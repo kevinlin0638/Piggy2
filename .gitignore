@@ -20,3 +20,5 @@ sql/
 out/
 
 server\.properties
+
+wz/
