@@ -63,7 +63,6 @@ public abstract class AbstractPlayerInteraction {
     protected int id, id2;
     protected String script;
 
-
     public AbstractPlayerInteraction(MapleClient c) {
         this.c = c;
         id = 0;
@@ -537,7 +536,11 @@ public abstract class AbstractPlayerInteraction {
                 }
                 MapleInventoryManipulator.addbyItem(cg, item.copy());
             } else {
-                MapleInventoryManipulator.addById(cg, id, quantity, owner == null ? "" : owner, null, period, "Received from interaction " + this.id + " (" + id2 + ") on " + FileoutputUtil.CurrentReadable_Date());
+                if (GameConstants.isPet(id)) {
+                    MapleInventoryManipulator.addById(cg, id, (short) 1, "", client.inventory.MaplePet.createPet(id, MapleInventoryIdentifier.getInstance()), 10, "GM獲得");
+                } else {
+                    MapleInventoryManipulator.addById(cg, id, quantity, owner == null ? "" : owner, null, period, "Received from interaction " + this.id + " (" + id2 + ") on " + FileoutputUtil.CurrentReadable_Date());
+                }
             }
         } else {
             MapleInventoryManipulator.removeById(cg, GameConstants.getInventoryType(id), id, -quantity, true, false);
@@ -1119,7 +1122,6 @@ public abstract class AbstractPlayerInteraction {
     // public final void evanTutorial(final String data, final int v1) {
     //   c.sendPacket(NPCTalkPacket.getEvanTutorial(data));
     // }
-
     public final void AranTutInstructionalBubble(final String data) {
         c.sendPacket(EffectPacket.AranTutInstructionalBalloon(data));
     }
