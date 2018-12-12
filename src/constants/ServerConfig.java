@@ -401,7 +401,7 @@ public final class ServerConfig {
     @Property(key = "db.port", defaultValue = "3306")
     public static String DB_PORT;
 
-    @Property(key = "db.name", defaultValue = "qhms")
+    @Property(key = "db.name", defaultValue = "twms145")
     public static String DB_NAME;
 
     @Property(key = "db.user", defaultValue = "root")
