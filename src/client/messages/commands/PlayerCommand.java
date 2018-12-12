@@ -49,7 +49,7 @@ public class PlayerCommand {
 
         @Override
         public String getHelpMessage() {
-            return "@fixExp - 經驗值歸零";
+            return "@經驗值歸零 - 經驗值歸零";
         }
     }
 

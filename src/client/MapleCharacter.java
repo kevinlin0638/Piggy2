@@ -5852,7 +5852,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             maxmp += Randomizer.rand(50, 100);
         }
         //maxmp += stats.getTotalInt() / 10;
-        exp += GameConstants.getExpNeededForLevel(level);
+        exp -= GameConstants.getExpNeededForLevel(level);
         if (exp < 0) {
             exp = 0;
         }
