@@ -55,8 +55,6 @@ import java.util.List;
 
 public class DamageParse {
 
-
-
     public static void applyAttack(final AttackInfo attack, final Skill theSkill, final MapleCharacter player, int attackCount, final double maxDamagePerMonster, final MapleStatEffect effect, final AttackType attack_type) {
         if (!player.isAlive()) {
             return;
@@ -442,7 +440,6 @@ public class DamageParse {
             return;
         }
 
-
         if ((attack.hits > 0) && (attack.targets > 0) && (!player.getStat().checkEquipDurabilitys(player, -1))) {
             player.dropMessage(5, "An item has run out of durability but has no inventory room to go to.");
             if (player.isShowErr()) {
@@ -450,7 +447,6 @@ public class DamageParse {
             }
             return;
         }
-
 
         if (GameConstants.isMulungSkill(attack.skill)) {
             if (player.getMapId() / 10000 != 92502) {
@@ -559,13 +555,11 @@ public class DamageParse {
                     return;
                 }
 
-
                 if (totDamageToOneMonster > Integer.MAX_VALUE) {
                     totDamageToOneMonster = Integer.MAX_VALUE;
                 } else if (totDamage > Integer.MAX_VALUE) {
                     totDamage = Integer.MAX_VALUE;
                 }
-
 
                 if (totDamageToOneMonster > 0) {
                     monster.damage(player, (int) totDamageToOneMonster, true, attack.skill);
@@ -882,7 +876,6 @@ public class DamageParse {
 //          if (theSkill != null && theSkill.isChargeSkill() && player.getKeyDownSkill_Time() == 0) {
 //              return 0;
 //          }
-
             final MonsterStatusEffect imprint = monster.getBuff(MonsterStatus.IMPRINT);
             if (imprint != null) {
                 elementalMaxDamagePerMonster += (elementalMaxDamagePerMonster * imprint.getX() / 100.0);
@@ -924,7 +917,6 @@ public class DamageParse {
                 if (p.attack != null) {
                     int hit = 0;
                     int mid_att = shadow ? p.attack.size() / 2 : p.attack.size();
-
 
                     int toCrit = (attack.skill == 4221001) || (attack.skill == 3221007) || (attack.skill == 23121003) || (attack.skill == 4341005) || (attack.skill == 4331006) || (attack.skill == 21120005) ? mid_att : 0;
                     if (toCrit == 0) {
@@ -991,13 +983,19 @@ public class DamageParse {
                 return null;
         }
 
-        if (ret.isBodyAttack &&
-                chr.getBuffedValue(MapleBuffStatus.ENERGY_CHARGE) == null && //能量获得
-                chr.getBuffedValue(MapleBuffStatus.BODY_PRESSURE) == null && //战神抗压
-                chr.getBuffedValue(MapleBuffStatus.DARK_AURA) == null && //黑暗灵气
-                chr.getBuffedValue(MapleBuffStatus.TORNADO) == null && //幻灵飓风
-                chr.getBuffedValue(MapleBuffStatus.SUMMON) == null && //召唤兽
-                chr.getBuffedValue(MapleBuffStatus.RAINING_MINES) == null && //地雷
+        if (ret.isBodyAttack
+                && chr.getBuffedValue(MapleBuffStatus.ENERGY_CHARGE) == null
+                && //能量获得
+                chr.getBuffedValue(MapleBuffStatus.BODY_PRESSURE) == null
+                && //战神抗压
+                chr.getBuffedValue(MapleBuffStatus.DARK_AURA) == null
+                && //黑暗灵气
+                chr.getBuffedValue(MapleBuffStatus.TORNADO) == null
+                && //幻灵飓风
+                chr.getBuffedValue(MapleBuffStatus.SUMMON) == null
+                && //召唤兽
+                chr.getBuffedValue(MapleBuffStatus.RAINING_MINES) == null
+                && //地雷
                 chr.getBuffedValue(MapleBuffStatus.TELEPORT_MASTERY) == null) {
             if (chr.isShowErr()) {
                 chr.showInfo("分析攻擊", true, "類型[" + header.name() + "]當前狀態限制了攻擊");
@@ -1096,6 +1094,7 @@ public class DamageParse {
             case 31001000: // grim scythe
             case 31101000: // soul eater
             case 31111005: // carrion breath
+            case 15101003: // Cygnus corkscrew
                 ret.charge = lea.readInt();
                 break;
             default:
@@ -1124,7 +1123,6 @@ public class DamageParse {
         ret.speed = lea.readByte();
         ret.lastAttackTickCount = lea.readInt();
         lea.readInt();
-
 
         if (chr.isShowInfo()) {
             chr.showInfo("AttackDebug", false, "Dir:" + ret.direction + " DIS:" + ret.display + " DD:" + Integer.toHexString(key) + " CRC:" + crc + " ACT: " + action);
@@ -1188,7 +1186,7 @@ public class DamageParse {
         ret.charge = -1;
         ret.direction = lea.readByte();
         ret.display = lea.readUShort();
-        
+
         lea.skip(1);
         if (ret.skill == 23111001) {
             lea.skip(4);

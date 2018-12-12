@@ -344,6 +344,7 @@ public enum RecvPacketOpcode implements WritableShortValueHolder {
             case "HEAL_OVER_TIME":
             //case "CP_UserMeleeAttack":
             case "TAKE_DAMAGE":
+            case "AUTO_AGGRO":
             //case "SPECIAL_MOVE":
             //case "USE_ITEM":
             //case "CHANGE_MAP":
