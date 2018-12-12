@@ -196,6 +196,11 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         this.hp = ostats.getHp();
         this.mp = ostats.getMp();
     }
+    public final void changeLevel(final int newLevel, long hp) {
+        this.ostats = new ChangeableStats(stats, newLevel, hp);
+        this.hp = ostats.getHp();
+        this.mp = ostats.getMp();
+    }
 
     public final MapleMonster getSponge() {
         return sponge.get();
