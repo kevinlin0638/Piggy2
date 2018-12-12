@@ -15,7 +15,7 @@ import java.util.Properties;
  * @author Emilyx3
  */
 public class ServerProperties {
-    private static final String dirpath = "./config";
+    private static final String dirpath = "./";
     private static final Properties[] props;
 
     static {

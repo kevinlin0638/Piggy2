@@ -3,6 +3,7 @@ package server;
 import client.inventory.MapleInventoryIdentifier;
 import client.messages.CommandProcessor;
 import client.skill.SkillFactory;
+import constants.ServerConfig;
 import constants.ServerConstants;
 import constants.WorldConstants;
 import database.DatabaseConnection;
@@ -62,6 +63,8 @@ public class Start {
     public void run() throws InterruptedException {
 
         System.out.println("楓之谷v145模擬器 啟動中" + "." + ServerConstants.MAPLE_PATCH + "..");
+        ServerProperties.load();
+
         SendPacketOpcode.reloadValues();
         RecvPacketOpcode.reloadValues();
         MapleBuffStatus.reloadValues();
