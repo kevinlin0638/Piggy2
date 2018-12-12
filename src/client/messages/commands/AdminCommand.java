@@ -7,13 +7,24 @@ import client.messages.CommandProcessorUtil;
 import constants.ServerConstants;
 import handling.channel.ChannelServer;
 import handling.world.World;
+import provider.MapleData;
+import provider.MapleDataProvider;
+import provider.MapleDataProviderFactory;
+import provider.MapleDataTool;
+import server.ItemInformation;
+import server.MapleItemInformationProvider;
 import server.Timer;
 import server.life.MapleLifeFactory;
 import server.life.MapleMonster;
 import server.life.OverrideMonsterStats;
 import server.maps.MapleMap;
+import tools.StringUtil;
+import tools.types.Pair;
 
 import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class AdminCommand {
@@ -141,6 +152,143 @@ public class AdminCommand {
         }
     }
 
+    public static class GainMeso extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            c.getPlayer().gainMeso(Integer.MAX_VALUE - c.getPlayer().getMeso(), true);
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!GainMeso - 楓幣全滿";
+        }
+    }
+
+    public static class Find extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() == 1) {
+                c.getPlayer().dropMessage(6, splitted.get(0) + ": <NPC> <MOB> <ITEM> <MAP> <SKILL>");
+            } else if (splitted.size() == 2) {
+                c.getPlayer().dropMessage(6, "請輸入要搜尋的關鍵字.");
+            } else {
+                String type = splitted.get(1);
+                String search = StringUtil.joinStringFrom(splitted.toArray(new String[0]), 2);
+                MapleData data = null;
+                MapleDataProvider dataProvider = MapleDataProviderFactory.getDataProvider(new File("./wz" + "/" + "String.wz"));
+                c.getPlayer().dropMessage(6, "<<Type: " + type + " | Search: " + search + ">>");
+
+                if (type.equalsIgnoreCase("NPC")) {
+                    List<String> retNpcs = new ArrayList<String>();
+                    data = dataProvider.getData("Npc.img");
+                    List<Pair<Integer, String>> npcPairList = new LinkedList<Pair<Integer, String>>();
+                    for (MapleData npcIdData : data.getChildren()) {
+                        npcPairList.add(new Pair<Integer, String>(Integer.parseInt(npcIdData.getName()), MapleDataTool.getString(npcIdData.getChildByPath("name"), "NO-NAME")));
+                    }
+                    for (Pair<Integer, String> npcPair : npcPairList) {
+                        if (npcPair.getRight().toLowerCase().contains(search.toLowerCase())) {
+                            retNpcs.add(npcPair.getLeft() + " - " + npcPair.getRight());
+                        }
+                    }
+                    if (retNpcs != null && retNpcs.size() > 0) {
+                        for (String singleRetNpc : retNpcs) {
+                            c.getPlayer().dropMessage(6, singleRetNpc);
+                        }
+                    } else {
+                        c.getPlayer().dropMessage(6, "無此NPC");
+                    }
+
+                } else if (type.equalsIgnoreCase("MAP")) {
+                    List<String> retMaps = new ArrayList<String>();
+                    data = dataProvider.getData("Map.img");
+                    List<Pair<Integer, String>> mapPairList = new LinkedList<Pair<Integer, String>>();
+                    for (MapleData mapAreaData : data.getChildren()) {
+                        for (MapleData mapIdData : mapAreaData.getChildren()) {
+                            mapPairList.add(new Pair<Integer, String>(Integer.parseInt(mapIdData.getName()), MapleDataTool.getString(mapIdData.getChildByPath("streetName"), "NO-NAME") + " - " + MapleDataTool.getString(mapIdData.getChildByPath("mapName"), "NO-NAME")));
+                        }
+                    }
+                    for (Pair<Integer, String> mapPair : mapPairList) {
+                        if (mapPair.getRight().toLowerCase().contains(search.toLowerCase())) {
+                            retMaps.add(mapPair.getLeft() + " - " + mapPair.getRight());
+                        }
+                    }
+                    if (retMaps != null && retMaps.size() > 0) {
+                        for (String singleRetMap : retMaps) {
+                            c.getPlayer().dropMessage(6, singleRetMap);
+                        }
+                    } else {
+                        c.getPlayer().dropMessage(6, "無此地圖");
+                    }
+                } else if (type.equalsIgnoreCase("MOB")) {
+                    List<String> retMobs = new ArrayList<String>();
+                    data = dataProvider.getData("Mob.img");
+                    List<Pair<Integer, String>> mobPairList = new LinkedList<Pair<Integer, String>>();
+                    for (MapleData mobIdData : data.getChildren()) {
+                        mobPairList.add(new Pair<Integer, String>(Integer.parseInt(mobIdData.getName()), MapleDataTool.getString(mobIdData.getChildByPath("name"), "NO-NAME")));
+                    }
+                    for (Pair<Integer, String> mobPair : mobPairList) {
+                        if (mobPair.getRight().toLowerCase().contains(search.toLowerCase())) {
+                            retMobs.add(mobPair.getLeft() + " - " + mobPair.getRight());
+                        }
+                    }
+                    if (retMobs != null && retMobs.size() > 0) {
+                        for (String singleRetMob : retMobs) {
+                            c.getPlayer().dropMessage(6, singleRetMob);
+                        }
+                    } else {
+                        c.getPlayer().dropMessage(6, "無此怪物");
+                    }
+
+                } else if (type.equalsIgnoreCase("ITEM")) {
+                    List<String> retItems = new ArrayList<String>();
+                    for (ItemInformation itemPair : MapleItemInformationProvider.getInstance().getAllItems()) {
+                        if (itemPair.name.toLowerCase().contains(search.toLowerCase())) {
+                            retItems.add(itemPair.itemId + " - " + itemPair.name);
+                        }
+                    }
+                    if (retItems != null && retItems.size() > 0) {
+                        for (String singleRetItem : retItems) {
+                            c.getPlayer().dropMessage(6, singleRetItem);
+                        }
+                    } else {
+                        c.getPlayer().dropMessage(6, "無此道具");
+                    }
+
+                } else if (type.equalsIgnoreCase("SKILL")) {
+                    List<String> retSkills = new ArrayList<String>();
+                    data = dataProvider.getData("Skill.img");
+                    List<Pair<Integer, String>> skillPairList = new LinkedList<Pair<Integer, String>>();
+                    for (MapleData skillIdData : data.getChildren()) {
+                        skillPairList.add(new Pair<Integer, String>(Integer.parseInt(skillIdData.getName()), MapleDataTool.getString(skillIdData.getChildByPath("name"), "NO-NAME")));
+                    }
+                    for (Pair<Integer, String> skillPair : skillPairList) {
+                        if (skillPair.getRight().toLowerCase().contains(search.toLowerCase())) {
+                            retSkills.add(skillPair.getLeft() + " - " + skillPair.getRight());
+                        }
+                    }
+                    if (retSkills != null && retSkills.size() > 0) {
+                        for (String singleRetSkill : retSkills) {
+                            c.getPlayer().dropMessage(6, singleRetSkill);
+                        }
+                    } else {
+                        c.getPlayer().dropMessage(6, "無此技能");
+                    }
+                } else {
+                    c.getPlayer().dropMessage(6, "抱歉，請重新輸入!");
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!search <NPC> <MOB> <ITEM> <MAP> <SKILL> - 搜尋";
+        }
+    }
+
     public static class TestDmg extends AbstractsCommandExecute {
 
         @Override
@@ -220,6 +368,34 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "!warp <地圖ID/腳色名稱> - 飛地圖";
+        }
+    }
+
+    public static class Job extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            c.getPlayer().changeJob(Integer.parseInt(splitted.get(1)));
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!job <職業ID> - 切換職業";
+        }
+    }
+
+    public static class WhereAmI extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            c.getPlayer().dropMessage(5, "目前地圖 " + c.getPlayer().getMap().getId() + "座標 (" + String.valueOf(c.getPlayer().getPosition().x) + " , " + String.valueOf(c.getPlayer().getPosition().y) + ")");
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!WhereAmI - 查詢目前地圖ID 與 腳色座標";
         }
     }
 
