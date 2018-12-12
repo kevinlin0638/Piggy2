@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package database;
 
+import constants.ServerConfig;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -100,10 +102,10 @@ public class DatabaseConnection {
         protected final Connection initialValue() {
             try {
                 Properties props = new Properties();
-                String database = "twms145";
-                String host = "localhost";
-                String dbUser = "root";
-                String dbPass = "";
+                String database = ServerConfig.DB_NAME;
+                String host = ServerConfig.DB_IP;
+                String dbUser = ServerConfig.DB_USER;
+                String dbPass = ServerConfig.DB_PASSWORD;
                 String dbUrl = "jdbc:mysql://" + host + ":3306/" + database;//+ "?autoReconnect=true&characterEncoding=UTF8&connectTimeout=120000000";
                 props.put("user", dbUser);
                 props.put("password", dbPass);
