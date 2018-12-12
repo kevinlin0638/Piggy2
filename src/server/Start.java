@@ -62,7 +62,6 @@ public class Start {
     public void run() throws InterruptedException {
 
         System.out.println("楓之谷v145模擬器 啟動中" + "." + ServerConstants.MAPLE_PATCH + "..");
-
         SendPacketOpcode.reloadValues();
         RecvPacketOpcode.reloadValues();
         MapleBuffStatus.reloadValues();
