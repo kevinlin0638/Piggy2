@@ -59,7 +59,6 @@ public class MapleServerHandler extends ChannelDuplexHandler {
     private int channel = -1;
     private SessionTracker sessionTracker = new SessionTracker();
 
-
     public MapleServerHandler(final int world, final int channel) {
         this.world = world;
         this.channel = channel;
@@ -129,14 +128,11 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                 new MapleAESOFB(ivRecv, ServerConstants.MAPLE_VERSION),
                 ctx.channel());
 
-
         client.setWorld(world);
         client.setChannel(channel);
 
-
         MaplePacketDecoder.DecoderState decoderState = new MaplePacketDecoder.DecoderState();
         client.getSession().attr(MaplePacketDecoder.DECODER_STATE_KEY).set(decoderState);
-
 
         client.sendPacket(LoginPacket.getHello(ivSend, ivRecv));
         client.getSession().attr(MapleClient.CLIENT_KEY).set(client);
@@ -187,8 +183,8 @@ public class MapleServerHandler extends ChannelDuplexHandler {
             WorldConfig.雪吉拉.setExpRate(100);
             WorldConfig.雪吉拉.setDropRate(10);
             WorldConfig.雪吉拉.setMesoRate(100);
-            c.getPlayer().addHP(c.getPlayer().getStat().getMaxHp()-c.getPlayer().getStat().getHp());
-            c.getPlayer().addMP(c.getPlayer().getStat().getMaxMp()-c.getPlayer().getStat().getMp());
+            c.getPlayer().addHP(c.getPlayer().getStat().getMaxHp() - c.getPlayer().getStat().getHp());
+            c.getPlayer().addMP(c.getPlayer().getStat().getMaxMp() - c.getPlayer().getStat().getMp());
             RecvPacketOpcode.reloadValues();
             SendPacketOpcode.reloadValues();
             MapleBuffStatus.reloadValues();
@@ -222,7 +218,6 @@ public class MapleServerHandler extends ChannelDuplexHandler {
     }
 
     void handlePacket(final RecvPacketOpcode header, final LittleEndianAccessor slea, final MapleClient client, final boolean cs) throws Exception {
-
 
         switch (header) {
             case PONG:
@@ -327,7 +322,6 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                 // c.sendPacket(LoginPacket.getCustomEncryption());
                 break;
 
-
             case ENABLE_SPECIAL_CREATION:
                 client.sendPacket(LoginPacket.enableSpecialCreation(client.getAccID(), true));
                 break;
@@ -373,6 +367,8 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                 InterServerHandler.EnterCS(client, client.getPlayer(), false);
                 break;
             case ENTER_MTS:
+                client.getSession().writeAndFlush(tools.packet.CWvsContext.enableActions());
+                scripting.NPCScriptManager.getInstance().start(client, 9900007, "home");
                 //  InterServerHandler.EnterMTS(c, c.getPlayer());
                 break;
             case MOVE_PLAYER:
