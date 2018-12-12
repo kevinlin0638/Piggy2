@@ -29,7 +29,7 @@ public class CommandProcessor {
 
 
     public static boolean processCommand(MapleClient client, String text, CommandType type) {
-        if (!checkPrefix(text))
+        if (checkPrefix(text))
             return false;
 
         final MapleCharacter player = client.getPlayer();
