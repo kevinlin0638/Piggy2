@@ -492,6 +492,8 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
             //case "SHOW_MONSTER_HP":
             //case "SHOW_QUEST_COMPLETION":
             //case "WARP_TO_MAP":
+            case "DROP_ITEM_FROM_MAPOBJECT":
+            case "REMOVE_ITEM_FROM_MAP":
                 return true;
             default:
                 return false;

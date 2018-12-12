@@ -339,8 +339,9 @@ public enum RecvPacketOpcode implements WritableShortValueHolder {
         switch (opcode.toString()) {
             case "NPC_ACTION":
             case "MOVE_PLAYER":
+            case "MOVE_SUMMON":
             case "MOVE_LIFE":
-            //case "HEAL_OVER_TIME":
+            case "HEAL_OVER_TIME":
             //case "CP_UserMeleeAttack":
             case "TAKE_DAMAGE":
             //case "SPECIAL_MOVE":
