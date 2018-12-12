@@ -18,3 +18,5 @@ sql/
 \.idea/
 
 out/
+
+server\.properties
