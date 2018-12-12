@@ -536,11 +536,7 @@ public abstract class AbstractPlayerInteraction {
                 }
                 MapleInventoryManipulator.addbyItem(cg, item.copy());
             } else {
-                if (GameConstants.isPet(id)) {
-                    MapleInventoryManipulator.addById(cg, id, (short) 1, "", client.inventory.MaplePet.createPet(id, MapleInventoryIdentifier.getInstance()), 10, "GM獲得");
-                } else {
-                    MapleInventoryManipulator.addById(cg, id, quantity, owner == null ? "" : owner, null, period, "Received from interaction " + this.id + " (" + id2 + ") on " + FileoutputUtil.CurrentReadable_Date());
-                }
+                MapleInventoryManipulator.addById(cg, id, quantity, owner == null ? "" : owner, null, period, "Received from interaction " + this.id + " (" + id2 + ") on " + FileoutputUtil.CurrentReadable_Date());
             }
         } else {
             MapleInventoryManipulator.removeById(cg, GameConstants.getInventoryType(id), id, -quantity, true, false);

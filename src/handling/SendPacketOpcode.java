@@ -480,13 +480,14 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
             //case "REACTOR_SPAWN":
             case "KILL_MONSTER":
             case "UPDATE_STATS":
-            //case "SHOW_STATUS_INFO":
+            case "SHOW_STATUS_INFO":
             //case "MAGIC_ATTACK":
             case "SPAWN_NPC":
+            case "REMOVE_NPC":
             case "SPAWN_NPC_REQUEST_CONTROLLER":
-            //case "GAME_MESSAGE":
+            case "GAME_MESSAGE":
             //case "LP_UserMeleeAttack":
-            //case "SERVERMESSAGE":
+            case "SERVERMESSAGE":
             case "SPAWN_MONSTER_CONTROL":
             //case "MODIFY_INVENTORY_ITEM":
             //case "SHOW_MONSTER_HP":
@@ -494,6 +495,7 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
             //case "WARP_TO_MAP":
             case "DROP_ITEM_FROM_MAPOBJECT":
             case "REMOVE_ITEM_FROM_MAP":
+            case "ARAN_COMBO":
                 return true;
             default:
                 return false;

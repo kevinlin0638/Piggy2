@@ -3,7 +3,12 @@ package client.messages.commands;
 import client.MapleCharacter;
 import client.MapleClient;
 import client.MapleStat;
+import client.inventory.Equip;
+import client.inventory.ItemFlag;
+import client.inventory.MapleInventoryIdentifier;
+import client.inventory.MapleInventoryType;
 import client.messages.CommandProcessorUtil;
+import constants.GameConstants;
 import constants.ServerConstants;
 import handling.channel.ChannelServer;
 import handling.world.World;
@@ -26,6 +31,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import server.MapleInventoryManipulator;
 
 public class AdminCommand {
 
@@ -99,7 +105,7 @@ public class AdminCommand {
     public static class Spawn extends AbstractsCommandExecute {
 
         @Override
-        public boolean execute(MapleClient c,  List<String> splitted) {
+        public boolean execute(MapleClient c, List<String> splitted) {
             final int mid = Integer.parseInt(splitted.get(1));
             final int num = Math.min(CommandProcessorUtil.getOptionalIntArg(splitted.toArray(new String[0]), 2, 1), 500);
 
@@ -300,10 +306,11 @@ public class AdminCommand {
                 final MapleMonster mm = MapleLifeFactory.getMonster(9001007);
                 int distance;
                 int job = chr.getJob();
-                if ((job >= 300 && job < 413) || (job >= 1300 && job < 1500) || (job >= 520 && job < 600))
+                if ((job >= 300 && job < 413) || (job >= 1300 && job < 1500) || (job >= 520 && job < 600)) {
                     distance = 125;
-                else
+                } else {
                     distance = 50;
+                }
                 Point p = new Point((int) chr.getPosition().getX() - distance, (int) chr.getPosition().getY());
                 long newhp = 800000000000L; //set it to what you want.
                 assert mm != null;
@@ -399,4 +406,53 @@ public class AdminCommand {
         }
     }
 
+    public static class Item extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            final int itemId = Integer.parseInt(splitted.get(1));
+            final short quantity = (short) CommandProcessorUtil.getOptionalIntArg(splitted, 2, 1);
+
+            if (!c.getPlayer().isAdmin()) {
+                for (int i : GameConstants.itemBlock) {
+                    if (itemId == i) {
+                        c.getPlayer().dropMessage(5, "很抱歉，此物品您的ＧＭ等級無法呼叫.");
+                        return false;
+                    }
+                }
+            }
+            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+            if (GameConstants.isPet(itemId)) {
+                MapleInventoryManipulator.addById(c, itemId, (short) 1, "", client.inventory.MaplePet.createPet(itemId, MapleInventoryIdentifier.getInstance()), 10, "GM獲得");
+                c.getPlayer().dropMessage(5, "Please purchase a pet from the cash shop instead.");
+            } else if (!ii.itemExists(itemId)) {
+                c.getPlayer().dropMessage(5, itemId + "  不存在");
+            } else {
+                client.inventory.Item item;
+                byte flag = 0;
+                flag |= ItemFlag.LOCK.getValue();
+
+                if (GameConstants.getInventoryType(itemId) == MapleInventoryType.EQUIP) {
+                    item = ii.randomizeStats((Equip) ii.getEquipById(itemId));
+                    item.setFlag(flag);
+
+                } else {
+                    item = new client.inventory.Item(itemId, (byte) 0, quantity, (byte) 0);
+                    if (GameConstants.getInventoryType(itemId) != MapleInventoryType.USE) {
+                        item.setFlag(flag);
+                    }
+                }
+                item.setOwner(c.getPlayer().getName());
+                item.setGMLog(c.getPlayer().getName() + " 使用 !item");
+
+                MapleInventoryManipulator.addbyItem(c, item);
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!item <道具ID> - 取得道具";
+        }
+    }
 }

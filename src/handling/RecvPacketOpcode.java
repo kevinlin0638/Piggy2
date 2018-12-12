@@ -348,6 +348,8 @@ public enum RecvPacketOpcode implements WritableShortValueHolder {
             //case "SPECIAL_MOVE":
             //case "USE_ITEM":
             //case "CHANGE_MAP":
+            case "GENERAL_CHAT":
+            case "ARAN_COMBO":
                 return true;
             default:
                 return false;

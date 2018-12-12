@@ -190,7 +190,7 @@ public class InterServerHandler {
         if (player.inCS()) {
             player.setInCS(false); // exit them from CS enabling
         } else {
-            client.sendPacket(CWvsContext.yellowChat("[啾咪谷] 歡迎來到 " + ServerConstants.SERVER_NAME));
+            client.sendPacket(CWvsContext.yellowChat("[楓之谷] 歡迎來到 " + ServerConstants.SERVER_NAME));
             client.sendPacket(CField.sendHint("" + ServerConstants.WELCOME_MESSAGE + "", 350, 5));
         }
         // GM Hide is a skill now, and auto-applies super hide. 

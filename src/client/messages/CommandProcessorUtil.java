@@ -1,5 +1,6 @@
 package client.messages;
 
+import java.util.List;
 import tools.StringUtil;
 
 /**
@@ -20,6 +21,17 @@ public class CommandProcessorUtil {
         if (splitted.length > position) {
             try {
                 return Integer.parseInt(splitted[position]);
+            } catch (NumberFormatException nfe) {
+                return def;
+            }
+        }
+        return def;
+    }
+
+    public static int getOptionalIntArg(List<String> splitted, int position, int def) {
+        if (splitted.size() > position) {
+            try {
+                return Integer.parseInt(splitted.get(position));
             } catch (NumberFormatException nfe) {
                 return def;
             }
