@@ -1188,7 +1188,7 @@ public class DamageParse {
         ret.charge = -1;
         ret.direction = lea.readByte();
         ret.display = lea.readUShort();
-        lea.skip(4);
+        
         lea.skip(1);
         if (ret.skill == 23111001) {
             lea.skip(4);
@@ -1208,7 +1208,7 @@ public class DamageParse {
         for (int i = 0; i < ret.targets; i++) {
             int oid = lea.readInt();
 
-            lea.skip(18);
+            lea.skip(14);
 
             List allDamageNumbers = new ArrayList();
             for (int j = 0; j < ret.hits; j++) {
