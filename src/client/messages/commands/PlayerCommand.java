@@ -1,4 +1,5 @@
 package client.messages.commands;
+
 import client.MapleClient;
 import client.MapleStat;
 import constants.ServerConstants.PlayerGMRank;
@@ -8,11 +9,32 @@ import server.maps.MapleMapObjectType;
 
 import java.util.Arrays;
 import java.util.List;
+import scripting.NPCScriptManager;
+import tools.packet.CWvsContext;
 
 public class PlayerCommand {
 
     public static PlayerGMRank getPlayerLevelRequired() {
         return PlayerGMRank.NORMAL;
+    }
+
+    public static class ea extends 查看 {
+    }
+
+    public static class 查看 extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            NPCScriptManager.getInstance().dispose(c);
+            c.sendPacket(CWvsContext.enableActions());
+            c.getPlayer().showInfo("指令", true, "解卡成功。");
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@ea - 解卡";
+        }
     }
 
     public static class 經驗值歸零 extends AbstractsCommandExecute {
@@ -70,12 +92,14 @@ public class PlayerCommand {
     }
 
     public static class 清除克隆 extends AbstractsCommandExecute {
+
         @Override
         public boolean execute(MapleClient c, List<String> args) {
             c.getPlayer().dropMessage(-11, c.getPlayer().getCloneSize() + " 個克隆被清除了");
             c.getPlayer().disposeClones();
             return true;
         }
+
         @Override
         public String getHelpMessage() {
             return "@清除克隆 - 清除克隆人";
