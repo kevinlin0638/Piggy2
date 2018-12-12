@@ -430,7 +430,7 @@ public class AdminCommand {
             } else {
                 client.inventory.Item item;
                 byte flag = 0;
-                flag |= ItemFlag.LOCK.getValue();
+                //flag |= ItemFlag.LOCK.getValue();
 
                 if (GameConstants.getInventoryType(itemId) == MapleInventoryType.EQUIP) {
                     item = ii.randomizeStats((Equip) ii.getEquipById(itemId));

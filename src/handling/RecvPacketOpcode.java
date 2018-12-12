@@ -350,6 +350,8 @@ public enum RecvPacketOpcode implements WritableShortValueHolder {
             //case "CHANGE_MAP":
             case "GENERAL_CHAT":
             case "ARAN_COMBO":
+            case "NPC_TALK":
+            case "NPC_TALK_MORE":
                 return true;
             default:
                 return false;

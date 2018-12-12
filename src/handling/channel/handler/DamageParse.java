@@ -1224,6 +1224,9 @@ public class DamageParse {
                         chr.setCData(5211009, -1);
                     }
                 }
+                if (chr.isShowInfo()) {
+                    chr.dropMessage(-5, "遠距離攻擊[" + ret.skill + "] - 攻擊數量: " + ret.targets + " 攻擊段數: " + ret.hits + " 怪物OID " + oid + " 傷害: " + damage);
+                }
                 allDamageNumbers.add(new Pair(Integer.valueOf(damage), Boolean.valueOf(false)));
             }
 
