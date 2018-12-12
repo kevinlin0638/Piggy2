@@ -1,211 +1,62 @@
-/*      
- *  ¥\¯à¡G¸U¯à NPC
- *  »s§@¡GWinter¥V©u
- *  ®É¶¡¡G2018¦~06¤ë15¤é
- */
+importPackage(Packages.client);
 
-var status;
-var x0 = "#fEffect/CharacterEff/1112949/0/0#";//°ª­µÃĞ°O¸¹
-var x1 = "#fEffect/CharacterEff/1112949/1/0#";//°ª­µÃĞ°O¸¹
-var x2 = "#fEffect/CharacterEff/1112949/2/0#";//°ª­µÃĞ°O¸¹
-var x3 = "#fEffect/CharacterEff/1112949/3/0#";//°ª­µÃĞ°O¸¹
-var x4 = "#fEffect/CharacterEff/1112949/4/0#";//°ª­µÃĞ°O¸¹
-var up = "#fUI/Login/CharSelect/icon/up#";
-var new_ = "#fUI/Login/CharSelect/icon/new#";
-var down = "#fUI/Login/CharSelect/icon/down#";
-var same = "#fUI/Login/CharSelect/icon/same#";
-var N = "#fUI/Login/WorldNotice/2/0#";
+var status = -1;
+var jobs1 = [
+"åŠå£«","æ³•å¸«","å¼“ç®­æ‰‹","ç›œè³Š","ç›œè³Š(å½±æ­¦è€…)","æµ·ç›œ","ç ²æ‰‹(é‡ç ²æŒ‡æ®å®˜)",
+"ç²¾éˆéŠä¿ ","è²´æ—(çš‡å®¶é¨å£«åœ˜)","å‚³èªª(ç‹‚ç‹¼å‹‡å£«)","é¾é­”å°å£«","å¸‚æ°‘(æœ«æ—¥åæŠ—è»)","æƒ¡é­”æ®ºæ‰‹"];
 
-var Message = Array(
-        Array("#fUI/Logo/1#", Array(//ºŞ²z­û
-			Array("¤è«K¶Ç°e", 9000003, "¤è«K¶Ç°e"),
-			Array("¤è«KÂàÂ¾", 9900003, "¤è«KÂàÂ¾"),
-			Array("´ú¸ÕªA»â¨ú", 9900007, "´ú¸ÕªA»â¨ú")
-			)),
-        Array("#fUI/Logo/2#", Array(//¥Î¤á
-			Array("±b¤á", 9900007, "±b¤á"),//«İ­×´_
-			Array("¶Ç°e", 9900007, "¶Ç°e"),
-			Array("Ãdª«", 9900007, "home", "Pet"),
-			Array("¦^¦¬", 9900007, "¦^¦¬"),
-			//Array("¤½§i", 9900007, "news"),
-			//Array("·¬ªZ", 9900007, "·¬ªZ")
-			Array("¾v«¬", 1012117, "¾v«¬"),
-			//Array("¾v«¬1", 1012117, "¾v«¬1"),
-			Array("Áy«¬", 1012117, "Áy«¬")
-			)),
-        Array("#fUI/Logo/3#", Array(//¼úÀy
-			//Array("¸ÉÀv", 1012117, "¸ÉÀv"),
-			Array("¤É¯Å", 9900007, "¤É¯Å"),
-			Array("¦b½u", 9900007, "¦b½u"),
-			Array("§I´«", 9900007, "§I´«"),
-			Array("¸ÉÀv", 9900007, "¥[½X¼úÀy"),
-			Array("§Ç¸¹", 9900007, "§Ç¸¹")
-			//Array("Àş¶¡²¾°Ê", 9900007, "Àş¶¡²¾°Ê"),
-			//Array("Facebook", 9900007, "FB¤À¨É"),
-			//Array("«Ê´ú", 9900007, "«Ê´ú»â¨ú")
-			)),
-        Array("#fUI/Logo/4#", Array(//¥\¯à
-			Array("Âà¥Í", 9900007, "Âà¥Í"),
-			Array("±Æ¦æ", 9900007, "±Æ¦æ"),
-			Array("ªşÅ]", 9900007, "ªşÅ]"),
-			Array("¤À¸Ñ", 9900007, "¤À¸Ñ"),//«İ­×´_
-			Array("§Ş¯à", 9900007, "§Ş¯à"),
-			Array("Ãz²v", 9900007, "Ãz²v"),
-			Array("¬ÛÃ¯", 9900007, "¬ÛÃ¯¥\¯à")
-			//Array("ª««~§I´«", 9900003, "§I´«"),
-			//Array("¦L³¹¨t²Î", 9900003, "¦L³¹"),
-			//Array("Âà¡ş­¸¤É", 9900007, "Âà¤É"),
-			//Array("ÀH¾÷²z¾v", 9105006, null),
-			//Array("«ØÄ³¦^³ø", 9900007, "¦^³ø")
-			))
-    );
-	
+var jobs = [
+["#råŠå£«",[1302000]],["#ræ³•å¸«",[1362000]],["#rå¼“ç®­æ‰‹",[1452000]],["#rç›œè³Š",[1472000,1342000]],["ç›œè³Š(å½±æ­¦è€…)",[1482000,1492000]],["#ræµ·ç›œ",[1482000,1492000]],["ç ²æ‰‹(é‡ç ²æŒ‡æ®å®˜)",[1532000]],
+["ç²¾éˆéŠä¿ ",[1522000]],["#rè²´æ—(çš‡å®¶é¨å£«åœ˜)",[1362000]],["å‚³èªª(ç‹‚ç‹¼å‹‡å£«)",[1442000]],["é¾é­”å°å£«",[1372000]],["#rå¸‚æ°‘(æœ«æ—¥åæŠ—è»)",[1482000,1492000]],["æƒ¡é­”æ®ºæ‰‹",[1422000]],
+
+["#b(è²´æ—)è–é­‚åŠå£«",[1302000]],["#b(è²´æ—)çƒˆç„°å·«å¸«",[1362000]],["#b(è²´æ—)ç ´é¢¨ä½¿è€…",[1452000]],["#b(è²´æ—)æš—å¤œè¡Œè€…",[1472000,1342000]],["#b(è²´æ—)é–ƒé›·æ‚å°‡",[1482000]],
+["#g(å¸‚æ°‘)ç…‰ç„å·«å¸«",[1362000]],["#g(å¸‚æ°‘)ç‹‚è±¹çµäºº",[1462000]],["#g(å¸‚æ°‘)æ©Ÿç”²æˆ°ç¥",[1492000]]
+]
+
+/*
+var jobid = [
+100,200,300,400,430,500,530,
+2300,1000,2000,2001,3000,3001
+];*/
+
+var jobid = [
+100,200,300,400,434,500,532,
+2312,1000,2112,2218,3000,3112,
+
+1112,1212,1312,1412,1512,
+3212,3312,3512
+];
+
 function start() {
-    status = -1;
     action(1, 0, 0);
 }
 
-var skill = [	
-4101004,
-1,//¬I©ñ¬r®ğ
-4,//¤p½d³ò¦èª«
-2,//ªvÂ¡¸É¦å
-1301007,
-3,//ªvÂ¡¸ÉÅ]
-5,//¤j½d³ò¦èª«
-3121002,
-3121000,
-2311003,
-6//¥ş¹Ï¦èª«
-];
-
-var pet = [5000595,5000685,5000696,5000707,5000708,5000709,5000721,5000722,5000723,5000727,5000736,5000737,5000738,5000740,5000749,5000751,5000752,5000753,5000754,5000762,5000763,5000764,5000765,5000766,5000767,5000768,5000769,5000772,5000773,5000774,5000786,5000790,5000791,5000792,5000793,5000794,5000795,5000796,5000797,5000798,5000806,5000807,5000808,5000906,5000907,5000908,5000918,
-5000919,5000920,5000921,5000922,5000923,5000924,5000925,5000945,5000953];
-pet = [5000906,5000907,5000908];
-
-var itemss = [1054002,1006002,1104002,1083002,1074002];
-itemss = [1054003,1006003,1104003,1083003,1074003];
-
-
-
 function action(mode, type, selection) {
-var change = 1;
-
-if (change == 1) {
-	cm.dispose();
-	cm.warp(9100000000, 0);
-	//cm.openNpc(9900007, "¶}ªA¥[½X¤É¯Å", "Player/List2");
-	return;
-} else if (change == 2) {
-	cm.dispose();
-	cm.openShop(95);
-	return;
-} else if (change == 3) {
-	for (var t in pet) {
-		cm.gainPetItem(pet[t], 1, 1);
-		//cm.playerMessage(1, "ÁÊ¶R¦¨¥\: " + pet[t]);
-	}
-} else if (change == 4) {
-	for (var t in pet) {
-		cm.DELPetItem(pet[t]);
-	}
-} else if (change == 5) {
-	cm.teachSkill(1004,1);
-} else if (change == 6) {
-	for (var t in itemss)
-		cm.gainItem(itemss[t],1);
-}
-    if (mode == 0) {
-		cm.dispose();
-		return;
-	} else if (cm.getPlayer().getLevel() < 10){
-		cm.sendOk("©p¥Ø«eªºµ¥¯ÅµLªk¨Ï¥Î");
-		cm.dispose();
-		return;
-    } else if (mode == 1){
-		status++;
+    if (mode == 1) {
+        status++;
     } else {
-		status--;
-    }
-    switch (status) {
-        case 0:
-			var UI = "#fUI/Logo/0#", AUI = "#fUI/Logo/1#";
-			var admin = (cm.getChar().isGM()? "#r#L999#" + AUI: "\t\t¡@ " + UI);
-			var text = "#e#b"+admin+"#n#k\r\n";
-			var L = Message;
-			for (var i in L) {
-				//²¤¹L«ü¥O¥\¯à
-				if (i == 0)
-					continue;
-				text += L[i][0];
-				text += cor(i);
-				for (var j in L[i][1]) {
-					var ¹Ï¥Ü = L[i][1][j][0];
-					if (j%6 == 0)
-						text += "\r\n";
-					text += "#L" + i+j + "#[" + ¹Ï¥Ü + "]#l";
-				}
-				if (i!=3)
-					text += "\r\n\r\n\r\n";
-            }
-			cm.sendOk(text);
-            break;
-        case 1:
-            var i = Math.floor(selection/10);
-			var j = Math.floor(selection%10);
-			cm.dispose();
-			if (selection == 999) {
-				cm.openNpc(9900007, "home", "Admin");
-				return;
-			}
-			var NPC = Message[i][1][j][1];
-			var ¸}¥» = Message[i][1][j][2];
-			var ¸ô®| = Message[i][1][j][3];
-			if (NPC == null)
-				Packages.client.messages.CommandProcessor.processCommand(cm.getClient(), ¸}¥», Packages.constants.ServerConstants.CommandType.NORMAL);
-			else if (¸}¥» == null)
-				cm.openNpc(NPC);
-			else if (¸ô®| != null)
-				cm.openNpc(NPC, ¸}¥», ¸ô®|);
-			/*else if (¸}¥» == "news")
-				cm.openNpc(NPC, "news_eve");*/
-			else 
-				cm.openNpc(NPC, ¸}¥», "Player/List"+i);
-            break;
-        case 2:
-        case 3:
+        if (status == 1) {
             cm.dispose();
-            break;
-    }
-}
-
-function cor(i) {
-	var c = i%10;
-    switch (c) {
-        case 0:
-			return "#d";
-        case 1:
-            return "#r";
-        case 2:
-			return "#b";
-        case 3:
-			return "#k";
-		default:
-            return "";
-    }
-
-}
-
-var format = function FormatString(c, length, content) {
-    var str = "";
-    var cs = "";
-    if (content.length > length) {
-        str = content;
-    } else {
-        for (var j = 0; j < length - content.getBytes("big5").length; j++) {
-            cs = cs + c;
+            return;
         }
+        status--;
     }
-    str = content + cs;
-    return str;
+	if (status == 0) {
+		var text = "";
+		for (var et in jobs) {
+			text += "#L" + et + "#" + jobs[et][0] + "#k\r\n";
+		}
+		cm.sendNext(text);
+	} else if (status == 1) {
+		var item = jobs[selection][1];
+		for (var i in item) {
+			var items = item[i]
+			if (!cm.haveItem(items))
+			cm.gainItem(items, 1);
+		}
+		var job = jobid[selection];
+		cm.changeJob(job);
+		cm.dispose();
+	}
+	//cm.warp(910000000);
 }

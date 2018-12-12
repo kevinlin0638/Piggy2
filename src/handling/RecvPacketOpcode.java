@@ -337,16 +337,15 @@ public enum RecvPacketOpcode implements WritableShortValueHolder {
 
     public static boolean isSkipLog(RecvPacketOpcode opcode) {
         switch (opcode.toString()) {
-            /*case "MOVE_PLAYER":
-            case "MOVE_LIFE":
-            case "HEAL_OVER_TIME":
-            case "CP_UserMeleeAttack":
-            case "TAKE_DAMAGE":
-            case "SPECIAL_MOVE":
-            case "USE_ITEM":
-            case "CHANGE_MAP":*/
             case "NPC_ACTION":
             case "MOVE_PLAYER":
+            case "MOVE_LIFE":
+            //case "HEAL_OVER_TIME":
+            //case "CP_UserMeleeAttack":
+            case "TAKE_DAMAGE":
+            //case "SPECIAL_MOVE":
+            //case "USE_ITEM":
+            //case "CHANGE_MAP":
                 return true;
             default:
                 return false;

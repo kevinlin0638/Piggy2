@@ -473,26 +473,25 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
 
         switch (opcode.toString()) {
             case "NPC_ACTION":
-            /*case "YELLOW_CHAT":
-            case "MOVE_MONSTER":
+            //case "YELLOW_CHAT":
+            //case "MOVE_MONSTER":
             case "MOVE_MONSTER_RESPONSE":
             case "SPAWN_MONSTER":
-            case "REACTOR_SPAWN":
+            //case "REACTOR_SPAWN":
             case "KILL_MONSTER":
             case "UPDATE_STATS":
-            case "SHOW_STATUS_INFO":
-            case "MAGIC_ATTACK":
+            //case "SHOW_STATUS_INFO":
+            //case "MAGIC_ATTACK":
             case "SPAWN_NPC":
             case "SPAWN_NPC_REQUEST_CONTROLLER":
-            case "GAME_MESSAGE":
-            case "LP_UserMeleeAttack":
-            case "SERVERMESSAGE":
+            //case "GAME_MESSAGE":
+            //case "LP_UserMeleeAttack":
+            //case "SERVERMESSAGE":
             case "SPAWN_MONSTER_CONTROL":
-            case "MODIFY_INVENTORY_ITEM":
-            case "SHOW_MONSTER_HP":
-            case "SHOW_QUEST_COMPLETION":
-            case "WARP_TO_MAP":*/
-            case ""://
+            //case "MODIFY_INVENTORY_ITEM":
+            //case "SHOW_MONSTER_HP":
+            //case "SHOW_QUEST_COMPLETION":
+            //case "WARP_TO_MAP":
                 return true;
             default:
                 return false;
