@@ -79,7 +79,7 @@ public class Start {
         MapleServerHandler.initiate();
 
         // Information
-        //MapleItemInformationProvider.getInstance().runEtc();
+        MapleItemInformationProvider.getInstance().runEtc();
         MapleMonsterInformationProvider.getInstance().load();
         MapleItemInformationProvider.getInstance().runItems();
 

@@ -71,7 +71,11 @@ public class MapleItemInformationProvider {
                 if (level.getType() != MapleDataType.INT) {
                     for (MapleData leve : level) {
                         if (!leve.getName().equals("representName") && !leve.getName().equals("typeName")) {
-                            itemz.itemIDs.add(MapleDataTool.getInt(leve));
+                            try {
+                                itemz.itemIDs.add(MapleDataTool.getIntConvert(leve));
+                            } catch (Exception e) {
+                                System.err.println("出錯數據： leve = " + leve.getData());
+                            }
                         }
                     }
                 } else {
@@ -254,7 +258,6 @@ public class MapleItemInformationProvider {
             ps.close();
 
             // Load Item Equipment Data
-
             ps = con.prepareStatement("SELECT * FROM wz_itemequipdata ORDER BY itemid");
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -264,7 +267,6 @@ public class MapleItemInformationProvider {
             ps.close();
 
             // Load Item Addition Data
-
             ps = con.prepareStatement("SELECT * FROM wz_itemadddata ORDER BY itemid");
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -274,7 +276,6 @@ public class MapleItemInformationProvider {
             ps.close();
 
             // Load Item Reward Data
-
             ps = con.prepareStatement("SELECT * FROM wz_itemrewarddata ORDER BY itemid");
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -284,7 +285,6 @@ public class MapleItemInformationProvider {
             ps.close();
 
             // Finalize all Equipments
-
             dataCache.entrySet().stream().filter(entry -> GameConstants.getInventoryType(entry.getKey()) == MapleInventoryType.EQUIP).forEach(entry -> {
                 finalizeEquipData(entry.getValue());
             });
@@ -412,8 +412,9 @@ public class MapleItemInformationProvider {
         if (i == null) {
             return 0;
         }
-        if (GameConstants.getInventoryType(itemId).getType() == MapleInventoryType.ETC.getType() || GameConstants.getInventoryType(itemId).getType() == MapleInventoryType.USE.getType())
+        if (GameConstants.getInventoryType(itemId).getType() == MapleInventoryType.ETC.getType() || GameConstants.getInventoryType(itemId).getType() == MapleInventoryType.USE.getType()) {
             return 32767;
+        }
         return i.slotMax;
     }
 
@@ -433,6 +434,7 @@ public class MapleItemInformationProvider {
         }
         return tradeblock;
     }
+
     public double getPrice(int itemId) {
         ItemInformation i = getItemInformation(itemId);
         if (i == null) {
@@ -556,7 +558,6 @@ public class MapleItemInformationProvider {
         }
         return getEquipStats(itemId).get("reqLevel");
     }
-
 
     public int getSlots(int itemId) {
         if (getEquipStats(itemId) == null || !getEquipStats(itemId).containsKey("tuc")) {
@@ -870,7 +871,7 @@ public class MapleItemInformationProvider {
 
     public Item getEquipById(int equipId, int ringId) {
         ItemInformation i = getItemInformation(equipId);
-        if (i == null ) {
+        if (i == null) {
             return new Equip(equipId, (short) 0, ringId, (byte) 0);
         }
         Item eq = i.eq.copy();
@@ -934,7 +935,6 @@ public class MapleItemInformationProvider {
         return equip;
     }
 
-
     public Equip randomizeStats(Equip equip) {
         equip.setStr(getRandStat(equip.getStr(), 5));
         equip.setDex(getRandStat(equip.getDex(), 5));
@@ -954,7 +954,6 @@ public class MapleItemInformationProvider {
 
         return equip;
     }
-
 
     public Equip randomizeStats3(Equip equip) {
         equip.setStr(getRandStat(equip.getStr(), 5));
@@ -1137,7 +1136,7 @@ public class MapleItemInformationProvider {
         return i.itemMakeLevel;
     }
 
- /*   public boolean isDropRestricted(int itemId) {
+    /*   public boolean isDropRestricted(int itemId) {
         ItemInformation i = getItemInformation(itemId);
         if (i == null) {
             return false;
@@ -1153,8 +1152,7 @@ public class MapleItemInformationProvider {
         return ((i.WORLD_FLAGS & 0x80) != 0 || GameConstants.isPickupRestricted(itemId)) && itemId != 4001168 && itemId != 4031306 && itemId != 4031307;
     }
     * 
-    */
-
+     */
     public boolean isAccountShared(int itemId) {
         ItemInformation i = getItemInformation(itemId);
         if (i == null) {
@@ -1203,7 +1201,7 @@ public class MapleItemInformationProvider {
         return i.karmaEnabled == 2;
     }
 
-   /* public boolean isPickupBlocked(int itemId) {
+    /* public boolean isPickupBlocked(int itemId) {
         ItemInformation i = getItemInformation(itemId);
         if (i == null) {
             return false;
@@ -1211,7 +1209,7 @@ public class MapleItemInformationProvider {
         return (i.WORLD_FLAGS & 0x40) != 0;
     }
     * 
-    */
+     */
 
  /*   public boolean isLogoutExpire(int itemId) {
         ItemInformation i = getItemInformation(itemId);
@@ -1221,9 +1219,9 @@ public class MapleItemInformationProvider {
         return (i.WORLD_FLAGS & 0x20) != 0;
     }
     * 
-    */
+     */
 
-  /*  public boolean cantSell(int itemId) { //true = cant sell, false = can sell
+ /*  public boolean cantSell(int itemId) { //true = cant sell, false = can sell
         ItemInformation i = getItemInformation(itemId);
         if (i == null) {
             return false;
@@ -1231,8 +1229,7 @@ public class MapleItemInformationProvider {
         return (i.WORLD_FLAGS & 0x10) != 0;
     }
     * 
-    */
-
+     */
     public Pair<Integer, List<StructRewardItem>> getRewardItem(int itemid) {
         ItemInformation i = getItemInformation(itemid);
         if (i == null) {
@@ -1384,7 +1381,6 @@ public class MapleItemInformationProvider {
         if (item.equipStats == null) {
             item.equipStats = new HashMap<>();
         }
-
 
         item.eq = new Equip(itemId, (byte) 0, -1, (byte) 0);
         short stats = GameConstants.getStat(itemId, 0);
@@ -1633,7 +1629,6 @@ public class MapleItemInformationProvider {
         }
         return ((i.flag & 0x200) != 0 || (i.flag & 0x400) != 0 || GameConstants.isIllegal(itemId)) && (itemId == 3012000 || itemId == 3012015 || itemId / 10000 != 301) && itemId != 2041200 && itemId != 5640000 && itemId != 4170023 && itemId != 2040124 && itemId != 2040125 && itemId != 2040126 && itemId != 2040211 && itemId != 2040212 && itemId != 2040227 && itemId != 2040228 && itemId != 2040229 && itemId != 2040230 && itemId != 1002926 && itemId != 1002906 && itemId != 1002927;
     }
-
 
     public static enum JobInfoFlag {
 
