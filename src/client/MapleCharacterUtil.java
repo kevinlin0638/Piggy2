@@ -40,11 +40,7 @@ public class MapleCharacterUtil {
     private static final Pattern petPattern = Pattern.compile("[a-zA-Z0-9]{4,12}");
 
     public static boolean canCreateChar(final String name, final boolean gm) {
-        return true;
-//        if (getIdByName(name) != -1 || !isEligibleCharName(name, gm)) {
-//            return false;
-//        }
-//        return true;
+        return !(getIdByName(name) != -1 || !isEligibleCharName(name, gm));
     }
 
     public static boolean canpoop(final String name, final boolean gm) {
