@@ -81,6 +81,8 @@ public class Skill {
             ret.pushTarget = MapleDataTool.getInt("pushTarget", inf, 0) > 0;
             ret.pullTarget = MapleDataTool.getInt("pullTarget", inf, 0) > 0;
         }
+
+
         final MapleData effect = data.getChildByPath("statEffect");
         if (skillType == 2) {
             isBuff = true;
@@ -300,6 +302,45 @@ public class Skill {
                 case 24121009: // hero's will
                 case 24121008: // maple warrior
                 case 5711001: // turret
+
+                case 1121000://楓葉祝福
+                case 1221000:
+                case 1321000:
+                case 2121000:
+                case 2221000:
+                case 2321000:
+                case 3121000:
+                case 3221000:
+                case 4121000:
+                case 4221000:
+                case 5121000:
+                case 5221000:
+
+                case 2111005://急速詠唱
+                case 2211005:
+                case 2311005:
+
+                case 1121002://格擋
+                case 1221002:
+                case 1321002:
+
+
+                case 1121010://鬥氣爆發
+
+                case 1211011://戰鬥命令
+                case 1211004://烈焰之劍
+                case 1211006://寒冰之劍
+                case 1211008://雷鳴之劍
+                case 1221004://聖靈之劍
+
+                case 3111000://集中
+                case 3211000://集中
+                case 3221006://楓幣護盾
+
+                case 4001003://隱身術
+                case 4111002://影分身
+                case 4211005://楓幣護盾
+
                     isBuff = true;
                     break;
             }

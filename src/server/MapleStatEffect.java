@@ -236,6 +236,7 @@ public class MapleStatEffect implements Serializable {
             }
         }
 
+
         if (!ret.skill && ret.duration > -1) {
             ret.overTime = true;
         } else if (ret.isBadSkill()) {
