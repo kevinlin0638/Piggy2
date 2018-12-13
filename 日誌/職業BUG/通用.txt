@@ -1,0 +1,6 @@
+1.使用任何對怪物Debuff技能 無效
+- APPLY_MONSTER_STATUS  有問題
+
+2.楓葉祝福 無效
+
+3.

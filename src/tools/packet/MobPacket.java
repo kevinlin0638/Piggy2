@@ -528,7 +528,7 @@ public class MobPacket {
     public static byte[] cancelMonsterStatus(MapleMonster mons, List<MonsterStatusEffect> mse) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-        mplew.writeShort(SendPacketOpcode.APPLY_MONSTER_STATUS.getValue());
+        mplew.writeShort(SendPacketOpcode.CANCEL_MONSTER_STATUS.getValue());
         mplew.writeInt(mons.getObjectId());
         writeMaskFromList(mplew, mse);
         for (MonsterStatusEffect buff : mse) {

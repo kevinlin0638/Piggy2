@@ -364,7 +364,11 @@ public class AdminCommand {
                     int ch = World.Find.findChannel(splitted.get(1));
                     if (ch < 0) {
                         MapleMap target = c.getChannelServer().getMapFactory().getMap(Integer.parseInt(splitted.get(1)));
-                        c.getPlayer().changeMap(target, target.getPortal(Integer.parseInt(splitted.get(2))));
+                        if (splitted.size() == 2) {
+                            c.getPlayer().changeMap(target, target.getPortal(0));
+                        }else{
+                            c.getPlayer().changeMap(target, target.getPortal(Integer.parseInt(splitted.get(2))));
+                        }
                     } else {
                         victim = ChannelServer.getInstance(c.getWorld(), ch).getPlayerStorage().getCharacterByName(splitted.get(1));
                         c.getPlayer().dropMessage(6, "換頻道中. 請稍後.");
