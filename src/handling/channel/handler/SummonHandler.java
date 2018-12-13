@@ -53,8 +53,9 @@ import java.util.Map;
 public class SummonHandler {
 
     public static void MoveDragon(final LittleEndianAccessor slea, final MapleCharacter chr) {
-        if (chr.getDragon() == null)
+        if (chr.getDragon() == null) {
             return;
+        }
         slea.skip(8); //POS
         final List<ILifeMovementFragment> res = MovementParse.parseMovement(slea, chr.getDragon().getPosition(), MovementKind.DRAGON_MOVEMENT);
         if (res.size() > 0) {
@@ -122,167 +123,106 @@ public class SummonHandler {
         }
     }
 
-    /*     */
-    public static void SummonAttack(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr)
-/*     */ {
-/* 158 */
+    public static void SummonAttack(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         if ((chr == null) || (!chr.isAlive()) || (chr.getMap() == null)) {
-/* 159 */
             return;
-/*     */
         }
-/* 161 */
         MapleMap map = chr.getMap();
-/* 162 */
         MapleMapObject obj = map.getMapObject(slea.readInt(), MapleMapObjectType.SUMMON);
-/* 163 */
         if ((obj == null) || (!(obj instanceof MapleSummon))) {
-/* 164 */
             chr.dropMessage(5, "The summon has disappeared.");
-/* 165 */
             return;
-/*     */
         }
-/* 167 */
         MapleSummon summon = (MapleSummon) obj;
-/* 168 */
         if ((summon.getOwnerId() != chr.getId()) || (summon.getSkillLevel() <= 0)) {
-/* 169 */
             chr.dropMessage(5, "Error.");
-/* 170 */
             return;
-/*     */
         }
-/* 172 */
         SummonSkillEntry sse = SkillFactory.getSummonData(summon.getSkill());
-/* 173 */
         if ((summon.getSkill() / 1000000 != 35) && (summon.getSkill() != 33101008) && (sse == null)) {
-/* 174 */
             chr.dropMessage(5, "Error in processing attack.");
-/* 175 */
             return;
-/*     */
         }
-/* 177 */
         if (!GameConstants.GMS) {
-/* 178 */
             slea.skip(8);
-/*     */
         }
-/* 180 */
         slea.readInt();
-/* 186 */
         if (!GameConstants.GMS) {
-/* 187 */
             slea.skip(8);
-/*     */
         }
-/* 189 */
         byte animation = slea.readByte();
-/* 190 */
         if (!GameConstants.GMS) {
-/* 191 */
             slea.skip(8);
-/*     */
         }
-/* 193 */
         byte numAttacked = slea.readByte();
-/* 194 */    // if ((sse != null) && (numAttacked > sse.mobCount)) {
-/* 195 */      // chr.dropMessage(5, "Warning: Attacking more monster than summon can do");
-/* 198 */     //  return;
-/*     */     //}
-/* 200 */
+        // if ((sse != null) && (numAttacked > sse.mobCount)) {
+        // chr.dropMessage(5, "Warning: Attacking more monster than summon can do");
+        //  return;
+        //}
         slea.skip(summon.getSkill() == 35111002 ? 24 : 12);
-/* 201 */
         List<Pair<Integer, Integer>> allDamage = new ArrayList<>();
-/* 202 */
         for (int i = 0; i < numAttacked; i++) {
-/* 203 */
             MapleMonster mob = map.getMonsterByOid(slea.readInt());
-/*     */ 
-/* 205 */
             if (mob == null) {
-/*     */
                 continue;
-/*     */
             }
-/* 208 */
             slea.skip(18);
-/* 209 */
             int damge = slea.readInt();
-/* 210 */
+            if (chr.isShowInfo()) {
+                chr.dropMessage(-5, "召喚獸攻擊[" + summon.getSkill() + "] - 攻擊數量: " + numAttacked + " 怪物OID " + mob.getObjectId() + " 傷害: " + damge);
+            }
             allDamage.add(new Pair(Integer.valueOf(mob.getObjectId()), Integer.valueOf(damge)));
-/*     */
         }
-/*     */ 
-/* 213 */
         map.broadcastMessage(chr, CField.SummonPacket.summonAttack(summon.getOwnerId(), summon.getObjectId(), animation, allDamage, chr.getLevel(), false), summon.getTruePosition());
-/*     */ 
-/* 215 */
         Skill summonSkill = SkillFactory.getSkill(summon.getSkill());
-/* 216 */
         MapleStatEffect summonEffect = summonSkill.getEffect(summon.getSkillLevel());
-/* 217 */
         if (summonEffect == null) {
-/* 218 */
             chr.dropMessage(5, "Error in attack.");
-/* 219 */
             return;
-/*     */
         }
-/* 221 */
         for (Pair<Integer, Integer> attackEntry : allDamage) {
-/* 222 */
             int toDamage = ((Integer) attackEntry.right).intValue();
-/* 223 */
             MapleMonster mob = map.getMonsterByOid(((Integer) attackEntry.left).intValue());
-/* 224 */
             if (mob == null) {
-/*     */
                 continue;
-/*     */
             }
-/* 230 */
-            if ((toDamage > 0) && (summonEffect.getMonsterStati().size() > 0) &&
-/* 231 */         (summonEffect.makeChanceResult())) {
-/* 232 */
+            if ((toDamage > 0) && (summonEffect.getMonsterStati().size() > 0)
+                    && (summonEffect.makeChanceResult())) {
                 for (Map.Entry z : summonEffect.getMonsterStati().entrySet()) {
-/* 233 */
                     mob.applyStatus(chr, new MonsterStatusEffect((MonsterStatus) z.getKey(), (Integer) z.getValue(), summonSkill.getId(), null, false), summonEffect.isPoison(), 4000, true, summonEffect);
-/*     */
                 }
-/*     */
             }
-/*     */ 
-/* 237 */
-            if ((toDamage < chr.getStat().getCurrentMaxBaseDamage() * 5.0 * (summonEffect.getSelfDestruction() + summonEffect.getDamage() + chr.getStat().getDamageIncrease(summonEffect.getSourceId())) / 100.0)) {
-/* 238 */
+            if (chr.isGM() || toDamage < (chr.getStat().getCurrentMaxBaseDamage() * 5.0 * (summonEffect.getSelfDestruction() + summonEffect.getDamage() + chr.getStat().getDamageIncrease(summonEffect.getSourceId())) / 100.0)) {
+                if (toDamage >= 999999) {
+                    toDamage = 999999;
+                }
                 mob.damage(chr, toDamage, true);
-/* 239 */
                 chr.checkMonsterAggro(mob);
-/* 240 */
-                if (!mob.isAlive())
-/* 241 */ chr.getClient().sendPacket(MobPacket.killMonster(mob.getObjectId(), 1));
-/*     */
+                if (!mob.isAlive()) {
+                    chr.getClient().getSession().write(MobPacket.killMonster(mob.getObjectId(), 1));
+                }
+            } else {
+                chr.getClient().getSession().write(MobPacket.killMonster(mob.getObjectId(), 1));
+                break;
             }
-/*     */
+            /*
+            if ((toDamage < chr.getStat().getCurrentMaxBaseDamage() * 5.0 * (summonEffect.getSelfDestruction() + summonEffect.getDamage() + chr.getStat().getDamageIncrease(summonEffect.getSourceId())) / 100.0)) {
+                mob.damage(chr, toDamage, true);
+                chr.checkMonsterAggro(mob);
+                if (!mob.isAlive()) {
+                    chr.getClient().sendPacket(MobPacket.killMonster(mob.getObjectId(), 1));
+                }
+            }*/
         }
-/* 250 */
         if (!summon.isMultiAttack()) {
-/* 251 */
             chr.getMap().broadcastMessage(CField.SummonPacket.removeSummon(summon, true));
-/* 252 */
             chr.getMap().removeMapObject(summon);
-/* 253 */
             chr.removeVisibleMapObject(summon);
-/* 254 */
             chr.removeSummon(summon);
-/* 255 */
-            if (summon.getSkill() != 35121011)
-/* 256 */ chr.cancelEffectFromBuffStat(MapleBuffStatus.SUMMON);
-/*     */
+            if (summon.getSkill() != 35121011) /* 256 */ {
+                chr.cancelEffectFromBuffStat(MapleBuffStatus.SUMMON);
+            }
         }
-/*     */
     }
 
     /*   public static void SummonAttack(final LittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
@@ -377,7 +317,7 @@ public class SummonHandler {
            }
        }
 
-   */
+     */
     public static void RemoveSummon(final LittleEndianAccessor slea, final MapleClient c) {
         final MapleMapObject obj = c.getPlayer().getMap().getMapObject(slea.readInt(), MapleMapObjectType.SUMMON);
         if (obj == null || !(obj instanceof MapleSummon)) {

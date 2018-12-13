@@ -1062,6 +1062,7 @@ public class DamageParse {
                 lea.skip(8);
                 ret.allDamage.add(new AttackPair(oid, allDamageNumbers));
             }
+            System.err.println(lea.toString());
             ret.position = lea.readPos();
             return ret;
         } catch (Exception e) {

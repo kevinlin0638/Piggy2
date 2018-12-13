@@ -468,7 +468,7 @@ public class PartyHandler {
         MapleParty part, party;
         String name;
         switch (mode) {
-            case 64: //create [PartySearchID]
+            case 63: //create [PartySearchID]
             case 134:
                 //case 119:
                 final ExpeditionType et = ExpeditionType.getById(slea.readInt());

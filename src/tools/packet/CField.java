@@ -82,7 +82,6 @@ public class CField {
         return mplew.getPacket();
     }
 
-
     public static byte[] gainCardStack(int oid, int runningId, int color, int skillid, int damage, int times) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.writeShort(SendPacketOpcode.GAIN_FORCE.getValue());
@@ -122,7 +121,6 @@ public class CField {
         mplew.write(HexTool.getByteArrayFromHexString(endBytes));
         return mplew.getPacket();
     }
-
 
     public static byte[] playPortalSound() {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
@@ -378,7 +376,6 @@ public class CField {
 
         return mplew.getPacket();
     }*/
-
     public static byte[] setField(MapleCharacter chr, boolean CharInfo, MapleMap to, int spawnPoint) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.writeShort(SendPacketOpcode.WARP_TO_MAP.getValue());
@@ -427,9 +424,12 @@ public class CField {
      * Possible values for <code>type</code>:<br>
      * 1: You cannot move that channel. Please try again later.<br>
      * 2: You cannot go into the cash shop. Please try again later.<br>
-     * 3: The Item-Trading shop is currently unavailable, please try again later.<br>
-     * 4: You cannot go into the trade shop, due to the limitation of user count.<br>
-     * 5: You do not meet the minimum level requirement to access the Trade Shop.<br>
+     * 3: The Item-Trading shop is currently unavailable, please try again
+     * later.<br>
+     * 4: You cannot go into the trade shop, due to the limitation of user
+     * count.<br>
+     * 5: You do not meet the minimum level requirement to access the Trade
+     * Shop.<br>
      */
     public static byte[] serverBlocked(int type) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
@@ -936,16 +936,25 @@ public class CField {
         mplew.writeInt(v1);
         mplew.writeInt(v2);
         mplew.writeInt(v3);
-        for (int i = 0; i < v3; i++)
+        for (int i = 0; i < v3; i++) {
             mplew.writeInt(0);
+        }
         // end
 
-
         mplew.writeInt(Math.min(250, chr.getInventory(MapleInventoryType.CASH).countById(5110000))); //max is like 100. but w/e
-        mplew.writeInt(0); /** 黃金雞特效 (42900000) **/
+        mplew.writeInt(0);
+        /**
+         * 黃金雞特效 (42900000) *
+         */
         mplew.writeInt(chr.getItemEffect());
-        mplew.writeInt(0); /** BlinkMonkeyEffect **/
-        mplew.writeInt(0); /** ActiveNickName **/
+        mplew.writeInt(0);
+        /**
+         * BlinkMonkeyEffect *
+         */
+        mplew.writeInt(0);
+        /**
+         * ActiveNickName *
+         */
         mplew.writeInt(0);
         mplew.writeMapleAsciiString("");
         mplew.writeMapleAsciiString("");
@@ -982,14 +991,12 @@ public class CField {
             PetPacket.addPetInfo(mplew, chr, pet, false);
         }
 
-
 //        mplew.write(0); // pets can smd :)
 //        if (!chr.isHidden() && chr.getActivePets() > 0) {
 //            chr.getPets().stream().filter(MaplePet::getSummoned).forEach(pet -> {
 //                addPetInfo(mplew, pet, false);
 //            });
 //        }
-
         mplew.writeInt(chr.getMount().getLevel()); // mount lvl
         mplew.writeInt(chr.getMount().getExp()); // exp
         mplew.writeInt(chr.getMount().getFatigue()); // tiredness
@@ -1000,7 +1007,6 @@ public class CField {
         if (hashChalkBoard) {
             mplew.writeMapleAsciiString(chr.getChalkboard());
         }
-
 
         Triple<List<MapleRing>, List<MapleRing>, List<MapleRing>> rings = chr.getRings(false);
         addRingInfo(mplew, rings.getLeft());
@@ -1526,7 +1532,6 @@ public class CField {
         return mplew.getPacket();
     }
 
-
     public static byte[] closeRangeAttack(MapleCharacter chr, int skilllevel, int itemId, AttackInfo attackInfo) {
         return addAttackInfo(SendPacketOpcode.LP_UserMeleeAttack, chr, skilllevel, itemId, attackInfo);
     }
@@ -1538,6 +1543,7 @@ public class CField {
     public static byte[] magicAttack(MapleCharacter chr, int skilllevel, int itemId, AttackInfo attackInfo) {
         return addAttackInfo(SendPacketOpcode.LP_UserMagicAttack, chr, skilllevel, itemId, attackInfo);
     }
+
     public static byte[] passiveAttack(MapleCharacter chr, int skilllevel, int itemId, AttackInfo attackInfo) {
         return addAttackInfo(SendPacketOpcode.LP_UserBodyAttack, chr, skilllevel, itemId, attackInfo);
     }
@@ -1571,7 +1577,7 @@ public class CField {
         mplew.write(attackInfo.direction);
         mplew.writeShort(attackInfo.display);
         int nAction = attackInfo.display & 0x7FFF;
-        if ( nAction < 0x19D) {
+        if (nAction < 0x19D) {
             mplew.write(attackInfo.speed);
             mplew.write(chr.getStat().passive_mastery());
             mplew.writeInt(itemId > 0 ? itemId : attackInfo.charge);
@@ -1581,23 +1587,27 @@ public class CField {
                     mplew.write(7);
                     if (attackInfo.skill == 4211006) {
                         mplew.write(oned.attack.size());
-                        for (Pair eachd : oned.attack) mplew.writeInt((Integer) eachd.left);
-                    } else for (Pair<Integer, Boolean> eachd : oned.attack) {
-                        mplew.write(!eachd.right ? 0 : 1);
-                        mplew.writeInt(eachd.left);
+                        for (Pair eachd : oned.attack) {
+                            mplew.writeInt((Integer) eachd.left);
+                        }
+                    } else {
+                        for (Pair<Integer, Boolean> eachd : oned.attack) {
+                            mplew.write(!eachd.right ? 0 : 1);
+                            mplew.writeInt(eachd.left);
+                        }
                     }
                 }
             });
 
-            if(nAction == 0x11E)
+            if (nAction == 0x11E) {
                 mplew.writePos(attackInfo.position);
+            }
 
             if (SkillConstants.isKeyDownSkillWithPos(attackInfo.skill)) {
                 mplew.writePos(attackInfo.position);
             } else if (attackInfo.skill == 33101007) {
                 mplew.writeInt(0);
             }
-
 
         }
     }
@@ -1626,7 +1636,7 @@ public class CField {
     }
 
     public static byte[] damagePlayer(int cid, int type, int damage, int monsteridfrom, byte direction,
-                                      int skillid, int pDMG, boolean pPhysical, int pID, byte pType, Point pPos, byte offset, int offset_d, int fake) {
+            int skillid, int pDMG, boolean pPhysical, int pID, byte pType, Point pPos, byte offset, int offset_d, int fake) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.DAMAGE_PLAYER.getValue());
@@ -1940,8 +1950,7 @@ public class CField {
         return mplew.getPacket();
     }
 
-    public static byte[] moveFollow(Point otherStart, Point myStart, Point
-            otherEnd, List<ILifeMovementFragment> moves) {
+    public static byte[] moveFollow(Point otherStart, Point myStart, Point otherEnd, List<ILifeMovementFragment> moves) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.FOLLOW_MOVE.getValue());
@@ -3140,7 +3149,6 @@ public class CField {
 //
 //            return mplew.getPacket();
 //        }
-
         public static byte[] reissueMedal(int itemId, int type) {
             MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
