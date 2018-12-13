@@ -64,6 +64,7 @@ public class Start {
 
         System.out.println("楓之谷v145模擬器 啟動中" + "." + ServerConstants.MAPLE_PATCH + "..");
         ServerProperties.load();
+        ServerConstants.SERVER_IP = ServerConfig.WORLD_INTERFACE;
 
         SendPacketOpcode.reloadValues();
         RecvPacketOpcode.reloadValues();
