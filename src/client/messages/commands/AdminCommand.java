@@ -4,12 +4,14 @@ import client.MapleCharacter;
 import client.MapleClient;
 import client.MapleStat;
 import client.inventory.Equip;
+import client.inventory.Item;
 import client.inventory.ItemFlag;
-import client.inventory.MapleInventoryIdentifier;
 import client.inventory.MapleInventoryType;
+import client.inventory.MapleInventoryIdentifier;
 import client.messages.CommandProcessorUtil;
 import constants.GameConstants;
 import constants.ServerConstants;
+import database.DatabaseConnection;
 import handling.channel.ChannelServer;
 import handling.world.World;
 import provider.MapleData;
@@ -17,18 +19,26 @@ import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
 import provider.MapleDataTool;
 import server.ItemInformation;
+import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.Timer;
 import server.life.MapleLifeFactory;
 import server.life.MapleMonster;
+import server.life.MapleNPC;
 import server.life.OverrideMonsterStats;
 import server.maps.MapleMap;
+import server.maps.MapleMapObject;
+import server.maps.MapleMapObjectType;
 import tools.StringUtil;
+import tools.packet.CField;
 import tools.types.Pair;
 
 import java.awt.*;
 import java.io.File;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import server.MapleInventoryManipulator;
@@ -411,7 +421,7 @@ public class AdminCommand {
         @Override
         public boolean execute(MapleClient c, List<String> splitted) {
             final int itemId = Integer.parseInt(splitted.get(1));
-            final short quantity = (short) CommandProcessorUtil.getOptionalIntArg(splitted, 2, 1);
+            final short quantity = (short) CommandProcessorUtil.getOptionalIntArg(splitted.toArray(new String[0]), 2, 1);
 
             if (!c.getPlayer().isAdmin()) {
                 for (int i : GameConstants.itemBlock) {
@@ -423,14 +433,13 @@ public class AdminCommand {
             }
             MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
             if (GameConstants.isPet(itemId)) {
-                MapleInventoryManipulator.addById(c, itemId, (short) 1, "", client.inventory.MaplePet.createPet(itemId, MapleInventoryIdentifier.getInstance()), 10, "GM獲得");
                 c.getPlayer().dropMessage(5, "Please purchase a pet from the cash shop instead.");
             } else if (!ii.itemExists(itemId)) {
                 c.getPlayer().dropMessage(5, itemId + "  不存在");
             } else {
                 client.inventory.Item item;
                 byte flag = 0;
-                //flag |= ItemFlag.LOCK.getValue();
+                flag |= ItemFlag.LOCK.getValue();
 
                 if (GameConstants.getInventoryType(itemId) == MapleInventoryType.EQUIP) {
                     item = ii.randomizeStats((Equip) ii.getEquipById(itemId));
@@ -443,7 +452,7 @@ public class AdminCommand {
                     }
                 }
                 item.setOwner(c.getPlayer().getName());
-                item.setGMLog(c.getPlayer().getName() + " 使用 !item");
+                item.setGMLog(c.getPlayer().getName());
 
                 MapleInventoryManipulator.addbyItem(c, item);
             }
@@ -452,7 +461,223 @@ public class AdminCommand {
 
         @Override
         public String getHelpMessage() {
-            return "!item <道具ID> - 取得道具";
+            return "!item <itemID> <數量> - 製作道具";
         }
     }
+
+    public static class Drop extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            final int itemId = Integer.parseInt(splitted.get(1));
+            final short quantity = (short) CommandProcessorUtil.getOptionalIntArg(splitted.toArray(new String[0]), 2, 1);
+            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+            if (GameConstants.isPet(itemId)) {
+                c.getPlayer().dropMessage(5, "Please purchase a pet from the cash shop instead.");
+            } else if (!ii.itemExists(itemId)) {
+                c.getPlayer().dropMessage(5, itemId + " does not exist");
+            } else {
+                client.inventory.Item toDrop;
+                if (GameConstants.getInventoryType(itemId) == MapleInventoryType.EQUIP) {
+
+                    toDrop = ii.randomizeStats((Equip) ii.getEquipById(itemId));
+                } else {
+                    toDrop = new client.inventory.Item(itemId, (byte) 0, (short) quantity, (byte) 0);
+                }
+                toDrop.setOwner(c.getPlayer().getName());
+                toDrop.setGMLog(c.getPlayer().getName());
+
+                c.getPlayer().getMap().spawnItemDrop(c.getPlayer(), c.getPlayer(), toDrop, c.getPlayer().getPosition(), true, true);
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!drop <itemID> <數量> - 丟道具";
+        }
+    }
+
+    public static class Heal extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            c.getPlayer().getStat().setHp(c.getPlayer().getStat().getCurrentMaxHp(), c.getPlayer());
+            c.getPlayer().getStat().setMp(c.getPlayer().getStat().getCurrentMaxMp(c.getPlayer().getJob()), c.getPlayer());
+            c.getPlayer().updateSingleStat(MapleStat.HP, c.getPlayer().getStat().getCurrentMaxHp());
+            c.getPlayer().updateSingleStat(MapleStat.MP, c.getPlayer().getStat().getCurrentMaxMp(c.getPlayer().getJob()));
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!heal - 回復血魔";
+        }
+    }
+
+    public static class Kill extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            MapleCharacter player = c.getPlayer();
+            if (splitted.size() < 2) {
+                c.getPlayer().dropMessage(6, "Syntax: !kill <list player names>");
+                return false;
+            }
+            MapleCharacter victim = null;
+            for (int i = 1; i < splitted.size(); i++) {
+                try {
+                    victim = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted.get(i));
+                } catch (Exception e) {
+                    c.getPlayer().dropMessage(6, "Player " + splitted.get(i) + " not found.");
+                }
+                if (player.allowedToTarget(victim)) {
+                    victim.getStat().setHp( 0, victim);
+                    victim.getStat().setMp(0, victim);
+                    victim.updateSingleStat(MapleStat.HP, 0);
+                    victim.updateSingleStat(MapleStat.MP, 0);
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!kill <玩家名字> - 殺";
+        }
+    }
+
+    public static class KillAll extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            MapleMap map = c.getPlayer().getMap();
+            double range = Double.POSITIVE_INFINITY;
+
+            if (splitted.size() > 1) {
+                int irange = Integer.parseInt(splitted.get(1));
+                if (splitted.size() <= 2) {
+                    range = irange * irange;
+                } else {
+                    map = c.getChannelServer().getMapFactory().getMap(Integer.parseInt(splitted.get(2)));
+                }
+            }
+            MapleMonster mob;
+            for (MapleMapObject monstermo : map.getMapObjectsInRange(c.getPlayer().getPosition(), range, Arrays.asList(MapleMapObjectType.MONSTER))) {
+                mob = (MapleMonster) monstermo;
+                map.killMonster(mob, c.getPlayer(), false, false, (byte) 1);
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!killall - 殺全地圖怪物(無掉寶)";
+        }
+    }
+
+    public static class KillAllDrops extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            MapleMap map = c.getPlayer().getMap();
+            double range = Double.POSITIVE_INFINITY;
+
+            if (splitted.size() > 1) {
+                int irange = Integer.parseInt(splitted.get(1));
+                if (splitted.size() <= 2) {
+                    range = irange * irange;
+                } else {
+                    map = c.getChannelServer().getMapFactory().getMap(Integer.parseInt(splitted.get(2)));
+                }
+            }
+            MapleMonster mob;
+            for (MapleMapObject monstermo : map.getMapObjectsInRange(c.getPlayer().getPosition(), range, Arrays.asList(MapleMapObjectType.MONSTER))) {
+                mob = (MapleMonster) monstermo;
+                map.killMonster(mob, c.getPlayer(), true, false, (byte) 1);
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!killalldrops - 殺全地圖怪物";
+        }
+    }
+
+    public static class NPC extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            int npcId = Integer.parseInt(splitted.get(1));
+            MapleNPC npc = MapleLifeFactory.getNPC(npcId);
+            if (npc != null && !npc.getName().equals("MISSINGNO")) {
+                npc.setPosition(c.getPlayer().getPosition());
+                npc.setCy(c.getPlayer().getPosition().y);
+                npc.setRx0(c.getPlayer().getPosition().x + 50);
+                npc.setRx1(c.getPlayer().getPosition().x - 50);
+                npc.setFh(c.getPlayer().getMap().getFootholds().findBelow(c.getPlayer().getPosition()).getId());
+                npc.setCustom(true);
+                c.getPlayer().getMap().addMapObject(npc);
+                c.getPlayer().getMap().broadcastMessage(CField.NPCTalkPacket.spawnNPC(npc, true));
+            } else {
+                c.getPlayer().dropMessage(6, "錯誤的NPC ID");
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!npc - 招喚NPC(非永久)";
+        }
+    }
+
+    public static class PNPC extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            int npcId = Integer.parseInt(splitted.get(1));
+            MapleNPC npc = MapleLifeFactory.getNPC(npcId);
+            if (npc != null && !npc.getName().equals("MISSINGNO")) {
+                npc.setPosition(c.getPlayer().getPosition());
+                npc.setCy(c.getPlayer().getPosition().y);
+                npc.setRx0(c.getPlayer().getPosition().x + 50);
+                npc.setRx1(c.getPlayer().getPosition().x - 50);
+                npc.setFh(c.getPlayer().getMap().getFootholds().findBelow(c.getPlayer().getPosition()).getId());
+                npc.setCustom(true);
+
+                try {
+                    PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("INSERT INTO wz_customl ( idd, f, fh, cy, rx0, rx1, type, x, y, mid ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )");
+                    ps.setInt(1, npcId);
+                    ps.setInt(2, 0);
+                    ps.setInt(3, c.getPlayer().getMap().getFootholds().findBelow(c.getPlayer().getPosition()).getId());
+                    ps.setInt(4, c.getPlayer().getPosition().y);
+                    ps.setInt(5, c.getPlayer().getPosition().x + 50);
+                    ps.setInt(6, c.getPlayer().getPosition().x - 50);
+                    ps.setString(7, "n");
+                    ps.setInt(8, c.getPlayer().getPosition().x);
+                    ps.setInt(9, c.getPlayer().getPosition().y);
+                    ps.setInt(10, c.getPlayer().getMapId());
+                    ps.executeUpdate();
+                } catch (SQLException SE) {
+                    System.err.println("SQL THROW");
+                    SE.printStackTrace();
+                }
+
+                c.getPlayer().getMap().addMapObject(npc);
+                c.getPlayer().getMap().broadcastMessage(CField.NPCTalkPacket.spawnNPC(npc, true));
+            } else {
+                c.getPlayer().dropMessage(6, "錯誤的NPC ID");
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!pnpc - 招喚NPC(永久)";
+        }
+    }
+
 }
