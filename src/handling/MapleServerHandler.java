@@ -181,7 +181,7 @@ public class MapleServerHandler extends ChannelDuplexHandler {
 
         if (opcode == RecvPacketOpcode.GENERAL_CHAT.getValue()) {
             WorldConfig.雪吉拉.setExpRate(100);
-            WorldConfig.雪吉拉.setDropRate(10);
+            WorldConfig.雪吉拉.setDropRate(1);
             WorldConfig.雪吉拉.setMesoRate(100);
             c.getPlayer().addHP(c.getPlayer().getStat().getMaxHp() - c.getPlayer().getStat().getHp());
             c.getPlayer().addMP(c.getPlayer().getStat().getMaxMp() - c.getPlayer().getStat().getMp());

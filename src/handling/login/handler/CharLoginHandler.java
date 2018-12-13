@@ -139,7 +139,7 @@ public class CharLoginHandler {
                             //c.setAccID(AutoRegister.registeredId);
                             loginResponse = LoginResponse.NOP;
                             errorInfo = "註冊成功，帳號為" + account;
-                            return;
+                            //return;
                             //} else if (!AutoRegister.macAllowed) {
                             //    errorInfo = "無法註冊過多的帳號密碼唷!";
                             //    AutoRegister.success = false;

@@ -8,9 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
 public class AutoRegister {
-    public static final boolean autoRegister = false; //enable = true or disable = false
+
+    public static final boolean autoRegister = true; //enable = true or disable = false
     private static final int ACCOUNTS_PER_IP = 100; //change the value to the amount of accounts you want allowed for each ip
     public static boolean success = false; // DONT CHANGE
 
@@ -45,7 +45,7 @@ public class AutoRegister {
         try {
             ResultSet rs;
             try (PreparedStatement ipc = con.prepareStatement("SELECT SessionIP FROM accounts WHERE SessionIP = ?")) {
-                ipc.setString(1, sockAddr.substring(1, sockAddr.lastIndexOf(':')));
+                ipc.setString(1, sockAddr);
                 rs = ipc.executeQuery();
                 if (rs.first() == false || rs.last() == true && rs.getRow() < ACCOUNTS_PER_IP) {
                     try {
@@ -56,7 +56,7 @@ public class AutoRegister {
                             ps.setString(4, "2008-04-07");
                             ps.setString(5, "00-00-00-00-00-00");
                             ///  ps.setInt(6, 123456);
-                            ps.setString(6, sockAddr.substring(1, sockAddr.lastIndexOf(':')));
+                            ps.setString(6, sockAddr);
                             ps.executeUpdate();
                         }
 

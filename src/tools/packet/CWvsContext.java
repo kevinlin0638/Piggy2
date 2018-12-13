@@ -83,61 +83,61 @@ public class CWvsContext {
 
     /*      */
     public static byte[] MagicWheelAction(int mode) {
-/* 7414 */
+        /* 7414 */
         return MagicWheelAction(mode, null, null, 0);
-/*      */
+        /*      */
     }
 
     /*      */
-/*      */
+ /*      */
     public static byte[] MagicWheelAction(int mode, String dataKey, List<Integer> ids, int position) {
-/* 7418 */
+        /* 7418 */
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-/*      */ 
-/* 7420 */
+        /*      */
+ /* 7420 */
         mplew.writeShort(SendPacketOpcode.MAGIC_WHEEL.getValue());
-/* 7421 */
+        /* 7421 */
         mplew.write(mode);
-/* 7422 */
+        /* 7422 */
         if (mode == 3) {
-/* 7423 */
+            /* 7423 */
             mplew.write(ids.size());
-/* 7424 */
+            /* 7424 */
             for (Integer i : ids) {
-/* 7425 */
+                /* 7425 */
                 mplew.writeInt(i.intValue());
-/*      */
+                /*      */
             }
-/* 7427 */
+            /* 7427 */
             mplew.writeMapleAsciiString(dataKey);
-/* 7428 */
+            /* 7428 */
             mplew.write(position);
-/*      */
+            /*      */
         }
-/*      */ 
-/* 7438 */
+        /*      */
+ /* 7438 */
         return mplew.getPacket();
-/*      */
+        /*      */
     }
 
     public static byte[] professionInfo(String skil, int level1, int level2, int chance) {
-/* 3965 */
+        /* 3965 */
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
- 
-/* 3967 */
+
+        /* 3967 */
         mplew.writeShort(SendPacketOpcode.PROFESSION_INFO.getValue());
-/* 3968 */
+        /* 3968 */
         mplew.writeMapleAsciiString(skil);
-/* 3969 */
+        /* 3969 */
         mplew.writeInt(level1);
-/* 3970 */
+        /* 3970 */
         mplew.writeInt(level2);
-/* 3971 */
+        /* 3971 */
         mplew.write(1);
-/* 3972 */
+        /* 3972 */
         mplew.writeInt((skil.startsWith("9200")) || (skil.startsWith("9201")) ? 100 : chance);
- 
-/* 3974 */
+
+        /* 3974 */
         return mplew.getPacket();
     }
 
@@ -154,95 +154,95 @@ public class CWvsContext {
 
     /*      */
     public static byte[] updateStolenSkills(int mode) {
-/* 2725 */
+        /* 2725 */
         return updateStolenSkills(mode, 0, 0, 0);
-/*      */
+        /*      */
     }
 
     /*      */
-/*      */
+ /*      */
     public static byte[] updateStolenSkills(int mode, int skillid, int skilllevel, int slot) {
-/* 2729 */
+        /* 2729 */
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-/*      */ 
-/* 2731 */
+        /*      */
+ /* 2731 */
         mplew.writeShort(SendPacketOpcode.UPDATE_STOLEN_SKILLS.getValue());
-/* 2732 */
+        /* 2732 */
         mplew.write(1);
-/* 2733 */
+        /* 2733 */
         mplew.write(mode);
-/*      */ 
-/* 2739 */
+        /*      */
+ /* 2739 */
         switch (mode) {
-/*      */
+            /*      */
             case 0:
-/* 2741 */
+                /* 2741 */
                 mplew.writeInt(GameConstants.getPhantomBook(skillid));
-/* 2742 */
+                /* 2742 */
                 mplew.writeInt(slot);
-/* 2743 */
+                /* 2743 */
                 mplew.writeInt(skillid);
-/* 2744 */
+                /* 2744 */
                 mplew.writeInt(skilllevel);
-/* 2745 */
+                /* 2745 */
                 mplew.writeInt(0);
-/* 2746 */
+                /* 2746 */
                 break;
-/*      */
+            /*      */
             case 3:
-/* 2748 */
+                /* 2748 */
                 mplew.writeInt(GameConstants.getPhantomBook(skillid));
-/* 2749 */
+                /* 2749 */
                 mplew.writeInt(slot);
-/* 2750 */
+                /* 2750 */
                 break;
-/*      */
+            /*      */
             case 4:
-/*      */
+            /*      */
             case 5:
-/* 2753 */
+                /* 2753 */
                 mplew.writeInt(0);
                 break;
-/*      */
+            /*      */
             case 1:
-/*      */
+            /*      */
             case 2:
                 break;
-/*      */
+            /*      */
         }
-/* 2757 */
+        /* 2757 */
         return mplew.getPacket();
-/*      */
+        /*      */
     }
 
     /*      */
-/*      */
+ /*      */
     public static byte[] showTargetSkills(int cid, int job, List<Integer> available) {
-/* 2761 */
+        /* 2761 */
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-/*      */ 
-/* 2763 */
+        /*      */
+ /* 2763 */
         mplew.writeShort(SendPacketOpcode.SKILL_SWIPE_WINDOW.getValue());
-/* 2764 */
+        /* 2764 */
         mplew.write(1);
-/* 2765 */
+        /* 2765 */
         mplew.writeInt(cid);
-/* 2766 */
+        /* 2766 */
         mplew.writeInt(4);
-/* 2767 */
+        /* 2767 */
         mplew.writeInt(job);
-/* 2768 */
+        /* 2768 */
         mplew.writeInt(available.size());
-/* 2769 */
+        /* 2769 */
         for (Integer i : available) {
-/* 2770 */
+            /* 2770 */
             mplew.writeInt(i.intValue());
-/*      */
+            /*      */
         }
-/*      */ 
-/* 2773 */
+        /*      */
+ /* 2773 */
         return mplew.getPacket();
-/*      */
+        /*      */
     }
 
     public static byte[] toSpouse(String sender, String text, int type) {
@@ -345,7 +345,6 @@ public class CWvsContext {
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="PartyPacket">
-
     public static byte[] showWeirdEffect(int chrId, String effect, int itemId) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -376,7 +375,6 @@ public class CWvsContext {
         Map<MapleStat, Integer> sorted = mystats.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldVal, newVal) -> oldVal, LinkedHashMap::new));
-
 
         for (final Entry<MapleStat, Integer> statUpdate : sorted.entrySet()) {
             switch (statUpdate.getKey()) {
@@ -1074,7 +1072,6 @@ public class CWvsContext {
 
         // if ( CInPacket::Decode1(v1) ) {
         // v2 = CInPacket::Decode1(a2);
-
         return mplew.getPacket();
     }
 
@@ -1845,7 +1842,7 @@ public class CWvsContext {
                 *(_DWORD *)(v10 + *(_DWORD *)v9) = CInPacket::Decode4(v3);
                 v11 = CInPacket::DecodeStr(v3, (int)&v16);
                 v13 = CInPacket::DecodeStr(v3, (int)&v17);
-        */
+         */
         mplew.writeMapleAsciiString(msg);
 
         return mplew.getPacket();
@@ -1991,7 +1988,6 @@ public class CWvsContext {
         public static byte[] updateInventorySlot(Item item, boolean fromDrop) {
             return modifyInventory(fromDrop, new ModifyInventory(!GameConstants.isInBag(item.getPosition(), GameConstants.getInventoryType(item.getItemId()).getType()) ? ModifyInventory.Types.UPDATE : ModifyInventory.Types.UPDATE_IN_BAG, item));
         }
-
 
         public static byte[] clearInventoryItem(final MapleInventoryType type, final short slot, final boolean fromDrop) {
             if (ServerConstants.DEBUG) {
@@ -2216,57 +2212,56 @@ public class CWvsContext {
     public static class BuffPacket {
 
         public static final MapleBuffStatus[] checkList1 = new MapleBuffStatus[]{
-                MapleBuffStatus.STR, MapleBuffStatus.INT, MapleBuffStatus.DEX, MapleBuffStatus.LUK
+            MapleBuffStatus.STR, MapleBuffStatus.INT, MapleBuffStatus.DEX, MapleBuffStatus.LUK
         };
 
         /*      */
-        public static byte[] giveDice(int buffid, int skillid, int duration, Map<MapleBuffStatus, Integer> statups)
-/*      */ {
-/*  398 */
+        public static byte[] giveDice(int buffid, int skillid, int duration, Map<MapleBuffStatus, Integer> statups) /*      */ {
+            /*  398 */
             MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-/*      */
-/*  400 */
+            /*      */
+ /*  400 */
             mplew.writeShort(SendPacketOpcode.GIVE_BUFF.getValue());
-/*  401 */
+            /*  401 */
             PacketHelper.writeBuffMask(mplew, statups);
-/*  402 */
+            /*  402 */
             mplew.writeShort(Math.max(buffid / 100, Math.max(buffid / 10, buffid % 10)));
-/*  403 */
+            /*  403 */
             mplew.writeInt(skillid);
-/*  404 */
+            /*  404 */
             mplew.writeInt(duration);
-/*  405 */
+            /*  405 */
             mplew.writeShort(0);
-/*  406 */
+            /*  406 */
             mplew.write(0);
-/*  407 */
+            /*  407 */
             mplew.writeInt(GameConstants.getDiceStat(buffid, 3));
-/*  408 */
+            /*  408 */
             mplew.writeInt(GameConstants.getDiceStat(buffid, 3));
-/*  409 */
+            /*  409 */
             mplew.writeInt(GameConstants.getDiceStat(buffid, 4));
-/*  410 */
+            /*  410 */
             mplew.writeZeroBytes(20);
-/*  411 */
+            /*  411 */
             mplew.writeInt(GameConstants.getDiceStat(buffid, 2));
-/*  412 */
+            /*  412 */
             mplew.writeZeroBytes(12);
-/*  413 */
+            /*  413 */
             mplew.writeInt(GameConstants.getDiceStat(buffid, 5));
-/*  414 */
+            /*  414 */
             mplew.writeZeroBytes(16);
-/*  415 */
+            /*  415 */
             mplew.writeInt(GameConstants.getDiceStat(buffid, 6));
-/*  416 */
+            /*  416 */
             mplew.writeZeroBytes(16);
-/*  417 */
+            /*  417 */
             mplew.writeShort(1000);
-/*  418 */
+            /*  418 */
             mplew.write(0);
-/*      */
-/*  420 */
+            /*      */
+ /*  420 */
             return mplew.getPacket();
-/*      */
+            /*      */
         }
 
         public static byte[] giveHoming(int skillid, int mobid, int x) {
@@ -2484,33 +2479,32 @@ public class CWvsContext {
             return mplew.getPacket();
         }
 
-        public static byte[] cancelBuff(List<MapleBuffStatus> statups)
-/*      */ {
-/*  678 */
+        public static byte[] cancelBuff(List<MapleBuffStatus> statups) /*      */ {
+            /*  678 */
             MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-/*      */
-/*  680 */
+            /*      */
+ /*  680 */
             mplew.writeShort(SendPacketOpcode.CANCEL_BUFF.getValue());
-/*  681 */
+            /*  681 */
             PacketHelper.writeMask(mplew, statups);
-/*  682 */
+            /*  682 */
             for (MapleBuffStatus z : statups) {
-/*  683 */
+                /*  683 */
                 if (z.canStack()) {
-/*  684 */
+                    /*  684 */
                     mplew.writeInt(0);
-/*      */
+                    /*      */
                 }
-/*      */
+                /*      */
             }
-/*  687 */
+            /*  687 */
             mplew.write(3);
-/*  688 */
+            /*  688 */
             mplew.write(1);
-/*      */
-/*  690 */
+            /*      */
+ /*  690 */
             return mplew.getPacket();
-/*      */
+            /*      */
         }
 
         public static byte[] cancelDebuff(MapleBuffStatus mask) {
@@ -2702,57 +2696,57 @@ public class CWvsContext {
         public static byte[] GainEXP_Monster(final int gain, final boolean white, final int partyinc, final int Class_Bonus_EXP, final int Equipment_Bonus_EXP, final int Premium_Bonus_EXP) {
             final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-/*  894 */
+            /*  894 */
             mplew.writeShort(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
-/*  895 */
+            /*  895 */
             mplew.write(3);
-/*  896 */
+            /*  896 */
             mplew.write(white ? 1 : 0);
-/*  897 */
+            /*  897 */
             mplew.writeInt(gain);
-/*  898 */
+            /*  898 */
             mplew.write(0);
-/*  899 */
+            /*  899 */
             mplew.writeInt(0);
-/*  900 */
+            /*  900 */
             mplew.write(0);
-/*  901 */
+            /*  901 */
             mplew.write(0);
-/*  902 */
+            /*  902 */
             mplew.writeInt(0);
-/*  903 */
+            /*  903 */
             mplew.write(0);
-/*  904 */
+            /*  904 */
             mplew.writeInt(partyinc);
-/*      */
-/*  906 */
+            /*      */
+ /*  906 */
             mplew.writeInt(Equipment_Bonus_EXP);
-/*  907 */
+            /*  907 */
             mplew.writeInt(0);
-/*  908 */
+            /*  908 */
             mplew.writeInt(0);
-/*  909 */
+            /*  909 */
             mplew.write(0);
-/*  910 */
+            /*  910 */
             mplew.writeInt(0);
-/*  911 */
+            /*  911 */
             mplew.writeInt(0);
-/*  912 */
+            /*  912 */
             mplew.writeInt(0);
-/*      */
-/*  915 */
+            /*      */
+ /*  915 */
             mplew.writeInt(0);
-/*  916 */
+            /*  916 */
             mplew.writeInt(0);
-/*  917 */
+            /*  917 */
             mplew.writeInt(0);
-/*  918 */
+            /*  918 */
             mplew.writeInt(0);
-/*  919 */
+            /*  919 */
             mplew.writeInt(Premium_Bonus_EXP);
-/*  920 */
+            /*  920 */
             mplew.writeInt(0);
-/*      */
+            /*      */
 
             return mplew.getPacket();
         }
@@ -2940,7 +2934,7 @@ public class CWvsContext {
             MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
             mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
-            mplew.write(32);
+            mplew.write(0x1A);
             if (c == null || c.getMGC() == null) { //show empty guild (used for leaving, expelled)
                 mplew.write(0);
                 return mplew.getPacket();
