@@ -61,10 +61,13 @@ public class Start {
     }
 
     public void run() throws InterruptedException {
-
-        System.out.println("楓之谷v145模擬器 啟動中" + "." + ServerConstants.MAPLE_PATCH + "..");
         ServerProperties.load();
-        ServerConstants.SERVER_IP = ServerConfig.WORLD_INTERFACE;
+        //ServerConstants.SERVER_IP = ServerConfig.WORLD_INTERFACE;
+        
+        // 開始
+        System.out.println("正在載入 " + ServerConstants.SERVER_NAME);
+        System.out.println("主機位置: " + ServerConstants.SERVER_IP + ":" + LoginServer.PORT);
+        System.out.println("客戶端版本: " + ServerConstants.MAPLE_VERSION + "." + ServerConstants.MAPLE_PATCH);
 
         SendPacketOpcode.reloadValues();
         RecvPacketOpcode.reloadValues();
@@ -109,6 +112,6 @@ public class Start {
         PlayerNPC.LoadAll();// touch - so we see database problems early...
         MapleMonsterInformationProvider.getInstance().addExtra();
         RankingWorker.run();
-        System.out.printf("Server is Opened - %ds ", (System.currentTimeMillis()-startTime)/1000);
+        System.out.printf("Server is Opened - %ds ", (System.currentTimeMillis() - startTime) / 1000);
     }
 }
