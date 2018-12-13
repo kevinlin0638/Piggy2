@@ -498,6 +498,7 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
             case "REMOVE_ITEM_FROM_MAP":
             case "ARAN_COMBO":
             case "NPC_TALK":
+            case "MOVE_SUMMON":
                 return true;
             default:
                 return false;
