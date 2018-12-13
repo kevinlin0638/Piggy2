@@ -474,7 +474,8 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
         switch (opcode.toString()) {
             case "NPC_ACTION":
             case "YELLOW_CHAT":
-            //case "MOVE_MONSTER":
+            case "MOVE_PLAYER":
+            case "MOVE_MONSTER":
             case "MOVE_MONSTER_RESPONSE":
             case "SPAWN_MONSTER":
             //case "REACTOR_SPAWN":

@@ -62,7 +62,7 @@ public class Start {
 
     public void run() throws InterruptedException {
         ServerProperties.load();
-        //ServerConstants.SERVER_IP = ServerConfig.WORLD_INTERFACE;
+        ServerConstants.SERVER_IP = ServerConfig.WORLD_INTERFACE;
         
         // 開始
         System.out.println("正在載入 " + ServerConstants.SERVER_NAME);

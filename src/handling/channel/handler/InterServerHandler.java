@@ -199,7 +199,8 @@ public class InterServerHandler {
                 player.setMegaHide(true); // on 
             }
             //SkillFactory.getSkill(9101004).getEffect(1).applyTo(c.getPlayer());
-            player.toggleHide(false, !player.isHidden());
+            player.dropMessage(6, "Hide Deactivated - 略過隱身.");
+            //player.toggleHide(false, !player.isHidden());
         }
 
         try {

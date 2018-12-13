@@ -1054,11 +1054,15 @@ public class DamageParse {
                 List allDamageNumbers = new ArrayList();
                 for (int j = 0; j < ret.hits; j++) {
                     int damage = lea.readInt();
+                    if (chr.isShowInfo()) {
+                        chr.dropMessage(-5, "魔法攻擊[" + ret.skill + "] - 攻擊數量: " + ret.targets + " 攻擊段數: " + ret.hits + " 怪物OID " + oid + " 傷害: " + damage);
+                    }
                     allDamageNumbers.add(new Pair<>(damage, false));
                 }
                 lea.skip(8);
                 ret.allDamage.add(new AttackPair(oid, allDamageNumbers));
             }
+            System.err.println(lea.toString());
             ret.position = lea.readPos();
             return ret;
         } catch (Exception e) {
