@@ -90,6 +90,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
+import scripting.NPCTalkType;
 
 public class MapleCharacter extends AnimatedMapleMapObject implements Serializable, MapleCharacterLook {
 
@@ -101,7 +102,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public transient MapleAndroid android;
     public EnumMap<MapleTraitType, MapleTrait> traits;
     /*Start of Custom Feature*/
-    /*All custom shit declare here*/
+ /*All custom shit declare here*/
     public boolean keyvalue_changed = false;
     public boolean[] warning = new boolean[25];
     public boolean[] gate = new boolean[25];
@@ -115,52 +116,51 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public long dojoStartTime;
     public long dojoMapEndTime;
     public int[] jqmaps = {
-            //Official AutoJQ's:
-            280020000, // zakum
-            280020001, // zakum part 2
-            220000006, //ludi
-            100000202, //henesys
-            922020000, //that one dark invisible field jq
-            682000200, //chimney jq
-            690000067, // Forest of patience
-            690000066, // Forest of patience
-            690000068,
-            690000069,
-            690000070,
-            105040310, //the one with the big red balls o-e
-            105040311, // - Hidden Street - The Deep Forest of Patience
-            105040312, // - Hidden Street - The Deep Forest of Patience
-            105040313, // - Hidden Street - The Deep Forest of Patience
-            105040314, // - Hidden Street - The Deep Forest of Patience
-            105040315, // - Hidden Street - The Deep Forest of Patience
-            910530000,
-            910530001,
-            105040316, // - Hid
-            101000100, //main ellinia jq part 1
-            101000101, //main ellinia jq part 2
-            101000102, //main ellinia jq part 3
-            101000103, //main ellinia jq part 4
-            101000104, //main ellinia jq part 5
-            //GM Jq's (!startevent)
-            109040000, //GM Stage pt 0 - entering jq
-            109040001, //GM Stage pt 1 - big stage
-            109040002, //GM Stage pt 2 - going to the right
-            109040003, //GM Stage pt 3 - all the major obstacales
-            109040004, //GM Stage pt 4 - Final stage
-            910130000,
-            910130001,
-            910130100,
-            910130101,
-            910130102,
-    };
+        //Official AutoJQ's:
+        280020000, // zakum
+        280020001, // zakum part 2
+        220000006, //ludi
+        100000202, //henesys
+        922020000, //that one dark invisible field jq
+        682000200, //chimney jq
+        690000067, // Forest of patience
+        690000066, // Forest of patience
+        690000068,
+        690000069,
+        690000070,
+        105040310, //the one with the big red balls o-e
+        105040311, // - Hidden Street - The Deep Forest of Patience
+        105040312, // - Hidden Street - The Deep Forest of Patience
+        105040313, // - Hidden Street - The Deep Forest of Patience
+        105040314, // - Hidden Street - The Deep Forest of Patience
+        105040315, // - Hidden Street - The Deep Forest of Patience
+        910530000,
+        910530001,
+        105040316, // - Hid
+        101000100, //main ellinia jq part 1
+        101000101, //main ellinia jq part 2
+        101000102, //main ellinia jq part 3
+        101000103, //main ellinia jq part 4
+        101000104, //main ellinia jq part 5
+        //GM Jq's (!startevent)
+        109040000, //GM Stage pt 0 - entering jq
+        109040001, //GM Stage pt 1 - big stage
+        109040002, //GM Stage pt 2 - going to the right
+        109040003, //GM Stage pt 3 - all the major obstacales
+        109040004, //GM Stage pt 4 - Final stage
+        910130000,
+        910130001,
+        910130100,
+        910130101,
+        910130102,};
     public int[] tutmaps = {
-            90000000,
-            90000001,
-            90000002,
-            90000003,
-            90000004,
-            90000009,
-            1337, // universe
+        90000000,
+        90000001,
+        90000002,
+        90000003,
+        90000004,
+        90000009,
+        1337, // universe
     };
     public boolean ownerHidden;
     // To stop sending all this shit when you exit the cs.. f3
@@ -1027,7 +1027,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 //                rs.close();
 //                ps.close();
 
-
                 ps = con.prepareStatement("SELECT * FROM skillmacros WHERE characterid = ?");
                 ps.setInt(1, charId);
                 rs = ps.executeQuery();
@@ -1307,7 +1306,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             ps.close();
 
-
             ps = con.prepareStatement("INSERT INTO mountdata (characterid, `Level`, `Exp`, `Fatigue`) VALUES (?, ?, ?, ?)");
             ps.setInt(1, chr.id);
             ps.setByte(2, (byte) 1);
@@ -1316,11 +1314,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ps.execute();
             ps.close();
 
-
             final int[] array1 = {18, 65, 2, 23, 3, 4, 5, 6, 16, 17, 19, 25, 26, 27, 31, 34, 35, 37, 38, 40, 43, 44, 45, 46, 50, 56, 59, 60, 61, 62, 63, 64, 57, 48, 29, 7, 24, 33, 41, 39, 8, 20, 21, 49};
             final int[] array2 = {4, 6, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 4, 4, 5, 6, 6, 6, 6, 6, 6, 5, 4, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4};
             final int[] array3 = {0, 106, 10, 1, 12, 13, 18, 24, 8, 5, 4, 19, 14, 15, 2, 17, 11, 3, 20, 16, 9, 50, 51, 6, 7, 53, 100, 101, 102, 103, 104, 105, 54, 30, 52, 21, 25, 26, 23, 27, 29, 28, 31, 22};
-
 
             ps = con.prepareStatement("INSERT INTO keymap (characterid, `key`, `type`, `action`) VALUES (?, ?, ?, ?)");
             ps.setInt(1, chr.id);
@@ -1388,7 +1384,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public static int rand(int l, int u) {
         return Randomizer.nextInt(u - l + 1) + l;
     }
-
 
     public static class Ban {
 
@@ -1784,7 +1779,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
                 ps.close();
             }
-
 
             if (changed_savedlocations) {
                 deleteWhereCharacterId(con, "DELETE FROM savedlocations WHERE characterid = ?");
@@ -2540,7 +2534,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         // True = Can Hold || False = Can't Hold
         if (meso + mesos >= Integer.MAX_VALUE) { // max mesos
             return false;
-        } else return meso + mesos < Integer.MAX_VALUE - 10;
+        } else {
+            return meso + mesos < Integer.MAX_VALUE - 10;
+        }
     }
 
     public void gainMeso(int mesos) {
@@ -2586,10 +2582,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void registerEffect(MapleStatEffect effect, long starttime, ScheduledFuture<?> schedule, Map<MapleBuffStatus, Integer> statups, boolean silent, final int localDuration, final int cid) {
         if (effect.isHide()) {
-            if (this.isHidden())
+            if (this.isHidden()) {
                 map.broadcastMessage(this, CField.spawnPlayerMapobject(this), false);
-            else
+            } else {
                 map.broadcastNONGMMessage(this, CField.removePlayerFromMap(getId()), false);
+            }
         }
         if (effect.isDragonBlood()) {
             prepareDragonBlood();
@@ -2730,7 +2727,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     /**
      * @param effect
      * @param overwrite when overwrite is set no data is sent and all the
-     *                  Buffstats in the StatEffect are deregistered
+     * Buffstats in the StatEffect are deregistered
      * @param startTime
      */
     public void cancelEffect(final MapleStatEffect effect, final boolean overwrite, final long startTime) {
@@ -3357,14 +3354,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public String getGenderString(boolean lc) {
         if (getGender() == 0) {
             if (!lc) // lowercase
+            {
                 return "His";
-            else
+            } else {
                 return "his";
+            }
         } else {
-            if (!lc)
+            if (!lc) {
                 return "Her";
-            else
+            } else {
                 return "her";
+            }
         }
     }
 
@@ -3384,15 +3384,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public String getJQWinner(boolean lc) {
         if (getGender() == 0) {
-            if (!lc)
+            if (!lc) {
                 return "He";
-            else
+            } else {
                 return "he";
+            }
         } else {
-            if (!lc)
+            if (!lc) {
                 return "She";
-            else
+            } else {
                 return "she";
+            }
         }
     }
 
@@ -3599,7 +3601,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         final boolean pyramid = pyramidSubway != null;
         if (map.getId() == nowmapid) {
             client.sendPacket(warpPacket);
-            final boolean shouldChange =  !isClone() &&client.getChannelServer().getPlayerStorage().getCharacterById(getId()) != null;
+            final boolean shouldChange = !isClone() && client.getChannelServer().getPlayerStorage().getCharacterById(getId()) != null;
             final boolean shouldState = map.getId() == to.getId();
             if (shouldChange && shouldState) {
                 to.setCheckStates(false);
@@ -3690,7 +3692,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         try {
             this.cancelEffectFromBuffStat(MapleBuffStatus.SHADOWPARTNER);
 
-
             if (MapleJob.is影武者(newJob)) {
                 this.setSubcategory(1);
             } else if (MapleJob.is重砲指揮官(newJob)) {
@@ -3763,7 +3764,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             if (GameConstants.isPhantom(this.job)) {
                 this.client.sendPacket(CField.updateCardStack(0));
             }
-                /*     if (!GameConstants.isBeginnerJob(newJob)) {
+            /*     if (!GameConstants.isBeginnerJob(newJob)) {
                  if (GameConstants.isEvan(newJob) || GameConstants.isResist(newJob) || GameConstants.isMercedes(newJob)) {
                  int changeSp = (newJob == 2200 || newJob == 2210 || newJob == 2211 || newJob == 2213 ? 3 : 5);
                  if (GameConstants.isResist(job) && newJob != 3100 && newJob != 3200 && newJob != 3300 && newJob != 3500) {
@@ -3807,7 +3808,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                  updateSingleStat(MapleStat.AVAILABLE_SP, 0); // we don't care the value here
                  }
                  *
-                 */
+             */
 
             int maxhp = stats.getMaxHp(), maxmp = stats.getMaxMp();
 
@@ -3921,146 +3922,141 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             // null
         } else if (MapleJob.is重砲指揮官(job)) {
             addskills = new int[]{
-                    109, // 游泳達人。
+                109, // 游泳達人。
             };
         } else if (MapleJob.is蒼龍俠客(job)) {
             addskills = new int[]{
-                    228, // 草上飛
+                228, // 草上飛
             };
         } else if (MapleJob.is皇家騎士團(job)) {
             addskills = new int[]{
-                    10000252, // 元素位移
-                    10001244, // 元素狂刃
-                    10001254, // 元素閃現
+                10000252, // 元素位移
+                10001244, // 元素狂刃
+                10001254, // 元素閃現
             };
         } else if (MapleJob.is狂狼勇士(job)) {
             removeskills = new int[]{
-                    20000014, // 新手區技能
-                    20000015, // 新手區技能
-                    20000016, // 新手區技能
+                20000014, // 新手區技能
+                20000015, // 新手區技能
+                20000016, // 新手區技能
             };
         } else if (MapleJob.is精靈遊俠(job)) {
             addskills = new int[]{
-                    20020109, // 精靈的回復
-                    20020111, // 時髦的移動
-                    20020112, // 王的資格
+                20020109, // 精靈的回復
+                20020111, // 時髦的移動
+                20020112, // 王的資格
             };
             removeskills = new int[]{
-                    20021181,
-                    20021166,
-            };
+                20021181,
+                20021166,};
         } else if (MapleJob.is幻影俠盜(job)) {
             addskills = new int[]{
-                    20031203, // 水晶花園傳送
-                    20031205, // 幻影斗篷
-                    20030206, // 高明洞察力
-                    20031207, // 技能竊取
-                    20031208, // 技能管理
-                    20031260, // 審判方針 AUTO/MANUAL
-                    job == 2412 ? 20031210 : 20031209, // 卡牌審判
+                20031203, // 水晶花園傳送
+                20031205, // 幻影斗篷
+                20030206, // 高明洞察力
+                20031207, // 技能竊取
+                20031208, // 技能管理
+                20031260, // 審判方針 AUTO/MANUAL
+                job == 2412 ? 20031210 : 20031209, // 卡牌審判
             };
             removeskills = new int[]{
-                    20031211, // 鬼鬼祟祟的移動
-                    20031212, // 擾亂
-                    job == 2412 ? 20031209 : 20031210, // 卡牌審判
+                20031211, // 鬼鬼祟祟的移動
+                20031212, // 擾亂
+                job == 2412 ? 20031209 : 20031210, // 卡牌審判
             };
         } else if (MapleJob.is夜光(job)) {
             addskills = new int[]{
-                    20040216, // 光蝕
-                    20040217, // 暗蝕
-                    20040221, // 光明力量
-                    20041222, // 星光順移
-                    20040219, // 平衡
+                20040216, // 光蝕
+                20040217, // 暗蝕
+                20040221, // 光明力量
+                20041222, // 星光順移
+                20040219, // 平衡
             };
             removeskills = new int[]{
-                    20041226, // 光箭
-                    20040220, // 平衡
+                20041226, // 光箭
+                20040220, // 平衡
             };
         } else if (MapleJob.is惡魔殺手(job)) {
             addskills = new int[]{
-                    30010111, // 死亡詛咒
+                30010111, // 死亡詛咒
             };
             removeskills = new int[]{
-                    30010166,
-                    30011167,
-                    30011168,
-                    30011169,
-                    30011170,
-            };
+                30010166,
+                30011167,
+                30011168,
+                30011169,
+                30011170,};
         } else if (MapleJob.is惡魔復仇者(job)) {
             addskills = new int[]{
-                    30010242, // 血之限界
-                    30010230, // 超越
-                    30010231, // 效能提升
+                30010242, // 血之限界
+                30010230, // 超越
+                30010231, // 效能提升
             };
             removeskills = new int[]{
-                    30010166,
-                    30011167,
-                    30011168,
-                    30011169,
-                    30011170,
-            };
+                30010166,
+                30011167,
+                30011168,
+                30011169,
+                30011170,};
         } else if (MapleJob.is傑諾(job)) {
             int jobNumber = MapleJob.getJobGrade(job);
             addskills = new int[]{
-                    30020232, // 蓄能系統
-                    30020240, // 多樣化裝扮
-                    30021237, // 自由飛行
-                    30020234, // 全能增幅 I
-                    30021235, // 普羅梅莎突襲
-                    job >= 3610 ? 30021236 : 0, // 多功能模式
-                    job >= 3612 ? 36120010 : 0, // 全能增幅 V
+                30020232, // 蓄能系統
+                30020240, // 多樣化裝扮
+                30021237, // 自由飛行
+                30020234, // 全能增幅 I
+                30021235, // 普羅梅莎突襲
+                job >= 3610 ? 30021236 : 0, // 多功能模式
+                job >= 3612 ? 36120010 : 0, // 全能增幅 V
             };
             removeskills = new int[]{
-                    30021238, // 刀舞
+                30021238, // 刀舞
             };
         } else if (MapleJob.is末日反抗軍(job)) {
             addskills = new int[]{
-                    30000074, // 自由精神
+                30000074, // 自由精神
             };
         } else if (MapleJob.is劍豪(job)) {
             addskills = new int[]{
-                    40010000, // 天賦的才能
-                    40010067, // 攻守兼備
-                    40011288, // 拔刀姿勢
-                    40011289, // 疾風五月雨刃
+                40010000, // 天賦的才能
+                40010067, // 攻守兼備
+                40011288, // 拔刀姿勢
+                40011289, // 疾風五月雨刃
             };
             removeskills = new int[]{
-                    40011023, // 心刀
-                    40011183,
-                    40011184,
-                    40011185,
-                    40011186,
-            };
+                40011023, // 心刀
+                40011183,
+                40011184,
+                40011185,
+                40011186,};
         } else if (MapleJob.is陰陽師(job)) {
             addskills = new int[]{
-                    40020000, // 五行的加護
-                    40020001, // 無限的靈力
-                    40020109, // 花狐
+                40020000, // 五行的加護
+                40020001, // 無限的靈力
+                40020109, // 花狐
             };
             removeskills = new int[]{
-                    40021183,
-                    40021184,
-                    40021185,
-                    40021186,
-            };
+                40021183,
+                40021184,
+                40021185,
+                40021186,};
         } else if (MapleJob.is凱撒(job)) {
             addskills = new int[]{
-                    60001216, // 洗牌交換： 防禦模式
-                    60001217, // 洗牌交換： 攻擊模式
-                    60001218, // 縱向連接
-                    60000219, // 變身
+                60001216, // 洗牌交換： 防禦模式
+                60001217, // 洗牌交換： 攻擊模式
+                60001218, // 縱向連接
+                60000219, // 變身
             };
             removeskills = new int[]{
-                    60001229, // 氣焰隱忍
+                60001229, // 氣焰隱忍
             };
         } else if (MapleJob.is天使破壞者(job)) {
             addskills = new int[]{
-                    60011216, // 繼承人
-                    60011218, // 魔法起重機
-                    60011220, // 白日夢
-                    60011221, // 配飾
-                    60011222, // 魔法變身
+                60011216, // 繼承人
+                60011218, // 魔法起重機
+                60011220, // 白日夢
+                60011221, // 配飾
+                60011222, // 魔法變身
             };
         }
 
@@ -4854,9 +4850,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void changeElf() {//questEx 7784
         if (getElf()) // for non-mercedes :P
+        {
             setElf(false);
-        else
+        } else {
             setElf(true);
+        }
         updateAreaInfo(7784, containsAreaInfo(7784, "sw=") ? containsAreaInfo(7784, "sw=1") ? "sw=0" : "sw=1" : "sw=1");
         if (containsAreaInfo(7784, GameConstants.isMercedes(getJob()) ? "sw=0" : "sw=1")) {
             announce(CWvsContext.showWeirdEffect("Effect/BasicEff.img/JobChangedElf", 5155000));
@@ -4891,9 +4889,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void changeElf2() {//questEx 7784
         if (getElf()) // for non-mercedes :P
+        {
             setElf(false);
-        else
+        } else {
             setElf(true);
+        }
         updateAreaInfo(7784, containsAreaInfo(7784, "sw=") ? containsAreaInfo(7784, "sw=1") ? "sw=0" : "sw=1" : "sw=1");
         if (containsAreaInfo(7784, GameConstants.isMercedes(getJob()) ? "sw=0" : "sw=1")) {
             announce(CWvsContext.showWeirdEffect("Effect/BasicEff.img/JobChangedElf", 5155000));
@@ -5061,7 +5061,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public boolean isShowInfo() {
-        return isAdmin() || ServerConstants.DEBUG; /* && !ServerConfig.LOG_PACKETS*/
+        return isAdmin() || ServerConstants.DEBUG;
+        /* && !ServerConfig.LOG_PACKETS*/
     }
 
     public boolean isShowErr() {
@@ -6157,8 +6158,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     List<Integer> pet_data = new ArrayList<>();
                     for (int i = 0; i < 3; i++) {
                         int v1 = Integer.parseInt(petss[i]);
-                        if (v1 != -1)
+                        if (v1 != -1) {
                             pet_data.add(Integer.parseInt(petss[i]));
+                        }
                     }
                     // System.out.println(pet_data);
                     return pet_data.size();
@@ -6661,7 +6663,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 //    public List<MapleCharacter> getWatchers() {
 //        return watcher;
 //    }
-
     public void setGuildContribution(int _c) {
         this.guildContribution = _c;
         if (mgc != null) {
@@ -6704,8 +6705,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 gainAPS(-ap);
                 gainAp(ap);
                 dropMessage(6, "[AP] You have withdrawn " + ap + " AP from the AP storage.");
-            } else
+            } else {
                 dropMessage(6, "[AP] You can't withdraw " + ap + " AP");
+            }
         }
     }
 
@@ -6731,7 +6733,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         int totalexp = this.occupationExp + gain;
         if (totalexp >= getOccExpNeeded() && getOccLevel() < 11) {
             if (this.getOccId() != 0 || this.getOccId() != 1) // we don't want None/Wizers leveling. o.o
+            {
                 occupationLevelUp();
+            }
         } else {
             dropMessage(-1, "You have gained " + gain + " Occupation EXP!");
             //client.sendPacket(MaplePacketCreator.getShowExpGain(totalexp, true, false, (byte) (totalexp != gain ? party - 1 : 0)));
@@ -6742,7 +6746,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     /* public int getJQExpNeeded() {
         return GameConstants.getExpNeededForLevel(getJQLevel()) / 3;
     }  */
-
     public void occupationLevelUp() {
         map.broadcastMessage(this, EffectPacket.showForeignEffect(getId(), 11), false);
         client.sendPacket(EffectPacket.showForeignEffect(getId(), 11));
@@ -6838,10 +6841,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public int getJQExpNeeded() {
-        if (getJQLevel() == 0)
+        if (getJQLevel() == 0) {
             return GameConstants.getExpNeededForJQLevel(1);
-        else
+        } else {
             return GameConstants.getExpNeededForJQLevel(getJQLevel());
+        }
     }
 
     public void gainJQExp(int gain) {
@@ -7193,9 +7197,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return haveItem(itemid, 1, true, true);
     }
 
+    public void dropNPC(String message) {
+        client.sendPacket(CField.NPCTalkPacket.getNPCTalk(9010000, NPCTalkType.NEXT_PREV, message, "00 00", (byte) 0));
+    }
+
+    public void dropNPC(int npc, String message) {
+        client.sendPacket(CField.NPCTalkPacket.getNPCTalk(npc, NPCTalkType.NEXT_PREV, message, "00 00", (byte) 0));
+    }
+
     /**
-     * fixSkillsByJob() - Used for gMS-like SP class handling.
-     * Scripted by Eric, could have improved this but I don't care about mastery to be honest.
+     * fixSkillsByJob() - Used for gMS-like SP class handling. Scripted by Eric,
+     * could have improved this but I don't care about mastery to be honest.
      */
 
     public final void fixSkillsByJob() {
@@ -8060,7 +8072,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         client.getSession().writeAndFlush(CField.skillCooldown(skillId, 0));
     }
 
-
     public boolean skillisCooling(int skillId) {
         return coolDowns.containsKey(Integer.valueOf(skillId));
     }
@@ -8239,7 +8250,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     /**
      * <Start Of Mu Lung Dojo>
      */
-
     public int getMulungEnergy() {
         return mulung_energy;
     }
@@ -8281,7 +8291,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     /**
      * <End of Mu Lung Dojo>
      */
-
     public void writeEnergy(String type, String inc) {
         client.sendPacket(CWvsContext.sendPyramidEnergy(type, inc));
     }
@@ -8764,13 +8773,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void setKeyValue(final String key, final String values) {
-        if (CustomValues.containsKey(key)) CustomValues.remove(key);
+        if (CustomValues.containsKey(key)) {
+            CustomValues.remove(key);
+        }
         CustomValues.put(key, values);
         keyvalue_changed = true;
     }
 
     public String getKeyValue(final String key) {
-        if (CustomValues.containsKey(key)) return CustomValues.get(key);
+        if (CustomValues.containsKey(key)) {
+            return CustomValues.get(key);
+        }
         return null;
     }
 
@@ -10819,12 +10832,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return numClones;
     }
 
-
     public enum FameStatus {
 
         OK, NOT_TODAY, NOT_THIS_MONTH
     }
-
 
     public enum DojoMode {
         EASY(0),
