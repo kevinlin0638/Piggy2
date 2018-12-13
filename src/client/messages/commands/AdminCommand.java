@@ -433,6 +433,7 @@ public class AdminCommand {
             }
             MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
             if (GameConstants.isPet(itemId)) {
+                MapleInventoryManipulator.addById(c, itemId, (short) 1, "", client.inventory.MaplePet.createPet(itemId, MapleInventoryIdentifier.getInstance()), 10, "GM獲得");
                 c.getPlayer().dropMessage(5, "Please purchase a pet from the cash shop instead.");
             } else if (!ii.itemExists(itemId)) {
                 c.getPlayer().dropMessage(5, itemId + "  不存在");
