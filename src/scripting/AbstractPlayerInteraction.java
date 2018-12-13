@@ -981,13 +981,16 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public final void openNpc(final int id) {
-        getClient().removeClickedNPC();
-        NPCScriptManager.getInstance().start(getClient(), id);
+        openNpc(c, id, null);
     }
 
-    public final void openNpc(final MapleClient cg, final int id) {
-        cg.removeClickedNPC();
-        NPCScriptManager.getInstance().start(cg, id);
+    public final void openNpc(final int npc, final String filename) {
+        openNpc(c, npc, filename);
+    }
+
+    public final void openNpc(final MapleClient client, final int npc, final String filename) {
+        client.removeClickedNPC();
+        NPCScriptManager.getInstance().start(client, npc, filename);
     }
 
     public final int getMapId() {

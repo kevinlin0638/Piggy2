@@ -2982,7 +2982,7 @@ public class CWvsContext {
             MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
             mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
-            mplew.write(38);
+            mplew.write(0xA1);
             if (c == null || c.getMGC() == null) { // Show empty guild (used for leaving, expelled)
                 return genericGuildMessage((byte) 37);
             }

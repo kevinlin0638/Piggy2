@@ -3477,6 +3477,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.job = (short) j;
     }
 
+    public String getJobName(short id) {
+        return MapleJob.getName(MapleJob.getById(id));
+    }
+
     @Override
     public byte getGender() {
         return gender;
@@ -7209,7 +7213,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
      * fixSkillsByJob() - Used for gMS-like SP class handling. Scripted by Eric,
      * could have improved this but I don't care about mastery to be honest.
      */
-
     public final void fixSkillsByJob() {
         HashMap<Skill, SkillEntry> sa = new HashMap<>();
         int[] dontAddSkill = {21120009, 21120010, 5320011, 31120010, 31121011, 24121010};
