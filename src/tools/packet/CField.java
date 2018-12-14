@@ -1573,11 +1573,10 @@ public class CField {
 
             }
         }
-
         mplew.write(attackInfo.direction);
         mplew.writeShort(attackInfo.display);
         int nAction = attackInfo.display & 0x7FFF;
-//        if (nAction < 0x19D) {
+        if (nAction < 0x19D) {
             mplew.write(attackInfo.speed);
             mplew.write(chr.getStat().passive_mastery());
             mplew.writeInt(itemId > 0 ? itemId : attackInfo.charge);
@@ -1612,8 +1611,7 @@ public class CField {
             } else if (attackInfo.skill == 33101007) {
                 mplew.writeInt(0);
             }
-
-//        }
+        }
     }
 
     public static byte[] skillEffect(MapleCharacter from, int skillId, byte level, short display, byte unk) {
