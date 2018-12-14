@@ -62,7 +62,7 @@ public class BuddyListHandler {
         final int mode = slea.readByte();
         final BuddyList buddylist = c.getPlayer().getBuddylist();
 
-        if (mode == 1) { // add
+        if (mode == 1) { // 新增好友
             final String addName = slea.readMapleAsciiString();
             final String groupName = slea.readMapleAsciiString();
             final BuddyListEntry ble = buddylist.get(addName);
@@ -154,18 +154,18 @@ public class BuddyListHandler {
                     System.err.println("SQL THROW" + e);
                 }
             }
-        } else if (mode == 2) { // accept buddy
+        } else if (mode == 2) { // 接受好友邀請
             int otherCid = slea.readInt();
             final BuddyListEntry ble = buddylist.get(otherCid);
             if (!buddylist.isFull() && ble != null && !ble.isVisible()) {
                 final int channel = World.Find.findChannel(otherCid);
-                buddylist.put(new BuddyListEntry(ble.getName(), otherCid, "ETC", channel, true));
+                buddylist.put(new BuddyListEntry(ble.getName(), otherCid, "群組未指定", channel, true));
                 c.sendPacket(BuddylistPacket.updateBuddylist(buddylist.getBuddies(), 10));
-                notifyRemoteChannel(c, channel, otherCid, "ETC", ADDED);
+                notifyRemoteChannel(c, channel, otherCid, "群組未指定", ADDED);
             } else {
                 c.sendPacket(BuddylistPacket.buddylistMessage((byte) 11));
             }
-        } else if (mode == 3) { // delete
+        } else if (mode == 3) { // 刪除好友
             final int otherCid = slea.readInt();
             final BuddyListEntry blz = buddylist.get(otherCid);
             if (blz != null && blz.isVisible()) {

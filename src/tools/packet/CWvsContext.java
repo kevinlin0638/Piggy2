@@ -3754,7 +3754,7 @@ public class CWvsContext {
             mplew.write(buddylist.size());
             for (BuddyListEntry buddy : buddylist) {
                 mplew.writeInt(buddy.getCharacterId());
-                mplew.writeAsciiString(buddy.getName(), 13);
+                mplew.writeAsciiString(buddy.getName(), 15);
                 mplew.write(buddy.isVisible() ? 0 : 1);
                 mplew.writeInt(buddy.getChannel() == -1 ? -1 : (buddy.getChannel() - 1));
                 mplew.writeAsciiString(buddy.getGroup(), 17);
@@ -3792,7 +3792,7 @@ public class CWvsContext {
             mplew.writeAsciiString(nameFrom, 13);
             mplew.write(1);
             mplew.writeInt(0);
-            mplew.writeAsciiString("ETC", 17);
+            mplew.writeAsciiString("群組未指定", 16);
             mplew.write(0);
 
             return mplew.getPacket();
