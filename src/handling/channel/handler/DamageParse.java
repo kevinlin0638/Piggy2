@@ -1234,7 +1234,7 @@ public class DamageParse {
                 allDamageNumbers.add(new Pair(Integer.valueOf(damage), Boolean.valueOf(false)));
             }
 
-            lea.skip(4);
+            lea.skip(8);
 
             ret.allDamage.add(new AttackPair(Integer.valueOf(oid).intValue(), allDamageNumbers));
         }

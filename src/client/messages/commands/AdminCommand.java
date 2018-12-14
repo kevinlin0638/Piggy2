@@ -96,7 +96,7 @@ public class AdminCommand {
 
         @Override
         public boolean execute(MapleClient c, List<String> args) {
-            c.getPlayer().setLevel(Short.parseShort(args.get(1)));
+            c.getPlayer().setLevel((short) (Short.parseShort(args.get(1)) - 1));
             c.getPlayer().levelUp();
             c.getPlayer().setExp(0);
             c.getPlayer().updateSingleStat(MapleStat.EXP, c.getPlayer().getExp());
@@ -324,7 +324,7 @@ public class AdminCommand {
                 Point p = new Point((int) chr.getPosition().getX() - distance, (int) chr.getPosition().getY());
                 long newhp = 800000000000L; //set it to what you want.
                 assert mm != null;
-                mm.changeLevel(250, 800000000000L);
+                mm.changeLevel(100, 800000000000L);
                 chr.getMap().spawnMonsterOnGroundBelow(mm, p);
                 Timer.EtcTimer.getInstance().schedule(new Runnable() {
                     public void run() {
@@ -682,6 +682,27 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "!pnpc - 招喚NPC(永久)";
+        }
+    }
+    public static class lookallmob extends AbstractsCommandExecute {
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            MapleMonster mob = null;
+            for (final MapleMapObject obj : c.getPlayer().getMap().getAllMonster()) {
+                mob = (MapleMonster) obj;
+                if (mob.isAlive()) {
+                    c.getPlayer().dropMessage(6, "怪物: " + mob.toString());
+                }
+            }
+            if (mob == null) {
+                c.getPlayer().dropMessage(6, "沒找到任何怪物");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!lookallmob - 怪物資訊";
         }
     }
 
