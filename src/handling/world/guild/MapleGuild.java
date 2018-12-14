@@ -53,6 +53,7 @@ public class MapleGuild implements java.io.Serializable {
     private boolean bDirty = true, proper = true;
     private int allianceid = 0, invitedid = 0;
     private boolean init = false, changed = false, changed_skills = false;
+
     public MapleGuild(final int guildid) {
         this(guildid, null);
     }
@@ -458,7 +459,6 @@ public class MapleGuild implements java.io.Serializable {
                 ps.execute();
                 ps.close();
 
-
                 ps = con.prepareStatement("DELETE FROM bbs_replies WHERE guildid = ?");
                 ps.setInt(1, id);
                 ps.execute();
@@ -473,7 +473,6 @@ public class MapleGuild implements java.io.Serializable {
                 ps.setInt(1, id);
                 ps.executeUpdate();
                 ps.close();
-
 
                 if (allianceid > 0) {
                     final MapleGuildAlliance alliance = World.Alliance.getAlliance(allianceid);
@@ -1068,13 +1067,14 @@ public class MapleGuild implements java.io.Serializable {
             mplew.writeInt(mgc.getId());
         }
         for (final MapleGuildCharacter mgc : members) {
-            mplew.writeAsciiString(mgc.getName(), 13);
+            mplew.writeAsciiString(mgc.getName(), 15);
             mplew.writeInt(mgc.getJobId()); //-1 = ??
             mplew.writeInt(mgc.getLevel()); //-1 = ??
             mplew.writeInt(mgc.getGuildRank());
             mplew.writeInt(mgc.isOnline() ? 1 : 0);
+            mplew.writeInt(signature);
             mplew.writeInt(mgc.getAllianceRank());
-            mplew.writeInt(mgc.getGuildContribution());
+            //mplew.writeInt(mgc.getGuildContribution());
         }
     }
 

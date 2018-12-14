@@ -2932,7 +2932,7 @@ public class CWvsContext {
 
         public static byte[] showGuildInfo(MapleCharacter c) {
             MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-            
+
             mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
             mplew.write(32);
             if ((c == null) || (c.getMGC() == null)) {
@@ -2982,7 +2982,7 @@ public class CWvsContext {
             MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
             mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
-            mplew.write(0xA1);
+            mplew.write(38);
             if (c == null || c.getMGC() == null) { // Show empty guild (used for leaving, expelled)
                 return genericGuildMessage((byte) 37);
             }

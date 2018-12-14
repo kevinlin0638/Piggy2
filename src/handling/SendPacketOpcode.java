@@ -215,6 +215,7 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
     SHOW_EQUIP_EFFECT,
     SKILL_MACRO,
     CS_OPEN,
+    CS_INFO,
     CS_UPDATE,
     CS_OPERATION,
     MTS_OPEN,

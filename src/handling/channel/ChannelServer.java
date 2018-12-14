@@ -26,6 +26,8 @@ import constants.WorldConstants;
 import handling.login.LoginServer;
 import handling.netty.ServerConnection;
 import handling.world.World;
+import java.io.FileInputStream;
+import java.io.IOException;
 import scripting.EventScriptManager;
 import server.MapleSquad;
 import server.MapleSquad.MapleSquadType;
@@ -41,8 +43,6 @@ import tools.types.ConcurrentEnumMap;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-;
 
 public class ChannelServer {
 
@@ -61,6 +61,7 @@ public class ChannelServer {
     private PlayerStorage players = new PlayerStorage();
     private ServerConnection acceptor;
     private AramiaFireWorks works = new AramiaFireWorks();
+    private String ShopPack;
 
     private ChannelServer(final int world, final int channel) {
         this.world = world;
@@ -453,5 +454,21 @@ public class ChannelServer {
 
     public AramiaFireWorks getFireWorks() {
         return works;
+    }
+
+    public String getShopPack() {
+        if (this.ShopPack != null) {
+            return this.ShopPack;
+        }
+        Properties props = new Properties();
+        try {
+            try (FileInputStream is = new FileInputStream("購物商城.txt")) {
+                props.load(is);
+            }
+        } catch (IOException ex) {
+            System.out.println("無法讀取 購物商城.txt 檔案資訊。");
+        }
+        this.ShopPack = props.getProperty("pack");
+        return this.ShopPack;
     }
 }
