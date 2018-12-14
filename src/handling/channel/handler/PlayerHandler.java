@@ -1258,7 +1258,7 @@ public class PlayerHandler {
 
         Data_Display(attack);
         double maxdamage = chr.getStat().getCurrentMaxBaseDamage();
-        int attackCount = 2;
+        int attackCount = 1;
         final Skill skill = SkillFactory.getSkill(GameConstants.getLinkedAranSkill(attack.skill));
         if (skill == null && (chr.getStat().equippedSummon % 10000) != (attack.skill % 10000)) {
             c.getSession().writeAndFlush(CWvsContext.enableActions());
@@ -1271,6 +1271,7 @@ public class PlayerHandler {
             System.out.println("Return 4");
             return;
         }
+        attackCount = effect.getAttackCount() > effect.getBulletCount() ? effect.getAttackCount() : effect.getBulletCount();
         attack = DamageParse.Modify_AttackCrit(attack, chr, 3, effect);
         if (GameConstants.isEventMap(chr.getMapId())) {
             for (MapleEventType t : MapleEventType.values()) {
