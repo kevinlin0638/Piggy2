@@ -1021,7 +1021,7 @@ public class DamageParse {
             ret.targets = (byte) (ret.tbyte >>> 4 & 0xF);
             ret.hits = (byte) (ret.tbyte & 0xF);
             ret.skill = lea.readInt();
-            lea.skip(1);
+            //lea.skip(1);
             lea.skip(4);
             if (GameConstants.isMagicChargeSkill(ret.skill)) {
                 ret.charge = lea.readInt();
@@ -1040,7 +1040,7 @@ public class DamageParse {
             }
             ret.direction = lea.readByte();
             ret.display = lea.readUShort();
-            lea.skip(4);
+            lea.skip(5);
             ret.speed = lea.readByte();
 
             ret.lastAttackTickCount = lea.readInt();
@@ -1062,8 +1062,8 @@ public class DamageParse {
                 lea.skip(8);
                 ret.allDamage.add(new AttackPair(oid, allDamageNumbers));
             }
-            System.err.println(lea.toString());
             ret.position = lea.readPos();
+            lea.skip(1);
             return ret;
         } catch (Exception e) {
             e.printStackTrace();
