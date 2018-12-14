@@ -251,6 +251,12 @@ public class CharLoginHandler {
             return;
         }
         final String name = slea.readMapleAsciiString();
+        //TODO: refactor
+        if (name.contains("Admin") || name.contains("admin") || name.contains("GameMaster") || name.contains("gamemaster")) {
+            c.sendPacket(CWvsContext.getPopupMsg("這個名字是非法的喔，請在想一個新名字。"));
+            c.sendPacket(LoginPacket.getLoginFailed(1));
+            return;
+        }
         final JobType jobType = JobType.getByType(slea.readInt(), slea.readShort());
         final boolean isJettPhantom = (jobType == LoginInformationProvider.JobType.Phantom);
         final boolean isMercedes = (jobType == JobType.Mercedes);
@@ -530,7 +536,8 @@ public class CharLoginHandler {
         newchar.getInventory(MapleInventoryType.USE).addItem(new Item(2000004, (byte) 0, (short) 100, (byte) 0));
         newchar.getInventory(MapleInventoryType.USE).addItem(new Item(2000004, (byte) 0, (short) 100, (byte) 0));
         c.getPlayer().fakeRelog();
-        if ((!LoginInformationProvider.getInstance().isForbiddenName(name) || c.isGM()) && (c.isGM() || c.canMakeCharacter(c.getWorld()))) {
+        if (MapleCharacterUtil.canCreateChar(name, c.isGM()) && !LoginInformationProvider.getInstance().isForbiddenName(name)) {
+        //if ((!LoginInformationProvider.getInstance().isForbiddenName(name) || c.isGM()) && (c.isGM() || c.canMakeCharacter(c.getWorld()))) {
             MapleCharacter.saveNewCharToDB(newchar, jobType, (short) 0);
             c.createdChar(newchar.getId());
             MapleQuest.getInstance(20734).forceComplete(c.getPlayer(), 1101000);

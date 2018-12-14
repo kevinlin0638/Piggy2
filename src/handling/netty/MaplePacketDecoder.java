@@ -42,14 +42,13 @@ public class MaplePacketDecoder extends ByteToMessageDecoder {
     protected void decode(ChannelHandlerContext chc, ByteBuf in, List<Object> message) throws Exception {
         final MapleClient client = chc.channel().attr(MapleClient.CLIENT_KEY).get();
         final DecoderState decoderState = chc.channel().attr(DECODER_STATE_KEY).get();
-
         if (in.readableBytes() >= 4 && decoderState.packetLength == -1) {
             int packetHeader = in.readInt();
             if (!client.getReceiveCrypto().checkPacket(packetHeader)) {
                 chc.channel().close();
                 return;
             }
-            decoderState.packetLength = MapleAESOFB.getPacketLength(packetHeader);
+            decoderState.packetLength = MapleAESOFB.getPacketLength(packetHeader);            
         } else if (in.readableBytes() < 4 && decoderState.packetLength == -1) {
             return;
         }
