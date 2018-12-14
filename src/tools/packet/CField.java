@@ -2132,7 +2132,7 @@ public class CField {
         mplew.writeRect(mist.getBox());
         mplew.writeLong(0);
         mplew.writeInt(0); //dunno
-        mplew.writeZeroBytes(50);
+//        mplew.writeZeroBytes(50);
         return mplew.getPacket();
     }
 

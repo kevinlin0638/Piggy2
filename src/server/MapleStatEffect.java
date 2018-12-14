@@ -1822,10 +1822,10 @@ public class MapleStatEffect implements Serializable {
             } else {
                 applyto.dropMessage(5, "You may not spawn a door because all doors in the town are taken.");
             }
-            //} else if (isMist()) {
-            //  final Rectangle bounds = calculateBoundingBox(pos != null ? pos : applyfrom.getPosition(), applyfrom.isFacingLeft());
-            //final MapleMist mist = new MapleMist(bounds, applyfrom, this);
-            // applyfrom.getMap().spawnMist(mist, 3000, false); // 3seconds for EventTimer instance
+        } else if (isMist()) {
+            final Rectangle bounds = calculateBoundingBox(pos != null ? pos : applyfrom.getPosition(), applyfrom.isFacingLeft());
+            final MapleMist mist = new MapleMist(bounds, applyfrom, this);
+            applyfrom.getMap().spawnMist(mist, 3000, false); // 3seconds for EventTimer instance
         } else if (isTimeLeap()) { // Time Leap
             for (MapleCoolDownValueHolder i : applyto.getCooldowns()) {
                 if (i.skillId != 5121010) {
@@ -1833,7 +1833,6 @@ public class MapleStatEffect implements Serializable {
                     applyto.getClient().sendPacket(CField.skillCooldown(i.skillId, 0));
                 }
             }
-        } else {
         }
         if (fatigueChange != 0 && applyto.getSummonedFamiliar() != null && (familiars == null || familiars.contains(applyto.getSummonedFamiliar().getFamiliar()))) {
             applyto.getSummonedFamiliar().addFatigue(applyto, fatigueChange);
