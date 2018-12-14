@@ -36,8 +36,8 @@ import java.util.regex.Pattern;
 
 public class MapleCharacterUtil {
 
-    private static final Pattern namePattern = Pattern.compile("[a-zA-Z0-9]{4,12}");
-    private static final Pattern petPattern = Pattern.compile("[a-zA-Z0-9]{4,12}");
+    private static final Pattern namePattern = Pattern.compile("[\\u4e00-\\u9fa5a-zA-Z0-9_-]{4,12}");
+    private static final Pattern petPattern = Pattern.compile("[\\u4e00-\\u9fa5a-zA-Z0-9_-]{4,12}");
 
     public static boolean canCreateChar(final String name, final boolean gm) {
         return !(getIdByName(name) != -1 || !isEligibleCharName(name, gm));
