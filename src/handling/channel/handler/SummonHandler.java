@@ -56,7 +56,7 @@ public class SummonHandler {
         if (chr.getDragon() == null) {
             return;
         }
-        slea.skip(8); //POS
+        slea.skip(4); //POS
         final List<ILifeMovementFragment> res = MovementParse.parseMovement(slea, chr.getDragon().getPosition(), MovementKind.DRAGON_MOVEMENT);
         if (res.size() > 0) {
             final Point pos = chr.getDragon().getPosition();

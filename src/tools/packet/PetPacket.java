@@ -71,6 +71,7 @@ public class PetPacket {
             mplew.writeShort(pet.getPos().y - 20);
             mplew.write(pet.getStance());
             mplew.writeInt(pet.getFh());
+            mplew.writeInt(0);
         }
 
         return mplew.getPacket();

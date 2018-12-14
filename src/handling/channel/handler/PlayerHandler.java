@@ -874,14 +874,12 @@ public class PlayerHandler {
         for (int i = length; i > 0; i = i - 2) {
             ret += ss.substring(i - 2, i) + " ";
         }
-
         return ret;
     }
 
     //方便解析s
     public static void Data_Display(AttackInfo attack) {
         System.gc();
-
         System.err.println("ｔｂｙｅ　　　　" + attack.tbyte + " >> " + bytes2HexString(tools.HexTool.toString(attack.tbyte)) + " [??]");
         System.err.println("攻擊數量　　　　" + attack.targets);
         System.err.println("攻擊次數　　　　" + attack.hits);

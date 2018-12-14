@@ -47,6 +47,7 @@ import java.util.List;
 public class PetHandler {
 
     public static void SpawnPet(final LittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
+        //[9C 00] [4D 05 85 06] [0A] [00] v145
         slea.readInt();
         chr.spawnPet(slea.readByte(), slea.readByte() > 0);
 
