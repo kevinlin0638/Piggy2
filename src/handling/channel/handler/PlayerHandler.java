@@ -863,28 +863,44 @@ public class PlayerHandler {
         }
     }
 
-    //方便解析
+    public static String bytes2HexString(String s) {
+        int length = s.length();
+        String ret = "", ss = "";
+        if (length % 2 != 0) {
+            ss = "0";
+            length += 1;
+        }
+        ss += s;
+        for (int i = length; i > 0; i = i - 2) {
+            ret += ss.substring(i - 2, i) + " ";
+        }
+
+        return ret;
+    }
+
+    //方便解析s
     public static void Data_Display(AttackInfo attack) {
         System.gc();
-        System.err.println("ｔｂｙｅ　　　　" + attack.tbyte + " >> " + tools.HexTool.toString(attack.tbyte) + " [??]");
+
+        System.err.println("ｔｂｙｅ　　　　" + attack.tbyte + " >> " + bytes2HexString(tools.HexTool.toString(attack.tbyte)) + " [??]");
         System.err.println("攻擊數量　　　　" + attack.targets);
         System.err.println("攻擊次數　　　　" + attack.hits);
-        System.err.println("技能代碼　　　　" + attack.skill + " >> " + tools.HexTool.toString(attack.skill) + " [?? ?? ?? ??]");
+        System.err.println("技能代碼　　　　" + attack.skill + " >> " + bytes2HexString(tools.HexTool.toString(attack.skill)) + " [?? ?? ?? ??]");
         System.err.println("Ｃｈａｒｇｅ　　" + attack.charge);
         System.err.println("方向　　　　　　" + attack.direction + " [0 = 右邊 | 80 = 左邊]");//unk
-        System.err.println("動作　　　　　　" + attack.display + " >> " + tools.HexTool.toString(attack.display) + " [?? ??]" + " <nAction " + (attack.display & 0x7FFF) + ">");
-        System.err.println("攻擊速度　　　　" + attack.speed + " >> " + tools.HexTool.toString(attack.speed));
-        System.err.println("最後使用時間　　" + attack.lastAttackTickCount + " >> " + tools.HexTool.toString(attack.lastAttackTickCount));
-        System.err.println("遠Ｓｌｏｔ　　　" + attack.slot + " >> " + tools.HexTool.toString(attack.slot));
-        System.err.println("遠Ｃｓｓｔａｒ　" + attack.csstar + " >> " + tools.HexTool.toString(attack.csstar));
-        System.err.println("遠ＡＯＣ　　　　" + attack.AOE + " >> " + tools.HexTool.toString(attack.AOE));
+        System.err.println("動作　　　　　　" + attack.display + " >> " + bytes2HexString(tools.HexTool.toString(attack.display)) + " [?? ??]" + " <nAction " + (attack.display & 0x7FFF) + ">");
+        System.err.println("攻擊速度　　　　" + attack.speed + " >> " + bytes2HexString(tools.HexTool.toString(attack.speed)));
+        System.err.println("最後使用時間　　" + attack.lastAttackTickCount + " >> " + bytes2HexString(tools.HexTool.toString(attack.lastAttackTickCount)));
+        System.err.println("遠Ｓｌｏｔ　　　" + attack.slot + " >> " + bytes2HexString(tools.HexTool.toString(attack.slot)));
+        System.err.println("遠Ｃｓｓｔａｒ　" + attack.csstar + " >> " + bytes2HexString(tools.HexTool.toString(attack.csstar)));
+        System.err.println("遠ＡＯＣ　　　　" + attack.AOE + " >> " + bytes2HexString(tools.HexTool.toString(attack.AOE)));
         System.err.print("全部傷害　　　　");
         attack.allDamage.forEach(playerID -> {
             System.err.print("怪物ID:" + playerID.objectId + ", 傷害:" + playerID.attack);
             System.err.print("　");
         });
         System.err.println("");
-        System.err.println("座標　　　　　　" + attack.position);
+        System.err.println("座標　　　　　　" + attack.position + " [" + bytes2HexString(tools.HexTool.toString(attack.position.x)) + bytes2HexString(tools.HexTool.toString(attack.position.y)) + "]");
         System.gc();
     }
 
