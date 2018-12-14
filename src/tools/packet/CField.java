@@ -1577,11 +1577,11 @@ public class CField {
         mplew.write(attackInfo.direction);
         mplew.writeShort(attackInfo.display);
         int nAction = attackInfo.display & 0x7FFF;
-        if (nAction < 0x19D) {
+//        if (nAction < 0x19D) {
             mplew.write(attackInfo.speed);
             mplew.write(chr.getStat().passive_mastery());
             mplew.writeInt(itemId > 0 ? itemId : attackInfo.charge);
-            attackInfo.allDamage.stream().filter(oned -> oned.attack != null).forEach(oned -> {
+            attackInfo.allDamage.stream().forEach(oned -> {
                 mplew.writeInt(oned.objectId);
                 if (oned.objectId > 0) {
                     mplew.write(7);
@@ -1603,7 +1603,7 @@ public class CField {
                 }
             });
 
-            if (nAction == 0x23) {//v145 [遠攻座標]
+            if (nAction >= 0x23) {//v145 [遠攻座標]
                 mplew.writePos(attackInfo.position);
             }
 
@@ -1613,7 +1613,7 @@ public class CField {
                 mplew.writeInt(0);
             }
 
-        }
+//        }
     }
 
     public static byte[] skillEffect(MapleCharacter from, int skillId, byte level, short display, byte unk) {

@@ -1027,11 +1027,11 @@ public class PlayerHandler {
 
     public static void rangedAttack(final LittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         AttackInfo attack = DamageParse.parseRangedAttack(slea, chr);
-        Data_Display(attack);//方便解析
         if (attack == null) {
             c.sendPacket(CWvsContext.enableActions());
             return;
         }
+        Data_Display(attack);
         int bulletCount = 1, skillLevel = 0;
         MapleStatEffect effect = null;
         Skill skill = null;
@@ -1250,12 +1250,13 @@ public class PlayerHandler {
 
     public static void magicAttack(final LittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         AttackInfo attack = DamageParse.parseMagicDamage(slea, chr);
-        Data_Display(attack);//方便解析
         if (attack == null) {
             System.out.println("Return 2");
             c.getSession().writeAndFlush(CWvsContext.enableActions());
             return;
         }
+
+        Data_Display(attack);
         double maxdamage = chr.getStat().getCurrentMaxBaseDamage();
         int attackCount = 1;
         final Skill skill = SkillFactory.getSkill(GameConstants.getLinkedAranSkill(attack.skill));
