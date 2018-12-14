@@ -9,6 +9,7 @@ import client.inventory.ItemFlag;
 import client.inventory.MapleInventoryType;
 import client.inventory.MapleInventoryIdentifier;
 import client.messages.CommandProcessorUtil;
+import client.skill.SkillFactory;
 import constants.GameConstants;
 import constants.ServerConstants;
 import database.DatabaseConnection;
@@ -179,6 +180,36 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "!GainMeso - 楓幣全滿";
+        }
+    }
+
+    public static class Hide extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            SkillFactory.getSkill(9001004).getEffect(1).applyTo(c.getPlayer());
+            c.getPlayer().dropMessage(6, "管理員隱藏 = 開啟 \r\n 解除請輸入!unhide");
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!hide - 管理員隱藏";
+        }
+    }
+
+    public static class UnHide extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            c.getPlayer().dispelBuff(9001004);
+            c.getPlayer().dropMessage(6,"管理員隱藏 = 關閉 \r\n 開啟請輸入!hide");
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!unhide - 解除管理員隱藏";
         }
     }
 
