@@ -228,11 +228,11 @@ public class PlayerHandler {
     }
 
     public static final void CharInfoRequest(int objectid, MapleClient c, MapleCharacter chr) {
-/*  228 */
+        /*  228 */
         if ((c.getPlayer() == null) || (c.getPlayer().getMap() == null)) {
-/*  229 */
+            /*  229 */
             return;
-/*      */
+            /*      */
         }
         MapleCharacter player = c.getPlayer().getMap().getCharacterById(objectid);
         if ((player.isGM()) && (player.getCharToggle() == 1)) {
@@ -249,7 +249,7 @@ public class PlayerHandler {
             c.sendPacket(CWvsContext.charInfo(player, c.getPlayer().getId() == objectid));
             c.sendPacket(CWvsContext.enableActions());
         }
-/*  233 */     //if ((player != null) && ((!player.isGM()) || (c.getPlayer().isGM())))
+        /*  233 */     //if ((player != null) && ((!player.isGM()) || (c.getPlayer().isGM())))
 /*  235 */       //c.sendPacket(CWvsContext.charInfo(player, c.getPlayer().getWorldId() == objectid));
 /*      */
     }
@@ -332,7 +332,7 @@ public class PlayerHandler {
                 }
             }
             if (skillid != 0) {
-/*  320 */     //    pPhysical = slea.readByte() > 0;
+                /*  320 */     //    pPhysical = slea.readByte() > 0;
 /*  321 */        // pID = slea.readInt();
 /*  322 */       //  pType = slea.readByte();
 /*  323 */       //  slea.skip(4);
@@ -735,7 +735,7 @@ public class PlayerHandler {
             case 4341003: //monster bomb
                 chr.setKeyDownSkill_Time(0);
                 chr.getMap().broadcastMessage(chr, CField.skillCancel(chr, skillid), false);
-                //fallthrough intended
+            //fallthrough intended
             default:
                 Point pos = null;
                 if (slea.available() == 5 || slea.available() == 7) {
@@ -760,7 +760,6 @@ public class PlayerHandler {
                 break;
         }
     }
-
 
     public static void attack2(LittleEndianAccessor slea, MapleClient c, RecvPacketOpcode header) {
         MapleCharacter chr = c.getPlayer();
@@ -806,7 +805,6 @@ public class PlayerHandler {
         }
     }
 
-
     public static void attack(LittleEndianAccessor slea, MapleClient c, RecvPacketOpcode header) {
         MapleCharacter chr = c.getPlayer();
         if (chr == null) {
@@ -840,12 +838,18 @@ public class PlayerHandler {
                 magicAttack(slea, c, chr);
                 break;
             case CP_UserBodyAttack: // 被動攻擊, BUFF觸發的, 需要有BUFF才有效果
-                if (chr.getBuffedValue(MapleBuffStatus.ENERGY_CHARGE) == null && //能量获得
-                        chr.getBuffedValue(MapleBuffStatus.BODY_PRESSURE) == null && //战神抗压
-                        chr.getBuffedValue(MapleBuffStatus.DARK_AURA) == null && //黑暗灵气
-                        chr.getBuffedValue(MapleBuffStatus.TORNADO) == null && //幻灵飓风
-                        chr.getBuffedValue(MapleBuffStatus.SUMMON) == null && //召唤兽
-                        chr.getBuffedValue(MapleBuffStatus.RAINING_MINES) == null && //地雷
+                if (chr.getBuffedValue(MapleBuffStatus.ENERGY_CHARGE) == null
+                        && //能量获得
+                        chr.getBuffedValue(MapleBuffStatus.BODY_PRESSURE) == null
+                        && //战神抗压
+                        chr.getBuffedValue(MapleBuffStatus.DARK_AURA) == null
+                        && //黑暗灵气
+                        chr.getBuffedValue(MapleBuffStatus.TORNADO) == null
+                        && //幻灵飓风
+                        chr.getBuffedValue(MapleBuffStatus.SUMMON) == null
+                        && //召唤兽
+                        chr.getBuffedValue(MapleBuffStatus.RAINING_MINES) == null
+                        && //地雷
                         chr.getBuffedValue(MapleBuffStatus.TELEPORT_MASTERY) == null) { //皮卡啾的品格
                     chr.dropMessage(5, "當前狀態限制了攻擊。");
                     c.getSession().writeAndFlush(CWvsContext.enableActions());
@@ -859,6 +863,30 @@ public class PlayerHandler {
         }
     }
 
+    //方便解析
+    public static void Data_Display(AttackInfo attack) {
+        System.gc();
+        System.err.println("ｔｂｙｅ　　　　" + attack.tbyte + " >> " + tools.HexTool.toString(attack.tbyte));
+        System.err.println("攻擊數量　　　　" + attack.targets + " >> " + tools.HexTool.toString(attack.targets));
+        System.err.println("攻擊次數　　　　" + attack.hits + " >> " + tools.HexTool.toString(attack.hits) + " " + (attack.tbyte & 0xF));
+        System.err.println("技能代碼　　　　" + attack.skill + " >> " + tools.HexTool.toString(attack.skill));
+        System.err.println("Ｃｈａｒｇｅ　　" + attack.charge);
+        System.err.println("方向　　　　　　" + attack.direction + " [0 = 右邊 | 80 = 左邊]");//unk
+        System.err.println("動作　　　　　　" + attack.display + " >> " + tools.HexTool.toString(attack.display));
+        System.err.println("攻擊速度　　　　" + attack.speed + " >> " + tools.HexTool.toString(attack.speed));
+        System.err.println("最後使用時間　　" + attack.lastAttackTickCount + " >> " + tools.HexTool.toString(attack.lastAttackTickCount));
+        System.err.println("遠Ｓｌｏｔ　　　" + attack.slot + " >> " + tools.HexTool.toString(attack.slot));
+        System.err.println("遠Ｃｓｓｔａｒ　" + attack.csstar + " >> " + tools.HexTool.toString(attack.csstar));
+        System.err.println("遠ＡＯＣ　　　　" + attack.AOE + " >> " + tools.HexTool.toString(attack.AOE));
+        System.err.print("全部傷害　　　　");
+        attack.allDamage.forEach(playerID -> {
+            System.err.print("怪物ID:" + playerID.objectId + ", 傷害:" + playerID.attack);
+            System.err.print("　");
+        });
+        System.err.println("");
+        System.err.println("座標　　　　　　" + attack.position);
+        System.gc();
+    }
 
     public static void closeRangeAttack(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         PlayerHandler.closeRangeAttack(slea, c, chr, false);
@@ -870,6 +898,7 @@ public class PlayerHandler {
 
     public static void closeRangeAttack(LittleEndianAccessor slea, MapleClient c, final MapleCharacter chr, boolean passive) {
         AttackInfo attack = DamageParse.parseCloseRangeAttack(slea, chr);
+        Data_Display(attack);
         if (attack == null) {
             chr.dropMessage(5, "攻擊出現錯誤。");
             c.getSession().writeAndFlush(CWvsContext.enableActions());
@@ -977,7 +1006,6 @@ public class PlayerHandler {
             }
         }
         chr.checkFollow();
-
 
         //給地圖上的玩家顯示當前玩家使用技能的效果
         byte[] packet;
@@ -1297,7 +1325,6 @@ public class PlayerHandler {
         }
     }
 
-
     public static void DropMeso(final int meso, final MapleCharacter chr) {
         if (!chr.isAlive() || (meso < 10 || meso > 50000) || (meso > chr.getMeso())) {
             chr.getClient().sendPacket(CWvsContext.enableActions());
@@ -1416,7 +1443,7 @@ public class PlayerHandler {
         }
 
         int unk = slea.readByte();
-        for (int i = 0; ; i += 2) {
+        for (int i = 0;; i += 2) {
             if (i >= unk) {
                 break;
             }
@@ -1526,12 +1553,11 @@ public class PlayerHandler {
     public static void ChangeMap(final LittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         /**
          *
-         * 40 00
-         * 01
-         * FF FF FF FF
-         * 05 00 6F 75 74 30 30 36 04 E5 01 00 00 00 00 00 00
+         * 40 00 01 FF FF FF FF 05 00 6F 75 74 30 30 36 04 E5 01 00 00 00 00 00
+         * 00
          *
-         * **/
+         * *
+         */
         if (chr == null || chr.getMap() == null) {
             return;
         }
@@ -1700,11 +1726,12 @@ public class PlayerHandler {
         MaplePortal portal = chr.getMap().getPortal(slea.readMapleAsciiString());
         int toX = slea.readShort();
         int toY = slea.readShort();
-        if (portal == null)
+        if (portal == null) {
             if ((portal.getPosition().distanceSq(chr.getTruePosition()) > 22500.0D) && (!chr.isGM())) {
                 c.sendPacket(CWvsContext.enableActions());
                 return;
             }
+        }
         chr.getMap().movePlayer(chr, new Point(toX, toY));
         chr.checkFollow();
     }

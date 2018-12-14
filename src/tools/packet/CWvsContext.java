@@ -2932,10 +2932,10 @@ public class CWvsContext {
 
         public static byte[] showGuildInfo(MapleCharacter c) {
             MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
+            
             mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
-            mplew.write(0x1A);
-            if (c == null || c.getMGC() == null) { //show empty guild (used for leaving, expelled)
+            mplew.write(32);
+            if ((c == null) || (c.getMGC() == null)) {
                 mplew.write(0);
                 return mplew.getPacket();
             }
