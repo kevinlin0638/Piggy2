@@ -872,7 +872,7 @@ public class PlayerHandler {
         System.err.println("技能代碼　　　　" + attack.skill + " >> " + tools.HexTool.toString(attack.skill) + " [?? ?? ?? ??]");
         System.err.println("Ｃｈａｒｇｅ　　" + attack.charge);
         System.err.println("方向　　　　　　" + attack.direction + " [0 = 右邊 | 80 = 左邊]");//unk
-        System.err.println("動作　　　　　　" + attack.display + " >> " + tools.HexTool.toString(attack.display));
+        System.err.println("動作　　　　　　" + attack.display + " >> " + tools.HexTool.toString(attack.display) + " [?? ??]" + " <nAction " + (attack.display & 0x7FFF) + ">");
         System.err.println("攻擊速度　　　　" + attack.speed + " >> " + tools.HexTool.toString(attack.speed));
         System.err.println("最後使用時間　　" + attack.lastAttackTickCount + " >> " + tools.HexTool.toString(attack.lastAttackTickCount));
         System.err.println("遠Ｓｌｏｔ　　　" + attack.slot + " >> " + tools.HexTool.toString(attack.slot));

@@ -1603,7 +1603,7 @@ public class CField {
                 }
             });
 
-            if (nAction >= 0x23) {//v145 [遠攻座標]
+            if (op == SendPacketOpcode.LP_UserShootAttack || nAction == 0x11B) {//v145 [遠攻座標] [0x11B 箭雨]
                 mplew.writePos(attackInfo.position);
             }
 
