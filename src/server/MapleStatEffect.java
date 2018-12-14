@@ -2268,7 +2268,12 @@ public class MapleStatEffect implements Serializable {
                 if (applyfrom.getTotalSkillLevel(4330001) > 0 && ((applyfrom.getJob() >= 430 && applyfrom.getJob() <= 434) || (applyfrom.getJob() == 400 && applyfrom.getSubcategory() == 1))) {
                     SkillFactory.getSkill(4330001).getEffect(applyfrom.getTotalSkillLevel(4330001)).applyBuffEffect(applyfrom, applyto, primary, newDuration);
                     return;
-                } //fallthrough intended
+                } else{
+                    final EnumMap<MapleBuffStatus, Integer> stat = new EnumMap<>(MapleBuffStatus.class);
+                    stat.put(MapleBuffStatus.DARK_SIGHT, 0);
+                    applyto.getMap().broadcastMessage(applyto, BuffPacket.giveForeignBuff(applyto.getId(), stat, this), false);
+                    break;
+                }
             }
             case 4330001:
             case 14001003: { // Dark Sight
