@@ -1258,7 +1258,7 @@ public class PlayerHandler {
 
         Data_Display(attack);
         double maxdamage = chr.getStat().getCurrentMaxBaseDamage();
-        int attackCount = 1;
+        int attackCount = 2;
         final Skill skill = SkillFactory.getSkill(GameConstants.getLinkedAranSkill(attack.skill));
         if (skill == null && (chr.getStat().equippedSummon % 10000) != (attack.skill % 10000)) {
             c.getSession().writeAndFlush(CWvsContext.enableActions());
