@@ -1593,13 +1593,17 @@ public class CField {
                     } else {
                         for (Pair<Integer, Boolean> eachd : oned.attack) {
                             //mplew.write(!eachd.right ? 0 : 1);
-                            mplew.writeInt(eachd.left);
+                            if (eachd.right) {
+                                mplew.writeInt(eachd.left + 0x80000000);
+                            } else {
+                                mplew.writeInt(eachd.left);
+                            }
                         }
                     }
                 }
             });
 
-            if (nAction == 0x11E) {
+            if (nAction == 0x23) {//v145 [遠攻座標]
                 mplew.writePos(attackInfo.position);
             }
 

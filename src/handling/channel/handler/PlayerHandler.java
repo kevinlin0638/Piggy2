@@ -898,7 +898,7 @@ public class PlayerHandler {
 
     public static void closeRangeAttack(LittleEndianAccessor slea, MapleClient c, final MapleCharacter chr, boolean passive) {
         AttackInfo attack = DamageParse.parseCloseRangeAttack(slea, chr);
-        Data_Display(attack);
+        Data_Display(attack);//方便解析
         if (attack == null) {
             chr.dropMessage(5, "攻擊出現錯誤。");
             c.getSession().writeAndFlush(CWvsContext.enableActions());
@@ -1027,6 +1027,7 @@ public class PlayerHandler {
 
     public static void rangedAttack(final LittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         AttackInfo attack = DamageParse.parseRangedAttack(slea, chr);
+        Data_Display(attack);//方便解析
         if (attack == null) {
             c.sendPacket(CWvsContext.enableActions());
             return;
@@ -1249,6 +1250,7 @@ public class PlayerHandler {
 
     public static void magicAttack(final LittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         AttackInfo attack = DamageParse.parseMagicDamage(slea, chr);
+        Data_Display(attack);//方便解析
         if (attack == null) {
             System.out.println("Return 2");
             c.getSession().writeAndFlush(CWvsContext.enableActions());

@@ -1170,7 +1170,7 @@ public class DamageParse {
         if (ret.skill >= 91000000) {
             return null;
         }
-        lea.skip(10);
+        lea.skip(6);
         switch (ret.skill) {
             case 3121004: // Hurricane
             case 3221001: // Pierce
@@ -1191,7 +1191,7 @@ public class DamageParse {
         ret.charge = -1;
         ret.direction = lea.readByte();
         ret.display = lea.readUShort();
-
+        lea.skip(4);
         lea.skip(1);
         if (ret.skill == 23111001) {
             lea.skip(4);
@@ -1202,7 +1202,7 @@ public class DamageParse {
         ret.speed = lea.readByte();
         ret.lastAttackTickCount = lea.readInt();
         lea.skip(4);
-        ret.slot = (byte) lea.readShort();
+        ret.slot = (byte) lea.readShort();//消耗飛鏢 子彈等等在消耗欄的位置
         ret.csstar = (byte) lea.readShort();
         ret.AOE = lea.readByte();
 
@@ -1239,9 +1239,9 @@ public class DamageParse {
 
             ret.allDamage.add(new AttackPair(Integer.valueOf(oid).intValue(), allDamageNumbers));
         }
-        lea.skip(4);
-        ret.position = lea.readPos();
 
+        ret.position = lea.readPos();
+        lea.skip(4);
         return ret;
     }
 
