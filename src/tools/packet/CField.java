@@ -1533,60 +1533,7 @@ public class CField {
     }
 
     public static byte[] closeRangeAttack(MapleCharacter chr, int skilllevel, int itemId, AttackInfo attackInfo) {
- MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.writeShort(SendPacketOpcode.LP_UserMeleeAttack.getValue());
-        mplew.writeInt(chr.getId());
-        mplew.write(attackInfo.tbyte);
-        mplew.write(chr.getLevel()); //?
-        if (attackInfo.skill > 0) {
-            mplew.write(attackInfo.level);
-            mplew.writeInt(attackInfo.skill);
-        } else {
-            mplew.write(0);
-        }
-        mplew.write(attackInfo.direction); // Added on v.82
-        mplew.write(attackInfo.display);
-        mplew.write(0);
-        mplew.write(attackInfo.speed);
-        mplew.write(0); // Mastery
-        mplew.writeInt(0);  // E9 03 BE FC
-
-        if (attackInfo.skill == 4211006) {
-            for (AttackPair oned : attackInfo.allDamage) {
-                if (oned.attack != null) {
-                    mplew.writeInt(oned.objectId);
-                    mplew.write(0x07);
-                    mplew.write(oned.attack.size());
-                    for (Pair<Integer, Boolean> eachd : oned.attack) {
-                        // highest bit set = crit
-//						mplew.write(eachd.right ? 1 : 0);
-                        mplew.writeInt(eachd.left); //m.e. is never crit
-                    }
-                }
-            }
-        } else {
-            for (AttackPair oned : attackInfo.allDamage) {
-                if (oned.attack != null) {
-                    mplew.writeInt(oned.objectId);
-                    mplew.write(0x07);
-                    for (Pair<Integer, Boolean> eachd : oned.attack) {
-//                      mplew.write(0);
-                        // highest bit set = crit
-                        if (eachd.right) {
-                            mplew.writeInt(eachd.left.intValue() + 0x80000000);
-                        } else {
-                            mplew.writeInt(eachd.left.intValue());
-                        }
-                    }
-                }
-            }
-        }
-        //if (charge > 0) {
-        //	mplew.writeInt(charge); //is it supposed to be here
-        //}
-        return mplew.getPacket();
-        //return addAttackInfo(SendPacketOpcode.LP_UserMeleeAttack, chr, skilllevel, itemId, attackInfo);
+        return addAttackInfo(SendPacketOpcode.LP_UserMeleeAttack, chr, skilllevel, itemId, attackInfo);
     }
 
     public static byte[] rangedAttack(MapleCharacter chr, int skilllevel, int itemId, AttackInfo attackInfo) {
@@ -1645,7 +1592,7 @@ public class CField {
                         }
                     } else {
                         for (Pair<Integer, Boolean> eachd : oned.attack) {
-                            mplew.write(!eachd.right ? 0 : 1);
+                            //mplew.write(!eachd.right ? 0 : 1);
                             mplew.writeInt(eachd.left);
                         }
                     }

@@ -866,10 +866,10 @@ public class PlayerHandler {
     //方便解析
     public static void Data_Display(AttackInfo attack) {
         System.gc();
-        System.err.println("ｔｂｙｅ　　　　" + attack.tbyte + " >> " + tools.HexTool.toString(attack.tbyte));
-        System.err.println("攻擊數量　　　　" + attack.targets + " >> " + tools.HexTool.toString(attack.targets));
-        System.err.println("攻擊次數　　　　" + attack.hits + " >> " + tools.HexTool.toString(attack.hits) + " " + (attack.tbyte & 0xF));
-        System.err.println("技能代碼　　　　" + attack.skill + " >> " + tools.HexTool.toString(attack.skill));
+        System.err.println("ｔｂｙｅ　　　　" + attack.tbyte + " >> " + tools.HexTool.toString(attack.tbyte) + " [??]");
+        System.err.println("攻擊數量　　　　" + attack.targets);
+        System.err.println("攻擊次數　　　　" + attack.hits);
+        System.err.println("技能代碼　　　　" + attack.skill + " >> " + tools.HexTool.toString(attack.skill) + " [?? ?? ?? ??]");
         System.err.println("Ｃｈａｒｇｅ　　" + attack.charge);
         System.err.println("方向　　　　　　" + attack.direction + " [0 = 右邊 | 80 = 左邊]");//unk
         System.err.println("動作　　　　　　" + attack.display + " >> " + tools.HexTool.toString(attack.display));

@@ -1086,7 +1086,7 @@ public class DamageParse {
                 break;
         }
         lea.skip(GameConstants.isEnergyBuff(ret.skill) ? 1 : 2);
-        int crc = lea.readInt(); // nSkillCRC
+        int crc = lea.readShort(); // nSkillCRC
         switch (ret.skill) {
             case 24121000:
             case 5201002: // Gernard
@@ -1113,6 +1113,7 @@ public class DamageParse {
         lea.readByte();
         ret.direction = lea.readByte();
         ret.display = lea.readUShort();
+        lea.skip(2);
         int key = ret.display & 0x7FFF;
         int dd = ret.display >> 15;
         lea.skip(1);
