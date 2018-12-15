@@ -3411,13 +3411,10 @@ public class CWvsContext {
                 lew.writeInt(partychar.getId()); // 24
             }
             for (MaplePartyCharacter partychar : partymembers) {
-                lew.writeAsciiString(partychar.getName(), 13); // 78
+                lew.writeAsciiString(partychar.getName(), 15); // 78
             }
             for (MaplePartyCharacter partychar : partymembers) {
                 lew.writeInt(partychar.getJobId()); // 24
-            }
-            for (MaplePartyCharacter partychar : partymembers) {
-                lew.writeInt(0); // 24
             }
             for (MaplePartyCharacter partychar : partymembers) {
                 lew.writeInt(partychar.getLevel()); // 24
