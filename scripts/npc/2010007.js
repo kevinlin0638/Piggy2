@@ -17,33 +17,33 @@ function action(mode, type, selection) {
 	status--;
 
     if (status == 0)
-	cm.sendSimple("What would you like to do?\r\n#b#L0#Create a Guild#l\r\n#L1#Disband your Guild#l\r\n#L2#Increase your Guild's capacity (limited to 100)#l\r\n#L3#Increase your Guild's capacity (limited to 200)#l#k");
+	cm.sendSimple("您想要做什麼?\r\n#b#L0#創建公會#l\r\n#L1#解散公會#l\r\n#L2#使用#r楓幣#b增加公會成員數量限制 (最高提升至100人)#l\r\n#L3#使用#rGP#b增加公會成員數量限制 (最高提升至200人)#l#k");
     else if (status == 1) {
 	sel = selection;
 	if (selection == 0) {
 	    if (cm.getPlayerStat("GID") > 0) {
-		cm.sendOk("You may not create a new Guild while you are in one.");
+		cm.sendOk("您已經加入公會 無法創建新的公會.");
 		cm.dispose();
 	    } else
-		cm.sendYesNo("Creating a Guild costs #b500,000 mesos#k, are you sure you want to continue?");
+		cm.sendYesNo("創建公會需要花費 #b500,000 楓幣#k, 您確定要繼續嗎?");
 	} else if (selection == 1) {
 	    if (cm.getPlayerStat("GID") <= 0 || cm.getPlayerStat("GRANK") != 1) {
-		cm.sendOk("You can only disband a Guild if you are the leader of that Guild.");
+		cm.sendOk("只有公會長可以解散公會.");
 		cm.dispose();
 	    } else
-		cm.sendYesNo("Are you sure you want to disband your Guild? You will not be able to recover it afterward and all your GP will be gone.");
+		cm.sendYesNo("您確定您要解散公會? 此執行無法反悔且您將失去所有的 GP.");
 	} else if (selection == 2) {
 	    if (cm.getPlayerStat("GID") <= 0 || cm.getPlayerStat("GRANK") != 1) {
-		cm.sendOk("You can only increase your Guild's capacity if you are the leader.");
+		cm.sendOk("只有公會長可以擴增公會成員數量限制.");
 		cm.dispose();
 	    } else
-		cm.sendYesNo("Increasing your Guild capacity by #b5#k costs #b500,000 mesos#k, are you sure you want to continue?");
+		cm.sendYesNo("擴增公會成員數量限制 #b5#k 人 - 需要 #b500,000 楓幣#k, 您確定要繼續?");
 	} else if (selection == 3) {
 	    if (cm.getPlayerStat("GID") <= 0 || cm.getPlayerStat("GRANK") != 1) {
-		cm.sendOk("You can only increase your Guild's capacity if you are the leader.");
+		cm.sendOk("只有公會長可以擴增公會成員數量限制.");
 		cm.dispose();
 	    } else
-		cm.sendYesNo("Increasing your Guild capacity by #b5#k costs #b25,000 GP#k, are you sure you want to continue?");
+		cm.sendYesNo("擴增公會成員數量限制 #b5#k 人 - 需要 #b25,000 GP#k, 您確定要繼續?");
 	}
     } else if (status == 2) {
 	if (sel == 0 && cm.getPlayerStat("GID") <= 0) {

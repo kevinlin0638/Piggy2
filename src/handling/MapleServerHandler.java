@@ -926,10 +926,11 @@ public class MapleServerHandler extends ChannelDuplexHandler {
             case GACH_EXP:
                 PlayersHandler.GachExp(slea, client);
                 break;
-            case PARTY_SEARCH_START:
-                PartyHandler.MemberSearch(slea, client);
+            case PARTY_SEARCH_SQUADCREW:
+//                PartyHandler.MemberSearch(slea, client);
+                client.getPlayer().dropMessage(1, "目前不支援遠征隊搜尋");
                 break;
-            case PARTY_SEARCH_STOP:
+            case PARTY_SEARCH_SQUAD:
                 PartyHandler.PartySearch(slea, client);
                 break;
             case PARTY_SEARCH_CREW:

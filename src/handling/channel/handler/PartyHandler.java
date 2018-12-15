@@ -478,7 +478,7 @@ public class PartyHandler {
             case 63: //create [PartySearchID]
             case 134:
                 //case 119:
-                final ExpeditionType et = ExpeditionType.getById(slea.readInt());
+                /*final ExpeditionType et = ExpeditionType.getById(slea.readInt());
                 if (et != null && c.getPlayer().getParty() == null && c.getPlayer().getLevel() <= et.maxLevel && c.getPlayer().getLevel() >= et.minLevel) {
                     party = World.Party.createParty(new MaplePartyCharacter(c.getPlayer()), et.exped);
                     c.getPlayer().setParty(party);
@@ -486,7 +486,8 @@ public class PartyHandler {
                     c.sendPacket(ExpeditionPacket.expeditionStatus(World.Party.getExped(party.getExpeditionId()), true));
                 } else {
                     c.sendPacket(ExpeditionPacket.expeditionError(0, ""));
-                }
+                }*/
+                c.getPlayer().dropMessage(1, "目前不支援遠征隊搜尋");
                 break;
             case 65: //invite [name]
             case 135:
