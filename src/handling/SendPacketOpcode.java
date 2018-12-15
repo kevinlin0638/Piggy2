@@ -500,6 +500,7 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
             case "ARAN_COMBO":
             case "NPC_TALK":
             case "MOVE_SUMMON":
+            case "UPDATE_PARTYMEMBER_HP":
                 return true;
             default:
                 return false;

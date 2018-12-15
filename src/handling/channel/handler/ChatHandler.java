@@ -63,7 +63,7 @@ public class ChatHandler {
         if (chr != null && !CommandProcessor.processCommand(client, text, CommandType.NORMAL)) {
             client.getPlayer().getMap().broadcastMessage(CField.getChatText(chr.getId(), text, chr.isSuperGM(), unk), chr.getTruePosition());
         }
-        
+
     }
 
     private static String getChatType(int type) {
@@ -250,7 +250,7 @@ public class ChatHandler {
             case 0x06: // message
                 if (messenger != null) {
                     final String charname = slea.readMapleAsciiString();
-                    final String text = slea.readMapleAsciiString();
+                    final String text = "";//v145 不需要
                     final String chattext = charname + "" + text;
                     if (c.getPlayer().getWatcher() != null) {
                         if (text.equals("0") || text.equals("1")) {

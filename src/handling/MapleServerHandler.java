@@ -698,7 +698,7 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                 ChatHandler.GeneralChat(slea, client);
                 break;
             case PARTYCHAT:
-                slea.readInt();
+               // slea.readInt();
                 ChatHandler.Others(slea, client, client.getPlayer());
                 break;
             case WHISPER:
