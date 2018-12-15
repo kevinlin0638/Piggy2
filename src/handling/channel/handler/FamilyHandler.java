@@ -184,9 +184,9 @@ public class FamilyHandler {
     public static void FamilySummon(final LittleEndianAccessor slea, MapleClient c) {
         MapleFamilyBuff cost = MapleFamilyBuff.Summon;
         MapleCharacter tt = c.getChannelServer().getPlayerStorage().getCharacterByName(slea.readMapleAsciiString());
-        if (c.getPlayer().getFamilyId() > 0 && tt != null && tt.getFamilyId() == c.getPlayer().getFamilyId() && !FieldLimitType.VipRock.check(tt.getMap().getFieldLimit()) &&
-                !FieldLimitType.VipRock.check(c.getPlayer().getMap().getFieldLimit()) && tt.canUseFamilyBuff(cost) &&
-                c.getPlayer().getTeleportName().equals(tt.getName()) && tt.getCurrentRep() > cost.rep && !c.getPlayer().isInBlockedMap() && !tt.isInBlockedMap()) {
+        if (c.getPlayer().getFamilyId() > 0 && tt != null && tt.getFamilyId() == c.getPlayer().getFamilyId() && !FieldLimitType.VipRock.check(tt.getMap().getFieldLimit())
+                && !FieldLimitType.VipRock.check(c.getPlayer().getMap().getFieldLimit()) && tt.canUseFamilyBuff(cost)
+                && c.getPlayer().getTeleportName().equals(tt.getName()) && tt.getCurrentRep() > cost.rep && !c.getPlayer().isInBlockedMap() && !tt.isInBlockedMap()) {
             //whew lots of checks
             boolean accepted = slea.readByte() > 0;
             if (accepted) {
@@ -269,7 +269,9 @@ public class FamilyHandler {
 
     public static void AcceptFamily(LittleEndianAccessor slea, MapleClient c) {
         MapleCharacter inviter = c.getPlayer().getMap().getCharacterById(slea.readInt());
-        if (inviter != null && c.getPlayer().getSeniorId() == 0 && (c.getPlayer().isGM() || !inviter.isHidden()) && inviter.getLevel() - 20 <= c.getPlayer().getLevel() && inviter.getLevel() >= 10 && inviter.getName().equals(slea.readMapleAsciiString()) && inviter.getNoJuniors() < 2 /*&& inviter.getFamily().getGens() < 1000*/ && c.getPlayer().getLevel() >= 10) {
+        if (inviter != null && c.getPlayer().getSeniorId() == 0 && (c.getPlayer().isGM() || !inviter.isHidden()) && inviter.getLevel() - 20 <= c.getPlayer().getLevel() && inviter.getLevel() >= 10/* && inviter.getName().equals(slea.readMapleAsciiString())*/ && inviter.getNoJuniors() < 2 /*
+                 * && inviter.getFamily().getGens() < 1000
+                 */ && c.getPlayer().getLevel() >= 10) {
             boolean accepted = slea.readByte() > 0;
             inviter.getClient().sendPacket(FamilyPacket.sendFamilyJoinResponse(accepted, c.getPlayer().getName()));
             if (accepted) {

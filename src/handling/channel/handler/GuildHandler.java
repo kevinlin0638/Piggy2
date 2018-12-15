@@ -24,6 +24,7 @@ import client.MapleCharacter;
 import client.MapleClient;
 import client.skill.Skill;
 import client.skill.SkillFactory;
+import handling.channel.MapleGuildRanking;
 import handling.world.World;
 import handling.world.guild.MapleGuild;
 import handling.world.guild.MapleGuildResponse;
@@ -90,25 +91,27 @@ public class GuildHandler {
                 c.sendPacket(GuildPacket.showGuildInfo(c.getPlayer()));
                 break;
             case 0x02: // 建立公會
-                if (c.getPlayer().getGuildId() > 0 || c.getPlayer().getMapId() != 200000301) {
-                    c.getPlayer().dropMessage(1, "You cannot create a new Guild while in one.");
+                int cost = 5000000;
+                if ((c.getPlayer().getGuildId() > 0) || (c.getPlayer().getMapId() != 200000301)) {
+                    c.getPlayer().dropMessage(1, "無法建立公會\r\n已經有公會或不在英雄之殿");
                     return;
-                } else if (c.getPlayer().getMeso() < 500000) {
-                    c.getPlayer().dropMessage(1, "You do not have enough mesos to create a Guild.");
+                }
+                if (c.getPlayer().getMeso() < cost) {
+                    c.getPlayer().dropMessage(1, "你沒有足夠的楓幣建立公會。目前建立公會需要: " + cost + " 的楓幣。");
                     return;
                 }
                 final String guildName = slea.readMapleAsciiString();
 
                 if (!isGuildNameAcceptable(guildName)) {
-                    c.getPlayer().dropMessage(1, "The Guild name you have chosen is not accepted.");
+                    c.getPlayer().dropMessage(1, "這個公會名稱是不被准許的.");
                     return;
                 }
                 int guildId = World.Guild.createGuild(c.getPlayer().getId(), guildName);
                 if (guildId == 0) {
-                    c.getPlayer().dropMessage(1, "Please try again.");
+                    c.sendPacket(GuildPacket.genericGuildMessage((byte) 34)); // 這名稱已經有人使用！請您重新輸入...
                     return;
                 }
-                c.getPlayer().gainMeso(-500000, true, true);
+                c.getPlayer().gainMeso(-cost, true, true);
                 c.getPlayer().setGuildId(guildId);
                 c.getPlayer().setGuildRank((byte) 1);
                 c.getPlayer().saveGuildStatus();
@@ -116,8 +119,9 @@ public class GuildHandler {
                 //c.sendPacket(GuildPacket.showGuildInfo(c.getPlayer()));
                 c.sendPacket(GuildPacket.newGuildInfo(c.getPlayer()));
                 World.Guild.gainGP(c.getPlayer().getGuildId(), 500, c.getPlayer().getId());
+                MapleGuildRanking.getInstance().load();
                 //c.getPlayer().dropMessage(1, "You have successfully created a Guild.");
-                //respawnPlayer(c.getPlayer());
+                respawnPlayer(c.getPlayer());
                 break;
             case 0x05: // 邀請
                 if (c.getPlayer().getGuildId() <= 0 || c.getPlayer().getGuildRank() > 2) { // 1 == guild master, 2 == jr
@@ -125,7 +129,7 @@ public class GuildHandler {
                 }
                 String name = slea.readMapleAsciiString().toLowerCase();
                 if (invited.containsKey(name)) {
-                    c.getPlayer().dropMessage(5, "The player is currently handling an invitation.");
+                     c.getPlayer().dropMessage(5, "玩家 " + name + " 已經在邀請的列表，請稍後在試。");
                     return;
                 }
                 final MapleGuildResponse mgr = MapleGuild.sendInvite(c, name);
@@ -153,7 +157,7 @@ public class GuildHandler {
                     c.getPlayer().setGuildRank((byte) 5);
                     int s = World.Guild.addGuildMember(c.getPlayer().getMGC());
                     if (s == 0) {
-                        c.getPlayer().dropMessage(1, "The Guild you are trying to join is already full.");
+                        c.getPlayer().dropMessage(1, "公會成員已經達到最高限制。");
                         c.getPlayer().setGuildId(0);
                         return;
                     }

@@ -11,6 +11,7 @@ import client.inventory.MapleInventoryIdentifier;
 import client.messages.CommandProcessorUtil;
 import client.skill.SkillFactory;
 import constants.GameConstants;
+import constants.MapConstants;
 import constants.ServerConstants;
 import database.DatabaseConnection;
 import handling.channel.ChannelServer;
@@ -42,7 +43,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import server.MapleCarnivalChallenge;
 import server.MapleInventoryManipulator;
+import tools.packet.CWvsContext;
 
 public class AdminCommand {
 
@@ -60,6 +63,80 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "@expRate <世界> <頻道> <倍率> - 設定經驗值倍率";
+        }
+    }
+
+    public static class online extends 上線 {
+    }
+
+    public static class 上線 extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            MapleCharacter chr = c.getPlayer();
+            int world = World.Find.findWorld(chr.getId());
+            if (splitted.size() == 1) {
+                int total = 0;
+                if (chr.isGM()) {
+                    chr.dropMessage(6, "----------------------------------(all / ch)-----------------------------------------");
+                }
+                chr.dropMessage(6, "-------------------------------------------------------------------------------------");
+                for (ChannelServer cserv : ChannelServer.getAllInstance(world)) {
+                    int curConnected = cserv.getConnectedClients();
+                    //curConnected += 服務端配置.上線人數底 / ChannelServer.getAllInstances().size();
+                    chr.dropMessage(6, "頻道: " + cserv.getChannel() + " 在線人數: " + curConnected);
+                    total += curConnected;
+                }
+                chr.dropMessage(6, "當前伺服器總計線上人數: " + total);
+                chr.dropMessage(6, "-------------------------------------------------------------------------------------");
+                return true;
+            }
+            if (splitted.size() < 4 && splitted.get(1).equalsIgnoreCase("all") && chr.isGM()) {
+                int total = 0;
+                chr.dropMessage(6, "-------------------------------------------------------------------------------------");
+                for (ChannelServer cserv : ChannelServer.getAllInstance(world)) {
+                    int curConnected = cserv.getConnectedClients();
+                    if (curConnected != 0) {
+                        chr.dropMessage(6, "頻道: " + cserv.getChannel() + " 在線人數: " + curConnected);
+                    }
+                    total += curConnected;
+                    for (MapleCharacter chr1 : cserv.getPlayerStorage().getAllCharacters()) {
+                        //略過自由市場 和 釣魚地圖的玩家
+                        /*if (splitted.size() == 3 && MapConstants.isMarketMap(chr1.getMapId()) && MapConstants.isFishingMap(chr1.getMapId())) {
+                        continue;
+                    }*/
+                        if (chr1 != null) {
+                            StringBuilder ret = new StringBuilder();
+                            ret.append("  ");
+                            ret.append(StringUtil.getRightPaddedStr(chr1.getName(), ' ', 12));
+                            ret.append(" ID: ");
+                            ret.append(StringUtil.getRightPaddedStr(String.valueOf(chr1.getId()), ' ', 3));
+                            ret.append(" 等級: ");
+                            ret.append(StringUtil.getRightPaddedStr(String.valueOf(chr1.getLevel()), ' ', 3));
+                            ret.append(" 職業: ");
+                            ret.append(StringUtil.getRightPaddedStr(MapleCarnivalChallenge.getJobNameById(chr1.getJob()), ' ', 14));
+                            if (chr1.getMap() != null) {
+                                ret.append(" 地圖: ");
+                                ret.append(chr1.getMapId());
+                                ret.append("-");
+                                ret.append(chr1.getMap().getMapName());
+                            }
+                            chr.dropMessage(6, ret.toString());
+                        }
+                    }
+                }
+                chr.dropMessage(5, "當前伺服器總計線上人數: " + total);
+                chr.dropMessage(6, "-------------------------------------------------------------------------------------");
+            } else if (splitted.get(1).equalsIgnoreCase("ch")) {
+                chr.dropMessage(6, "上線的角色 頻道-" + c.getChannel() + ":");
+                chr.dropMessage(6, c.getChannelServer().getPlayerStorage().getOnlinePlayers(true));
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!online - 查看在線人數";
         }
     }
 
@@ -201,7 +278,6 @@ public class AdminCommand {
         }
     }
 
-
     public static class Hide extends AbstractsCommandExecute {
 
         @Override
@@ -222,7 +298,7 @@ public class AdminCommand {
         @Override
         public boolean execute(MapleClient c, List<String> args) {
             c.getPlayer().dispelBuff(9001004);
-            c.getPlayer().dropMessage(6,"管理員隱藏 = 關閉 \r\n 開啟請輸入!hide");
+            c.getPlayer().dropMessage(6, "管理員隱藏 = 關閉 \r\n 開啟請輸入!hide");
             return true;
         }
 
@@ -416,7 +492,7 @@ public class AdminCommand {
                         MapleMap target = c.getChannelServer().getMapFactory().getMap(Integer.parseInt(splitted.get(1)));
                         if (splitted.size() == 2) {
                             c.getPlayer().changeMap(target, target.getPortal(0));
-                        }else{
+                        } else {
                             c.getPlayer().changeMap(target, target.getPortal(Integer.parseInt(splitted.get(2))));
                         }
                     } else {
@@ -439,6 +515,45 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "!warp <地圖ID/腳色名稱> - 飛地圖";
+        }
+    }
+
+    public static class SP extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            c.getPlayer().setRemainingSp(CommandProcessorUtil.getOptionalIntArg(splitted, 1, 1));
+            c.getPlayer().updateSingleStat(MapleStat.AVAILABLE_SP, 0); // we don't care the value here
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!sp [數量] - 增加SP";
+        }
+    }
+
+    public static class AP extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            MapleCharacter player = c.getPlayer();
+            if (splitted.size() != 2) {
+            }
+            int ap = Integer.parseInt(splitted.get(1));
+            if (ap + player.getRemainingAp() > 32767) {
+                player.setRemainingAp(32767);
+                player.updateSingleStat(MapleStat.AVAILABLE_AP, 32767);
+            } else {
+                player.setRemainingAp((short) (ap + player.getRemainingAp()));
+                player.updateSingleStat(MapleStat.AVAILABLE_AP, player.getRemainingAp());
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!ap [數量] - 增加AP";
         }
     }
 
@@ -587,7 +702,7 @@ public class AdminCommand {
                     c.getPlayer().dropMessage(6, "Player " + splitted.get(i) + " not found.");
                 }
                 if (player.allowedToTarget(victim)) {
-                    victim.getStat().setHp( 0, victim);
+                    victim.getStat().setHp(0, victim);
                     victim.getStat().setMp(0, victim);
                     victim.updateSingleStat(MapleStat.HP, 0);
                     victim.updateSingleStat(MapleStat.MP, 0);
@@ -734,7 +849,9 @@ public class AdminCommand {
             return "!pnpc - 招喚NPC(永久)";
         }
     }
+
     public static class lookallmob extends AbstractsCommandExecute {
+
         @Override
         public boolean execute(MapleClient c, List<String> args) {
             MapleMonster mob = null;

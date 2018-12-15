@@ -3222,28 +3222,28 @@ public class CWvsContext {
             if (code == 3 || code == 59 || code == 60 || code == 61 || code == 84 || code == 87) {
                 mplew.writeMapleAsciiString("");
             }
-            // 1: Request for Guild Name
-            // 18: Set Emblem
-            // 3: Would you like to create %s Guild?
-            // 34: The name is already in use... Please try other ones....
-            // 39: Already joined the guild.
-            // 41: You cannot make a guild, due to the limitation of minimum level requirement.
-            // 42: Somebody has disagreed to form a guild...  Please come back to me when you meet with the right people...  You can only make a guild after getting agreement from all...
-            // 46: Already joined the guild.
-            // 47: The guild, you are trying to join, has already reached the max number of users.
-            // 48: The character cannot be found in the current channel.
-            // 37/44/58: The problem has happened during the process of forming the guild... Plese try again later...
-            // 51: You are not in the guild.
-            // 54: You are not in the guild.
-            // 59: %s is currently not accepting guild invite message.
-            // 60: '%s' is taking care of another invitation.
-            // 61: %s has denied your guild invitation.
-            // 62: Admin cannot make a guild.
-            // 86: Extending Guild Skill failed.
-            // 81: There are less than 6 members remaining, so the quest cannot continue. Your Guild Quest will end in 5 seconds.
-            // 82: The user that registered has disconnected, so the quest cannot continue. Your Guild Quest will end in 5 seconds.
-            // default: The guild request has not been accepted, due to unknown reason.
-            // 84/87: idk
+            // 1：公會名稱請求
+            // 18：設置徽章
+            // 3：你想創建 %s 公會嗎？
+            // 34：名稱已經在使用中......請嘗試其他名稱....
+            // 39：已加入公會
+            // 41：由於最低等級要求的限制，你無法組建公會。
+            // 42：有人不同意組建一個公會...當你遇到合適的人時，請回到我身邊...你只能在得到所有人的同意後再組建一個公會......
+            // 46：已加入公會
+            // 47：您正嘗試加入的公會已達到最大用戶數。
+            // 48：在當前頻道中找不到該字符。
+            // 37/44/58：問題發生在組建公會的過程中......請稍後再試......
+            // 51：你不在公會裡。
+            // 54：你不在公會裡。
+            // 59：%s 當前不接受公會邀請消息。
+            // 60：'%s'正在處理另一個邀請。
+            // 61：%s 拒絕了您的公會邀請。
+            // 62：管理員無法建立公會。
+            // 86：擴展公會技能失敗。
+            // 81：剩下的成員少於6個，因此任務無法繼續。你的公會任務將在5秒內結束。
+            // 82：註冊的用戶已斷開連接，因此任務無法繼續。你的公會任務將在5秒內結束。
+            // default:由於未知原因，未接受公會請求。
+            // 84/87：idk
 
             return mplew.getPacket();
         }
