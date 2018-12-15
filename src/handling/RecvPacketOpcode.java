@@ -217,6 +217,8 @@ public enum RecvPacketOpcode implements WritableShortValueHolder {
     EXPEDITION_LISTING,
     PARTY_SEARCH_START,
     PARTY_SEARCH_STOP,
+    PARTY_SEARCH_CREW,
+    PARTY_SEARCH_TEAM,
     USE_TELE_ROCK,
     SUB_SUMMON,
     USE_MECH_DOOR,

@@ -315,7 +315,9 @@ public class PartyHandler {
         if (c.getPlayer().getParty() != null && c.getPlayer().getParty().getLeader().getName().equalsIgnoreCase(c.getPlayer().getName())) {
             List<MapleCharacter> chars = new ArrayList<>();
             for (MapleCharacter chr : c.getPlayer().getMap().getCharactersThreadsafe()) {
-                if (chr != c.getPlayer() && !chr.isGM()) {
+                if (chr != c.getPlayer() /*&& !chr.isGM()*/) {
+                    if(chr.getParty() != null && chr.getParty().getId() == c.getPlayer().getParty().getId())
+                        continue;
                     chars.add(chr);
                 }
             }
@@ -331,8 +333,13 @@ public class PartyHandler {
         List<MapleParty> parties = new ArrayList<>();
         for (MapleCharacter chr : c.getPlayer().getMap().getCharactersThreadsafe()) {
             if (chr != null || parties != null) {
-                if (chr.getParty() != null && chr.getParty().getId() != c.getPlayer().getParty().getId() && !parties.contains(chr.getParty())) {
-                    parties.add(chr.getParty());
+                if (chr.getParty() != null  && !parties.contains(chr.getParty())) {
+                    if (c.getPlayer().getParty() != null){
+                        if (chr.getParty().getId() != c.getPlayer().getParty().getId())
+                            parties.add(chr.getParty());
+                    }else {
+                        parties.add(chr.getParty());
+                    }
                 }
             }
         }

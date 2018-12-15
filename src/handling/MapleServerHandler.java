@@ -932,6 +932,12 @@ public class MapleServerHandler extends ChannelDuplexHandler {
             case PARTY_SEARCH_STOP:
                 PartyHandler.PartySearch(slea, client);
                 break;
+            case PARTY_SEARCH_CREW:
+                PartyHandler.MemberSearch(slea, client);
+                break;
+            case PARTY_SEARCH_TEAM:
+                PartyHandler.PartySearch(slea, client);
+                break;
             case EXPEDITION_LISTING:
                 PartyHandler.PartyListing(slea, client);
                 break;
