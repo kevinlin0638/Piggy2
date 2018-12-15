@@ -84,8 +84,12 @@ public class GuildHandler {
             nextPruneTime += 5 * 60 * 1000;
         }
         byte bla = slea.readByte();
+        //System.err.println("公會操作類型: ( 0x" + tools.StringUtil.getLeftPaddedStr(Integer.toHexString(bla).toUpperCase(), '0', 2) + " )" + slea.toString());
         switch (bla) { //AFTERSHOCK: most are +1
-            case 0x02: // Create guild
+            case 0:
+                c.sendPacket(GuildPacket.showGuildInfo(c.getPlayer()));
+                break;
+            case 0x02: // 建立公會
                 if (c.getPlayer().getGuildId() > 0 || c.getPlayer().getMapId() != 200000301) {
                     c.getPlayer().dropMessage(1, "You cannot create a new Guild while in one.");
                     return;
@@ -115,7 +119,7 @@ public class GuildHandler {
                 //c.getPlayer().dropMessage(1, "You have successfully created a Guild.");
                 //respawnPlayer(c.getPlayer());
                 break;
-            case 0x05: // invitation
+            case 0x05: // 邀請
                 if (c.getPlayer().getGuildId() <= 0 || c.getPlayer().getGuildRank() > 2) { // 1 == guild master, 2 == jr
                     return;
                 }
@@ -132,7 +136,7 @@ public class GuildHandler {
                     invited.put(name, new Pair<>(c.getPlayer().getGuildId(), currentTime + (20 * 60000))); //20 mins expire
                 }
                 break;
-            case 0x06: // accepted guild invitation
+            case 0x06: // 接受了公會邀請
                 if (c.getPlayer().getGuildId() > 0) {
                     return;
                 }
@@ -164,7 +168,7 @@ public class GuildHandler {
                     respawnPlayer(c.getPlayer());
                 }
                 break;
-            case 0x07: // leaving
+            case 0x07: // 離開
                 cid = slea.readInt();
                 name = slea.readMapleAsciiString();
 
@@ -174,7 +178,7 @@ public class GuildHandler {
                 World.Guild.leaveGuild(c.getPlayer().getMGC());
                 c.sendPacket(GuildPacket.showGuildInfo(null));
                 break;
-            case 0x08: // Expel
+            case 0x08: // 驅逐
                 cid = slea.readInt();
                 name = slea.readMapleAsciiString();
 
@@ -183,7 +187,7 @@ public class GuildHandler {
                 }
                 World.Guild.expelMember(c.getPlayer().getMGC(), name, cid);
                 break;
-            case 0x0e: // Guild rank titles change
+            case 0x0e: // 更變職位名稱
                 if (c.getPlayer().getGuildId() <= 0 || c.getPlayer().getGuildRank() != 1) {
                     return;
                 }
@@ -194,7 +198,7 @@ public class GuildHandler {
 
                 World.Guild.changeRankTitle(c.getPlayer().getGuildId(), ranks);
                 break;
-            case 0x0f: // Rank change
+            case 0x0f: // 更變職位
                 cid = slea.readInt();
                 byte newRank = slea.readByte();
 
@@ -204,7 +208,7 @@ public class GuildHandler {
 
                 World.Guild.changeRank(c.getPlayer().getGuildId(), cid, newRank);
                 break;
-            case 0x10: // guild emblem change
+            case 0x10: //更變圖標
                 if (c.getPlayer().getGuildId() <= 0 || c.getPlayer().getGuildRank() != 1 || c.getPlayer().getMapId() != 200000301) {
                     return;
                 }
@@ -223,7 +227,7 @@ public class GuildHandler {
                 c.getPlayer().gainMeso(-1500000, true, true);
                 respawnPlayer(c.getPlayer());
                 break;
-            case 0x11: // guild notice change
+            case 0x11: // 更變公告
                 final String notice = slea.readMapleAsciiString();
                 if (notice.length() > 100 || c.getPlayer().getGuildId() <= 0 || c.getPlayer().getGuildRank() > 2) {
                     return;
@@ -271,6 +275,8 @@ public class GuildHandler {
                 }
                 World.Guild.setGuildLeader(c.getPlayer().getGuildId(), cid);
                 break;
+            default:
+                System.out.println("未知公會操作類型: ( 0x" + tools.StringUtil.getLeftPaddedStr(Integer.toHexString(bla).toUpperCase(), '0', 2) + " )" + slea.toString());
         }
     }
 }

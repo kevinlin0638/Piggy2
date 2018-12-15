@@ -3002,7 +3002,7 @@ public class CWvsContext {
             mplew.write(45);
             mplew.writeInt(mgc.getGuildId());
             mplew.writeInt(mgc.getId());
-            mplew.writeAsciiString(mgc.getName(), 13);
+            mplew.writeAsciiString(mgc.getName(), 15);
             mplew.writeInt(mgc.getJobId());
             mplew.writeInt(mgc.getLevel());
             mplew.writeInt(mgc.getGuildRank()); //should be always 5 but whatevs
