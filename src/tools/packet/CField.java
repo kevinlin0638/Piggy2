@@ -2655,6 +2655,21 @@ public class CField {
             }
             mplew.write(effect); // 0 = Level up, 8 = job change
 
+
+            if(effect == 20)
+                mplew.writeInt(0);
+
+            return mplew.getPacket();
+        }
+
+        public static byte[] showForeignDoDge(int effect) {
+            MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+            mplew.writeShort(SendPacketOpcode.SHOW_FOREIGN_EFFECT.getValue());
+            mplew.write(effect); // 0 = Level up, 8 = job change
+
+            mplew.writeInt(0);
+
             return mplew.getPacket();
         }
 

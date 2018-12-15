@@ -183,6 +183,25 @@ public class AdminCommand {
         }
     }
 
+    public static class Packet extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            if (args.size() > 1) {
+                c.getSession().write(CField.getPacketFromHexString(StringUtil.joinStringFrom(args.toArray(new String[0]), 1)));
+            } else {
+                c.getPlayer().dropMessage(6, "請輸入數據!");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!Packet <封包資料> - 傳送封包";
+        }
+    }
+
+
     public static class Hide extends AbstractsCommandExecute {
 
         @Override

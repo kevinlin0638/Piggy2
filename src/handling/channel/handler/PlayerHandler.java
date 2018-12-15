@@ -360,7 +360,7 @@ public class PlayerHandler {
             return;
         }
         if (chr.getStat().dodgeChance > 0 && Randomizer.nextInt(100) < chr.getStat().dodgeChance) {
-            c.sendPacket(EffectPacket.showForeignEffect(20));
+            c.sendPacket(EffectPacket.showForeignDoDge(20));
             return;
         }
         if (pPhysical && skillid == 1201007 && chr.getTotalSkillLevel(1201007) > 0) { // Only Power Guard decreases damage
