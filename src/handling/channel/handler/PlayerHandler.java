@@ -879,6 +879,9 @@ public class PlayerHandler {
 
     //方便解析s
     public static void Data_Display(AttackInfo attack) {
+        if (attack != null) {
+            return;
+        }
         System.gc();
         System.err.println("ｔｂｙｅ　　　　" + attack.tbyte + " >> " + bytes2HexString(tools.HexTool.toString(attack.tbyte)) + " [??]");
         System.err.println("攻擊數量　　　　" + attack.targets);

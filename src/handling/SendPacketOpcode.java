@@ -475,9 +475,9 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
         switch (opcode.toString()) {
             case "NPC_ACTION":
             case "YELLOW_CHAT":
-            case "MOVE_PLAYER":
-            case "MOVE_MONSTER":
-            case "MOVE_MONSTER_RESPONSE":
+            case "MOVE_PLAYER"://# 玩家移動[完成]
+            case "MOVE_MONSTER"://# 怪物移動 [完成]
+            case "MOVE_MONSTER_RESPONSE"://# 怪物移動回應
             case "SPAWN_MONSTER":
             //case "REACTOR_SPAWN":
             case "KILL_MONSTER":
@@ -501,6 +501,7 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
             case "NPC_TALK":
             case "MOVE_SUMMON":
             case "UPDATE_PARTYMEMBER_HP":
+            case "DAMAGE_PLAYER":
                 return true;
             default:
                 return false;

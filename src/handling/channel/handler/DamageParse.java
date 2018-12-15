@@ -103,6 +103,11 @@ public class DamageParse {
         if (LoginServer.isAdminOnly()) {
             player.dropMessage(-1, "Animation: " + Integer.toHexString(((attack.display & 0x8000) != 0 ? (attack.display - 0x8000) : attack.display)));
         }
+        if (player.isShowInfo()) {
+            int display = attack.display & 0x7FFF;
+            player.dropMessage(6, "[物理攻擊]使用技能[" + attack.skill + "]進行攻擊，攻擊動作:0x" + Integer.toHexString(display).toUpperCase() + "(" + display + ")");
+        }
+        
         final boolean useAttackCount = attack.skill != 4211006 && attack.skill != 3221007 && attack.skill != 23121003 && (attack.skill != 1311001 || player.getJob() != 132) && attack.skill != 3211006;
         if (attack.hits > attackCount) {
             if (useAttackCount) { //buster

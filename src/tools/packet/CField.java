@@ -2655,9 +2655,9 @@ public class CField {
             }
             mplew.write(effect); // 0 = Level up, 8 = job change
 
-
-            if(effect == 20)
+            if (effect == 20) {
                 mplew.writeInt(0);
+            }
 
             return mplew.getPacket();
         }

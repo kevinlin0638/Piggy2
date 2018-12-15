@@ -2611,7 +2611,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             stats.recalcLocalStats(this);
         }
         if (ServerConstants.DEBUG) {
-            this.dropMessage(6, "[系統提示] 使用了 BUFF 來源 :" + effect.getName() + "(" + effect.getSourceId() + ")");
+            this.dropMessage(6, "[系統提示] 使用了 BUFF 來源 :" + effect.getName() + "(" + effect.getSourceId() + ") 持續時間 :" + effect.getDuration()/1000);
             for (Map.Entry<MapleBuffStatus, Integer> buf : statups.entrySet()) {
                 this.dropMessage(6, "[系統提示] " + buf.getKey().toString() + "(0x" + HexTool.toString(buf.getKey().getValue()) + ")");
             }
@@ -8051,12 +8051,12 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void addCooldown(int skillId, long startTime, long length) {
         if (isAdmin() && isInvincible()) {
-            dropMessage(10, "伺服器管理員無敵狀態消除技能[" + GameConstants.getLinkedAttackSkill(skillId) + "(源" + skillId + ")]，持續時間：" + length / 1000.0 + "秒");
+            dropMessage(2, "伺服器管理員無敵狀態消除技能[" + GameConstants.getLinkedAttackSkill(skillId) + "(源" + skillId + ")]，持續時間：" + length / 1000.0 + "秒");
         } else {
             if (isShowInfo()) {
-                dropMessage(10, "技能[" + GameConstants.getLinkedAttackSkill(skillId) + "(源" + skillId + ")]進入冷卻，持續時間：" + length / 1000.0 + "秒");
+                dropMessage(2, "技能[" + GameConstants.getLinkedAttackSkill(skillId) + "(源" + skillId + ")]進入冷卻，持續時間：" + length / 1000.0 + "秒");
             }
-            giveCoolDowns(skillId, startTime, length);
+            //giveCoolDowns(skillId, startTime, length);
             if (length / 1000 > 0) {
                 client.getSession().writeAndFlush(CField.skillCooldown(skillId, (int) Math.max(length / 1000, 0)));
             }

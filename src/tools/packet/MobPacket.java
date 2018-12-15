@@ -269,7 +269,6 @@ public class MobPacket {
         return mplew.getPacket();
     }
 
-
     public static byte[] movePokemon(int oid, Point startPos, List<ILifeMovementFragment> moves) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -361,7 +360,6 @@ public class MobPacket {
         return mplew.getPacket();
     }
 
-
     public static void addMonsterStatus(MaplePacketLittleEndianWriter mplew, MapleMonster life) {
         if (life.getStati().size() <= 1) {
             life.addEmpty(); //not done yet lulz ok so we add it now for the lulz
@@ -382,7 +380,7 @@ public class MobPacket {
         }
     }
 
-    public static byte[] controlMonster(MapleMonster life, boolean newSpawn, boolean aggro) {
+    public static byte[] controlMonster1(MapleMonster life, boolean newSpawn, boolean aggro) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.writeShort(SendPacketOpcode.SPAWN_MONSTER_CONTROL.getValue());
         mplew.write(aggro ? 2 : 1);
@@ -434,7 +432,6 @@ public class MobPacket {
         return mplew.getPacket();
     }
 
-
     public static byte[] stopControllingMonster(int oid) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
@@ -461,7 +458,6 @@ public class MobPacket {
         return spawnAswanMonster(life, -4, 0);
     }
 
-
     public static byte[] makeMonsterReal(MapleMonster life) {
         return spawnMonster(life, -1, 0);
     }
@@ -470,7 +466,6 @@ public class MobPacket {
 //        System.out.println("accessing makeAswanMonsterReal");
         return spawnAswanMonster(life, -1, 0);
     }
-
 
     public static byte[] makeMonsterFake(MapleMonster life) {
         return spawnMonster(life, -4, 0);
@@ -620,41 +615,39 @@ public class MobPacket {
     }
 
     public static byte[] showBossHPPlayer(int monsterId, long currentHp, long maxHp, byte tagColor, byte tagbgcolor) {
-/* 208 */
+        /* 208 */
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-/*     */ 
-/* 210 */
+        /*     */
+ /* 210 */
         mplew.writeShort(SendPacketOpcode.BOSS_ENV.getValue());
-/* 211 */
+        /* 211 */
         mplew.write(5);
-/* 212 */
+        /* 212 */
         mplew.writeInt(monsterId);
-/* 213 */
-        if (currentHp > 2147483647L)
-/* 214 */ mplew.writeInt((int) (currentHp / maxHp * 2147483647.0D));
-/*     */
-        else {
-/* 216 */
+        /* 213 */
+        if (currentHp > 2147483647L) /* 214 */ {
+            mplew.writeInt((int) (currentHp / maxHp * 2147483647.0D));
+        } /*     */ else {
+            /* 216 */
             mplew.writeInt((int) (currentHp <= 0L ? -1L : currentHp));
-/*     */
+            /*     */
         }
-/* 218 */
-        if (maxHp > 2147483647L)
-/* 219 */ mplew.writeInt(2147483647);
-/*     */
-        else {
-/* 221 */
+        /* 218 */
+        if (maxHp > 2147483647L) /* 219 */ {
+            mplew.writeInt(2147483647);
+        } /*     */ else {
+            /* 221 */
             mplew.writeInt((int) maxHp);
-/*     */
+            /*     */
         }
-/* 223 */
+        /* 223 */
         mplew.write(tagColor);
-/* 224 */
+        /* 224 */
         mplew.write(tagbgcolor);
-/*     */ 
-/* 229 */
+        /*     */
+ /* 229 */
         return mplew.getPacket();
-/*     */
+        /*     */
     }
 
     private static void writeMaskFromList(MaplePacketLittleEndianWriter mplew, Collection<MonsterStatusEffect> ss) {
@@ -666,7 +659,6 @@ public class MobPacket {
             mplew.writeInt(mask[(i)]);
         }
     }
-
 
     public static void EncodeTemporary(MaplePacketLittleEndianWriter mplew, List<MonsterStatusEffect> buffs) {
         writeMaskFromList(mplew, buffs);
@@ -705,10 +697,12 @@ public class MobPacket {
                         mplew.writeInt(0);
                     });
                 }
-                if (buff.getStatus() == MonsterStatus.WEAPON_DAMAGE_REFLECT)
+                if (buff.getStatus() == MonsterStatus.WEAPON_DAMAGE_REFLECT) {
                     mplew.writeInt(0);
-                if (buff.getStatus() == MonsterStatus.MAGIC_DAMAGE_REFLECT)
+                }
+                if (buff.getStatus() == MonsterStatus.MAGIC_DAMAGE_REFLECT) {
                     mplew.writeInt(0);
+                }
                 if (buff.getStatus() == MonsterStatus.WEAPON_DAMAGE_REFLECT || buff.getStatus() == MonsterStatus.MAGIC_DAMAGE_REFLECT) {
                     mplew.writeInt(0);
                     mplew.writeInt(0);
@@ -733,6 +727,89 @@ public class MobPacket {
             }
             mplew.writeShort((short) ((buff.getCancelTask() - System.currentTimeMillis()) / 1000));
         }
+    }
 
+    private static void getLongMask_NoRef(MaplePacketLittleEndianWriter mplew, Collection<MonsterStatusEffect> ss, boolean ignore_imm) {
+        int[] mask = new int[8];
+        for (MonsterStatusEffect statup : ss) {
+            if ((statup != null) && (statup.getStatus() != MonsterStatus.WEAPON_DAMAGE_REFLECT) && (statup.getStatus() != MonsterStatus.MAGIC_DAMAGE_REFLECT) && ((!ignore_imm) || ((statup.getStatus() != MonsterStatus.WEAPON_IMMUNITY) && (statup.getStatus() != MonsterStatus.MAGIC_IMMUNITY) && (statup.getStatus() != MonsterStatus.DAMAGE_IMMUNITY)))) {
+                mask[(statup.getStatus().getPosition() - 1)] |= statup.getStatus().getValue();
+            }
+        }
+        for (int i = mask.length; i >= 1; i--) {
+            mplew.writeInt(mask[(i - 1)]);
+        }
+    }
+
+    public static void addMonsterStatus1(MaplePacketLittleEndianWriter mplew, MapleMonster life) {
+        if (life.getStati().size() <= 1) {
+            life.addEmpty();
+        }
+        mplew.write(life.getChangedStats() != null ? 1 : 0);
+        if (life.getChangedStats() != null) {
+            mplew.writeInt(life.getChangedStats().hp > 2147483647L ? 2147483647 : (int) life.getChangedStats().hp);
+            mplew.writeInt(life.getChangedStats().mp);
+            mplew.writeInt(life.getChangedStats().exp);
+            mplew.writeInt(life.getChangedStats().watk);
+            mplew.writeInt(life.getChangedStats().matk);
+            mplew.writeInt(life.getChangedStats().PDRate);
+            mplew.writeInt(life.getChangedStats().MDRate);
+            mplew.writeInt(life.getChangedStats().acc);
+            mplew.writeInt(life.getChangedStats().eva);
+            mplew.writeInt(life.getChangedStats().pushed);
+            mplew.writeInt(life.getChangedStats().level);
+        }
+        boolean ignore_imm = (life.getStati().containsKey(MonsterStatus.WEAPON_DAMAGE_REFLECT)) || (life.getStati().containsKey(MonsterStatus.MAGIC_DAMAGE_REFLECT));
+        Collection<MonsterStatusEffect> buffs = life.getStati().values();
+        getLongMask_NoRef(mplew, buffs, ignore_imm);
+        for (MonsterStatusEffect buff : buffs) {
+            if ((buff != null) && (buff.getStatus() != MonsterStatus.WEAPON_DAMAGE_REFLECT) && (buff.getStatus() != MonsterStatus.MAGIC_DAMAGE_REFLECT) && ((!ignore_imm) || ((buff.getStatus() != MonsterStatus.WEAPON_IMMUNITY) && (buff.getStatus() != MonsterStatus.MAGIC_IMMUNITY) && (buff.getStatus() != MonsterStatus.DAMAGE_IMMUNITY)))) {
+                if ((buff.getStatus() != MonsterStatus.SUMMON) && (buff.getStatus() != MonsterStatus.IMPRINT)) {
+                    if ((buff.getStatus() == MonsterStatus.MOB_BUFF_32) || (buff.getStatus() == MonsterStatus.NEUTRALISE) || (buff.getStatus() == MonsterStatus.IMPRINT) || (buff.getStatus() == MonsterStatus.MONSTER_BOMB) || (buff.getStatus() == MonsterStatus.MAGIC_CRASH) || (buff.getStatus() == MonsterStatus.MOB_BUFF_37)) {
+                        mplew.writeShort(Integer.valueOf((int) System.currentTimeMillis()).shortValue());
+                        mplew.writeShort(0);
+                    } else if (buff.getStatus() == MonsterStatus.MOB_BUFF_38) {
+                        mplew.write(0);
+                    } else {
+                        mplew.writeInt(buff.getX().intValue());
+                    }
+                    if (buff.getMobSkill() != null) {
+                        mplew.writeShort(buff.getMobSkill().getSkillId());
+                        mplew.writeShort(buff.getMobSkill().getSkillLevel());
+                    } else if (buff.getSkill() > 0) {
+                        mplew.writeInt(buff.getSkill());
+                    }
+                }
+                if (buff.getStatus() != MonsterStatus.MOB_BUFF_38) {
+                    mplew.writeShort(buff.getStatus().isDefault() ? 0 : buff.getStatus() == MonsterStatus.HYPNOTIZE ? 40 : 1);
+                    if ((buff.getStatus() == MonsterStatus.MOB_BUFF_32) || (buff.getStatus() == MonsterStatus.IMPRINT)) {
+                        mplew.writeShort(0);
+                    } else if ((buff.getStatus() == MonsterStatus.MONSTER_BOMB) || (buff.getStatus() == MonsterStatus.MAGIC_CRASH)) {
+                        mplew.writeInt(0);
+                    }
+                }
+            }
+        }
+    }
+
+    public static byte[] controlMonster(MapleMonster life, boolean newSpawn, boolean aggro) {
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        mplew.writeShort(SendPacketOpcode.SPAWN_MONSTER_CONTROL.getValue());
+        mplew.write(aggro ? 2 : 1);
+        mplew.writeInt(life.getObjectId());
+        mplew.write(1);
+        mplew.writeInt(life.getId());
+        addMonsterStatus1(mplew, life);
+        mplew.writePos(life.getTruePosition());
+        mplew.write(life.getStance());
+        mplew.writeShort(0);
+        mplew.writeShort(life.getFh());
+        mplew.write(newSpawn ? -2 : life.isFake() ? -4 : -1);
+        mplew.write(life.getCarnivalTeam());
+        mplew.writeInt(63000);
+        mplew.writeInt(0);
+        mplew.writeInt(0);
+        mplew.write(-1);
+        return mplew.getPacket();
     }
 }
