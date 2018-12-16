@@ -2611,7 +2611,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             stats.recalcLocalStats(this);
         }
         if (ServerConstants.DEBUG) {
-            this.dropMessage(6, "[系統提示] 使用了 BUFF 來源 :" + effect.getName() + "(" + effect.getSourceId() + ") 持續時間 :" + effect.getDuration()/1000);
+            this.dropMessage(6, "[系統提示] 使用了 BUFF 來源 :" + effect.getName() + "(" + effect.getSourceId() + ") 持續時間 :" + effect.getDuration() / 1000);
             for (Map.Entry<MapleBuffStatus, Integer> buf : statups.entrySet()) {
                 this.dropMessage(6, "[系統提示] " + buf.getKey().toString() + "(0x" + HexTool.toString(buf.getKey().getValue()) + ")");
             }
@@ -3902,6 +3902,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             familyUpdate();
             if (dragon != null) {
                 map.broadcastMessage(CField.removeDragon(this.id));
+                map.removeMapObject(dragon);
                 dragon = null;
             }
             //baseSkills();
@@ -6178,6 +6179,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return 0;
     }
 
+    /**
+     * 作用：發送召喚角色相關的數據包
+     *
+     * @param client 客戶端
+     */
     @Override
     public void sendSpawnData(MapleClient client) {
         if (this.isGod() && this.isMegaHidden()) {

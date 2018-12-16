@@ -56,7 +56,9 @@ public class SummonHandler {
         if (chr.getDragon() == null) {
             return;
         }
-        slea.skip(4); //POS
+        //[D8 01 12 01] [00 00 00 00] [03]
+        //座標          空白           類型
+        slea.skip(8);
         final List<ILifeMovementFragment> res = MovementParse.parseMovement(slea, chr.getDragon().getPosition(), MovementKind.DRAGON_MOVEMENT);
         if (res.size() > 0) {
             final Point pos = chr.getDragon().getPosition();
@@ -64,7 +66,6 @@ public class SummonHandler {
             if (!chr.isHidden()) {
                 chr.getMap().broadcastMessage(chr, CField.moveDragon(chr.getDragon(), pos, res), chr.getTruePosition());
             }
-
         }
     }
 
