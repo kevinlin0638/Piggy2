@@ -40,7 +40,6 @@ public class PlayerStorage {
     private final Map<String, MapleCharacter> nameToChar = new HashMap<>();
     private final Map<Integer, CharacterTransfer> pendingChars = new HashMap<>();
 
-
     public PlayerStorage() {
         PingTimer.getInstance().register(new PersistingTask(), 60000);
     }
@@ -83,8 +82,9 @@ public class PlayerStorage {
         rlock.lock();
         try {
             for (MapleCharacter chr : storage.values()) {
-                if (chr.getName().toLowerCase().equals(name.toLowerCase()))
+                if (chr.getName().toLowerCase().equals(name.toLowerCase())) {
                     return chr;
+                }
             }
             return null;
         } finally {
@@ -201,6 +201,7 @@ public class PlayerStorage {
     }
 
     public class PersistingTask implements Runnable {
+
         @Override
         public void run() {
             wlock.lock();
@@ -211,6 +212,27 @@ public class PlayerStorage {
             } finally {
                 wlock.unlock();
             }
+        }
+    }
+
+    private final PlayerObservable playerObservable = new PlayerObservable();
+
+    public PlayerObservable getPlayerObservable() {
+        return playerObservable;
+    }
+
+    public class PlayerObservable extends Observable {
+
+        private int count;
+
+        public int getCount() {
+            return count;
+        }
+
+        public void changed() {
+            this.count = nameToChar.size();
+            setChanged();
+            notifyObservers();
         }
     }
 }

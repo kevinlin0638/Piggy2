@@ -63,6 +63,7 @@ public abstract class Timer {
     }
 
     public static class WorldTimer extends Timer {
+
         private static WorldTimer instance = new WorldTimer();
 
         private WorldTimer() {
@@ -75,6 +76,7 @@ public abstract class Timer {
     }
 
     public static class PokeTimer extends Timer {
+
         private static PokeTimer instance = new PokeTimer();
 
         private PokeTimer() {
@@ -87,6 +89,7 @@ public abstract class Timer {
     }
 
     public static class MapTimer extends Timer {
+
         private static MapTimer instance = new MapTimer();
 
         private MapTimer() {
@@ -99,6 +102,7 @@ public abstract class Timer {
     }
 
     public static class BuffTimer extends Timer {
+
         private static BuffTimer instance = new BuffTimer();
 
         private BuffTimer() {
@@ -111,6 +115,7 @@ public abstract class Timer {
     }
 
     public static class EventTimer extends Timer {
+
         private static EventTimer instance = new EventTimer();
 
         private EventTimer() {
@@ -123,6 +128,7 @@ public abstract class Timer {
     }
 
     public static class EtcTimer extends Timer {
+
         private static EtcTimer instance = new EtcTimer();
 
         private EtcTimer() {
@@ -135,6 +141,7 @@ public abstract class Timer {
     }
 
     public static class CloneTimer extends Timer {
+
         private static CheatTimer instance = new CheatTimer();
 
         private CloneTimer() {
@@ -147,6 +154,7 @@ public abstract class Timer {
     }
 
     public static class CheatTimer extends Timer {
+
         private static CheatTimer instance = new CheatTimer();
 
         private CheatTimer() {
@@ -158,8 +166,8 @@ public abstract class Timer {
         }
     }
 
-
     public static class PingTimer extends Timer {
+
         private static PingTimer instance = new PingTimer();
 
         private PingTimer() {
@@ -167,6 +175,32 @@ public abstract class Timer {
         }
 
         public static PingTimer getInstance() {
+            return instance;
+        }
+    }
+
+    public static class GuiTimer extends Timer {
+
+        private static final GuiTimer instance = new GuiTimer();
+
+        private GuiTimer() {
+            name = "GuiTimer";
+        }
+
+        public static GuiTimer getInstance() {
+            return instance;
+        }
+    }
+
+    public static class PlayerTimer extends Timer {
+
+        private static final PlayerTimer instance = new PlayerTimer();
+
+        private PlayerTimer() {
+            name = "PlayerTimer";
+        }
+
+        public static PlayerTimer getInstance() {
             return instance;
         }
     }
@@ -201,7 +235,6 @@ public abstract class Timer {
             tname = name + Randomizer.nextInt();
         }
 
-
         @Override
         public Thread newThread(Runnable r) {
             final Thread t = new Thread(r);
@@ -209,6 +242,5 @@ public abstract class Timer {
             return t;
         }
     }
-
 
 }

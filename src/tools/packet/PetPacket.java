@@ -77,7 +77,6 @@ public class PetPacket {
         return mplew.getPacket();
     }
 
-
     public static void addPetInfo(MaplePacketLittleEndianWriter mplew, MapleCharacter chr, MaplePet pet, boolean showpet) {
         if (showpet) {
             mplew.write(0);

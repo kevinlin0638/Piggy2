@@ -33,6 +33,16 @@ public class ShutdownServer implements ShutdownServerMBean {
         return instance;
     }
 
+    private int time = 0;
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
     public void shutdown() {//can execute twice
         run();
     }

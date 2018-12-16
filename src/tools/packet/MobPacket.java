@@ -262,8 +262,9 @@ public class MobPacket {
         if (unk2 != null) {
             unk2.forEach(mplew::writeShort);
         }
-        mplew.writeInt(0);
         mplew.writePos(startPos);
+        mplew.writeShort(8);
+        mplew.writeShort(1);
         PacketHelper.serializeMovementList(mplew, moves);
 
         return mplew.getPacket();
