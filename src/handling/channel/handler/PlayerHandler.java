@@ -738,6 +738,13 @@ public class PlayerHandler {
             //fallthrough intended
             default:
                 Point pos = null;
+                if (skillid == 35111002) {
+                    int type = slea.readByte();
+                    if (type == 2) {
+                        slea.skip(4 * type);
+                    }
+                    pos = slea.readPos();
+                }
                 if (slea.available() == 5 || slea.available() == 7) {
                     pos = slea.readPos();
                 }
