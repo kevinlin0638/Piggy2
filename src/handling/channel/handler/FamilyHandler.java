@@ -158,7 +158,7 @@ public class FamilyHandler {
         } else if (addChr.getSeniorId() != 0) {
             c.getPlayer().dropMessage(1, "The character is already a junior of another character.");
         } else if (addChr.getLevel() >= c.getPlayer().getLevel()) {
-            c.getPlayer().dropMessage(1, "The junior you wish to add must be at a lower rank.");
+            c.getPlayer().dropMessage(1, "您的追隨者等級必須小於您");
         } else if (addChr.getLevel() < c.getPlayer().getLevel() - 20) {
             c.getPlayer().dropMessage(1, "The gap between you and your junior must be within 20 levels.");
             //} else if (c.getPlayer().getFamilyId() != 0 && c.getPlayer().getFamily().getGens() >= 1000) {
