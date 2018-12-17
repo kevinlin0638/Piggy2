@@ -806,11 +806,18 @@ public class MobPacket {
         mplew.writeShort(0);
         mplew.writeShort(life.getFh());
         mplew.write(newSpawn ? -2 : life.isFake() ? -4 : -1);
-        mplew.write(life.getCarnivalTeam());
+
         mplew.writeInt(63000);
-        mplew.writeInt(0);
+        mplew.write(life.getCarnivalTeam());
         mplew.writeInt(0);
         mplew.write(-1);
+
+        // 4 1 4 1
+//        mplew.write(life.getCarnivalTeam());
+//        mplew.writeInt(63000);
+//        mplew.writeInt(0);
+//        mplew.writeInt(0);
+//        mplew.write(-1);
         return mplew.getPacket();
     }
 }
