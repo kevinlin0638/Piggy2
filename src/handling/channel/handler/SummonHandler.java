@@ -163,16 +163,17 @@ public class SummonHandler {
         slea.skip(summon.getSkill() == 35111002 ? 24 : 12);
         List<Pair<Integer, Integer>> allDamage = new ArrayList<>();
         for (int i = 0; i < numAttacked; i++) {
-            MapleMonster mob = map.getMonsterByOid(slea.readInt());
-            if (mob == null) {
+            int mob = slea.readInt();//MapleMonster mob = map.getMonsterByOid(slea.readInt());
+            /*if (mob == null) {
                 continue;
-            }
+            }*/
             slea.skip(18);
             int damge = slea.readInt();
             if (chr.isShowInfo()) {
-                chr.dropMessage(-5, "召喚獸攻擊[" + summon.getSkill() + "] - 攻擊數量: " + numAttacked + " 怪物OID " + mob.getObjectId() + " 傷害: " + damge);
+                chr.dropMessage(-5, "召喚獸攻擊[" + summon.getSkill() + "] - 攻擊數量: " + numAttacked + " 怪物ID " + mob + " 傷害: " + damge);
             }
-            allDamage.add(new Pair(Integer.valueOf(mob.getObjectId()), Integer.valueOf(damge)));
+            allDamage.add(new Pair(Integer.valueOf(mob), Integer.valueOf(damge)));
+            slea.readInt();//[?? ?? ?? ??]
         }
         map.broadcastMessage(chr, CField.SummonPacket.summonAttack(summon.getOwnerId(), summon.getObjectId(), animation, allDamage, chr.getLevel(), false), summon.getTruePosition());
         Skill summonSkill = SkillFactory.getSkill(summon.getSkill());
