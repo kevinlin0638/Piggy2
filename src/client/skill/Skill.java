@@ -657,7 +657,7 @@ public class Skill {
             case 9101001:
             case 9101002:
             case 9101003:
-            case 9101004:
+            case 9001004:
             case 9101005:
             case 9101006:
             case 9101007:

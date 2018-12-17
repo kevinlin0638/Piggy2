@@ -4994,7 +4994,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (isGM()) {
             if (!yes) {
                 this.hidden = false;
-                // dispelSkill(9101004);
+                // dispelSkill(9001004);
                 updatePartyMemberHP();
                 equipChanged();
                 getMap().broadcastMessage(this, CField.spawnPlayerMapobject(this), false);

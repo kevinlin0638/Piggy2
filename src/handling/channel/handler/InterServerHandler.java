@@ -123,10 +123,8 @@ public class InterServerHandler {
             player = MapleCharacter.ReconstructChr(transfer, client, true);
         }
 
-
         client.setPlayer(null);
         client.setAccID(player.getAccountID());
-
 
         if (!client.CheckIPAddress()) { // Remote hack
             client.getSession().close();
@@ -157,8 +155,6 @@ public class InterServerHandler {
 //            client.getSession().close();
 //            return;
 //        }
-
-
         if (!client.CheckIPAddress()) { // Remote hack
             System.out.println(client.getAccountName() + " BUG?3");
             client.getSession().close();
@@ -179,8 +175,9 @@ public class InterServerHandler {
         player.giveCoolDowns(PlayerBuffStorage.getCooldownsFromStorage(player.getId()));
         player.silentGiveBuffs(PlayerBuffStorage.getBuffsFromStorage(player.getId()));
         final List<MapleDiseaseValueHolder> ld = PlayerBuffStorage.getDiseaseFromStorage(player.getId());
-        if (ld != null)
+        if (ld != null) {
             player.giveSilentDebuff(ld);
+        }
         client.sendPacket(CField.getCharInfo(player));
         player.getMap().addPlayer(player);
         world.getPlayerStorage().addPlayer(player);
@@ -198,11 +195,14 @@ public class InterServerHandler {
             if (player.isGod()) {
                 player.setMegaHide(true); // on 
             }
-            //SkillFactory.getSkill(9101004).getEffect(1).applyTo(c.getPlayer());
+            //SkillFactory.getSkill(9001004).getEffect(1).applyTo(c.getPlayer());
             player.dropMessage(6, "Hide Deactivated.");
             player.toggleHide(false, !player.isHidden());
         }
-
+        //管理員上線預設隱藏
+        if (player.isGM()) {
+           // SkillFactory.getSkill(9001004).getEffect(1).applyTo(player);
+        }
         try {
             // Start of buddylist
             final int buddyIds[] = player.getBuddylist().getBuddyIds();

@@ -530,7 +530,7 @@ public abstract class AbstractPlayerInteraction {
                 item.setGMLog("Received from interaction " + this.id + " (" + id2 + ") on " + FileoutputUtil.CurrentReadable_Time());
                 final String name = ii.getName(id);
                 if (id / 10000 == 114 && name != null && name.length() > 0) { //medal
-                    final String msg = "You have attained title <" + name + ">";
+                    final String msg = "你已獲得稱號 <" + name + ">";
                     cg.getPlayer().dropMessage(-1, msg);
                     cg.getPlayer().dropMessage(5, msg);
                 }

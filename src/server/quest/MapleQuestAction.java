@@ -285,7 +285,7 @@ public class MapleQuestAction implements Serializable {
                         final int period = item.period / 1440; //im guessing.
                         final String name = MapleItemInformationProvider.getInstance().getName(id);
                         if (id / 10000 == 114 && name != null && name.length() > 0) { //medal
-                            final String msg = "You have attained title <" + name + ">";
+                            final String msg = "你已獲得稱號 <" + name + ">";
                             c.dropMessage(-1, msg);
                             c.dropMessage(5, msg);
                         }
@@ -548,7 +548,7 @@ public class MapleQuestAction implements Serializable {
                         final int period = item.period / 1440; //im guessing.
                         final String name = MapleItemInformationProvider.getInstance().getName(id);
                         if (id / 10000 == 114 && name != null && name.length() > 0) { //medal
-                            final String msg = "You have attained title <" + name + ">";
+                            final String msg = "你已獲得稱號 <" + name + ">";
                             c.dropMessage(-1, msg);
                             c.dropMessage(5, msg);
                         }

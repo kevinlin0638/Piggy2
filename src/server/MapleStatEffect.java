@@ -1456,7 +1456,7 @@ public class MapleStatEffect implements Serializable {
             return true;
         }
         if (!applyfrom.isGM()) {
-            if (skill && (sourceid == 9001000 || sourceid == 9001001 || sourceid == 9001002 || sourceid == 9101000 || sourceid == 9101001 || sourceid == 9101002 || sourceid == 9101003 || sourceid == 9101004 || sourceid == 9101005 || sourceid == 9101006 || sourceid == 9101007 || sourceid == 9101008)) {
+            if (skill && (sourceid == 9001000 || sourceid == 9001001 || sourceid == 9001002 || sourceid == 9101000 || sourceid == 9101001 || sourceid == 9101002 || sourceid == 9101003 || sourceid == 9001004 || sourceid == 9101005 || sourceid == 9101006 || sourceid == 9101007 || sourceid == 9101008)) {
                 World.Broadcast.broadcastMessage(applyfrom.getWorld(), CWvsContext.broadcastMsg(6, "[AutoBan]: " + applyfrom.getName() + "has Packet edited GM skills."));
                 applyfrom.ban("Packet edited a GM Skill!", true);
                 return false;
@@ -2125,7 +2125,7 @@ public class MapleStatEffect implements Serializable {
             case 80001081:
                 // applyto.dropMessage(5, "Monster Carnival buffs are currently being coded.");
                 break;
-            case 9101004: {
+            case 9001004: {
                 if (isHide() && applyfrom.isGM()) {
                     applyfrom.toggleHide(false, !applyfrom.isHidden());
                     return;
