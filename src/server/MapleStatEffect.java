@@ -1149,8 +1149,8 @@ public class MapleStatEffect implements Serializable {
                     break;
                 case 33111007: //feline berserk
                     ret.statups.put(MapleBuffStatus.SPEED, ret.z);
-                    ret.statups.put(MapleBuffStatus.ATTACK_BUFF, ret.y);
-                    ret.statups.put(MapleBuffStatus.FELINE_BERSERK, ret.x);
+                    ret.statups.put(MapleBuffStatus.DAMAGE_BUFF, ret.y);
+                    ret.statups.put(MapleBuffStatus.ATTACK_BUFF, ret.x);
                     break;
                 case 2301004:
                 case 9001003:

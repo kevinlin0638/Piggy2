@@ -273,7 +273,12 @@ public class DamageParse {
                     totDamageToOneMonster = Integer.MAX_VALUE;
                 }
                 if (totDamageToOneMonster > 0 || attack.skill == 1221011 || attack.skill == 21120006) {
-
+                    if(attack.skill == 33121005){
+                        if(monster.getBuff(MonsterStatus.SHOWDOWN) == null) {
+                            final MapleStatEffect eff = SkillFactory.getSkill(33121005).getEffect(player.getTotalSkillLevel(33121005));
+                            monster.applyStatus(player, new MonsterStatusEffect(MonsterStatus.SHOWDOWN, eff.getX(), 33121005, null, false), false, eff.getDuration(), true, eff);
+                        }
+                    }
                     if (GameConstants.isDemon(player.getJob())) {
                         player.handleForceGain(monster.getObjectId(), attack.skill);
                     }
