@@ -345,6 +345,7 @@ public enum RecvPacketOpcode implements WritableShortValueHolder {
             case "MOVE_DRAGON"://# 神龍移動...OK!(145)
             case "MOVE_ANDROID"://# 機器人移動...OK!(145)
             case "MOVE_LIFE"://# 怪物移動...OK!(145)
+            case "MOVE_PET":
             case "HEAL_OVER_TIME"://# 自動恢復...OK!(145)
             //case "CP_UserMeleeAttack":
             case "TAKE_DAMAGE"://# 受到傷害...OK!(145)

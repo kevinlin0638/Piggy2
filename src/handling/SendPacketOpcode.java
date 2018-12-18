@@ -197,14 +197,31 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
     MERCH_ITEM_STORE,
     MESSENGER,
     NPC_ACTION,
+    //召喚寵物[完成]
     SPAWN_PET,
+    //寵物移動[完成]
     MOVE_PET,
+    //寵物說話[完成]
     PET_CHAT,
-    PET_COMMAND,
+    //變更寵物名稱
     PET_NAMECHANGE,
+    // 0x21E
+    //寵物例外清單[完成]
+    PET_EXCEPTION_LIST,
+    //寵物顏色[完成]
+    PET_COLOR,
+    //寵物大小[完成]
+    PET_SIZE,
+    // 0x222
+    //顯示寵物[完成]
+    SHOW_PET,
+    //寵物指令[完成]
+    PET_COMMAND,
+    // 寵物技能(HP)[完成]
     PET_AUTO_HP,
+    // 寵物技能(MP)[完成]
     PET_AUTO_MP,
-    PET_UPDATE,
+    
     COOLDOWN,
     PLAYER_HINT,
     SUMMON_HINT,
@@ -424,7 +441,6 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
     CYGNUS_ATTACK,
     SPECIAL_CREATION,
     MONSTER_RESIST,
-    PET_EXCEPTION_LIST,
     RPS_GAME,
     AZWAN_FAME,
     ASWAN_MOB_TO_MOB_DAMAGE,

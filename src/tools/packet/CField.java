@@ -988,6 +988,7 @@ public class CField {
                 break;
             }
             mplew.writeInt(i);
+            //新架構 [寵物]
             PetPacket.addPetInfo(mplew, chr, pet, false);
         }
 

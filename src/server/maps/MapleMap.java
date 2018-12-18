@@ -28,6 +28,7 @@ import client.MonsterFamiliar;
 import client.inventory.Equip;
 import client.inventory.Item;
 import client.inventory.MapleInventoryType;
+import client.inventory.MaplePet;
 import constants.GameConstants;
 import constants.MapConstants;
 import constants.WorldConfig;
@@ -2223,13 +2224,15 @@ public final class MapleMap {
                     break;
             }
         }
-        chr.getPets().stream().filter(pet -> pet.getSummoned()).forEach(pet -> {
-            if (chr.isGM()) {
-                chr.getClient().sendPacket(PetPacket.showPet(chr, pet, false, false));
-            } else {
-                broadcastMessage(chr, PetPacket.showPet(chr, pet, false, false), false);
+        //新架構 [寵物]
+        for (final MaplePet pet : chr.getPets()) {
+            if (pet.getSummoned()) {
+                pet.setPos(chr.getTruePosition());
+                chr.getClient().sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), true));
+                chr.getClient().sendPacket(PetPacket.showPet(chr, pet, false, false, true));
+                chr.getClient().sendPacket(PetPacket.showPetUpdate(chr, pet.getUniqueId(), (byte) (pet.getSummonedValue() - 1)));
             }
-        });
+        }
         if (chr.getSummonedFamiliar() != null) {
             chr.spawnFamiliar(chr.getSummonedFamiliar());
         }

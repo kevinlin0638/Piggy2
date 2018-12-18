@@ -2792,6 +2792,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
                 for (final MaplePet pet : pets) {
                     if (pet.getSummoned()) {
+                        //新架構 [寵物]
                         map.broadcastMessage(this, PetPacket.showPet(this, pet, false, false), false);
                     }
                 }
@@ -6202,7 +6203,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     receivePartyMemberHP();
                 }
                 pets.stream().filter(pet -> pet.getSummoned()).forEach(pet -> {
+                    //新架構 [寵物]
+                    client.sendPacket(PetPacket.updatePet(pet, getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), true));
                     client.sendPacket(PetPacket.showPet(this, pet, false, false));
+                    client.sendPacket(PetPacket.showPetUpdate(this, pet.getUniqueId(), (byte) (pet.getSummonedValue() - 1)));
                 });
                 if (dragon != null) {
                     client.sendPacket(CField.spawnDragon(dragon));
@@ -6376,7 +6380,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void unequipPet(MaplePet pet, boolean shiftLeft, boolean hunger) {
         if (pet.getSummoned()) {
             pet.saveToDb();
-
+            //新架構 [寵物]
             client.sendPacket(PetPacket.updatePet(pet, getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), false));
             if (map != null) {
                 map.broadcastMessage(this, PetPacket.showPet(this, pet, true, hunger), true);
@@ -6386,7 +6390,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             //stats.put(MapleStat.PET, Integer.valueOf(0)));
             //showpetupdate isn't done here...
             if (GameConstants.GMS) {
-                client.sendPacket(PetPacket.petStatUpdate(this));
+                //新架構 [寵物]
+                //client.sendPacket(PetPacket.petStatUpdate(this));
             }
             client.sendPacket(CWvsContext.enableActions());
         }
@@ -9012,12 +9017,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                         pet.setSummoned(1); //let summoned be true..
                         addPet(pet);
                         pet.setSummoned(getPetIndex(pet) + 1); //then get the index
+                        //新架構 [寵物]
                         if (broadcast && getMap() != null) {
+                            client.getSession().write(PetPacket.updatePet(pet, getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), true));
                             getMap().broadcastMessage(this, PetPacket.showPet(this, pet, false, false), true);
                             client.sendPacket(PetPacket.showPetUpdate(this, pet.getUniqueId(), (byte) (pet.getSummonedValue() - 1)));
-                            if (GameConstants.GMS) {
-                                client.sendPacket(PetPacket.petStatUpdate(this));
-                            }
+                            client.sendPacket(PetPacket.petStatUpdate(this));
+//                            client.getSession().write(PetPacket.petStatUpdate(this));
                         }
                     }
                 }
@@ -9079,7 +9085,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
         }
         if (GameConstants.GMS) {
-            client.sendPacket(PetPacket.petStatUpdate(this));
+            //新架構 [寵物]
+            //client.sendPacket(PetPacket.petStatUpdate(this));
         }
         petStore = new byte[]{-1, -1, -1};
     }

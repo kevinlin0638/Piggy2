@@ -29,6 +29,7 @@ import client.inventory.MaplePet;
 import client.inventory.PetCommand;
 import constants.GameConstants;
 import constants.Occupations;
+import java.awt.Point;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.Randomizer;
@@ -88,6 +89,7 @@ public class PetHandler {
         if (chr == null || chr.getMap() == null || chr.getPet(petid) == null) {
             return;
         }
+        //新架構 [寵物]
         chr.getMap().broadcastMessage(chr, PetPacket.petChat(chr.getId(), command, text, (byte) petid), true);
     }
 
@@ -109,11 +111,14 @@ public class PetHandler {
                 if (newCloseness >= GameConstants.getClosenessNeededForLevel(pet.getLevel() + 1)) {
                     pet.setLevel(pet.getLevel() + 1);
                     c.sendPacket(EffectPacket.showOwnPetLevelUp(petIndex));
+                    //新架構 [寵物]
                     chr.getMap().broadcastMessage(PetPacket.showPetLevelUp(chr, petIndex));
                 }
-                c.sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), true));
+                //新架構 [寵物]
+                c.getSession().write(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), true));
             }
         }
+        //新架構 [寵物]
         chr.getMap().broadcastMessage(PetPacket.commandResponse(chr.getId(), (byte) petCommand.getSkillId(), petIndex, success, false));
     }
 
@@ -167,9 +172,11 @@ public class PetHandler {
                     pet.setLevel(pet.getLevel() + 1);
 
                     c.sendPacket(EffectPacket.showOwnPetLevelUp(index));
+                    //新架構 [寵物]
                     chr.getMap().broadcastMessage(PetPacket.showPetLevelUp(chr, index));
                 }
             }
+            //新架構 [寵物]
             c.sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), true));
             chr.getMap().broadcastMessage(c.getPlayer(), PetPacket.commandResponse(chr.getId(), (byte) 1, index, true, true), true);
         } else {
@@ -183,6 +190,7 @@ public class PetHandler {
                     pet.setLevel(pet.getLevel() - 1);
                 }
             }
+            //新架構 [寵物]
             c.sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), true));
             chr.getMap().broadcastMessage(chr, PetPacket.commandResponse(chr.getId(), (byte) 1, chr.getPetIndex(pet), false, true), true);
         }
@@ -225,14 +233,17 @@ public class PetHandler {
                     return;
                 }
                 if (chr.getPet(i).getCloseness() >= constants.GameConstants.getClosenessNeededForLevel(chr.getPet(i).getLevel())) {
+                    //新架構 [寵物]
                     chr.announce(PetPacket.showPetLevelUp(chr, (byte) i));
                     chr.getMap().broadcastMessage(chr, PetPacket.showPetLevelUp(chr, (byte) i), false);
                     chr.getPet(i).setLevel((byte) (chr.getPet(i).getLevel() + 1));
                 }
                 if (chance >= 70 && attackAmount == 1) {
+                    //新架構 [寵物]
                     chr.getMap().broadcastMessage(PetPacket.petChat(chr.getId(), 1, monsterDialog[(int) (monsterDialog.length * Math.random())], (byte) i));
                 }
                 if (attackAmount > 1) {
+                    //新架構 [寵物]
                     chr.getMap().broadcastMessage(PetPacket.petChat(chr.getId(), 1, "Critical hit!!", (byte) i));
                 }
                 for (int e = 0; e < attackAmount; e++) {
@@ -264,7 +275,9 @@ public class PetHandler {
         if (res != null && !res.isEmpty() && chr.getMap() != null) { // map crash hack
 
             pet.updatePosition(res);
-            chr.getMap().broadcastMessage(chr, PetPacket.movePet(chr.getId(), petId, chr.getPetIndex(petId), res), false);
+            //新架構 [寵物]
+            Point p = pet.getPos();
+            chr.getMap().broadcastMessage(chr, PetPacket.movePet(chr.getId(), petId, chr.getPetIndex(petId), p, res), false);
             if (chr.getOccupation().is(Occupations.Hacker)) { // the question is, should we make this level 2 or something
                 // Handle Pet Attacking System Here
                 if (chr.getMap().getMobsSize() > 0) { // TODO: check if mobs are in range automatically.. rather then spamming this method

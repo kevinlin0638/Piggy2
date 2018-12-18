@@ -705,7 +705,7 @@ public class PlayerHandler {
                         chr.cancelEffectFromBuffStat(MapleBuffStatus.MONSTER_RIDING);
                         c.sendPacket(CWvsContext.updateJaguar(chr));
                     } else {
-                        chr.dropMessage(5, "The monster has too much physical strength, so you cannot catch it.");
+                         chr.dropMessage(5, "怪物體力過高，補抓失敗。");
                     }
                 }
                 c.sendPacket(CWvsContext.enableActions());

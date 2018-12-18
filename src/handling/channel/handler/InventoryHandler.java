@@ -116,159 +116,157 @@ public class InventoryHandler {
         }
         MapleInventoryManipulator.move(c, MapleInventoryType.ETC, src, dst);
     }
-/*      */
 
     /*      */
-    public static void UseMagicWheel(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr)
-/*      */ {
-/* 4197 */
+
+ /*      */
+    public static void UseMagicWheel(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) /*      */ {
+        /* 4197 */
         if ((!chr.isAlive()) || (chr.hasBlockedInventory()) || (chr.isInBlockedMap()) || (chr.inPVP())) {
-/* 4198 */
+            /* 4198 */
             c.sendPacket(CWvsContext.MagicWheelAction(8));
-/* 4199 */
+            /* 4199 */
             return;
-/*      */
+            /*      */
         }
-/*      */
-/* 4202 */
+        /*      */
+ /* 4202 */
         byte mode = slea.readByte();
-/* 4203 */
+        /* 4203 */
         if ((mode == 0) && (World.hasWheelCache(chr.getId()))) {
-/* 4204 */
+            /* 4204 */
             World.removeFromWheelCache(chr.getId());
-/* 4205 */
+            /* 4205 */
         } else if (mode == 2) {
-/* 4206 */
+            /* 4206 */
             slea.skip(4);
-/* 4207 */
+            /* 4207 */
             short toUseSlot = (short) slea.readInt();
-/* 4208 */
+            /* 4208 */
             int tokenId = slea.readInt();
-/* 4209 */
+            /* 4209 */
             Item toUse = chr.getInventory(GameConstants.getInventoryType(tokenId)).getItem(toUseSlot);
-/* 4210 */
+            /* 4210 */
             if ((toUse == null) || (toUse.getQuantity() < 1) || (toUse.getItemId() != tokenId) || tokenId != 4400000) {
-/* 4211 */
+                /* 4211 */
                 c.sendPacket(CWvsContext.MagicWheelAction(6));
-/* 4212 */
+                /* 4212 */
                 return;
-/*      */
+                /*      */
             }
-/* 4214 */
+            /* 4214 */
             if ((chr.getInventory(MapleInventoryType.EQUIP).getNumFreeSlot() < 2) || (chr.getInventory(MapleInventoryType.USE).getNumFreeSlot() < 2) || (chr.getInventory(MapleInventoryType.SETUP).getNumFreeSlot() < 2) || (chr.getInventory(MapleInventoryType.ETC).getNumFreeSlot() < 2) || (chr.getInventory(MapleInventoryType.CASH).getNumFreeSlot() < 2)) {
-/* 4215 */
+                /* 4215 */
                 c.sendPacket(CWvsContext.MagicWheelAction(7));
-/* 4216 */
+                /* 4216 */
                 return;
-/*      */
+                /*      */
             }
-/* 4218 */
+            /* 4218 */
             if (World.hasWheelCache(chr.getId())) {
-/* 4219 */
+                /* 4219 */
                 c.sendPacket(CWvsContext.MagicWheelAction(8));
-/* 4220 */
+                /* 4220 */
                 return;
-/*      */
+                /*      */
             }
-/* 4222 */
+            /* 4222 */
             MapleInventoryManipulator.removeFromSlot(c, GameConstants.getInventoryType(tokenId), toUseSlot, (short) 1, false);
-/* 4223 */
+            /* 4223 */
             List rewards = new ArrayList();
-/* 4224 */
+            /* 4224 */
             int i = 0;
-/* 4225 */
+            /* 4225 */
             int itemid = 0;
-/* 4226 */
+            /* 4226 */
             while (i < 10) {
-/* 4227 */
+                /* 4227 */
                 if (i < 6) {
-/* 4228 */
+                    /* 4228 */
                     itemid = GameConstants.normalMagicWheel[Randomizer.nextInt(GameConstants.normalMagicWheel.length)];
-/* 4229 */
+                    /* 4229 */
                     if (!rewards.contains(Integer.valueOf(itemid))) {
-/* 4230 */
+                        /* 4230 */
                         rewards.add(Integer.valueOf(itemid));
-/* 4231 */
+                        /* 4231 */
                         i++;
-/*      */
+                        /*      */
                     }
-/* 4233 */
+                    /* 4233 */
                 } else if (i < 9) {
-/* 4234 */
+                    /* 4234 */
                     itemid = GameConstants.rareMagicWheel[Randomizer.nextInt(GameConstants.rareMagicWheel.length)];
-/* 4235 */
+                    /* 4235 */
                     if (!rewards.contains(Integer.valueOf(itemid))) {
-/* 4236 */
+                        /* 4236 */
                         rewards.add(Integer.valueOf(itemid));
-/* 4237 */
+                        /* 4237 */
                         i++;
-/*      */
+                        /*      */
                     }
-/*      */
+                    /*      */
                 } else {
-/* 4240 */
+                    /* 4240 */
                     itemid = GameConstants.superMagicWheel[Randomizer.nextInt(GameConstants.superMagicWheel.length)];
-/* 4241 */
+                    /* 4241 */
                     if (!rewards.contains(Integer.valueOf(itemid))) {
-/* 4242 */
+                        /* 4242 */
                         rewards.add(Integer.valueOf(itemid));
-/* 4243 */
+                        /* 4243 */
                         i++;
-/*      */
+                        /*      */
                     }
-/*      */
+                    /*      */
                 }
-/*      */
+                /*      */
             }
-/* 4247 */
+            /* 4247 */
             Collections.shuffle(rewards);
-/* 4248 */
+            /* 4248 */
             int prizePos = Randomizer.nextInt(10);
-/* 4249 */
+            /* 4249 */
             World.addToWheelCache(chr.getId(), ((Integer) rewards.get(prizePos)).intValue());
-/* 4250 */
+            /* 4250 */
             c.sendPacket(CWvsContext.MagicWheelAction(3, String.valueOf(chr.getId()), rewards, prizePos));
-/* 4251 */
+            /* 4251 */
         } else if (mode == 4) {
-/* 4252 */
+            /* 4252 */
             String data = slea.readMapleAsciiString();
-/* 4253 */
+            /* 4253 */
             if ((!data.equals(String.valueOf(chr.getId()))) || (!World.hasWheelCache(chr.getId()))) {
-/* 4254 */
+                /* 4254 */
                 c.sendPacket(CWvsContext.MagicWheelAction(8));
-/* 4255 */
+                /* 4255 */
                 return;
-/*      */
+                /*      */
             }
-/* 4257 */
+            /* 4257 */
             int itemId = World.removeFromWheelCache(chr.getId());
-/* 4258 */
+            /* 4258 */
             if (itemId > 0) {
-/* 4259 */
+                /* 4259 */
                 Item item = MapleInventoryManipulator.addbyId_Gachapon(c, itemId, (short) 1);
-/* 4260 */
+                /* 4260 */
                 if (item == null) {
-/* 4261 */
+                    /* 4261 */
                     c.sendPacket(CWvsContext.MagicWheelAction(10));
-/* 4262 */
+                    /* 4262 */
                     return;
-/*      */
+                    /*      */
                 }
-/* 4264 */
+                /* 4264 */
                 if (GameConstants.isSuperMagicWheel(itemId)) {
                     c.sendPacket(CWvsContext.getGachaponMega(chr.getName(), " : got a(n)", item, (byte) 11, "Wheel of Marvels"));
                 }
-/*      */
+                /*      */
             }
-/*      */
-        }
-/* 4268 */
-        else if (mode != 0) {
-/* 4269 */
+            /*      */
+        } /* 4268 */ else if (mode != 0) {
+            /* 4269 */
             c.sendPacket(CWvsContext.MagicWheelAction(8));
-/*      */
+            /*      */
         }
-/*      */
+        /*      */
     }
 
     public static void MoveBag(LittleEndianAccessor slea, MapleClient c) {
@@ -920,7 +918,6 @@ public class InventoryHandler {
 
         //addToScrollLog(chr.getAccountID(), chr.getWorldId(), scroll.getItemId(), itemID, oldSlots, (byte)(scrolled == null ? -1 : scrolled.getUpgradeSlots()), oldVH, scrollSuccess.name(), whiteScroll, legendarySpirit, vegas);
         // equipped item was scrolled and isChanged
-
         if (dst < 0 && (scrollSuccess == Equip.ScrollResult.SUCCESS || scrollSuccess == Equip.ScrollResult.CURSE) && vegas == 0) {
             chr.equipChanged();
 
@@ -1050,7 +1047,6 @@ public class InventoryHandler {
         Item toUse = chr.getInventory(GameConstants.getInventoryType(itemId)).getItem(slot);
         long expiration_days = 0;
         int mountid = 0;
-
 
         if (toUse != null && toUse.getQuantity() >= 1 && toUse.getItemId() == itemId && !chr.hasBlockedInventory() && !chr.inPVP()) {
             switch (toUse.getItemId()) {
@@ -2248,7 +2244,7 @@ public class InventoryHandler {
                             if (/*
                                  * playerst.getMaxMp() <
                                  * ((c.getPlayer().getLevel() * 14) + 134) ||
-                                 */c.getPlayer().getHpApUsed() <= 0 || c.getPlayer().getHpApUsed() >= 10000) {
+                                     */c.getPlayer().getHpApUsed() <= 0 || c.getPlayer().getHpApUsed() >= 10000) {
                                 used = false;
                                 c.getPlayer().dropMessage(1, "You need points in HP or MP in order to take points out.");
                             }
@@ -2257,7 +2253,7 @@ public class InventoryHandler {
                             if (/*
                                  * playerst.getMaxMp() <
                                  * ((c.getPlayer().getLevel() * 14) + 134) ||
-                                 */c.getPlayer().getHpApUsed() <= 0 || c.getPlayer().getHpApUsed() >= 10000) {
+                                     */c.getPlayer().getHpApUsed() <= 0 || c.getPlayer().getHpApUsed() >= 10000) {
                                 used = false;
                                 c.getPlayer().dropMessage(1, "You need points in HP or MP in order to take points out.");
                             }
@@ -2478,12 +2474,12 @@ public class InventoryHandler {
                     } //well i dont really care other than this o.o
                     int skill1 = slea.readInt();
                     int skill2 = slea.readInt();
-                /*
+                    /*
                  * for (int i : GameConstants.blockedSkills) { if (skill1 == i)
                  * { c.getPlayer().dropMessage(1, "You may not add this
                  * skill."); return; } }
                  *
-                 */
+                     */
 
                     Skill skillSPTo = SkillFactory.getSkill(skill1);
                     Skill skillSPFrom = SkillFactory.getSkill(skill2);
@@ -3386,7 +3382,7 @@ public class InventoryHandler {
                     }
                     break;
                 }
-          /*  case 5100000: { // Congratulatory Song
+                /*  case 5100000: { // Congratulatory Song
                 c.getPlayer().getMap().broadcastMessage(CField.musicChange("Jukebox/Congratulation"));
                 used = true;
                 break;
@@ -3429,6 +3425,7 @@ public class InventoryHandler {
                     PetFlag zz = PetFlag.getByAddId(itemId);
                     if (zz != null && !zz.check(pet.getFlags())) {
                         pet.setFlags(pet.getFlags() | zz.getValue());
+                        //新架構 [寵物]
                         c.sendPacket(PetPacket.updatePet(pet, c.getPlayer().getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), true));
                         c.sendPacket(CWvsContext.enableActions());
                         c.sendPacket(MTSCSPacket.changePetFlag(uniqueid, true, zz.getValue()));
@@ -3470,6 +3467,7 @@ public class InventoryHandler {
                     PetFlag zz = PetFlag.getByDelId(itemId);
                     if (zz != null && zz.check(pet.getFlags())) {
                         pet.setFlags(pet.getFlags() - zz.getValue());
+                        //新架構 [寵物]
                         c.sendPacket(PetPacket.updatePet(pet, c.getPlayer().getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), true));
                         c.sendPacket(CWvsContext.enableActions());
                         c.sendPacket(MTSCSPacket.changePetFlag(uniqueid, false, zz.getValue()));
@@ -3505,6 +3503,7 @@ public class InventoryHandler {
 
                     pet.setName(nName);
                     pet.saveToDb();
+                    //新架構 [寵物]
                     c.sendPacket(PetPacket.updatePet(pet, c.getPlayer().getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), true));
                     c.sendPacket(CWvsContext.enableActions());
                     c.getPlayer().getMap().broadcastMessage(MTSCSPacket.changePetName(c.getPlayer(), nName, slo));
@@ -3618,9 +3617,11 @@ public class InventoryHandler {
                         if (pet.getCloseness() >= GameConstants.getClosenessNeededForLevel(pet.getLevel() + 1)) {
                             pet.setLevel(pet.getLevel() + 1);
                             c.sendPacket(EffectPacket.showOwnPetLevelUp(c.getPlayer().getPetIndex(pet)));
+                            //新架構 [寵物]
                             c.getPlayer().getMap().broadcastMessage(PetPacket.showPetLevelUp(c.getPlayer(), petindex));
                         }
                     }
+                    //新架構 [寵物]
                     c.sendPacket(PetPacket.updatePet(pet, c.getPlayer().getInventory(MapleInventoryType.CASH).getItem(pet.getInventoryPosition()), true));
                     c.getPlayer().getMap().broadcastMessage(c.getPlayer(), PetPacket.commandResponse(c.getPlayer().getId(), (byte) 1, petindex, true, true), true);
                     used = true;
