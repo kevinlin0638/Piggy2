@@ -9022,7 +9022,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                             client.getSession().write(PetPacket.updatePet(pet, getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), true));
                             getMap().broadcastMessage(this, PetPacket.showPet(this, pet, false, false), true);
                             client.sendPacket(PetPacket.showPetUpdate(this, pet.getUniqueId(), (byte) (pet.getSummonedValue() - 1)));
-                            client.sendPacket(PetPacket.petStatUpdate(this));
 //                            client.getSession().write(PetPacket.petStatUpdate(this));
                         }
                     }
