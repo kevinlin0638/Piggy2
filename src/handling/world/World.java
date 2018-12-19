@@ -134,6 +134,10 @@ public class World {
     }
 
     public static void ChannelChange_Data(CharacterTransfer Data, int characterid, int world, int toChannel) {
+        if(toChannel == -1)
+        {
+            CashShopServer.getPlayerStorage().registerPendingPlayer(Data, characterid);
+        }
         LoginServer.getWorld(world).getPlayerStorage().registerPendingPlayer(Data, characterid);
     }
 

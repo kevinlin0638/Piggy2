@@ -39,6 +39,7 @@ public class CashShopServer {
         acceptor = new ServerConnection(PORT, -1, MapleServerHandler.CASH_SHOP_SERVER);
         players = new PlayerStorage();
         playersMTS = new PlayerStorage();
+        System.out.println("[CashShop]Binding to port " + PORT);
 
         try {
             acceptor.run();

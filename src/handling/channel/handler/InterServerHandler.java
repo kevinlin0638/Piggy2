@@ -84,7 +84,7 @@ public class InterServerHandler {
             c.sendPacket(CWvsContext.enableActions());
             return;
         }
-        World.ChannelChange_Data(new CharacterTransfer(c.getPlayer()), c.getPlayer().getId(), c.getWorld(), 30);
+        World.ChannelChange_Data(new CharacterTransfer(c.getPlayer()), c.getPlayer().getId(), c.getWorld(), -1);
         final String s = c.getSessionIPAddress();
         LoginServer.addIPAuth(s.substring(s.indexOf('/') + 1, s.length()));
 

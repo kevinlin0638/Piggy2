@@ -5,7 +5,9 @@ import client.MapleClient;
 import client.inventory.Item;
 import client.inventory.ItemFlag;
 import client.inventory.MapleInventoryType;
+import client.messages.CommandProcessor;
 import constants.GameConstants;
+import constants.ServerConstants;
 import tools.packet.CField.InteractionPacket;
 import tools.packet.CWvsContext;
 import tools.packet.PlayerShopPacket;
@@ -212,17 +214,17 @@ public class MapleTrade {
             if (player.getMap().getId() == GameConstants.JAIL) {
                 player.dropMessage(5, "You're in jail, herp derp.");
                 player.getClient().sendPacket(CWvsContext.enableActions());
-            } else if (player.isMuted() || (player.getMap().getMuted() && !player.isGM())) {
+            } else if (player.isMuted() || (player.getMap().getMuted())) {
                 player.dropMessage(5, player.isMuted() ? "You are Muted, therefore you are unable to talk. " : "The map is Muted, therefore you are unable to talk.");
                 player.getClient().sendPacket(CWvsContext.enableActions());
             }
         }
-//        if (!CommandProcessor.processCommand(chr.get().getClient(), message, CommandType.TRADE)) {
-//            chr.get().dropMessage(-2, chr.get().getName() + " : " + message);
-//            if (partner != null) {
-//                partner.getChr().getClient().sendPacket(PlayerShopPacket.shopChat(chr.get().getName() + " : " + message, 1));
-//            }
-//        }
+        if (!CommandProcessor.processCommand(chr.get().getClient(), message, ServerConstants.CommandType.TRADE)) {
+            chr.get().dropMessage(-2, chr.get().getName() + " : " + message);
+            if (partner != null) {
+                partner.getChr().getClient().sendPacket(PlayerShopPacket.shopChat(chr.get().getName() + " : " + message, 1));
+            }
+        }
     }
 
     public final void chatAuto(String message) {
@@ -232,7 +234,7 @@ public class MapleTrade {
             chr.get().getClient().sendPacket(CWvsContext.enableActions());
             return;
         }
-        if (chr.get().isMuted() || (chr.get().getMap().getMuted() && !chr.get().isGM())) {
+        if (chr.get().isMuted() || (chr.get().getMap().getMuted())) {
             chr.get().dropMessage(5, chr.get().isMuted() ? "You are Muted, therefore you are unable to talk. " : "The map is Muted, therefore you are unable to talk.");
             chr.get().getClient().sendPacket(CWvsContext.enableActions());
             return;

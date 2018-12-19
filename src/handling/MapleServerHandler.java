@@ -312,6 +312,14 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                 case CS_UPDATE:
                     CashShopHandler.CSUpdate(client);
                     break;
+                case PLAYER_LOGGEDIN:
+                    final int playerid = slea.readInt();
+                    if (cs) {
+                        CashShopHandler.EnterCS(playerid, client);
+                    } else {
+                        InterServerHandler.Loggedin(playerid, client);
+                    }
+                    break;
             }
             return;
         }
