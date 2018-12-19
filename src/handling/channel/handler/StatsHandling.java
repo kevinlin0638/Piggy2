@@ -199,31 +199,31 @@ public class StatsHandling {
         Map<MapleStat, Integer> statupdate = new EnumMap<>(MapleStat.class);
         c.sendPacket(CWvsContext.updatePlayerStats(statupdate, true, chr));
 
-        if (chr.getRemainingAp() == amount + amount2) {
+        if (chr.getRemainingAp() >= amount + amount2) {
             switch (PrimaryStat) {
                 case 64: // Str
-                    if (playerst.getStr() + amount > 999) {
+                    if (playerst.getStr() + amount > Short.MAX_VALUE) {
                         return;
                     }
                     playerst.setStr((short) (playerst.getStr() + amount), chr);
                     statupdate.put(MapleStat.STR, (int) playerst.getStr());
                     break;
                 case 128: // Dex
-                    if (playerst.getDex() + amount > 999) {
+                    if (playerst.getDex() + amount > Short.MAX_VALUE) {
                         return;
                     }
                     playerst.setDex((short) (playerst.getDex() + amount), chr);
                     statupdate.put(MapleStat.DEX, (int) playerst.getDex());
                     break;
                 case 256: // Int
-                    if (playerst.getInt() + amount > 999) {
+                    if (playerst.getInt() + amount > Short.MAX_VALUE) {
                         return;
                     }
                     playerst.setInt((short) (playerst.getInt() + amount), chr);
                     statupdate.put(MapleStat.INT, (int) playerst.getInt());
                     break;
                 case 512: // Luk
-                    if (playerst.getLuk() + amount > 999) {
+                    if (playerst.getLuk() + amount > Short.MAX_VALUE) {
                         return;
                     }
                     playerst.setLuk((short) (playerst.getLuk() + amount), chr);
@@ -235,28 +235,28 @@ public class StatsHandling {
             }
             switch (SecondaryStat) {
                 case 64: // Str
-                    if (playerst.getStr() + amount2 > 32767) {
+                    if (playerst.getStr() + amount2 > Short.MAX_VALUE) {
                         return;
                     }
                     playerst.setStr((short) (playerst.getStr() + amount2), chr);
                     statupdate.put(MapleStat.STR, (int) playerst.getStr());
                     break;
                 case 128: // Dex
-                    if (playerst.getDex() + amount2 > 32767) {
+                    if (playerst.getDex() + amount2 > Short.MAX_VALUE) {
                         return;
                     }
                     playerst.setDex((short) (playerst.getDex() + amount2), chr);
                     statupdate.put(MapleStat.DEX, (int) playerst.getDex());
                     break;
                 case 256: // Int
-                    if (playerst.getInt() + amount2 > 32767) {
+                    if (playerst.getInt() + amount2 > Short.MAX_VALUE) {
                         return;
                     }
                     playerst.setInt((short) (playerst.getInt() + amount2), chr);
                     statupdate.put(MapleStat.INT, (int) playerst.getInt());
                     break;
                 case 512: // Luk
-                    if (playerst.getLuk() + amount2 > 32767) {
+                    if (playerst.getLuk() + amount2 > Short.MAX_VALUE) {
                         return;
                     }
                     playerst.setLuk((short) (playerst.getLuk() + amount2), chr);
