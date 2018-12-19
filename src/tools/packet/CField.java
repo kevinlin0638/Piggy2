@@ -890,7 +890,7 @@ public class CField {
         return mplew.getPacket();
     }
 
-    public static byte[] spawnPlayerMapobject(MapleCharacter chr) {
+     public static byte[] spawnPlayerMapobject(MapleCharacter chr) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.SPAWN_PLAYER.getValue());
@@ -936,25 +936,16 @@ public class CField {
         mplew.writeInt(v1);
         mplew.writeInt(v2);
         mplew.writeInt(v3);
-        for (int i = 0; i < v3; i++) {
+        for (int i = 0; i < v3; i++)
             mplew.writeInt(0);
-        }
         // end
 
+
         mplew.writeInt(Math.min(250, chr.getInventory(MapleInventoryType.CASH).countById(5110000))); //max is like 100. but w/e
-        mplew.writeInt(0);
-        /**
-         * 黃金雞特效 (42900000) *
-         */
+        mplew.writeInt(0); /** 黃金雞特效 (42900000) **/
         mplew.writeInt(chr.getItemEffect());
-        mplew.writeInt(0);
-        /**
-         * BlinkMonkeyEffect *
-         */
-        mplew.writeInt(0);
-        /**
-         * ActiveNickName *
-         */
+        mplew.writeInt(0); /** BlinkMonkeyEffect **/
+        mplew.writeInt(0); /** ActiveNickName **/
         mplew.writeInt(0);
         mplew.writeMapleAsciiString("");
         mplew.writeMapleAsciiString("");
@@ -988,7 +979,6 @@ public class CField {
                 break;
             }
             mplew.writeInt(i);
-            //新架構 [寵物]
             PetPacket.addPetInfo(mplew, chr, pet, false);
         }
 

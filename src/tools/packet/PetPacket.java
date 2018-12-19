@@ -40,10 +40,12 @@ public class PetPacket {
 
     public static final byte[] showPet(MapleCharacter chr, MaplePet pet, boolean remove, boolean hunger, boolean show) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
         mplew.writeShort(show ? SendPacketOpcode.SHOW_PET.getValue() : SendPacketOpcode.SPAWN_PET.getValue());
         mplew.writeInt(chr.getId());
-        mplew.writeInt(chr.getPetIndex(pet));
+        mplew.write(chr.getPetIndex(pet));
+        mplew.write(0);
+        mplew.write(0);
+        mplew.write(0);
         mplew.write(remove ? 0 : 1);
         mplew.write(hunger ? 1 : 0);
         if (!remove) {
@@ -51,6 +53,21 @@ public class PetPacket {
         }
 
         return mplew.getPacket();
+    }
+
+    public static void addPetInfo(MaplePacketLittleEndianWriter mplew, MaplePet pet, boolean showpet) {
+        mplew.write(1);
+        if (showpet) {
+            mplew.write(0);
+        }
+
+        mplew.writeInt(pet.getPetItemId());
+        mplew.writeMapleAsciiString(pet.getName());
+        mplew.writeInt(pet.getUniqueId());
+        mplew.writeInt(0);
+        mplew.writePos(pet.getPos());
+        mplew.write(pet.getStance());
+        mplew.writeInt(pet.getFh());
     }
 
     public static final byte[] removePet(int cid, int index) {
@@ -149,7 +166,7 @@ public class PetPacket {
     public static byte[] petStatUpdate(MapleCharacter chr) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-  mplew.writeShort(SendPacketOpcode.UPDATE_STATS.getValue());
+        mplew.writeShort(SendPacketOpcode.UPDATE_STATS.getValue());
         mplew.write(0);
         mplew.writeLong(MapleStat.PET.getValue());
 
@@ -172,8 +189,7 @@ public class PetPacket {
 
     public static void addPetInfo(MaplePacketLittleEndianWriter mplew, MapleCharacter chr, MaplePet pet, boolean showpet) {
         if (showpet) {
-            mplew.write(1);
-            mplew.writeInt(chr.getPetIndex(pet));
+            mplew.write(0);
         }
         mplew.writeInt(pet.getPetItemId());
         mplew.writeMapleAsciiString(pet.getName());
@@ -181,10 +197,6 @@ public class PetPacket {
         mplew.writePos(pet.getPos());
         mplew.write(pet.getStance());
         mplew.writeShort(pet.getFh());
-        mplew.writeInt(-1);
-        mplew.writeShort(100);
-        mplew.write(0);
-        mplew.write(0);
     }
 
     public static void addPet(MaplePacketLittleEndianWriter mplew, MapleCharacter chr, MaplePet pet) {
