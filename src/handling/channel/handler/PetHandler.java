@@ -86,7 +86,7 @@ public class PetHandler {
     }
 
     public static void PetChat(final int petid, final short command, final String text, MapleCharacter chr) {
-        if (chr == null || chr.getMap() == null || chr.getPet(petid) == null) {
+        if (chr == null || chr.getMap() == null || chr.getSpawnPet(petid) == null) {
             return;
         }
         //新架構 [寵物]
@@ -203,8 +203,8 @@ public class PetHandler {
             String[] monsterDialog = {"BOOM! HEADSHOT!", "fyte mi!", "FALCOOOON PAWNCH!", "attack_4", "attack_5"};
 
             for (int i = 0; i < chr.getPets().size(); i++) {
-                List<server.life.MapleMonster> moInRange = chr.getMap().getMapMonstersInRange(chr.getPet(i).getPos(), 15000.0, MapleMapObjectType.MONSTER);
-                int damage = (int) (((chr.getPet(i).getLevel() * 5) * (int) (2.0 * Math.random() + 2)));
+                List<server.life.MapleMonster> moInRange = chr.getMap().getMapMonstersInRange(chr.getSpawnPet(i).getPos(), 15000.0, MapleMapObjectType.MONSTER);
+                int damage = (int) (((chr.getSpawnPet(i).getLevel() * 5) * (int) (2.0 * Math.random() + 2)));
                 int level = chr.getLevel();
                 int chance = (int) (100.0 * Math.random());
                 int attackAmount = (int) (100.0 * Math.random());
@@ -228,15 +228,15 @@ public class PetHandler {
                     attackAmount *= 2;
                     damage *= 20;
                 }
-                if ((System.currentTimeMillis() - chr.getPet(i).lastAttack) <= 1250 || moInRange.isEmpty()) {
+                if ((System.currentTimeMillis() - chr.getSpawnPet(i).lastAttack) <= 1250 || moInRange.isEmpty()) {
                     moInRange = null;
                     return;
                 }
-                if (chr.getPet(i).getCloseness() >= constants.GameConstants.getClosenessNeededForLevel(chr.getPet(i).getLevel())) {
+                if (chr.getSpawnPet(i).getCloseness() >= constants.GameConstants.getClosenessNeededForLevel(chr.getSpawnPet(i).getLevel())) {
                     //新架構 [寵物]
                     chr.announce(PetPacket.showPetLevelUp(chr, (byte) i));
                     chr.getMap().broadcastMessage(chr, PetPacket.showPetLevelUp(chr, (byte) i), false);
-                    chr.getPet(i).setLevel((byte) (chr.getPet(i).getLevel() + 1));
+                    chr.getSpawnPet(i).setLevel((byte) (chr.getSpawnPet(i).getLevel() + 1));
                 }
                 if (chance >= 70 && attackAmount == 1) {
                     //新架構 [寵物]
@@ -251,10 +251,10 @@ public class PetHandler {
                         server.life.MapleMonster locked_on = moInRange.get(1);
                         chr.getMap().broadcastMessage(chr, MobPacket.damageMonster(locked_on.getObjectId(), damage), true);
                         locked_on.damage(chr, damage, true);
-                        chr.getPet(i).lastAttack = System.currentTimeMillis();
+                        chr.getSpawnPet(i).lastAttack = System.currentTimeMillis();
                     }
                 }
-                chr.getPet(i).gainCloseness(1);
+                chr.getSpawnPet(i).gainCloseness(1);
                 moInRange = null; // dispose
             }
         }
@@ -265,7 +265,7 @@ public class PetHandler {
             return;
         }
         final int petId = (int) slea.readLong();
-        final MaplePet pet = chr.getPet(GameConstants.GMS ? (chr.getPetIndex(petId)) : petId);
+        final MaplePet pet = chr.getSpawnPet(!GameConstants.GMS ? (chr.getPetIndex(petId)) : petId);
         if (pet == null) {
             return;
         }

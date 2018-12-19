@@ -815,7 +815,7 @@ public class PlayersHandler {
         c.getPlayer().cancelAllDiseaseBuff();
         c.getPlayer().changeRemoval();
         c.getPlayer().clearAllCooldowns();
-        c.getPlayer().unequipAllPets();
+        c.getPlayer().unequipAllSpawnPets();
         final StringBuilder key = new StringBuilder().append(lvl).append(" ").append(type).append(" ");
         //check if any of the maps are available
         for (int i : maps) {

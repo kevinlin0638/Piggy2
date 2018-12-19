@@ -315,7 +315,6 @@ public class CashShopHandler {
                 if (pos >= 0) {
                     if (item_.getPet() != null) {
                         item_.getPet().setInventoryPosition(pos);
-                        c.getPlayer().addPet(item_.getPet());
                     }
                     c.getPlayer().getCashInventory().removeFromInventory(item);
                     c.sendPacket(MTSCSPacket.confirmFromCSInventory(item_, pos));
@@ -332,9 +331,6 @@ public class CashShopHandler {
             if (item != null && item.getQuantity() > 0 && item.getUniqueId() > 0 && c.getPlayer().getCashInventory().getItemsSize() < 100) {
                 Item item_ = item.copy();
                 MapleInventoryManipulator.removeFromSlot(c, type, item.getPosition(), item.getQuantity(), false);
-                if (item_.getPet() != null) {
-                    c.getPlayer().removePetCS(item_.getPet());
-                }
                 item_.setPosition((byte) 0);
                 c.getPlayer().getCashInventory().addToInventory(item_);
                 //warning: this d/cs

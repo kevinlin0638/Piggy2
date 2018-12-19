@@ -190,21 +190,21 @@ public class CharacterTransfer implements Externalizable {
         this.familiars = chr.getFamiliars();
         this.tempIP = chr.getClient().getTempIP();
         this.rebuy = chr.getRebuy();
-        boolean uneq = false;
+        //boolean uneq = false;
         for (int i = 0; i < this.petStore.length; i++) {
-            final MaplePet pet = chr.getPet(i);
+            final MaplePet pet = chr.getSpawnPet(i);
             if (this.petStore[i] == 0) {
                 this.petStore[i] = (byte) -1;
             }
             if (pet != null) {
-                uneq = true;
+                //uneq = true;
                 this.petStore[i] = (byte) Math.max(this.petStore[i], pet.getInventoryPosition());
             }
 
-        }
+        }/*
         if (uneq) {
             chr.unequipAllPets();
-        }
+        }*/
 
         for (MapleTraitType t : MapleTraitType.values()) {
             this.traits.put(t, chr.getTrait(t).getTotalExp());

@@ -938,20 +938,19 @@ public abstract class AbstractPlayerInteraction {
     }
 
     public final void gainCloseness(final int closeness, final int index) {
-        final MaplePet pet = getPlayer().getPet(index);
+        final MaplePet pet = getPlayer().getSpawnPet(index);
         if (pet != null) {
             pet.setCloseness(pet.getCloseness() + (closeness * getWorldServer().getTraitRate()));
-            //新架構 [寵物]
-            getClient().getSession().write(PetPacket.updatePet(pet, getPlayer().getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), false));
+            getPlayer().petUpdateStats(pet, true);
         }
     }
 
     public final void gainClosenessAll(final int closeness) {
-        for (final MaplePet pet : getPlayer().getPets()) {
-            if (pet != null && pet.getSummoned()) {
-                pet.setCloseness(pet.getCloseness() + closeness);
-                //新架構 [寵物]
-                getClient().getSession().write(PetPacket.updatePet(pet, getPlayer().getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), true));
+        MaplePet[] pets = getPlayer().getSpawnPets();
+        for (int i = 0; i < 3; i++) {
+            if (pets[i] != null && pets[i].getSummoned()) {
+                pets[i].setCloseness(pets[i].getCloseness() + closeness);
+                getPlayer().petUpdateStats(pets[i], true);
             }
         }
     }

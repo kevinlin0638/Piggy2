@@ -3396,39 +3396,26 @@ public class InventoryHandler {
                 case 5190007:
                 case 5190008:
                 case 5190000: { // Pet Flags
+                    MapleCharacter chr = c.getPlayer();
                     int uniqueid = (int) slea.readLong();
-                    MaplePet pet = c.getPlayer().getPet(0);
-                    int slo = 0;
-
-                    if (pet == null) {
-                        break;
-                    }
-                    if (pet.getUniqueId() != uniqueid) {
-                        pet = c.getPlayer().getPet(1);
-                        slo = 1;
-                        if (pet != null) {
-                            if (pet.getUniqueId() != uniqueid) {
-                                pet = c.getPlayer().getPet(2);
-                                slo = 2;
-                                if (pet != null) {
-                                    if (pet.getUniqueId() != uniqueid) {
-                                        break;
-                                    }
-                                } else {
-                                    break;
-                                }
-                            }
-                        } else {
+                    MaplePet pet = null;
+                    for (MaplePet petx : chr.getPets()) {
+                        if (petx != null && petx.getUniqueId() == uniqueid) {
+                            pet = petx;
                             break;
                         }
                     }
-                    PetFlag zz = PetFlag.getByAddId(itemId);
-                    if (zz != null && !zz.check(pet.getFlags())) {
-                        pet.setFlags(pet.getFlags() | zz.getValue());
-                        //新架構 [寵物]
-                        c.sendPacket(PetPacket.updatePet(pet, c.getPlayer().getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), true));
+                    if (pet == null) {
+                        chr.dropMessage(1, "寵物改名錯誤，找不到寵物的信息.");
+                        break;
+                    }
+                    PetFlag petFlag = PetFlag.getByAddId(itemId);
+                    if (petFlag != null && !petFlag.check(pet.getFlags())) {
+                        pet.setFlags(pet.getFlags() | petFlag.getValue());
+                        pet.saveToDb();
+                        chr.petUpdateStats(pet, true);
                         c.sendPacket(CWvsContext.enableActions());
-                        c.sendPacket(MTSCSPacket.changePetFlag(uniqueid, true, zz.getValue()));
+                        c.sendPacket(MTSCSPacket.changePetFlag(uniqueid, true, petFlag.getValue()));
                         used = true;
                     }
                     break;
@@ -3438,39 +3425,26 @@ public class InventoryHandler {
                 case 5191003:
                 case 5191004:
                 case 5191000: { // Pet Flags
+                    MapleCharacter chr = c.getPlayer();
                     int uniqueid = (int) slea.readLong();
-                    MaplePet pet = c.getPlayer().getPet(0);
-                    int slo = 0;
-
-                    if (pet == null) {
-                        break;
-                    }
-                    if (pet.getUniqueId() != uniqueid) {
-                        pet = c.getPlayer().getPet(1);
-                        slo = 1;
-                        if (pet != null) {
-                            if (pet.getUniqueId() != uniqueid) {
-                                pet = c.getPlayer().getPet(2);
-                                slo = 2;
-                                if (pet != null) {
-                                    if (pet.getUniqueId() != uniqueid) {
-                                        break;
-                                    }
-                                } else {
-                                    break;
-                                }
-                            }
-                        } else {
+                    MaplePet pet = null;
+                    for (MaplePet petx : chr.getPets()) {
+                        if (petx != null && petx.getUniqueId() == uniqueid) {
+                            pet = petx;
                             break;
                         }
                     }
-                    PetFlag zz = PetFlag.getByDelId(itemId);
-                    if (zz != null && zz.check(pet.getFlags())) {
-                        pet.setFlags(pet.getFlags() - zz.getValue());
-                        //新架構 [寵物]
-                        c.sendPacket(PetPacket.updatePet(pet, c.getPlayer().getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), true));
+                    if (pet == null) {
+                        chr.dropMessage(1, "寵物改名錯誤，找不到寵物的信息.");
+                        break;
+                    }
+                    PetFlag petFlag = PetFlag.getByDelId(itemId);
+                    if (petFlag != null && petFlag.check(pet.getFlags())) {
+                        pet.setFlags(pet.getFlags() - petFlag.getValue());
+                        pet.saveToDb();
+                        chr.petUpdateStats(pet, true);
                         c.sendPacket(CWvsContext.enableActions());
-                        c.sendPacket(MTSCSPacket.changePetFlag(uniqueid, false, zz.getValue()));
+                        c.sendPacket(MTSCSPacket.changePetFlag(uniqueid, false, petFlag.getValue()));
                         used = true;
                     }
                     break;
@@ -3491,24 +3465,33 @@ public class InventoryHandler {
                     break;
                 }
                 case 5170000: { // Pet name change
-
-                    MaplePet pet = c.getPlayer().getPet(0);
-                    int slo = 0;
-
+                    MapleCharacter chr = c.getPlayer();
+                    int uniqueid = (int) slea.readLong();
+                    MaplePet pet = null;
+                    for (MaplePet petx : chr.getPets()) {
+                        if (petx != null && petx.getUniqueId() == uniqueid) {
+                            pet = petx;
+                            break;
+                        }
+                    }
                     if (pet == null) {
+                        chr.dropMessage(1, "寵物改名錯誤，找不到寵物的信息.");
                         break;
                     }
-
                     String nName = slea.readMapleAsciiString();
-
-                    pet.setName(nName);
-                    pet.saveToDb();
-                    //新架構 [寵物]
-                    c.sendPacket(PetPacket.updatePet(pet, c.getPlayer().getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), true));
-                    c.sendPacket(CWvsContext.enableActions());
-                    c.getPlayer().getMap().broadcastMessage(MTSCSPacket.changePetName(c.getPlayer(), nName, slo));
-                    used = true;
-
+                    for (String z : GameConstants.RESERVED) {
+                        if (pet.getName().contains(z) || nName.contains(z)) {
+                            break;
+                        }
+                    }
+                    if (MapleCharacterUtil.canChangePetName(nName)) {
+                        pet.setName(nName);
+                        pet.saveToDb();
+                        chr.petUpdateStats(pet, true);
+                        c.sendPacket(CWvsContext.enableActions());
+                        chr.getMap().broadcastMessage(MTSCSPacket.changePetName(chr, nName, pet.getInventoryPosition()));
+                        used = true;
+                    }
                     break;
                 }
                 case 5700000: {
@@ -3584,46 +3567,31 @@ public class InventoryHandler {
                 case 5240055:
                 case 5240056:
                 case 5240066: { // Pet food
-                    MaplePet pet = c.getPlayer().getPet(0);
-
-                    if (pet == null) {
-                        break;
-                    }
-                    if (!pet.canConsume(itemId)) {
-                        pet = c.getPlayer().getPet(1);
-                        if (pet != null) {
-                            if (!pet.canConsume(itemId)) {
-                                pet = c.getPlayer().getPet(2);
-                                if (pet != null) {
-                                    if (!pet.canConsume(itemId)) {
-                                        break;
-                                    }
-                                } else {
-                                    break;
-                                }
-                            }
-                        } else {
+                    MapleCharacter chr = c.getPlayer();
+                    MaplePet pet = null;
+                    MaplePet[] pets = chr.getSpawnPets();
+                    for (int i = 0; i < 3; i++) {
+                        if (pets[i] != null && (pets[i].canConsume(itemId) || itemId == 5249000)) {
+                            pet = pets[i];
                             break;
                         }
                     }
-                    byte petindex = c.getPlayer().getPetIndex(pet);
+                    if (pet == null) {
+                        chr.dropMessage(1, "没有可以喂食的寵物。\r\n請重新確認。");
+                        break;
+                    }
+                    byte petIndex = chr.getPetIndex(pet);
                     pet.setFullness(100);
                     if (pet.getCloseness() < 30000) {
-                        if (pet.getCloseness() + (100 * c.getWorldServer().getTraitRate()) > 30000) {
-                            pet.setCloseness(30000);
-                        } else {
-                            pet.setCloseness(pet.getCloseness() + (100 * c.getWorldServer().getTraitRate()));
-                        }
-                        if (pet.getCloseness() >= GameConstants.getClosenessNeededForLevel(pet.getLevel() + 1)) {
+                        pet.setCloseness(Math.min(itemId == 5249000 ? pet.getCloseness() + 100 : pet.getCloseness() + (100 * c.getWorldServer().getTraitRate()), 30000));
+                        while (pet.getCloseness() >= GameConstants.getClosenessNeededForLevel(pet.getLevel() + 1)) {
                             pet.setLevel(pet.getLevel() + 1);
-                            c.sendPacket(EffectPacket.showOwnPetLevelUp(c.getPlayer().getPetIndex(pet)));
-                            //新架構 [寵物]
-                            c.getPlayer().getMap().broadcastMessage(PetPacket.showPetLevelUp(c.getPlayer(), petindex));
+                            c.sendPacket(EffectPacket.showOwnPetLevelUp(chr.getPetIndex(pet)));
+                            chr.getMap().broadcastMessage(PetPacket.showPetLevelUp(chr, petIndex));
                         }
                     }
-                    //新架構 [寵物]
-                    c.sendPacket(PetPacket.updatePet(pet, c.getPlayer().getInventory(MapleInventoryType.CASH).getItem(pet.getInventoryPosition()), true));
-                    c.getPlayer().getMap().broadcastMessage(c.getPlayer(), PetPacket.commandResponse(c.getPlayer().getId(), (byte) 1, petindex, true, true), true);
+                    chr.petUpdateStats(pet, true);
+                    chr.getMap().broadcastMessage(chr, PetPacket.commandResponse(chr.getId(), (byte) 1, petIndex, true, true), true);
                     used = true;
                     break;
                 }
@@ -3997,7 +3965,7 @@ public class InventoryHandler {
         }
         c.getPlayer().setScrolledPosition((short) 0);
         byte petz = (byte) (GameConstants.GMS ? (c.getPlayer().getPetIndex((int) slea.readLong())) : slea.readInt());
-        MaplePet pet = chr.getPet(petz);
+        MaplePet pet = chr.getSpawnPet(petz);
         slea.skip(1); // [4] Zero, [4] Seems to be tickcount, [1] Always zero
         slea.readInt();
         Point Client_Reportedpos = slea.readPos();

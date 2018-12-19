@@ -117,7 +117,6 @@ public class MTSOperation {
                 if (pos >= 0) {
                     if (item_.getPet() != null) {
                         item_.getPet().setInventoryPosition(pos);
-                        c.getPlayer().addPet(item_.getPet());
                     }
                     cart.removeFromInventory(item);
                     c.sendPacket(MTSCSPacket.getMTSConfirmTransfer(GameConstants.getInventoryType(item_.getItemId()).getType(), pos)); //IF this is actually pos and pos

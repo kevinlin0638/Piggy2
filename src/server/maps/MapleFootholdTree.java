@@ -225,6 +225,42 @@ public class MapleFootholdTree {
         return null;
     }
 
+    public MapleFoothold findBelow(Point p, boolean byCharacter) {
+        List<MapleFoothold> relevants = getRelevants(p);
+        List<MapleFoothold> xMatches = new LinkedList<>();
+        for (MapleFoothold fh : relevants) {
+            if (fh.getX1() <= p.x && fh.getX2() >= p.x) {
+                xMatches.add(fh);
+            }
+        }
+        Collections.sort(xMatches);
+        for (MapleFoothold fh : xMatches) {
+            if (fh.isWall()) {
+                continue;
+            }
+            if (fh.getY1() != fh.getY2()) {
+                int calcY;
+                double s1 = Math.abs(fh.getY2() - fh.getY1());
+                double s2 = Math.abs(fh.getX2() - fh.getX1());
+                double s4 = Math.abs(p.x - fh.getX1());
+                double alpha = Math.atan(s2 / s1);
+                double beta = Math.atan(s1 / s2);
+                double s5 = Math.cos(alpha) * (s4 / Math.cos(beta));
+                if (fh.getY2() < fh.getY1()) {
+                    calcY = fh.getY1() - (int) s5;
+                } else {
+                    calcY = fh.getY1() + (int) s5;
+                }
+                if (calcY >= p.y) {
+                    return fh;
+                }
+            } else if (byCharacter ? fh.getY1() == p.y : fh.getY1() >= p.y) {
+                return fh;
+            }
+        }
+        return null;
+    }
+
     public final int getX1() {
         return p1.x;
     }
