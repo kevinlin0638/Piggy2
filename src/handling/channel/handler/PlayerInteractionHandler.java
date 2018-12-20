@@ -770,14 +770,14 @@ public class PlayerInteractionHandler {
         INVITE_TRADE(11),
         DENY_TRADE(12),
         VISIT(9),
-        HIRED_MERCHANT_MAINTENANCE(21), // ?
+        HIRED_MERCHANT_MAINTENANCE(999), // ?
         CHAT(14),
         EXIT(18),
         OPEN(16),
         SET_ITEMS(0),
         SET_MESO(1),
         CONFIRM_TRADE(2),
-        PLAYER_SHOP_ADD_ITEM(42),
+        PLAYER_SHOP_ADD_ITEM(21),
         PLAYER_SHOP_REMOVE_ITEM(50),
         PLAYER_SHOP_BAN(51),
         BUY_ITEM_PLAYER_SHOP(43), // (BUY_ITEM_STORE(22) // unknown: 53
