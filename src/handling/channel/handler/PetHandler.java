@@ -264,13 +264,14 @@ public class PetHandler {
         if (chr == null) {
             return;
         }
-        final int petId = (int) slea.readLong();
+        final int petId = slea.readInt();//00 00 00 00
+        slea.readInt();//座標
         final MaplePet pet = chr.getSpawnPet(!GameConstants.GMS ? (chr.getPetIndex(petId)) : petId);
         if (pet == null) {
             return;
         }
 
-        slea.skip(9); // byte(index?), int(pos), int
+        slea.skip(4); // byte(index?), int(pos), int
         final List<ILifeMovementFragment> res = MovementParse.parseMovement(slea, pet.getPos(), MovementKind.PET_MOVEMENT);
         if (res != null && !res.isEmpty() && chr.getMap() != null) { // map crash hack
 

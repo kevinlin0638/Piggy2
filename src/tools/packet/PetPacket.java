@@ -43,6 +43,7 @@ public class PetPacket {
         mplew.writeShort(show ? SendPacketOpcode.SHOW_PET.getValue() : SendPacketOpcode.SPAWN_PET.getValue());
         mplew.writeInt(chr.getId());
         mplew.write(chr.getPetIndex(pet));
+        System.err.println(chr.getPetIndex(pet) + "<<");
         mplew.write(0);
         mplew.write(0);
         mplew.write(0);
@@ -86,10 +87,10 @@ public class PetPacket {
 
         mplew.writeShort(SendPacketOpcode.MOVE_PET.getValue());
         mplew.writeInt(cid);
-        mplew.writeInt(slot);
+        mplew.writeInt(pid);
         mplew.writeInt(0);
         mplew.writePos(pos);
-        mplew.writeInt(pid);
+        //mplew.writeInt(pid);
         PacketHelper.serializeMovementList(mplew, moves);
 
         return mplew.getPacket();
@@ -191,11 +192,11 @@ public class PetPacket {
         if (showpet) {
             mplew.write(0);
         }
-        mplew.writeInt(pet.getPetItemId());
-        mplew.writeMapleAsciiString(pet.getName());
-        mplew.writeLong(pet.getUniqueId());
-        mplew.writePos(pet.getPos());
-        mplew.write(pet.getStance());
+        mplew.writeInt(pet.getPetItemId());  //寵物ID
+        mplew.writeMapleAsciiString(pet.getName()); //寵物名字
+        mplew.writeLong(pet.getUniqueId()); //寵物的SQL唯一ID
+        mplew.writePos(pet.getPos()); //寵物的坐標
+        mplew.write(pet.getStance()); //姿勢
         mplew.writeShort(pet.getFh());
     }
 

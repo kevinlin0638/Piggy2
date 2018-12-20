@@ -195,8 +195,9 @@ public class MapleQuestRequirement implements Serializable {
                 }
                 return false;
             case pettamenessmin:
-                for (MaplePet pet : c.getPets()) {
-                    if (pet.getSummoned() && pet.getCloseness() >= intStore) {
+                MaplePet[] pet = c.getSpawnPets();
+                for (int i = 0; i < 3; i++) {
+                    if (pet[i] != null && pet[i].getSummoned() && pet[i].getCloseness() >= intStore) {
                         return true;
                     }
                 }

@@ -189,7 +189,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private List<Integer> lastmonthfameids, lastmonthbattleids, extendedSlots;
     private List<MapleDoor> doors;
     private List<MechDoor> mechDoors;
-    private MaplePet[] spawnPets; //召喚中的寵物
+    private final MaplePet[] spawnPets; //召喚中的寵物
     private int gml;
     private List<Item> rebuy;
     private Map<Short, String> area_info = new LinkedHashMap<>();

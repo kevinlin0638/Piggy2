@@ -980,6 +980,20 @@ public class CField {
 //        mplew.writePos(chr.getTruePosition());
 //        mplew.write(chr.getStance());
 
+        /*chr.dropMessage("開始---------" + chr.getName());
+        for (int i = 0; i < 3; i++) { // 寵物
+            MaplePet pet = chr.getSummonedPet(i);
+            mplew.writeBool(pet != null);
+            chr.dropMessage((pet != null) + " writeBool");
+            if (pet == null) {
+                break;
+            }
+            mplew.writeInt(i);
+            chr.dropMessage(i + " writeInt");
+            PetPacket.addPetInfo(mplew, chr, pet, false);
+        }
+        chr.dropMessage("END 結束-------------");*/
+        
         MaplePet[] pet = chr.getSpawnPets();
         for (int i = 0; i < 3; i++) {
             mplew.writeBool(pet[i] != null);

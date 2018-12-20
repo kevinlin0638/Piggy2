@@ -820,7 +820,7 @@ public class CWvsContext {
         mplew.write(0);
         mplew.write(0);
         mplew.write(0);
-        mplew.write(chr.getSummonedPets().isEmpty() ? 0 : 1);
+        //mplew.write(chr.getSummonedPets().isEmpty() ? 0 : 1);
 //        mplew.writeMapleAsciiString(chr.getCharMessage()); // 角色訊息
 //        mplew.write(chr.getExpression());// 表情
 //        mplew.write(chr.getConstellation());// 星座
@@ -828,19 +828,23 @@ public class CWvsContext {
 //        mplew.write(chr.getMonth());// 月
 //        mplew.write(chr.getDay());// 日
 
-        chr.getPets().stream().filter(pet -> pet.getSummoned()).forEach(pet -> {
-            mplew.write(pet.getSummonedValue());
-            mplew.writeInt(chr.getPetIndex(pet));
-            mplew.writeInt(pet.getPetItemId()); // petid
-            mplew.writeMapleAsciiString(pet.getName());
-            mplew.write(pet.getLevel()); // pet level
-            mplew.writeShort(pet.getCloseness()); // pet closeness
-            mplew.write(pet.getFullness()); // pet fullness
-            mplew.writeShort(0); // pet flags
-            Item inv = chr.getInventory(MapleInventoryType.EQUIPPED).getItem((byte) (pet.getSummonedValue() == 2 ? -130 : pet.getSummonedValue() == 1 ? -114 : -138));
-            mplew.writeInt(inv == null ? 0 : inv.getItemId());
-        });
-        mplew.write(0);
+        MaplePet[] pets = chr.getSpawnPets();
+        mplew.write(chr.getSpawnPet(0) != null ? 1 : 0);
+        for (int i = 0; i < 3; i++) {
+            if (pets[i] != null && pets[i].getSummoned()) { //已召喚的寵物
+                mplew.write(pets[i].getSummonedValue());
+                mplew.writeInt(i);
+                mplew.writeInt(pets[i].getPetItemId()); //寵物的道具ID
+                mplew.writeMapleAsciiString(pets[i].getName()); //寵物名
+                mplew.write(pets[i].getLevel()); //寵物等級
+                mplew.writeShort(pets[i].getCloseness()); //寵物親密度
+                mplew.write(pets[i].getFullness()); //寵物飢餓度
+                mplew.writeShort(pets[i].getFlags()); //寵物的狀態
+                Item inv = chr.getInventory(MapleInventoryType.EQUIPPED).getItem((byte) (i == 0 ? -114 : (i == 1 ? -122 : -124)));
+                mplew.writeInt(inv == null ? 0 : inv.getItemId());
+            }
+        }
+        mplew.write(0);// End of pet
 
         if (chr.getInventory(MapleInventoryType.EQUIPPED).getItem((byte) -18) != null && chr.getInventory(MapleInventoryType.EQUIPPED).getItem((byte) -19) != null) {
             final MapleMount mount = chr.getMount();

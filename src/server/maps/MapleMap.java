@@ -748,7 +748,7 @@ public final class MapleMap {
             doShrine(true);
         } else if (mobid == 9300281 && mapid == 921120300) {
             startMapEffect("How... How could my plan fail like this...? Even Rex... Ughhh...", 5120035);
-       /* this isn't automatic in gms anymore, it's actually done by npc. :)
+            /* this isn't automatic in gms anymore, it's actually done by npc. :)
             } else if (mobid == 9300010 && mapid == 922010700 && getAllMonstersThreadsafe().size() == 0) { // LudiPQ - Rombots
             for (MaplePartyCharacter pchr : chr.getParty().getMembers()) {
                 MapleCharacter chrz = chr.getClient().getChannelServer().getPlayerStorage().getCharacterById(pchr.getWorldId());
@@ -1322,7 +1322,8 @@ public final class MapleMap {
     }
 
     /**
-     * Automagically finds a new controller for the given monster from the chars on the map...
+     * Automagically finds a new controller for the given monster from the chars
+     * on the map...
      *
      * @param monster
      */
@@ -1459,7 +1460,8 @@ public final class MapleMap {
     }
 
     /**
-     * returns a monster with the given oid, if no such monster exists returns null
+     * returns a monster with the given oid, if no such monster exists returns
+     * null
      *
      * @param oid
      * @return
@@ -1589,7 +1591,7 @@ public final class MapleMap {
         spawnFakeMonster(mainb);
 
         final int[] zakpart = {8800003, 8800004, 8800005, 8800006, 8800007,
-                8800008, 8800009, 8800010};
+            8800008, 8800009, 8800010};
 
         for (final int i : zakpart) {
             final MapleMonster part = MapleLifeFactory.getMonster(i);
@@ -1613,7 +1615,7 @@ public final class MapleMap {
         spawnFakeMonster(mainb);
 
         final int[] zakpart = {8800103, 8800104, 8800105, 8800106, 8800107,
-                8800108, 8800109, 8800110};
+            8800108, 8800109, 8800110};
 
         for (final int i : zakpart) {
             final MapleMonster part = MapleLifeFactory.getMonster(i);
@@ -2224,13 +2226,15 @@ public final class MapleMap {
                     break;
             }
         }
-        //新架構 [寵物]
-        for (final MaplePet pet : chr.getPets()) {
-            if (pet.getSummoned()) {
-                pet.setPos(chr.getTruePosition());
-                chr.getClient().sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((short) (byte) pet.getInventoryPosition()), true));
-                chr.getClient().sendPacket(PetPacket.showPet(chr, pet, false, false, true));
-                chr.getClient().sendPacket(PetPacket.showPetUpdate(chr, pet.getUniqueId(), (byte) (pet.getSummonedValue() - 1)));
+        MaplePet[] pets = chr.getSpawnPets();
+        for (int i = 0; i < 3; i++) {
+            if (chr.getSpawnPet(i) == null)
+                break;
+            if (pets[i] != null && pets[i].getSummoned()) {
+                pets[i].setPos(chr.getTruePosition());
+                chr.petUpdateStats(pets[i], true);
+                chr.getClient().sendPacket(PetPacket.showPet(chr, pets[i], false, false, true));
+                //chr.getClient().sendPacket(PetPacket.loadExceptionList(chr, pets[i]));
             }
         }
         if (chr.getSummonedFamiliar() != null) {
@@ -2253,7 +2257,7 @@ public final class MapleMap {
             chr.getClient().sendPacket(CField.updateCardStack(chr.getCardStack()));
         }
 
-        if(!chr.isClone()) {
+        if (!chr.isClone()) {
             final List<MapleSummon> ss = chr.getSummonsReadLock();
             try {
                 for (MapleSummon summon : ss) {
@@ -2316,9 +2320,9 @@ public final class MapleMap {
                 case 922010403:
                 case 922010404:
                 case 922010405:
-                    startSimpleMapEffect((getAllMonstersThreadsafe().size() == 0 ?
-                            "I can't feel the energies of the monsters. Please proceed to a different room." :
-                            "I can feel the energies of the monsters. Please find and defeat them."), 5120018);
+                    startSimpleMapEffect((getAllMonstersThreadsafe().size() == 0
+                            ? "I can't feel the energies of the monsters. Please proceed to a different room."
+                            : "I can feel the energies of the monsters. Please find and defeat them."), 5120018);
                     break;
             }
             if (getNumMonsters() > 0 && (mapid == 280030001 || mapid == 240060201 || mapid == 280030000 || mapid == 240060200 || mapid == 220080001 || mapid == 541020800 || mapid == 541010100)) {
@@ -2346,8 +2350,8 @@ public final class MapleMap {
                 if (!chr.isFlying()) {
                     chr.fly_PQ(chr);
                 }
-            } else if ((mapid >= 925020600 && mapid <= 925020609) || (mapid >= 925021200 && mapid <= 925021209) || (mapid >= 925021800 && mapid <= 925021809) ||
-                    (mapid >= 925022400 && mapid <= 925022409) || (mapid >= 925023000 && mapid <= 925023009) || (mapid >= 925023600 && mapid <= 925023609)) {
+            } else if ((mapid >= 925020600 && mapid <= 925020609) || (mapid >= 925021200 && mapid <= 925021209) || (mapid >= 925021800 && mapid <= 925021809)
+                    || (mapid >= 925022400 && mapid <= 925022409) || (mapid >= 925023000 && mapid <= 925023009) || (mapid >= 925023600 && mapid <= 925023609)) {
                 chr.dojoMapEndTime = System.currentTimeMillis();
             } else if (mapid == 910000000) {
                 chr.getClient().sendPacket(CField.musicChange(MapConstants.FM_BGM));
@@ -3264,8 +3268,9 @@ public final class MapleMap {
         List<Integer> stored_bm = blockedmaps;
         for (int i : stored_bm) {
             blockedmaps.clear(); // store the list as i, clear, then re-add unless == map
-            if (i != map)
+            if (i != map) {
                 blockedmaps.add(i); // add i of list != to map. This is because we're unable to list.remove properly.
+            }
         }
         //}
     }
@@ -3287,8 +3292,9 @@ public final class MapleMap {
         List<Integer> stored_bm = pvpmaps;
         for (int i : stored_bm) {
             pvpmaps.clear(); // store the list as i, clear, then re-add unless == map
-            if (i != map)
+            if (i != map) {
                 pvpmaps.add(i); // add i of list != to map. This is because we're unable to list.remove properly.
+            }
         }
     }
 
@@ -3379,7 +3385,7 @@ public final class MapleMap {
     public final void setChangeableMobOrigin(MapleCharacter d) {
         this.changeMobOrigin = new WeakReference<MapleCharacter>(d);
     }
-    
+
     /*public boolean getAntiKSAllowed(int map) {
         for (Object i : antiks_bm) {
             final String mapId = "" + map + "";
@@ -3407,7 +3413,6 @@ public final class MapleMap {
             System.out.println("AntiKS on map " + mapid + " (using function map: " + map + ") is undefined {{" + AntiKS_Allowed + "}}");
         }
     }*/
-
     public void respawn(final boolean force) {
         respawn(force, System.currentTimeMillis());
     }
