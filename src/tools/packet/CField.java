@@ -980,33 +980,20 @@ public class CField {
 //        mplew.writePos(chr.getTruePosition());
 //        mplew.write(chr.getStance());
 
-        /*chr.dropMessage("開始---------" + chr.getName());
-        for (int i = 0; i < 3; i++) { // 寵物
-            MaplePet pet = chr.getSummonedPet(i);
+        //--------------------------------------
+        /*for (int i = 0; i < 3; i++) { // 寵物
+            MaplePet pet = chr.getPet(i);
             mplew.writeBool(pet != null);
-            chr.dropMessage((pet != null) + " writeBool");
             if (pet == null) {
                 break;
             }
             mplew.writeInt(i);
-            chr.dropMessage(i + " writeInt");
-            PetPacket.addPetInfo(mplew, chr, pet, false);
+            handling.PetPacket.addPetInfo(mplew, pet, false);
         }
-        chr.dropMessage("END 結束-------------");*/
-        
-        MaplePet[] pet = chr.getSpawnPets();
-        for (int i = 0; i < 3; i++) {
-            mplew.writeBool(pet[i] != null);
-            if (pet[i] != null && pet[i].getSummoned()) {
-                mplew.writeInt(i);
-                PetPacket.addPetInfo(mplew, chr, pet[i], false);
-            } else {
-                break;
-            }
-        }
-        // Pets
-        /*
-        for (int i = 0; i < 3; i++) { // 寵物
+        mplew.write(0);*/
+        //--------------------------------------
+        //--------------------------------------
+        /*for (int i = 0; i < 3; i++) { // 寵物
             MaplePet pet = chr.getSpawnPet(i);
             mplew.writeBool(pet != null);
             if (pet == null) {
@@ -1014,9 +1001,19 @@ public class CField {
             }
             mplew.writeInt(i);
             PetPacket.addPetInfo(mplew, chr, pet, false);
-        }*/
-
-//        mplew.write(0); // pets can smd :)
+        }
+        mplew.write(0);*/
+        //--------------------------------------
+        MaplePet[] pet = chr.getSpawnPets();
+        if (pet != null) {
+            for (int i = 0; i < 3; i++) {
+                if (pet[i] != null && pet[i].getSummoned()) {
+                    PetPacket.addPetInfo(mplew, chr, pet[i], true);
+                }
+            }
+        }
+        mplew.write(0); //加載玩家寵物結束
+        //---------------------------------------
 //        if (!chr.isHidden() && chr.getActivePets() > 0) {
 //            chr.getPets().stream().filter(MaplePet::getSummoned).forEach(pet -> {
 //                addPetInfo(mplew, pet, false);
@@ -1062,20 +1059,6 @@ public class CField {
 
         mplew.writeInt(chr.getMount().getItemId());//骑宠id
         return mplew.getPacket();
-    }
-
-    public static void addPetInfo(final MaplePacketLittleEndianWriter mplew, MaplePet pet, boolean showpet) {
-        mplew.write(1);
-        if (showpet) {
-            mplew.write(0); //1?
-        }
-        mplew.writeInt(pet.getPetItemId());
-        mplew.writeMapleAsciiString(pet.getName());
-        mplew.writeLong(pet.getUniqueId());
-        mplew.writeShort(pet.getPos().x);
-        mplew.writeShort(pet.getPos().y - 20);
-        mplew.write(pet.getStance());
-        mplew.writeInt(pet.getFh());
     }
 
     public static byte[] removePlayerFromMap(int cid) {

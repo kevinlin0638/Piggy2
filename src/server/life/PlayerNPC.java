@@ -152,7 +152,7 @@ public class PlayerNPC extends MapleNPC implements MapleCharacterLook {
         setFace(chr.getFace());
         setSkin(chr.getSkinColor());
         setGender(chr.getGender());
-        setPets(chr.getPets());
+        //setPets(chr.getPets());
 
         equips = new HashMap<Byte, Integer>();
         for (Item item : chr.getInventory(MapleInventoryType.EQUIPPED).newList()) {

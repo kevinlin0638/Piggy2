@@ -3577,7 +3577,7 @@ public class InventoryHandler {
                         }
                     }
                     if (pet == null) {
-                        chr.dropMessage(1, "没有可以喂食的寵物。\r\n請重新確認。");
+                        chr.dropMessage(1, "沒有可以餵食的寵物。\r\n請重新確認。");
                         break;
                     }
                     byte petIndex = chr.getPetIndex(pet);
@@ -3949,83 +3949,6 @@ public class InventoryHandler {
                     c.sendPacket(InventoryPacket.getInventoryFull());
                     c.sendPacket(InventoryPacket.getShowInventoryFull());
                     c.sendPacket(CWvsContext.enableActions());
-                }
-            }
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    public static void Pickup_Pet(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        if (chr == null) {
-            return;
-        }
-        if (c.getPlayer().hasBlockedInventory() || c.getPlayer().inPVP()) { //hack
-            return;
-        }
-        c.getPlayer().setScrolledPosition((short) 0);
-        byte petz = (byte) (GameConstants.GMS ? (c.getPlayer().getPetIndex((int) slea.readLong())) : slea.readInt());
-        MaplePet pet = chr.getSpawnPet(petz);
-        slea.skip(1); // [4] Zero, [4] Seems to be tickcount, [1] Always zero
-        slea.readInt();
-        Point Client_Reportedpos = slea.readPos();
-        MapleMapObject ob = chr.getMap().getMapObject(slea.readInt(), MapleMapObjectType.ITEM);
-
-        if (ob == null || pet == null) {
-            return;
-        }
-        MapleMapItem mapitem = (MapleMapItem) ob;
-        Lock lock = mapitem.getLock();
-        lock.lock();
-        try {
-            if (mapitem.isPickedUp()) {
-                c.sendPacket(InventoryPacket.getInventoryFull());
-                return;
-            }
-            if (mapitem.getOwner() != chr.getId() && mapitem.isPlayerDrop()) {
-                return;
-            }
-            if (mapitem.getOwner() != chr.getId() && ((!mapitem.isPlayerDrop() && mapitem.getDropType() == 0) || (mapitem.isPlayerDrop() && chr.getMap().getEverlast()))) {
-                c.sendPacket(CWvsContext.enableActions());
-                return;
-            }
-            if (!mapitem.isPlayerDrop() && mapitem.getDropType() == 1 && mapitem.getOwner() != chr.getId() && (chr.getParty() == null || chr.getParty().getMemberById(mapitem.getOwner()) == null)) {
-                c.sendPacket(CWvsContext.enableActions());
-                return;
-            }
-            if (mapitem.getMeso() > 0) {
-                /*
-                 * if (chr.getParty() != null && mapitem.getOwner() !=
-                 * chr.getWorldId()) { List<MapleCharacter> toGive = new
-                 * LinkedList<>(); int splitMeso = mapitem.getMeso() * 40 / 100;
-                 * for (MaplePartyCharacter z : chr.getParty().getMembers()) {
-                 * MapleCharacter m = chr.getMap().getCharacterById(z.getWorldId());
-                 * if (m != null && m.getWorldId() != chr.getWorldId()) { toGive.add(m); }
-                 * } for (MapleCharacter m : toGive) { m.gainMeso(splitMeso /
-                 * toGive.size() + (m.getStat().hasPartyBonus ? (int)
-                 * (mapitem.getMeso() / 20.0) : 0), true); }
-                 * chr.gainMeso(mapitem.getMeso() - splitMeso, true);
-                 *
-                 */
-                // } else {
-                chr.gainMeso(mapitem.getMeso(), true);
-                //  }
-                if (chr.getAutoToken() == true) { //TASK: Pet loot, this will now auto-convert if you use meso-magnet.
-                    if (chr.getMeso() >= 1000000000) {
-                        MapleInventoryManipulator.addById(c, ServerConstants.Currency, (short) 1, null, null, 0, "");
-                        //c.getPlayer().dropMessage("Auto-Token Received! To disable Auto-Token, type @autotoken!");
-                        chr.gainMeso(-1000000000);
-                    }
-                }
-                removeItem_Pet(chr, mapitem, petz);
-            } else {
-                if (mapitem.getItemId() / 10000 == 291) {
-                    c.sendPacket(CWvsContext.enableActions());
-                } else if (useItem(c, mapitem.getItemId())) {
-                    removeItem_Pet(chr, mapitem, petz);
-                } else if (MapleInventoryManipulator.checkSpace(c, mapitem.getItemId(), mapitem.getItem().getQuantity(), mapitem.getItem().getOwner())) {
-                    MapleInventoryManipulator.addFromDrop(c, mapitem.getItem(), true, mapitem.getDropper() instanceof MapleMonster);
-                    removeItem_Pet(chr, mapitem, petz);
                 }
             }
         } finally {

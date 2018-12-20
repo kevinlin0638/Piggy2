@@ -1,75 +1,69 @@
-/*
-This file is part of the OdinMS Maple Story Server
-Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
-Matthias Butz <matze@odinms.de>
-Jan Christian Meyer <vimes@odinms.de>
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License version 3
-as published by the Free Software Foundation. You may not use, modify
-or distribute this program under any other version of the
-GNU Affero General Public License.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package handling.channel.handler;
 
-import server.status.MapleBuffStatus;
 import client.MapleCharacter;
 import client.MapleClient;
 import client.inventory.Item;
 import client.inventory.MapleInventoryType;
 import client.inventory.MaplePet;
 import client.inventory.PetCommand;
+import client.inventory.PetDataFactory;
 import constants.GameConstants;
-import constants.Occupations;
-import java.awt.Point;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
-import server.Randomizer;
 import server.maps.FieldLimitType;
+import server.maps.MapleMapItem;
+import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
+import server.quest.MapleQuest;
+import tools.packet.PetPacket;
+import java.awt.*;
+import java.util.Arrays;
+import java.util.List;
+import server.Randomizer;
 import server.movement.ILifeMovementFragment;
 import server.movement.MovementKind;
+import server.status.MapleBuffStatus;
 import tools.data.LittleEndianAccessor;
+import tools.packet.CField;
 import tools.packet.CField.EffectPacket;
 import tools.packet.CWvsContext;
-import tools.packet.MobPacket;
-import tools.packet.PetPacket;
-
-import java.util.List;
 
 public class PetHandler {
 
-    public static void SpawnPet(final LittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
-        //[9C 00] [4D 05 85 06] [0A] [00] v145
+    /*
+     * 召喚寵物
+     */
+    public static void SpawnPet(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+        //[9A 00] [B8 19 35 01] [05] [00]
+        //chr.updateTick(slea.readInt());
         slea.readInt();
         chr.spawnPet(slea.readByte(), slea.readByte() > 0);
-
     }
 
-    public static void Pet_AutoPotion(final LittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
-        slea.skip(GameConstants.GMS ? 9 : 1);
-        slea.readInt();
-        final short slot = slea.readShort();
-        if (chr == null || !chr.isAlive() || chr.getMapId() == 749040100 || chr.getMap() == null || chr.hasDisease(MapleBuffStatus.POTION)) {
+    /*
+     * 寵物自動喝藥
+     */
+    public static void Pet_AutoPotion(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+        slea.skip(1);
+        if (chr == null) {
+            c.sendPacket(CWvsContext.enableActions());
             return;
         }
-        final Item toUse = chr.getInventory(MapleInventoryType.USE).getItem(slot);
-
+        //chr.updateTick(slea.readInt());
+        slea.readInt();
+        short slot = slea.readShort();
+        if (chr == null || !chr.isAlive() || chr.getMapId() == 749040100 || chr.getMap() == null || chr.hasDisease(MapleBuffStatus.POTION)) {
+            c.sendPacket(CWvsContext.enableActions());
+            return;
+        }
+        Item toUse = chr.getInventory(MapleInventoryType.USE).getItem(slot);
         if (toUse == null || toUse.getQuantity() < 1 || toUse.getItemId() != slea.readInt()) {
             c.sendPacket(CWvsContext.enableActions());
             return;
         }
-        final long time = System.currentTimeMillis();
+        long time = System.currentTimeMillis();
         if (chr.getNextConsume() > time) {
-            chr.dropMessage(5, "You may not use this item yet.");
+            chr.dropMessage(5, "暫時無法使用道具.");
             c.sendPacket(CWvsContext.enableActions());
             return;
         }
@@ -85,20 +79,80 @@ public class PetHandler {
         }
     }
 
-    public static void PetChat(final int petid, final short command, final String text, MapleCharacter chr) {
+    public static void PetExcludeItems(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+        /*
+         * FF 00
+         * 00 00 00 00
+         * 01
+         * 63 BF 0F 00
+         *//*
+        int petSlot = slea.readInt();
+        MaplePet pet = chr.getSpawnPet(petSlot);
+        if (pet == null || !PetFlag.PET_IGNORE_PICKUP.check(pet.getFlags())) {
+            c.sendPacket(CWvsContext.enableActions());
+            return;
+        }
+        pet.clearExcluded(); //清除以前的過濾
+        byte amount = slea.readByte(); //有多少個過濾的道具ID
+        for (int i = 0; i < amount; i++) {
+            pet.addExcluded(i, slea.readInt());
+        }*/
+    }
+
+    /*
+     * 寵物說話
+     */
+    public static void PetChat(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+        /*
+         * FB 00
+         * 00 00 00 00
+         * 40 62 BB 00
+         * 01 13
+         * 06 00 DF C6 DF C6 DF C6
+         */
+        if (slea.available() < 12) {
+            c.sendPacket(CWvsContext.enableActions());
+            return;
+        }
+        int petid = slea.readInt();
+        slea.readInt();
         if (chr == null || chr.getMap() == null || chr.getSpawnPet(petid) == null) {
             return;
         }
-        //新架構 [寵物]
-        chr.getMap().broadcastMessage(chr, PetPacket.petChat(chr.getId(), command, text, (byte) petid), true);
-    }
-
-    public static void PetCommand(final MaplePet pet, final PetCommand petCommand, final MapleClient c, final MapleCharacter chr) {
-
-        if (petCommand == null) {
+        short act = slea.readShort();
+        String text = slea.readMapleAsciiString();
+        if (text.length() < 1) {
+            //FileoutputUtil.log(FileoutputUtil.寵物說話, "玩家寵物說話為空 - 操作: " + act + " 寵物ID: " + chr.getSpawnPet(petid).getPetItemId(), true);
             return;
         }
-        byte petIndex = (byte) chr.getPetIndex(pet);
+        chr.getMap().broadcastMessage(chr, PetPacket.petChat(chr.getId(), act, text, (byte) petid), true);
+    }
+
+    /*
+     * 使用寵物命令
+     */
+    public static void PetCommand(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+        /*
+         * FC 00
+         * 00 00 00 00
+         * 00
+         * 0C
+         */
+        int petId = slea.readInt();
+        MaplePet pet = null;
+        pet = chr.getSpawnPet((byte) petId);
+        slea.readByte(); //always 0?
+        if (pet == null) {
+            c.sendPacket(CWvsContext.enableActions());
+            return;
+        }
+        byte command = slea.readByte();
+        PetCommand petCommand = PetDataFactory.getPetCommand(pet.getPetItemId(), command);
+        if (petCommand == null) {
+            c.sendPacket(CWvsContext.enableActions());
+            return;
+        }
+        byte petIndex = chr.getPetIndex(pet);
         boolean success = false;
         if (Randomizer.nextInt(99) <= petCommand.getProbability()) {
             success = true;
@@ -111,47 +165,47 @@ public class PetHandler {
                 if (newCloseness >= GameConstants.getClosenessNeededForLevel(pet.getLevel() + 1)) {
                     pet.setLevel(pet.getLevel() + 1);
                     c.sendPacket(EffectPacket.showOwnPetLevelUp(petIndex));
-                    //新架構 [寵物]
                     chr.getMap().broadcastMessage(PetPacket.showPetLevelUp(chr, petIndex));
                 }
-                //新架構 [寵物]
-                c.getSession().write(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), true));
+                chr.petUpdateStats(pet, true);
             }
         }
-        //新架構 [寵物]
         chr.getMap().broadcastMessage(PetPacket.commandResponse(chr.getId(), (byte) petCommand.getSkillId(), petIndex, success, false));
     }
 
-    public static void PetFood(final LittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
-        int previousFullness = 99;
-        MaplePet pet = null;
-        if (chr == null) {
+    /*
+     * 使用寵物食品
+     */
+    public static void PetFood(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+        /*
+         * 74 00
+         * 04 3A 41 01
+         * 06 00 - slot
+         * 40 59 20 00 - itemId
+         */
+ /*if (chr == null || chr.getMap() == null) {
             return;
         }
-        for (final MaplePet pets : chr.getPets()) {
-            if (pets.getSummoned()) {
-                if (pets.getFullness() < previousFullness) {
-                    previousFullness = pets.getFullness();
-                    pet = pets;
-                }
+        int previousFullness = 100;
+        byte petslot = 0;
+        MaplePet[] pets = chr.getSpawnPets();
+        for (byte i = 0; i < 3; i++) {
+            if (pets[i] != null && pets[i].getFullness() < previousFullness) {
+                petslot = i;
+                break;
             }
         }
-        if (pet == null) {
-            c.sendPacket(CWvsContext.enableActions());
-            return;
-        }
-
-        slea.readInt();
+        MaplePet pet = chr.getSpawnPet(petslot);
+        chr.updateTick(slea.readInt());
         short slot = slea.readShort();
-        final int itemId = slea.readInt();
-        Item petFood = c.getPlayer().getInventory(MapleInventoryType.USE).getItem(slot);
-        if (petFood == null || petFood.getItemId() != itemId || petFood.getQuantity() <= 0 || itemId / 10000 != 212) {
-            c.sendPacket(CWvsContext.enableActions());
+        int itemId = slea.readInt();
+        Item petFood = chr.getInventory(MapleInventoryType.USE).getItem(slot);
+        if (pet == null || petFood == null || petFood.getItemId() != itemId || petFood.getQuantity() <= 0 || itemId / 10000 != 212) {
+            c.announce(MaplePacketCreator.enableActions());
             return;
         }
         boolean gainCloseness = false;
-
-        if (Randomizer.nextInt(99) <= 50) {
+        if (Randomizer.nextInt(101) > 50) {
             gainCloseness = true;
         }
         if (pet.getFullness() < 100) {
@@ -160,8 +214,7 @@ public class PetHandler {
                 newFullness = 100;
             }
             pet.setFullness(newFullness);
-            final byte index = chr.getPetIndex(pet);
-
+            byte index = chr.getPetIndex(pet);
             if (gainCloseness && pet.getCloseness() < 30000) {
                 int newCloseness = pet.getCloseness() + 1;
                 if (newCloseness > 30000) {
@@ -170,14 +223,11 @@ public class PetHandler {
                 pet.setCloseness(newCloseness);
                 if (newCloseness >= GameConstants.getClosenessNeededForLevel(pet.getLevel() + 1)) {
                     pet.setLevel(pet.getLevel() + 1);
-
-                    c.sendPacket(EffectPacket.showOwnPetLevelUp(index));
-                    //新架構 [寵物]
-                    chr.getMap().broadcastMessage(PetPacket.showPetLevelUp(chr, index));
+                    c.announce(EffectPacket.showOwnPetLevelUp(index));
+                    chr.getMap().broadcastMessage(EffectPacket.showPetLevelUp(chr.getId(), index));
                 }
             }
-            //新架構 [寵物]
-            c.sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), true));
+            chr.petUpdateStats(pet, true);
             chr.getMap().broadcastMessage(c.getPlayer(), PetPacket.commandResponse(chr.getId(), (byte) 1, index, true, true), true);
         } else {
             if (gainCloseness) {
@@ -189,102 +239,164 @@ public class PetHandler {
                 if (newCloseness < GameConstants.getClosenessNeededForLevel(pet.getLevel())) {
                     pet.setLevel(pet.getLevel() - 1);
                 }
+                chr.dropMessage(5, "您的寵物的飢餓感是滿值，如果繼續使用將會有50%的幾率減少1點親密度。");
             }
-            //新架構 [寵物]
-            c.sendPacket(PetPacket.updatePet(pet, chr.getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition()), true));
+            chr.petUpdateStats(pet, true);
             chr.getMap().broadcastMessage(chr, PetPacket.commandResponse(chr.getId(), (byte) 1, chr.getPetIndex(pet), false, true), true);
         }
         MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (short) 1, true, false);
-        c.sendPacket(CWvsContext.enableActions());
+        c.announce(MaplePacketCreator.enableActions());*/
     }
 
-    public static void conductPetAttacking(MapleCharacter chr, boolean perk) {
-        if (chr.getPets() != null) {
-            String[] monsterDialog = {"BOOM! HEADSHOT!", "fyte mi!", "FALCOOOON PAWNCH!", "attack_4", "attack_5"};
+    /*
+     * 寵物移動
+     */
+    public static void MovePet(LittleEndianAccessor slea, MapleCharacter chr) {
+        int maxdist = 0;
+        int petSlot = slea.readInt();
+        //slea.skip(1); //[01] V.103 新增
+        //slea.skip(4); //[00 00 00 00] V.112 新增
+        Point startPos = slea.readPos(); //開始的坐標
+        slea.skip(4); //未知
+        List<ILifeMovementFragment> res = MovementParse.parseMovement(slea, startPos, MovementKind.PET_MOVEMENT);
+        if (res != null && chr != null && !res.isEmpty() && chr.getMap() != null) { // map crash hack
+//            if (slea.available() != 8) {
+//                System.out.println("slea.available != 8 (寵物移動出錯) 剩餘封包長度: " + slea.available());
+//                FileoutputUtil.log(FileoutputUtil.Movement_Log, "slea.available != 8 (寵物移動出錯) 封包: " + slea.toString(true));
+//                return;
+//            }
+            MapleCharacter player = chr;
+            MaplePet pet = chr.getSpawnPet(petSlot);
+            if (pet == null) {
+                return;
+            }
+            chr.getSpawnPet(chr.getPetIndex(pet)).updatePosition(res);
+            chr.getMap().broadcastMessage(chr, PetPacket.movePet(chr.getId(), petSlot, startPos, res), false);
 
-            for (int i = 0; i < chr.getPets().size(); i++) {
-                List<server.life.MapleMonster> moInRange = chr.getMap().getMapMonstersInRange(chr.getSpawnPet(i).getPos(), 15000.0, MapleMapObjectType.MONSTER);
-                int damage = (int) (((chr.getSpawnPet(i).getLevel() * 5) * (int) (2.0 * Math.random() + 2)));
-                int level = chr.getLevel();
-                int chance = (int) (100.0 * Math.random());
-                int attackAmount = (int) (100.0 * Math.random());
-                if (level >= 10 && level < 30) {
-                    damage *= 5;
-                } else if (level >= 30 && level < 70) {
-                    damage *= 12;
-                } else if (level >= 70 && level < 120) {
-                    damage *= 17;
-                } else if (level >= 120 && level < 150) {
-                    damage *= 27;
-                } else if (level >= 120) {
-                    damage *= 40;
-                }
-                if (attackAmount >= 95) {
-                    attackAmount = (int) (3.0 * Math.random()) + 1;
-                } else {
-                    attackAmount = 1;
-                }
-                if (perk) { // should technically just remove this xD
-                    attackAmount *= 2;
-                    damage *= 20;
-                }
-                if ((System.currentTimeMillis() - chr.getSpawnPet(i).lastAttack) <= 1250 || moInRange.isEmpty()) {
-                    moInRange = null;
-                    return;
-                }
-                if (chr.getSpawnPet(i).getCloseness() >= constants.GameConstants.getClosenessNeededForLevel(chr.getSpawnPet(i).getLevel())) {
-                    //新架構 [寵物]
-                    chr.announce(PetPacket.showPetLevelUp(chr, (byte) i));
-                    chr.getMap().broadcastMessage(chr, PetPacket.showPetLevelUp(chr, (byte) i), false);
-                    chr.getSpawnPet(i).setLevel((byte) (chr.getSpawnPet(i).getLevel() + 1));
-                }
-                if (chance >= 70 && attackAmount == 1) {
-                    //新架構 [寵物]
-                    chr.getMap().broadcastMessage(PetPacket.petChat(chr.getId(), 1, monsterDialog[(int) (monsterDialog.length * Math.random())], (byte) i));
-                }
-                if (attackAmount > 1) {
-                    //新架構 [寵物]
-                    chr.getMap().broadcastMessage(PetPacket.petChat(chr.getId(), 1, "Critical hit!!", (byte) i));
-                }
-                for (int e = 0; e < attackAmount; e++) {
-                    if (moInRange.get(1) != null) {
-                        server.life.MapleMonster locked_on = moInRange.get(1);
-                        chr.getMap().broadcastMessage(chr, MobPacket.damageMonster(locked_on.getObjectId(), damage), true);
-                        locked_on.damage(chr, damage, true);
-                        chr.getSpawnPet(i).lastAttack = System.currentTimeMillis();
+            Boolean meso = false, item = false, boots = false, bino = false;
+            if (chr.getInventory(MapleInventoryType.EQUIPPED).findById(1812001) != null) {
+                item = true;
+                maxdist = 30;
+            }
+            if (chr.getInventory(MapleInventoryType.EQUIPPED).findById(1812000) != null) {
+                meso = true;
+                maxdist = 30;
+            }
+            if (chr.getInventory(MapleInventoryType.EQUIPPED).findById(1812004) != null) {
+                boots = true;
+                maxdist = 80;
+            }
+            //寵物全圖撿物
+            if (chr.getInventory(MapleInventoryType.ETC).findById(4430004) != null) {
+                bino = true;
+                boots = true;
+                meso = true;
+                item = false;
+                maxdist = 1000;
+            } else {
+                bino = false;
+                boots = false;
+                meso = false;
+                item = false;
+            }
+
+            if (chr.getInventory(MapleInventoryType.ETC).findById(4430005) != null) {
+                bino = true;
+                boots = true;
+                meso = true;
+                item = true;
+                maxdist = 1000;
+            }
+
+            if ((boots || bino) || meso || item) {
+                List<MapleMapObject> objects = player.getMap().getMapObjectsInRange(player.getPosition(), GameConstants.maxViewRangeSq(), Arrays.asList(MapleMapObjectType.ITEM));
+
+                for (ILifeMovementFragment move : res) {
+                    Point petPos = move.getPosition();
+                    double petX = petPos.getX();
+                    double petY = petPos.getY();
+                    for (MapleMapObject map_object : objects) {
+                        Point objectPos = map_object.getPosition();
+                        double objectX = objectPos.getX();
+                        double objectY = objectPos.getY();
+                        if (Math.abs(petX - objectX) <= maxdist || Math.abs(objectX - petX) <= maxdist) {
+                            if (Math.abs(petY - objectY) <= maxdist || Math.abs(objectY - petY) <= maxdist) {
+                                if (map_object instanceof MapleMapItem) {
+                                    MapleMapItem mapitem = (MapleMapItem) map_object;
+                                    synchronized (mapitem) {
+                                        if (mapitem.isPickedUp() || mapitem.getOwner() != chr.getId()) {
+                                            continue;
+                                        }
+                                        if (mapitem.getMeso() > 0 && meso) {
+                                            chr.gainMeso(mapitem.getMeso(), true, false);
+                                            chr.getMap().broadcastMessage(
+                                                    CField.removeItemFromMap(mapitem.getObjectId(), 5, chr.getId(), petSlot),
+                                                    mapitem.getPosition());
+                                            chr.getMap().removeMapObject(map_object);
+                                            mapitem.setPickedUp(true);
+                                        } else {
+                                            if (item) {
+                                                if (mapitem.getItem().getItemId() >= 5000000 && mapitem.getItem().getItemId() <= 5000045) {
+                                                    MapleInventoryManipulator.addById(chr.getClient(), mapitem.getItem().getItemId(), mapitem.getItem().getQuantity(), "Was picked up by " + chr.getName(), null);
+                                                    chr.getMap().broadcastMessage(
+                                                            CField.removeItemFromMap(mapitem.getObjectId(), 5, chr.getId(), petSlot),
+                                                            mapitem.getPosition());
+                                                    chr.getMap().removeMapObject(map_object);
+                                                    mapitem.setPickedUp(true);
+                                                } else {
+                                                    StringBuilder logInfo = new StringBuilder("Picked up by ");
+                                                    logInfo.append(chr.getName());
+                                                    if (MapleInventoryManipulator.addFromDrop(chr.getClient(), mapitem.getItem(), true)) {
+                                                        chr.getMap().broadcastMessage(
+                                                                CField.removeItemFromMap(mapitem.getObjectId(), 5, chr.getId(), petSlot),
+                                                                mapitem.getPosition());
+                                                        chr.getMap().removeMapObject(map_object);
+                                                        mapitem.setPickedUp(true);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-                chr.getSpawnPet(i).gainCloseness(1);
-                moInRange = null; // dispose
             }
         }
     }
-
-    public static void MovePet(final LittleEndianAccessor slea, final MapleCharacter chr) {
-        if (chr == null) {
+/*
+    public static void AllowPetLoot(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+        if (chr == null || chr.getMap() == null) {
+            c.announce(MaplePacketCreator.enableActions());
             return;
         }
-        final int petId = slea.readInt();//00 00 00 00
-        slea.readInt();//座標
-        final MaplePet pet = chr.getSpawnPet(!GameConstants.GMS ? (chr.getPetIndex(petId)) : petId);
-        if (pet == null) {
-            return;
+        slea.skip(4);
+        int data = slea.readShort();
+        if (data > 0) {
+            chr.getQuestNAdd(MapleQuest.getInstance(GameConstants.ALLOW_PET_LOOT)).setCustomData(String.valueOf(data));
+        } else {
+            chr.getQuestRemove(MapleQuest.getInstance(GameConstants.ALLOW_PET_LOOT));
         }
-
-        slea.skip(4); // byte(index?), int(pos), int
-        final List<ILifeMovementFragment> res = MovementParse.parseMovement(slea, pet.getPos(), MovementKind.PET_MOVEMENT);
-        if (res != null && !res.isEmpty() && chr.getMap() != null) { // map crash hack
-
-            pet.updatePosition(res);
-            //新架構 [寵物]
-            Point p = pet.getPos();
-            chr.getMap().broadcastMessage(chr, PetPacket.movePet(chr.getId(), petId, chr.getPetIndex(petId), p, res), false);
-            if (chr.getOccupation().is(Occupations.Hacker)) { // the question is, should we make this level 2 or something
-                // Handle Pet Attacking System Here
-                if (chr.getMap().getMobsSize() > 0) { // TODO: check if mobs are in range automatically.. rather then spamming this method
-                    conductPetAttacking(chr, Math.random() > 0.5);
-                }      // will change the way PERKs are ran, we'll use this as a sort of "critical" hit?
+        MaplePet[] pet = chr.getSpawnPets();
+        for (int i = 0; i < 3; i++) {
+            if (pet[i] != null && pet[i].getSummoned()) {
+                pet[i].setCanPickup(data > 0);
+                chr.petUpdateStats(pet[i], true);
             }
         }
+        c.announce(PetPacket.showPetPickUpMsg(data > 0, 1));
     }
+
+    public static void AllowPetAutoEat(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+        if (chr == null || chr.getMap() == null) {
+            c.announce(MaplePacketCreator.enableActions());
+            return;
+        }
+        slea.skip(4); //
+        slea.skip(4); // [00 08 00 00] 寵物是否有這個狀態
+        boolean data = slea.readByte() > 0;
+        chr.updateInfoQuest(GameConstants.寵物自動餵食, data ? "autoEat=1" : "autoEat=0");
+        c.announce(PetPacket.showPetAutoEatMsg());
+    }*/
 }

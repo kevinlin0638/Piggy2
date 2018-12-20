@@ -1635,6 +1635,13 @@ public final class MapleMap {
         spawnFakeMonster(mob);
     }
 
+    public Point getGroundBelow(Point pos) {
+        Point spos = new Point(pos.x, pos.y - 1);
+        spos = calcPointBelow(spos);
+        spos.y--;
+        return spos;
+    }
+
     private void checkRemoveAfter(final MapleMonster monster) {
         final int ra = monster.getStats().getRemoveAfter();
 
@@ -2228,13 +2235,11 @@ public final class MapleMap {
         }
         MaplePet[] pets = chr.getSpawnPets();
         for (int i = 0; i < 3; i++) {
-            if (chr.getSpawnPet(i) == null)
-                break;
             if (pets[i] != null && pets[i].getSummoned()) {
                 pets[i].setPos(chr.getTruePosition());
                 chr.petUpdateStats(pets[i], true);
-                chr.getClient().sendPacket(PetPacket.showPet(chr, pets[i], false, false, true));
-                //chr.getClient().sendPacket(PetPacket.loadExceptionList(chr, pets[i]));
+                chr.announce(PetPacket.showPet(chr, pets[i], false, false, true));
+                chr.announce(PetPacket.loadExceptionList(chr, pets[i]));
             }
         }
         if (chr.getSummonedFamiliar() != null) {

@@ -828,20 +828,20 @@ public class CWvsContext {
 //        mplew.write(chr.getMonth());// 月
 //        mplew.write(chr.getDay());// 日
 
+        mplew.write(0);
         MaplePet[] pets = chr.getSpawnPets();
-        mplew.write(chr.getSpawnPet(0) != null ? 1 : 0);
+        Item inv = chr.getInventory(MapleInventoryType.EQUIPPED).getItem((byte) -114);
         for (int i = 0; i < 3; i++) {
-            if (pets[i] != null && pets[i].getSummoned()) { //已召喚的寵物
+            if (pets[i] != null) {
                 mplew.write(pets[i].getSummonedValue());
                 mplew.writeInt(i);
-                mplew.writeInt(pets[i].getPetItemId()); //寵物的道具ID
+                mplew.writeInt(pets[i].getPetItemId()); // 寵物的道具ID
                 mplew.writeMapleAsciiString(pets[i].getName()); //寵物名
-                mplew.write(pets[i].getLevel()); //寵物等級
-                mplew.writeShort(pets[i].getCloseness()); //寵物親密度
-                mplew.write(pets[i].getFullness()); //寵物飢餓度
+                mplew.write(pets[i].getLevel()); // 寵物等級
+                mplew.writeShort(pets[i].getCloseness()); // 寵物親密度
+                mplew.write(pets[i].getFullness()); // 寵物飢餓度
                 mplew.writeShort(pets[i].getFlags()); //寵物的狀態
-                Item inv = chr.getInventory(MapleInventoryType.EQUIPPED).getItem((byte) (i == 0 ? -114 : (i == 1 ? -122 : -124)));
-                mplew.writeInt(inv == null ? 0 : inv.getItemId());
+                mplew.writeInt(inv != null ? inv.getItemId() : 0);
             }
         }
         mplew.write(0);// End of pet

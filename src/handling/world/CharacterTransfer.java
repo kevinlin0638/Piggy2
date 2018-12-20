@@ -192,16 +192,16 @@ public class CharacterTransfer implements Externalizable {
         this.rebuy = chr.getRebuy();
         //boolean uneq = false;
         for (int i = 0; i < this.petStore.length; i++) {
-            final MaplePet pet = chr.getSpawnPet(i);
+            MaplePet pet = chr.getSpawnPet(i);
             if (this.petStore[i] == 0) {
                 this.petStore[i] = (byte) -1;
             }
             if (pet != null) {
-                //uneq = true;
+//                uneq = true;
                 this.petStore[i] = (byte) Math.max(this.petStore[i], pet.getInventoryPosition());
             }
-
-        }/*
+        }
+        /*
         if (uneq) {
             chr.unequipAllPets();
         }*/
@@ -234,11 +234,11 @@ public class CharacterTransfer implements Externalizable {
         for (final Map.Entry<Skill, SkillEntry> qs : chr.getSkills().entrySet()) {
             this.Skills.put(qs.getKey().getId(), qs.getValue());
         }
-/* 224 */
+        /* 224 */
         for (Map.Entry<Integer, CardData> ii : chr.getCharacterCard().getCards().entrySet()) {
-/* 225 */
+            /* 225 */
             this.cardsInfo.put(ii.getKey(), ii.getValue());
-/*     */
+            /*     */
         }
         this.BlessOfFairy = chr.getBlessOfFairyOrigin();
         this.BlessOfEmpress = chr.getBlessOfEmpressOrigin();
@@ -640,7 +640,7 @@ public class CharacterTransfer implements Externalizable {
             out.writeInt(qs.getValue().teachId);
             out.writeByte(qs.getValue().position);
         }
-        
+
         out.writeByte(this.cardsInfo.size());
         for (Map.Entry qs : this.cardsInfo.entrySet()) {
             out.writeInt((Integer) qs.getKey());
@@ -734,7 +734,6 @@ public class CharacterTransfer implements Externalizable {
         for (int i = 0; i < petStore.length; i++) {
             out.writeByte(petStore[i]);
         }
-
 
         out.writeShort(rebuy.size());
         for (int i = 0; i < rebuy.size(); i++) {

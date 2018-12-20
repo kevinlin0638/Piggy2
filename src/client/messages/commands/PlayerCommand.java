@@ -27,7 +27,9 @@ public class PlayerCommand {
         public boolean execute(MapleClient c, List<String> args) {
             String pet = tools.StringUtil.joinStringFrom(args.toArray(new String[0]), 1) + " 01 00 00 00 00 01 00 40 4B 4C 00 0B 00 42 72 6F 77 6E 20 4B 69 74 74 79 02 00 00 00 00 00 00 00 ED 04 4A 00 00 C2 00 00 00 00 00 00 00";
 //110
-            c.getSession().write(tools.packet.CField.getPacketFromHexString("0A 01 02 00 00 00 00 00 00 00 01 00 40 4B 4C 00 0B 00 42 72 6F 77 6E 20 4B 69 74 74 79 10 00 00 00 00 00 00 00 BA 02 12 01 00 61 00 FF FF FF FF 64 00 00 00"));
+            // c.getSession().write(tools.packet.CField.getPacketFromHexString("11 01 01 00 00 00 00 00 00 00 01 00 00 00"));
+//0A 01 02 00 00 00 00 01 00 40 4B 4C 00 0B 00 42 72 6F 77 6E 20 4B 69 74 74 79 35 00 00 00 00 00 00 00 34 02 06 01 00 68 00 00 00
+//0A 01 02 00 00 00 00 00 00 00 01 00 40 4B 4C 00 0B 00 42 72 6F 77 6E 20 4B 69 74 74 79 10 00 00 00 00 00 00 00 BA 02 12 01 00 61 00 FF FF FF FF 64 00 00 00
             NPCScriptManager.getInstance().dispose(c);
             c.sendPacket(CWvsContext.enableActions());
             c.getPlayer().showInfo("指令", true, "解卡成功。");
