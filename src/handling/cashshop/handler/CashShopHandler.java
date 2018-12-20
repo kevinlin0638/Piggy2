@@ -80,6 +80,7 @@ public class CashShopHandler {
         c.updateLoginState(MapleClient.LOGIN_LOGGED, c.getSessionIPAddress());
         CashShopServer.getPlayerStorage().addPlayer(chr);
         c.sendPacket(MTSCSPacket.warpCS(c));
+        c.sendPacket(MTSCSPacket.warpCSInfo(c));
         CSUpdate(c);
     }
 

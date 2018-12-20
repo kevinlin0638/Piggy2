@@ -61,74 +61,72 @@ public class MTSCSPacket {
         mplew.writeShort(SendPacketOpcode.CS_OPEN.getValue());
 
         PacketHelper.addCharacterInfo(mplew, c.getPlayer());
-        mplew.write(1); // 0 shows beta version of CS, 1 will send below.
-
-        mplew.writeInt(0); // Not Sale count. -> Send here removes the item from CS. For each: int(SN)
-
-        final Collection<CashModInfo> cmi = CashItemFactory.getInstance().getAllModInfo();
-        mplew.writeShort(cmi.size());
-        for (CashModInfo cm : cmi) {
-            addModCashItemInfo(mplew, cm);
-        }
-
-        mplew.write(0); // Category discount rate (For each: byte(category), byte(sub) byte(rate))
-        mplew.write(1); // Main tab (1 = event, 2 = equip, 3 = use, 4 = special, 5 = etc, 6 = pet, 7 = package)
-        mplew.write(0); // Sub tab (Starts at 0)
-        mplew.write(10); // Discount rate
-
-        final Map<Integer, List<Integer>> rmi = CashItemFactory.getInstance().getRandomItemInfo();
-        mplew.writeInt(rmi.size()); // I don't know what does this do atm, but it seemed that it corresponds the items..
-        for (final Entry<Integer, List<Integer>> i : rmi.entrySet()) {
-            mplew.writeInt(i.getKey()); // Item Id
-            if (i.getKey() / 1000 != 5533) {
-                continue;
-            }
-            mplew.writeInt(i.getValue().size());
-            for (final Integer x : i.getValue()) {
-                mplew.writeInt(x); // SN
-            }
-        }
-
-        mplew.write(bestItems);
-        int[] itemz = CashItemFactory.getInstance().getBestItems();
-        for (int i = 1; i <= 8; i++) { // 1080 bytes including 120 above.
-            for (int j = 0; j <= 1; j++) {
-                for (int item = 0; item < itemz.length; item++) {
-                    mplew.writeInt(i);
-                    mplew.writeInt(j);
-                    mplew.writeInt(itemz[item]);
-                }
-            }
-        }
-
-        mplew.writeShort(0); // Stock [Disable/Enable Buy button] (For each: int(sn), int(amount left))
-        mplew.writeInt(10003092); // Wheel of Marvel
-        mplew.writeInt(4); // amount left?, 0/3/4 = enable, 1/2 = disable
-
-        mplew.writeShort(0); // Limited Goods 104 bytes-> A2 35 4D 00 CE FD FD 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 00 00 00 FF FF FF FF FF FF FF FF 06 00 00 00 1F 1C 32 01 A7 3F 32 01 FF FF FF FF FF FF FF FF 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00
-        mplew.writeInt(5530177); // item id
-        mplew.writeInt(10003092); //sn
-        mplew.writeZeroBytes(36); // stock amount, hour start/end somewhere around here
-        mplew.writeInt(2);
-        mplew.writeLong(-1);
-        mplew.writeInt(6);
-        mplew.writeInt(10007092); // From yyyy/mm/dd
-        mplew.writeInt(10008092); // To yyyy/mm/dd
-        mplew.writeLong(-1);
-        mplew.writeInt(1); // Sunday
-        mplew.writeInt(0); // Monday
-        mplew.writeInt(0); // Tuesday
-        mplew.writeInt(1); // Wednesday
-        mplew.writeInt(0); // Thursday
-        mplew.writeInt(1); // Friday
-        mplew.writeInt(1); // Saturday
-
-        mplew.writeShort(0); // Zero Limit Goods -> 68 bytes ea
-        mplew.write(0); // event on
-        mplew.writeInt(0);
-        mplew.write(0); // v99+, idk
-
-        mplew.writeZeroBytes(80);
+//        mplew.write(1); // 0 shows beta version of CS, 1 will send below.
+//
+//        mplew.writeInt(0); // Not Sale count. -> Send here removes the item from CS. For each: int(SN)
+//
+//        final Collection<CashModInfo> cmi = CashItemFactory.getInstance().getAllModInfo();
+//        mplew.writeShort(cmi.size());
+//        for (CashModInfo cm : cmi) {
+//            addModCashItemInfo(mplew, cm);
+//        }
+//
+//        mplew.write(0); // Category discount rate (For each: byte(category), byte(sub) byte(rate))
+//        //mplew.write(1); // Main tab (1 = event, 2 = equip, 3 = use, 4 = special, 5 = etc, 6 = pet, 7 = package)
+//        //mplew.write(0); // Sub tab (Starts at 0)
+//        //mplew.write(10); // Discount rate
+//
+//        final Map<Integer, List<Integer>> rmi = CashItemFactory.getInstance().getRandomItemInfo();
+//        mplew.writeInt(rmi.size()); // I don't know what does this do atm, but it seemed that it corresponds the items..
+//        for (final Entry<Integer, List<Integer>> i : rmi.entrySet()) {
+//            mplew.writeInt(i.getKey()); // Item Id
+//            if (i.getKey() / 1000 != 5533) {
+//                continue;
+//            }
+//            mplew.writeInt(i.getValue().size());
+//            for (final Integer x : i.getValue()) {
+//                mplew.writeInt(x); // SN
+//            }
+//        }
+//
+//        mplew.write(bestItems);
+//        int[] itemz = CashItemFactory.getInstance().getBestItems();
+//        for (int i = 1; i <= 8; i++) { // 1080 bytes including 120 above.
+//            for (int j = 0; j <= 1; j++) {
+//                for (int item = 0; item < itemz.length; item++) {
+//                    mplew.writeInt(i);
+//                    mplew.writeInt(j);
+//                    mplew.writeInt(itemz[item]);
+//                }
+//            }
+//        }
+//
+//        mplew.writeShort(0); // Stock [Disable/Enable Buy button] (For each: int(sn), int(amount left))
+//        //mplew.writeInt(10003092); // Wheel of Marvel
+//        //mplew.writeInt(4); // amount left?, 0/3/4 = enable, 1/2 = disable
+//
+//        mplew.writeShort(0); // Limited Goods 104 bytes-> A2 35 4D 00 CE FD FD 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 00 00 00 FF FF FF FF FF FF FF FF 06 00 00 00 1F 1C 32 01 A7 3F 32 01 FF FF FF FF FF FF FF FF 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00
+//        //mplew.writeInt(5530177); // item id
+//        //mplew.writeInt(10003092); //sn
+//        //mplew.writeZeroBytes(36); // stock amount, hour start/end somewhere around here
+//        //mplew.writeInt(2);
+//        //mplew.writeLong(-1);
+//        //mplew.writeInt(6);
+//        //mplew.writeInt(10007092); // From yyyy/mm/dd
+//        //mplew.writeInt(10008092); // To yyyy/mm/dd
+//        //mplew.writeLong(-1);
+//        //mplew.writeInt(1); // Sunday
+//        //mplew.writeInt(0); // Monday
+//        //mplew.writeInt(0); // Tuesday
+//        //mplew.writeInt(1); // Wednesday
+//        //mplew.writeInt(0); // Thursday
+//        //mplew.writeInt(1); // Friday
+//        //mplew.writeInt(1); // Saturday
+//
+//        mplew.writeShort(0); // Zero Limit Goods -> 68 bytes ea
+//        mplew.write(0); // event on
+//        mplew.writeInt(0);
+//        mplew.write(0); // v99+, idk
 
         return mplew.getPacket();
     }
