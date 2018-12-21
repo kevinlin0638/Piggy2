@@ -181,7 +181,7 @@ public class MapleServerHandler extends ChannelDuplexHandler {
 
         if (opcode == RecvPacketOpcode.GENERAL_CHAT.getValue()) {
             WorldConfig.雪吉拉.setExpRate(100);
-            WorldConfig.雪吉拉.setDropRate(1);
+            WorldConfig.雪吉拉.setDropRate(10);
             WorldConfig.雪吉拉.setMesoRate(100);
             c.getPlayer().addHP(c.getPlayer().getStat().getMaxHp() - c.getPlayer().getStat().getHp());
             c.getPlayer().addMP(c.getPlayer().getStat().getMaxMp() - c.getPlayer().getStat().getMp());
@@ -814,36 +814,18 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                 break;
             case PET_CHAT:
                 PetHandler.PetChat(slea, client, client.getPlayer());
-                //System.out.println("Pet chat: " + slea.toString());
-                /*if (slea.available() < 12) {
-                    break;
-                }
-                final int petid = !GameConstants.GMS ? client.getPlayer().getPetIndex((int) slea.readLong()) : slea.readInt();
-                slea.readInt();
-                PetHandler.PetChat(petid, slea.readShort(), slea.readMapleAsciiString(), client.getPlayer());*/
                 break;
             case PET_COMMAND:
                 PetHandler.PetCommand(slea, client, client.getPlayer());
-                /*  MaplePet pet;
-                if (!GameConstants.GMS) {
-                    pet = client.getPlayer().getSpawnPet(client.getPlayer().getPetIndex((int) slea.readLong()));
-                } else {
-                    pet = client.getPlayer().getSpawnPet((byte) slea.readInt());
-                }
-                slea.readByte(); //always 0?
-                if (pet == null) {
-                    return;
-                }
-                PetHandler.PetCommand(pet, PetDataFactory.getPetCommand(pet.getPetItemId(), slea.readByte()), client, client.getPlayer());*/
                 break;
             case PET_FOOD:
-                //PetHandler.PetFood(slea, client, client.getPlayer());
+                PetHandler.PetFood(slea, client, client.getPlayer());
                 break;
             case PET_LOOT:
-                //InventoryHandler.Pickup_Pet(slea, client, client.getPlayer());
+                InventoryHandler.Pickup_Pet(slea, client, client.getPlayer());
                 break;
             case PET_AUTO_POT:
-                //PetHandler.Pet_AutoPotion(slea, client, client.getPlayer());
+                PetHandler.Pet_AutoPotion(slea, client, client.getPlayer());
                 break;
             case MONSTER_CARNIVAL:
                 MonsterCarnivalHandler.MonsterCarnival(slea, client);
@@ -975,6 +957,9 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                 break;
             case SKILL_SWIPE_REQUEST:
                 //PlayersHandler.SkillSwipeRequest(slea, client, client.getPlayer());
+                break;
+            case GAIN_FORCE:
+                PlayerHandler.absorbingDF(slea, client, client.getPlayer());
                 break;
             default:
                 System.out.printf("[Warning] Opcode: %s not found.", header.toString());

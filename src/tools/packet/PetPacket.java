@@ -2,6 +2,7 @@ package tools.packet;
 
 import client.MapleCharacter;
 import client.MapleStat;
+import client.inventory.Item;
 import client.inventory.MaplePet;
 import handling.SendPacketOpcode;
 
@@ -11,6 +12,26 @@ import server.movement.ILifeMovementFragment;
 import tools.data.MaplePacketLittleEndianWriter;
 
 public class PetPacket {
+
+    public static byte[] updatePet(final MaplePet pet, final Item item, final boolean active) {
+        final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+
+        mplew.writeShort(SendPacketOpcode.MODIFY_INVENTORY_ITEM.getValue());
+        mplew.write(0);
+        mplew.write(2);
+        mplew.write(3);
+        mplew.write(5);
+        mplew.writeShort(pet.getInventoryPosition());
+        mplew.write(0);
+        mplew.write(5);
+        mplew.writeShort(pet.getInventoryPosition());
+        mplew.write(3);
+        mplew.writeInt(pet.getPetItemId());
+        mplew.write(1);
+        mplew.writeLong(pet.getUniqueId());
+        PacketHelper.addPetItemInfo(mplew, item, pet, active);
+        return mplew.getPacket();
+    }
 
     public static byte[] showPet(MapleCharacter chr, MaplePet pet, boolean remove, boolean hunger) {
         return showPet(chr, pet, remove, hunger, false);
@@ -50,7 +71,7 @@ public class PetPacket {
         /*
         mplew.writeInt(-1); //T071新增
         mplew.writeInt(0x64); //V.109新增 未知
-        */
+         */
     }
 
     public static byte[] movePet(int chrId, int slot, Point startPos, List<ILifeMovementFragment> moves) {
@@ -90,7 +111,7 @@ public class PetPacket {
         if (food) {
             mplew.writeInt(0); //T071修改為 Int
         } else {
-            mplew.writeShort(success ? 1 : 0);  //T071修改為 byte
+            mplew.write(success ? 1 : 0);  //T071修改為 byte
         }
         return mplew.getPacket();
     }

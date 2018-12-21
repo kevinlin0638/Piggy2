@@ -282,6 +282,7 @@ public enum RecvPacketOpcode implements WritableShortValueHolder {
     LEAVE_AZWAN,
     MTS_TAB,
     MCAUGHTEFF,
+    GAIN_FORCE,
     UNKNOWN;
 
     static {

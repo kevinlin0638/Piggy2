@@ -183,7 +183,7 @@ public class PetHandler {
          * 06 00 - slot
          * 40 59 20 00 - itemId
          */
- /*if (chr == null || chr.getMap() == null) {
+        if (chr == null || chr.getMap() == null) {
             return;
         }
         int previousFullness = 100;
@@ -196,12 +196,13 @@ public class PetHandler {
             }
         }
         MaplePet pet = chr.getSpawnPet(petslot);
-        chr.updateTick(slea.readInt());
+        //chr.updateTick(slea.readInt());
+        slea.readInt();
         short slot = slea.readShort();
         int itemId = slea.readInt();
         Item petFood = chr.getInventory(MapleInventoryType.USE).getItem(slot);
         if (pet == null || petFood == null || petFood.getItemId() != itemId || petFood.getQuantity() <= 0 || itemId / 10000 != 212) {
-            c.announce(MaplePacketCreator.enableActions());
+            c.sendPacket(CWvsContext.enableActions());
             return;
         }
         boolean gainCloseness = false;
@@ -223,8 +224,8 @@ public class PetHandler {
                 pet.setCloseness(newCloseness);
                 if (newCloseness >= GameConstants.getClosenessNeededForLevel(pet.getLevel() + 1)) {
                     pet.setLevel(pet.getLevel() + 1);
-                    c.announce(EffectPacket.showOwnPetLevelUp(index));
-                    chr.getMap().broadcastMessage(EffectPacket.showPetLevelUp(chr.getId(), index));
+                    c.sendPacket(EffectPacket.showOwnPetLevelUp(index));
+                    chr.getMap().broadcastMessage(PetPacket.showPetLevelUp(chr, index));
                 }
             }
             chr.petUpdateStats(pet, true);
@@ -245,7 +246,7 @@ public class PetHandler {
             chr.getMap().broadcastMessage(chr, PetPacket.commandResponse(chr.getId(), (byte) 1, chr.getPetIndex(pet), false, true), true);
         }
         MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (short) 1, true, false);
-        c.announce(MaplePacketCreator.enableActions());*/
+        c.sendPacket(CWvsContext.enableActions());
     }
 
     /*
@@ -365,7 +366,7 @@ public class PetHandler {
             }
         }
     }
-/*
+    /*
     public static void AllowPetLoot(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
         if (chr == null || chr.getMap() == null) {
             c.announce(MaplePacketCreator.enableActions());

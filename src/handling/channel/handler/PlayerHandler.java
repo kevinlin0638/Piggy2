@@ -22,6 +22,7 @@ package handling.channel.handler;
 
 import client.MapleCharacter;
 import client.MapleClient;
+import client.MapleJob;
 import client.PlayerStats;
 import client.inventory.Item;
 import client.inventory.MapleInventoryType;
@@ -321,13 +322,14 @@ public class PlayerHandler {
             pDMG = slea.readInt(); // we don't use this, incase packet edit..
             final byte defType = slea.readByte();
             slea.skip(1); // ?
-            if (defType == 1) { // Guard
-                final Skill bx = SkillFactory.getSkill(31110008);
-                final int bof = chr.getTotalSkillLevel(bx);
+            if (defType == 1) { // 力量防禦
+                Skill bx = SkillFactory.getSkill(31110008);
+                int bof = chr.getTotalSkillLevel(bx);
                 if (bof > 0) {
-                    final MapleStatEffect eff = bx.getEffect(bof);
+                    MapleStatEffect eff = bx.getEffect(bof);
                     if (Randomizer.nextInt(100) <= eff.getX()) { // estimate
-                        chr.handleForceGain(oid, 31110008, eff.getZ());
+                         chr.addDemonMp(eff.getZ());
+                         chr.addHP((chr.getStat().getCurrentMaxHp() / 100) * eff.getY());
                     }
                 }
             }
@@ -705,7 +707,7 @@ public class PlayerHandler {
                         chr.cancelEffectFromBuffStat(MapleBuffStatus.MONSTER_RIDING);
                         c.sendPacket(CWvsContext.updateJaguar(chr));
                     } else {
-                         chr.dropMessage(5, "怪物體力過高，補抓失敗。");
+                        chr.dropMessage(5, "怪物體力過高，補抓失敗。");
                     }
                 }
                 c.sendPacket(CWvsContext.enableActions());
@@ -764,6 +766,29 @@ public class PlayerHandler {
                     }
                     effect.applyTo(c.getPlayer(), pos);
                 }
+                break;
+        }
+    }
+
+    public static void absorbingDF(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+        int size = slea.readInt();
+        int skillid = slea.readInt();
+
+        switch (skillid) {
+            case 0: {
+                if (MapleJob.is惡魔殺手(chr.getJob())) {
+                    int oid = slea.readInt();
+                    /*int revdf = chr.getSpecialStat().removeForceCounter(oid);
+//                    if (chr.isAdmin()) {
+//                        chr.dropMessage(6, "[恶魔精气] 之前:" + chr.getStat().getMp());
+//                    }
+                    if (revdf > 0) {
+                        chr.addMP(revdf, true);
+                    }*/
+                }
+                break;
+            }
+            default:
                 break;
         }
     }

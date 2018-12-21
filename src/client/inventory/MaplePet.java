@@ -191,7 +191,7 @@ public class MaplePet implements Serializable {
     }
 
     public final byte getFullness() {
-        return 100;
+        return fullness;
     }
 
     public final void setFullness(final int fullness) {

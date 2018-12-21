@@ -4645,7 +4645,18 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void addMP(int delta, boolean ignore) {
+        if (GameConstants.isDemon(getJob()) && GameConstants.getMPByJob(getJob()) <= 0) {
+            return;
+        }
         if ((delta <= 0 && GameConstants.isDemon(getJob())) || !GameConstants.isDemon(getJob()) || ignore) {
+            if (stats.setMp(stats.getMp() + delta, this)) {
+                updateSingleStat(MapleStat.MP, stats.getMp());
+            }
+        }
+    }
+
+    public void addDemonMp(int delta) {
+        if (delta > 0 && (getJob() == 3111 || getJob() == 3112)) {
             if (stats.setMp(stats.getMp() + delta, this)) {
                 updateSingleStat(MapleStat.MP, stats.getMp());
             }
@@ -10404,15 +10415,47 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
         force++; // counter
         addMP(extraForce > 0 ? extraForce : forceGain, true);
-        getClient().sendPacket(CField.gainForce(oid, force, forceGain));
+        getClient().sendPacket(CField.gainForce(oid, forceGain, force));
 
         if (stats.mpRecoverProp > 0 && extraForce <= 0) {
             if (Randomizer.nextInt(100) <= stats.mpRecoverProp) {//i think its out of 100, anyway
                 force++; // counter
                 addMP(stats.mpRecover, true);
-                getClient().sendPacket(CField.gainForce(oid, force, stats.mpRecover));
+                getClient().sendPacket(CField.gainForce(oid, stats.mpRecover, force));
             }
         }
+    }
+
+    public void handleForceGain1(int moboid, int skillid, int extraForce) {
+        if (!GameConstants.isForceIncrease(skillid) && extraForce <= 0) {
+            return;
+        }
+        int forceGain = Math.max(3, Randomizer.nextInt(5) + 1), forceColor = 3;
+
+        MapleMonster mob = getMap().getMonsterByOid(moboid);
+        if (mob != null && mob.getStats().isBoss()) {
+            forceGain = 10;
+            forceColor = 10;
+        } else {
+            if (skillid == 31000004 || skillid == 31000006 || skillid == 31000007 || skillid == 31000008) {
+                int skilllevel = getSkillLevel(31110009);
+                if (skilllevel > 0) {
+                    MapleStatEffect effect = SkillFactory.getSkill(31110009).getEffect(skilllevel);
+                    if (Randomizer.nextInt(100) > effect.getProb()) {
+                        return;
+                    }
+                }
+            } else if (skillid == 30010111) {
+                forceColor = 5;
+            }
+        }
+        force++;
+        forceGain = extraForce > 0 ? extraForce : forceGain;
+        getClient().sendPacket(CField.gainForce(moboid, forceGain, force));
+        /*
+        forceGain = extraForce > 0 ? extraForce : forceGain;
+        specialStats.addForceCounter(forceGain);
+        getClient().sendPacket(CField.showForce(this, moboid, specialStats.getForceCounter(), forceColor));*/
     }
 
     public void afterAttack(int mobCount, int attackCount, int skillid) {
@@ -10896,6 +10939,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void petUpdateStats(MaplePet pet, boolean active) {
         Item Pet = getInventory(MapleInventoryType.CASH).getItem((byte) pet.getInventoryPosition());
-        client.getSession().write(PetPacket1.updatePet_(pet, Pet, active));
+        client.sendPacket(PetPacket.updatePet(pet, Pet, active));
     }
 }

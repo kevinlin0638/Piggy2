@@ -3955,7 +3955,92 @@ public class InventoryHandler {
             lock.unlock();
         }
     }
-
+ /*
+     * 寵物撿取道具
+     */
+    public static void Pickup_Pet(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+        if (chr == null) {
+            return;
+        }
+        if (c.getPlayer().hasBlockedInventory() || c.getPlayer().inPVP()) { //hack
+            return;
+        }
+        c.getPlayer().setScrolledPosition((short) 0);
+        byte petz = (byte) slea.readInt();
+        MaplePet pet = chr.getSpawnPet(petz);
+        slea.skip(1); // [4] Zero, [4] Seems to be tickcount, [1] Always zero
+        //chr.updateTick(slea.readInt());
+        slea.readInt();
+        Point Client_Reportedpos = slea.readPos();
+        MapleMapObject ob = chr.getMap().getMapObject(slea.readInt(), MapleMapObjectType.ITEM);
+        if (ob == null || pet == null) {
+            return;
+        }
+        MapleMapItem mapitem = (MapleMapItem) ob;
+        Lock lock = mapitem.getLock();
+        lock.lock();
+        try {
+            if (mapitem.isPickedUp()) {
+                c.sendPacket(InventoryPacket.getInventoryFull());
+                return;
+            }
+            if (mapitem.getOwner() != chr.getId() && mapitem.isPlayerDrop()) {
+                return;
+            }
+            if (mapitem.getOwner() != chr.getId() && ((!mapitem.isPlayerDrop() && mapitem.getDropType() == 0) || (mapitem.isPlayerDrop() && chr.getMap().getEverlast()))) {
+                c.sendPacket(CWvsContext.enableActions());
+                return;
+            }
+            if (!mapitem.isPlayerDrop() && mapitem.getDropType() == 1 && mapitem.getOwner() != chr.getId() && (chr.getParty() == null || chr.getParty().getMemberById(mapitem.getOwner()) == null)) {
+                c.sendPacket(CWvsContext.enableActions());
+                return;
+            }
+            double Distance = Client_Reportedpos.distanceSq(mapitem.getPosition());
+            //外掛偵測
+            /*
+            if (Distance > 10000 && (mapitem.getMeso() > 0 || mapitem.getItemId() != 4001025) && (!chr.haveItem(4430005) && !chr.haveItem(4430004))) {
+                chr.getCheatTracker().checkPickup(12, true);
+                //chr.getCheatTracker().registerOffense(CheatingOffense.PET_ITEMVAC_CLIENT, String.valueOf(Distance));
+//                WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverNotice(6, "[GM消息] " + chr.getName() + " ID: " + chr.getId() + " (等級 " + chr.getLevel() + ") 全屏寵吸。地圖ID: " + chr.getMapId() + " 範圍: " + Distance));
+            } else if (pet.getPos().distanceSq(mapitem.getPosition()) > 640000.0  && (!chr.haveItem(4430005) && !chr.haveItem(4430004))) {
+                chr.getCheatTracker().checkPickup(6, true);
+                //chr.getCheatTracker().registerOffense(CheatingOffense.PET_ITEMVAC_SERVER);
+//                WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverNotice(6, "[GM消息] " + chr.getName() + " ID: " + chr.getId() + " (等級 " + chr.getLevel() + ") 全屏寵吸。地圖ID: " + chr.getMapId() + " 範圍: " + Distance));
+            }*/
+            if (mapitem.getMeso() > 0) {
+                if (chr.getParty() != null && mapitem.getOwner() != chr.getId()) {
+                    List<MapleCharacter> toGive = new LinkedList<>();
+                    int splitMeso = mapitem.getMeso() * 40 / 100;
+                    for (MaplePartyCharacter z : chr.getParty().getMembers()) {
+                        MapleCharacter m = chr.getMap().getCharacterById(z.getId());
+                        if (m != null && m.getId() != chr.getId()) {
+                            toGive.add(m);
+                        }
+                    }
+                    for (MapleCharacter m : toGive) {
+                        m.gainMeso(splitMeso / toGive.size() + (m.getStat().hasPartyBonus ? (int) (mapitem.getMeso() / 20.0) : 0), true);
+                    }
+                    chr.gainMeso(mapitem.getMeso() - splitMeso, true);
+                } else {
+                    chr.gainMeso(mapitem.getMeso(), true);
+                }
+                removeItem_Pet(chr, mapitem, petz);
+            /*} else if (MapleItemInformationProvider.getInstance().isPickupBlocked(mapitem.getItemId()) || mapitem.getItemId() / 10000 == 291) {
+                c.sendPacket(CWvsContext.enableActions());*/
+            } else if (useItem(c, mapitem.getItemId())) {
+                removeItem_Pet(chr, mapitem, petz);
+            } else if (MapleInventoryManipulator.checkSpace(c, mapitem.getItemId(), mapitem.getItem().getQuantity(), mapitem.getItem().getOwner())) {
+                if (mapitem.getItem().getQuantity() >= 50 && mapitem.getItemId() == 2340000) {
+                    //c.setMonitored(true); //hack check
+                }
+                 MapleInventoryManipulator.addFromDrop(c, mapitem.getItem(), true, mapitem.getDropper() instanceof MapleMonster);
+                //MapleInventoryManipulator.addFromDrop(c, mapitem.getItem(), true, mapitem.getDropper() instanceof MapleMonster, false);
+                removeItem_Pet(chr, mapitem, petz);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
     public static boolean useItem(MapleClient c, int id) {
         if (GameConstants.isUse(id)) { // TO prevent caching of everything, waste of mem
             MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();

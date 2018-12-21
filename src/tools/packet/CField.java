@@ -48,6 +48,7 @@ import tools.types.Triple;
 
 import java.awt.*;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
@@ -840,18 +841,10 @@ public class CField {
         mplew.writeShort(SendPacketOpcode.GAIN_FORCE.getValue());
         mplew.write(1); // 0 = remote user?
         mplew.writeInt(oid);
-        byte newcheck = 0;
-        mplew.writeInt(newcheck); //direction
-        if (newcheck > 0) {
-            mplew.writeInt(0); //direction
-            mplew.writeInt(0); //direction
-        }
-        mplew.write(0);
-        mplew.writeInt(4); // size, for each below
+        mplew.write(1); // size, for each below
         mplew.writeInt(count); //count
-        mplew.writeInt(color); //color, 1-10 for demon, 1-2 for phantom
-        mplew.writeInt(0); //direction
-        mplew.writeInt(0); //direction
+        mplew.writeInt(color); //color 4, 7
+        mplew.write(0);//?
 
         return mplew.getPacket();
     }
@@ -2913,7 +2906,7 @@ public class CField {
             mplew.writeShort(SendPacketOpcode.SHOW_ITEM_GAIN_INCHAT.getValue());
             mplew.write(6);
             mplew.write(0);
-            mplew.write(index); // Pet Index
+            mplew.writeInt(index); // Pet Index
 
             return mplew.getPacket();
         }

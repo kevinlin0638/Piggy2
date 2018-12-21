@@ -136,7 +136,7 @@ public class PetPacket1 {
 
         mplew.writeShort(SendPacketOpcode.UPDATE_STATS.getValue());
         mplew.write(0);
-        if (GameConstants.GMS) {
+        if (!GameConstants.GMS) {
             mplew.writeLong(MapleStat.PET.getValue());
         } else {
             mplew.writeInt((int) MapleStat.PET.getValue());

@@ -7,6 +7,8 @@ import client.buddy.BuddyListEntry;
 import server.status.MapleBuffStatus;
 import client.MapleCharacter;
 import client.inventory.MapleInventoryType;
+import client.inventory.MaplePet;
+import client.inventory.PetDataFactory;
 import constants.WorldConfig;
 import database.DatabaseConnection;
 import handling.cashshop.CashShopServer;
@@ -39,6 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class World {
+
     private static final PlayerStorage players = new PlayerStorage();
     private static final HashMap magicWheelCache = new HashMap();
     // AutoJQ and Event Maps
@@ -134,8 +137,7 @@ public class World {
     }
 
     public static void ChannelChange_Data(CharacterTransfer Data, int characterid, int world, int toChannel) {
-        if(toChannel == -1)
-        {
+        if (toChannel == -1) {
             CashShopServer.getPlayerStorage().registerPendingPlayer(Data, characterid);
         }
         LoginServer.getWorld(world).getPlayerStorage().registerPendingPlayer(Data, characterid);
@@ -196,27 +198,26 @@ public class World {
     }
 
     /*      */
-    public static void addToWheelCache(int cid, int itemId)
-/*      */ {
-/* 1762 */
+    public static void addToWheelCache(int cid, int itemId) /*      */ {
+        /* 1762 */
         magicWheelCache.put(Integer.valueOf(cid), Integer.valueOf(itemId));
-/*      */
+        /*      */
     }
 
     /*      */
-/*      */
+ /*      */
     public static int removeFromWheelCache(int cid) {
-/* 1766 */
+        /* 1766 */
         return ((Integer) magicWheelCache.remove(Integer.valueOf(cid))).intValue();
-/*      */
+        /*      */
     }
 
     /*      */
-/*      */
+ /*      */
     public static boolean hasWheelCache(int cid) {
-/* 1770 */
+        /* 1770 */
         return magicWheelCache.containsKey(Integer.valueOf(cid));
-/*      */
+        /*      */
     }
 
     public static boolean isCSConnected(List<Integer> charIds) {
@@ -260,7 +261,6 @@ public class World {
     }
 
     //---------------------------------------------------------------------------------------------------------
-
     public static void setPvpState(int state) {
         pvpState = state;
     }
@@ -356,8 +356,27 @@ public class World {
             chr.getMount().increaseFatigue();
         }
         if (numTimes % 13 == 0) { //we're parsing through the characters anyway (:
+            for (MaplePet pet : chr.getSummonedPets()) {
+                if (pet.getPetItemId() == 5000054 && pet.getSecondsLeft() > 0) {
+                    pet.setSecondsLeft(pet.getSecondsLeft() - 1);
+                    if (pet.getSecondsLeft() <= 0) {
+                        chr.unequipSpawnPet(pet, true, true);
+                        return;
+                    }
+                }
+                int newFullness = pet.getFullness() - PetDataFactory.getHunger(pet.getPetItemId());
+                if (newFullness <= 5) {
+                    pet.setFullness(15);
+                    chr.unequipSpawnPet(pet, true, true);
+                } else {
+                    pet.setFullness(newFullness);
+                    chr.petUpdateStats(pet, true);
+                }
+            }
+        }
+        if (numTimes % 13 == 0) { //we're parsing through the characters anyway (:
             chr.doFamiliarSchedule(now);
-      /*      for (MaplePet pet : chr.getSummonedPets()) {
+            /*      for (MaplePet pet : chr.getSummonedPets()) {
                 if (pet.getPetItemId() == 5000054 && pet.getSecondsLeft() > 0) {
                     pet.setSecondsLeft(pet.getSecondsLeft() - 1);
                     if (pet.getSecondsLeft() <= 0) {
@@ -527,6 +546,7 @@ public class World {
     }
 
     public static class AutoJQ {
+
         private static AutoJQ instance = null;
         private static boolean autojqOn = false;
         private static int autojqWaitingMap = 109060001;
