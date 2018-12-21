@@ -50,7 +50,7 @@ public class MTSCSPacket {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_INFO.getValue());
-        mplew.write(HexTool.getByteArrayFromHexString(c.getChannelServer().getShopPack()));
+        mplew.write(bestItems);
 
         return mplew.getPacket();
     }
