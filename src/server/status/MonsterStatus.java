@@ -102,7 +102,8 @@ public enum MonsterStatus implements Serializable, IBuffStat {
     MOB_BUFF_40(40, 40),
     MOB_BUFF_41(41, 41 ),
     MOB_BUFF_42(42, 42 ),
-    MOB_BUFF_43(43, 43);
+    MOB_BUFF_43(43, 43)
+    ;
 
     /***
      * WATK(0x1, 1),

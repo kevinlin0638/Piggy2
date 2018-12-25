@@ -296,7 +296,7 @@ public class MobPacket {
 
     public static void ProcessStatSet(MaplePacketLittleEndianWriter mplew, List<MonsterStatusEffect> buffs) {
         EncodeTemporary(mplew, buffs);
-        mplew.writeShort(2);
+        mplew.writeShort(0);
         mplew.write(1);
         // if (MobStat::IsMovementAffectingStat)
         mplew.write(1);
@@ -652,7 +652,7 @@ public class MobPacket {
     }
 
     private static void writeMaskFromList(MaplePacketLittleEndianWriter mplew, Collection<MonsterStatusEffect> ss) {
-        int[] mask = new int[GameConstants.MAX_BUFFSTAT];
+        int[] mask = new int[8];
         for (MonsterStatusEffect statup : ss) {
             mask[(statup.getStatus().getPosition())] |= statup.getStatus().getValue();
         }
@@ -662,71 +662,85 @@ public class MobPacket {
     }
 
     public static void EncodeTemporary(MaplePacketLittleEndianWriter mplew, List<MonsterStatusEffect> buffs) {
+        Set<MonsterStatus> mobstat = new HashSet();
         writeMaskFromList(mplew, buffs);
-        Collections.sort(buffs, (o1, o2) -> {
-            int val1 = o1.getStatus().getOrder();
-            int val2 = o2.getStatus().getOrder();
-            return (val1 < val2 ? -1 : (val1 == val2 ? 0 : 1));
-        });
-        Collection<MonsterStatus> buffstatus = new LinkedList<>();
         for (MonsterStatusEffect buff : buffs) {
-            buffstatus.add(buff.getStatus());
-            if (buff.getStatus() == MonsterStatus.DANAGED_ELEM_ATTR) {
-                continue;
-            }
-            if (buff.getStatus() == MonsterStatus.BLEED) {
-                List<MonsterStatusEffect> bleedBuffs = new ArrayList<>();
-                //MonsterStatusEffect
-                buffs.stream().filter((b)
-                        -> (b.getStatus().getBitNumber() == MonsterStatus.BLEED.getBitNumber() && b.getMobSkill() != null))
-                        .forEach(bleedBuffs::add);
-                mplew.write(bleedBuffs.size());
-                if (bleedBuffs.size() > 0) {
-                    bleedBuffs.stream().forEach((b) -> {
-                        mplew.writeInt(8695624);
-                        mplew.writeInt(buff.getSkill()); // 技能ID
-                        mplew.writeInt(7100); // 每秒傷害?
-                        mplew.writeInt(1000); // 延遲毫秒 : dotInterval * 1000
-                        mplew.writeInt(187277775);
-                        mplew.writeInt(16450);
-                        mplew.writeInt(15); // dotTime
-                        mplew.writeInt(0);
-                        mplew.writeInt(1);
-                        mplew.writeInt(7100); // 每秒傷害?
-                        mplew.writeInt(0);
-                        mplew.writeInt(0);
-                        mplew.writeInt(0);
-                    });
+            mobstat.add(buff.getStatus());
+            if (buff.getStatus().getBitNumber() < MonsterStatus.BLEED.getBitNumber()) {
+                mplew.writeInt(buff.getX());
+                if (buff.getMobSkill() != null) {
+                    mplew.writeShort(buff.getMobSkill().getSkillId());
+                    mplew.writeShort(buff.getMobSkill().getSkillLevel());
+                } else {
+                    mplew.writeInt(buff.getSkill() > 0 ? buff.getSkill() : 0);
                 }
-                if (buff.getStatus() == MonsterStatus.WEAPON_DAMAGE_REFLECT) {
-                    mplew.writeInt(0);
-                }
-                if (buff.getStatus() == MonsterStatus.MAGIC_DAMAGE_REFLECT) {
-                    mplew.writeInt(0);
-                }
-                if (buff.getStatus() == MonsterStatus.WEAPON_DAMAGE_REFLECT || buff.getStatus() == MonsterStatus.MAGIC_DAMAGE_REFLECT) {
-                    mplew.writeInt(0);
-                    mplew.writeInt(0);
-                }
-                continue;
+                mplew.writeShort((short) ((buff.getCancelTask() - System.currentTimeMillis()) / 1000));
             }
-            if (buff.getStatus() == MonsterStatus.SUMMON) {
-                mplew.writeBool(buff.getX() > 0);
-                mplew.writeBool(buff.getX() > 0);
-                continue;
+        }
+        if (mobstat.contains(MonsterStatus.WDEF)) {
+            mplew.writeInt(0);
+        }
+        if (mobstat.contains(MonsterStatus.MDEF)) {
+            mplew.writeInt(0);
+        }
+        if (mobstat.contains(MonsterStatus.BLIND)) {
+            mplew.writeInt(0);
+        }
+        if (mobstat.contains(MonsterStatus.SEAL_SKILL)) {
+            mplew.writeInt(0);
+        }
+        if (mobstat.contains(MonsterStatus.BLIND) || mobstat.contains(MonsterStatus.SEAL_SKILL)) {
+            mplew.writeInt(0);
+            mplew.writeInt(0);
+        }
+        if (mobstat.contains(MonsterStatus.MOB_BUFF_37)) {
+            mplew.writeInt(0);
+            mplew.writeInt(0);
+            mplew.writeInt(0);
+            mplew.writeInt(0);
+        }
+        if (mobstat.contains(MonsterStatus.MOB_BUFF_39)) {
+            mplew.writeInt(0);
+            mplew.writeInt(0);
+        }
+        if (mobstat.contains(MonsterStatus.MOB_BUFF_42)) {
+            mplew.writeInt(0);
+            mplew.writeInt(0);
+            mplew.writeInt(0);
+        }
+        if (mobstat.contains(MonsterStatus.SPEED)) {
+            mplew.write(0);
+        }
+        if (mobstat.contains(MonsterStatus.BLEED)) {
+            int v4 = 0;
+            int v23 = 0;
+            mplew.write(v4);
+            if (v4 > 0) {
+                do {
+                    mplew.writeInt(8695624);
+                    mplew.writeInt(80001431); // 技能ID
+                    mplew.writeInt(7100);
+                    mplew.writeInt(1000); // 延遲毫秒 : dotInterval * 1000
+                    mplew.writeInt(187277775);
+                    mplew.writeInt(16450);
+                    mplew.writeInt(15); // dotTime
+                    mplew.writeInt(0);
+                    mplew.writeInt(1);
+                    mplew.writeInt(7100);
+                    ++v23;
+                } while (v23 < v4);
             }
-            if (buff.getStatus() == MonsterStatus.MOB_BUFF_42) {
-                mplew.writeBool(buff.getX() > 0);
-                continue;
-            }
-            mplew.writeInt(buff.getX());
-            if (buff.getMobSkill() != null) {
-                mplew.writeShort(buff.getMobSkill().getSkillId());
-                mplew.writeShort(buff.getMobSkill().getSkillLevel());
-            } else {
-                mplew.writeInt(buff.getSkill());
-            }
-            mplew.writeShort((short) ((buff.getCancelTask() - System.currentTimeMillis()) / 1000));
+        }
+        if (mobstat.contains(MonsterStatus.MONSTER_BOMB)) {
+            mplew.writeInt(0);
+            mplew.writeInt(0);
+            mplew.writeInt(0);
+        }
+        if (mobstat.contains(MonsterStatus.SUMMON)) {
+            mplew.writeInt(0);
+            mplew.writeInt(0);
+            mplew.writeShort(0);
+            mplew.writeInt(0);
         }
     }
 
