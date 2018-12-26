@@ -183,8 +183,8 @@ public class MapleServerHandler extends ChannelDuplexHandler {
             WorldConfig.雪吉拉.setExpRate(100);
             WorldConfig.雪吉拉.setDropRate(10);
             WorldConfig.雪吉拉.setMesoRate(100);
-            c.getPlayer().addHP(c.getPlayer().getStat().getMaxHp() - c.getPlayer().getStat().getHp());
-            c.getPlayer().addMP(c.getPlayer().getStat().getMaxMp() - c.getPlayer().getStat().getMp());
+            c.getPlayer().addHP(c.getPlayer().getStat().getCurrentMaxHp() - c.getPlayer().getStat().getHp());
+            c.getPlayer().addMP(c.getPlayer().getStat().getCurrentMaxMp(c.getPlayer().getJob()) - c.getPlayer().getStat().getMp());
             RecvPacketOpcode.reloadValues();
             SendPacketOpcode.reloadValues();
             MapleBuffStatus.reloadValues();
