@@ -52,9 +52,9 @@ public abstract class AbstractPlayerStore extends MapleMapObject implements IMap
     protected int ownerId, owneraccount, itemId, world, channel, map;
     protected AtomicInteger meso = new AtomicInteger(0);
     protected WeakReference<MapleCharacter> chrs[];
-    protected List<String> visitors = new LinkedList<>();
     protected List<BoughtItem> bought = new LinkedList<>();
     protected List<MaplePlayerShopItem> items = new LinkedList<>();
+    protected ArrayList<Pair<String, Long>> visitor_t;
 
     @SuppressWarnings("unchecked")
     public AbstractPlayerStore(MapleCharacter owner, int itemId, String desc, String pass, int slots) {
@@ -69,6 +69,7 @@ public abstract class AbstractPlayerStore extends MapleMapObject implements IMap
         this.channel = owner.getClient().getChannel();
         this.world = owner.getClient().getWorld();
         chrs = new WeakReference[slots];
+        this.visitor_t = new ArrayList<>();
         for (int i = 0; i < chrs.length; i++) {
             chrs[i] = new WeakReference<>(null);
         }
@@ -204,8 +205,19 @@ public abstract class AbstractPlayerStore extends MapleMapObject implements IMap
                 broadcastToVisitors(PlayerShopPacket.shopVisitorAdd(visitor, i));
             }
             chrs[i - 1] = new WeakReference<>(visitor);
-            if (!isOwner(visitor) && !visitors.contains(visitor.getName())) {
-                visitors.add(visitor.getName());
+            if (!isOwner(visitor)) {
+                boolean ok = false;
+                for(Pair p : visitor_t){
+                    if(p.getLeft().equals(visitor.getName()))
+                    {
+                        ok = true;
+                        p.right = System.currentTimeMillis();
+                        break;
+                    }
+                }
+                if(!ok){
+                    visitor_t.add(new Pair<>(visitor.getName(), System.currentTimeMillis()));
+                }
             }
             if (i == 6) {
                 update();
@@ -220,6 +232,13 @@ public abstract class AbstractPlayerStore extends MapleMapObject implements IMap
         if (slot > 0) {
             broadcastToVisitors(PlayerShopPacket.shopVisitorLeave(slot), slot);
             chrs[slot - 1] = new WeakReference<>(null);
+            for(Pair p : visitor_t){
+                if(p.getLeft().equals(visitor.getName()))
+                {
+                    p.right = (System.currentTimeMillis() - (Long)p.getRight());
+                    break;
+                }
+            }
             if (shouldUpdate) {
                 update();
             }
@@ -229,7 +248,7 @@ public abstract class AbstractPlayerStore extends MapleMapObject implements IMap
     @Override
     public byte getVisitorSlot(MapleCharacter visitor) {
         for (byte i = 0; i < chrs.length; i++) {
-            if (chrs[i] != null && chrs[i].get() != null && chrs[i].get().getId() == visitor.getId()) {
+            if (chrs[i] != null && chrs[i].get() != null && chrs[i].get().getId() == visitor.getId() && !isOwner(visitor)) {
                 return (byte) (i + 1);
             }
         }

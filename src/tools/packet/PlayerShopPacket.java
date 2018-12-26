@@ -23,6 +23,7 @@ package tools.packet;
 import client.MapleCharacter;
 import client.MapleClient;
 import client.inventory.Item;
+import client.messages.commands.AdminCommand;
 import constants.GameConstants;
 import handling.SendPacketOpcode;
 import server.MerchItemPackage;
@@ -116,7 +117,7 @@ public class PlayerShopPacket {
         mplew.writeShort(SendPacketOpcode.PLAYER_INTERACTION.getValue());
         mplew.write(10);
         mplew.write(5);
-        mplew.write(7); // ?
+        mplew.write(6); // ?
         mplew.writeShort(merch.getVisitorSlot(chr));
         mplew.writeInt(merch.getItemId());
         mplew.writeMapleAsciiString("Hired Merchant");
@@ -246,7 +247,7 @@ public class PlayerShopPacket {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.PLAYER_INTERACTION.getValue());
-        mplew.write(48);
+        mplew.write(46);
         if (shop.getShopType() == 1) {
             //mplew.writeInt(((MaplePlayerShop) shop).getMCOwner().getMeso());
             mplew.writeInt(0);
@@ -584,7 +585,7 @@ public class PlayerShopPacket {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.PLAYER_INTERACTION.getValue());
-        mplew.write(39);
+        mplew.write(37);
         mplew.writeShort(blackList.size());
         for (String visit : blackList) {
             mplew.writeMapleAsciiString(visit);
@@ -592,15 +593,15 @@ public class PlayerShopPacket {
         return mplew.getPacket();
     }
 
-    public static byte[] MerchantVisitorView(List<String> visitor) {
+    public static byte[] MerchantVisitorView(List<Pair<String, Long>> visitor) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.PLAYER_INTERACTION.getValue());
-        mplew.write(38);
+        mplew.write(36);
         mplew.writeShort(visitor.size());
-        for (String visit : visitor) {
-            mplew.writeMapleAsciiString(visit);
-            mplew.writeInt(1); /////for the lul
+        for (Pair<String, Long> visit : visitor) {
+            mplew.writeMapleAsciiString(visit.getLeft());
+            mplew.writeInt(visit.getRight().intValue()); /////for the lul
         }
         return mplew.getPacket();
     }

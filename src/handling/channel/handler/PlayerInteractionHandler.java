@@ -170,13 +170,16 @@ public class PlayerInteractionHandler {
                                 c.sendPacket(PlayerShopPacket.getHiredMerch(chr, merchant, false));
                             } else {*/
                             if (!merchant.isOpen() || !merchant.isAvailable()) {
-                                chr.dropMessage(1, "This shop is in maintenance, please come by later.");
+                                chr.dropMessage(1, "店長正在維護商店中,請稍後再試.");
                             } else {
                                 if (ips.getFreeSlot() == -1) {
-                                    chr.dropMessage(1, "This shop has reached it's maximum capacity, please come by later.");
+                                    chr.dropMessage(1, "此商店的客人已滿, 請稍後再試.");
                                 } else if (merchant.isInBlackList(chr.getName())) {
-                                    chr.dropMessage(1, "You have been banned from this store.");
+                                    chr.dropMessage(1, "您已被賣家加入黑名單.");
                                 } else {
+                                    if(merchant.getMCOwner() == chr) {
+                                        merchant.setOpen(false);
+                                    }
                                     chr.setPlayerShop(ips);
                                     merchant.addVisitor(chr);
                                     c.sendPacket(PlayerShopPacket.getHiredMerch(chr, merchant, false));
@@ -185,7 +188,7 @@ public class PlayerInteractionHandler {
                             //}
                         } else {
                             if (ips instanceof MaplePlayerShop && ((MaplePlayerShop) ips).isBanned(chr.getName())) {
-                                chr.dropMessage(1, "You have been banned from this store.");
+                                chr.dropMessage(1, "您已被賣家加入黑名單.");
                             } else {
                                 if (ips.getFreeSlot() < 0 || ips.getVisitorSlot(chr) > -1 || !ips.isOpen() || !ips.isAvailable()) {
                                     c.sendPacket(PlayerShopPacket.getMiniGameFull());
@@ -193,11 +196,11 @@ public class PlayerInteractionHandler {
                                     if (slea.available() > 0 && slea.readByte() > 0) { //a password has been entered
                                         String pass = slea.readMapleAsciiString();
                                         if (!pass.equals(ips.getPassword())) {
-                                            c.getPlayer().dropMessage(1, "The password you entered is incorrect.");
+                                            c.getPlayer().dropMessage(1, "您輸入的密碼錯誤.");
                                             return;
                                         }
                                     } else if (ips.getPassword().length() > 0) {
-                                        c.getPlayer().dropMessage(1, "The password you entered is incorrect.");
+                                        c.getPlayer().dropMessage(1, "您輸入的密碼錯誤.");
                                         return;
                                     }
                                     ips.addVisitor(chr);
@@ -477,16 +480,17 @@ public class PlayerInteractionHandler {
             }
             case CLOSE_MERCHANT: { // the one-and-only todo >.>
                 final IMaplePlayerShop merchant = chr.getPlayerShop();
-                if (merchant != null && merchant.getShopType() == 1 && merchant.isOwner(chr) && merchant.isAvailable()) {
-                    c.sendPacket(CWvsContext.broadcastMsg(1, "Please visit Fredrick for your items."));
+                if (merchant != null && merchant.getShopType() == 1 && merchant.isOwner(chr) && (merchant.isAvailable() || !merchant.isOpen())) {
+                    c.sendPacket(CWvsContext.broadcastMsg(1, "請找富蘭德里取回您的道具."));
                     if (merchant.isOwner(chr)) {
                         merchant.closeShop(true, true); //how to return the items?
                     } else {
                         merchant.removeVisitor(chr);
                     }
+
                     chr.setPlayerShop(null);
                     merchant.setOpen(true);
-                    merchant.removeAllVisitors(-1, -1);
+                    merchant.removeAllVisitors(22, 1);
                     merchant.setOpen(false);
                     c.sendPacket(CWvsContext.enableActions());
                 }
@@ -777,22 +781,22 @@ public class PlayerInteractionHandler {
         SET_ITEMS(0),
         SET_MESO(1),
         CONFIRM_TRADE(2),
-        PLAYER_SHOP_ADD_ITEM(21),
+        PLAYER_SHOP_ADD_ITEM(49),
         PLAYER_SHOP_REMOVE_ITEM(50),
         PLAYER_SHOP_BAN(51),
         BUY_ITEM_PLAYER_SHOP(43), // (BUY_ITEM_STORE(22) // unknown: 53
-        ADD_ITEM(23),
-        BUY_ITEM_HIREDMERCHANT(24), // ? was 26
-        REMOVE_ITEM(30),
-        MAINTANCE_OFF(31), // ?
-        MAINTANCE_ORGANISE(32), // ?
-        CLOSE_MERCHANT(33), // fix this
-        TAKE_MESOS(35), // ?
-        ADMIN_STORE_NAMECHANGE(37), // ?
-        VIEW_MERCHANT_VISITOR(38),
-        VIEW_MERCHANT_BLACKLIST(39),
-        MERCHANT_BLACKLIST_ADD(40),
-        MERCHANT_BLACKLIST_REMOVE(41),
+        ADD_ITEM(21),
+        BUY_ITEM_HIREDMERCHANT(22), // ? was 26
+        REMOVE_ITEM(28),
+        MAINTANCE_OFF(29), // ?
+        MAINTANCE_ORGANISE(30), // ?
+        CLOSE_MERCHANT(31), // fix this
+        TAKE_MESOS(33), // ?
+        ADMIN_STORE_NAMECHANGE(35), // ?
+        VIEW_MERCHANT_VISITOR(36),
+        VIEW_MERCHANT_BLACKLIST(37),
+        MERCHANT_BLACKLIST_ADD(38),
+        MERCHANT_BLACKLIST_REMOVE(39),
         REQUEST_TIE(56),
         ANSWER_TIE(57),
         GIVE_UP(58),

@@ -309,7 +309,7 @@ public class PartyHandler {
 
     public static void MemberSearch(final LittleEndianAccessor slea, final MapleClient c) {
         if (!c.getPlayer().isGM() && /*(c.getPlayer().isInBlockedMap() ||*/ FieldLimitType.VipRock.check(c.getPlayer().getMap().getFieldLimit())) {
-            c.getPlayer().dropMessage(5, "You may not do party search here."); // is party search blocked anywhere in gms?
+            c.getPlayer().dropMessage(5, "您無法在此搜尋組隊."); // is party search blocked anywhere in gms?
             return;
         }
         if (c.getPlayer().getParty() != null && c.getPlayer().getParty().getLeader().getName().equalsIgnoreCase(c.getPlayer().getName())) {
@@ -327,7 +327,7 @@ public class PartyHandler {
 
     public static void PartySearch(final LittleEndianAccessor slea, final MapleClient c) {
         if ((c.getPlayer().isInBlockedMap() || FieldLimitType.VipRock.check(c.getPlayer().getMap().getFieldLimit()))) {
-            c.getPlayer().dropMessage(5, "You may not do party search here.");
+            c.getPlayer().dropMessage(5, "您無法在此搜尋組隊.");
             return;
         }
         List<MapleParty> parties = new ArrayList<>();

@@ -33,7 +33,9 @@ import server.Timer.EtcTimer;
 import server.maps.MapleMapObjectType;
 import tools.packet.CWvsContext;
 import tools.packet.PlayerShopPacket;
+import tools.types.Pair;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
@@ -113,14 +115,14 @@ public class HiredMerchant extends AbstractPlayerStore {
                 saveItems();
                 MapleCharacter chr = getMCOwnerWorld();
                 if (chr != null) {
-                    chr.dropMessage(-5, "Item " + MapleItemInformationProvider.getInstance().getName(newItem.getItemId()) + " (" + perbundle + ") x " + quantity + " has sold in the Hired Merchant. Quantity left: " + pItem.bundles);
+                    chr.dropMessage(-5, "Item " + MapleItemInformationProvider.getInstance().getName(newItem.getItemId()) + " (" + perbundle + ") x " + quantity + " 已經在您的精靈商人賣出. 剩下數量: " + pItem.bundles);
                 }
             } else {
-                c.getPlayer().dropMessage(1, "The seller has too many " + (ServerConstants.MerchantsUseCurrency ? "Munny" : "mesos") + ".");
+                c.getPlayer().dropMessage(1, "賣家擁有太多 " + (ServerConstants.MerchantsUseCurrency ? "楓幣" : "楓幣") + ".");
                 c.sendPacket(CWvsContext.enableActions());
             }
         } else {
-            c.getPlayer().dropMessage(1, "Your inventory is full.");
+            c.getPlayer().dropMessage(1, "您的道具欄已滿.");
             c.sendPacket(CWvsContext.enableActions());
         }
     }
@@ -130,13 +132,14 @@ public class HiredMerchant extends AbstractPlayerStore {
         if (schedule != null) {
             schedule.cancel(false);
         }
-        if (saveItems) {
+        if (saveItems && (items.size() > 0 || getMeso() > 0)) {
             saveItems();
             items.clear();
         }
         if (remove) {
             ChannelServer.getInstance(world, channel).removeMerchant(this);
             getMap().broadcastMessage(PlayerShopPacket.destroyHiredMerchant(getOwnerId()));
+            getMCOwner().getClient().sendPacket(PlayerShopPacket.shopErrorMessage(21, 0));
         }
         getMap().removeMapObject(this);
         schedule = null;
@@ -186,6 +189,6 @@ public class HiredMerchant extends AbstractPlayerStore {
     }
 
     public final void sendVisitor(final MapleClient c) {
-        c.sendPacket(PlayerShopPacket.MerchantVisitorView(visitors));
+        c.sendPacket(PlayerShopPacket.MerchantVisitorView(visitor_t));
     }
 }

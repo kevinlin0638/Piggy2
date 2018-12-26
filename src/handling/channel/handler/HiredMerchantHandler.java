@@ -53,13 +53,13 @@ public class HiredMerchantHandler {
 
             switch (state) {
                 case 1:
-                    c.getPlayer().dropMessage(1, "Please claim your items from Fredrick first.");
+                    c.getPlayer().dropMessage(1, "請先去找富蘭德里領取道具.");
                     break;
                 case 0:
                     boolean merch = World.hasMerchant(c.getPlayer().getAccountID(), c.getPlayer().getId());
                     if (!merch) {
                         if (c.getChannelServer().isShutdown()) {
-                            c.getPlayer().dropMessage(1, "The server is about to shut down.");
+                            c.getPlayer().dropMessage(1, "伺服器將要關閉.");
                             return false;
                         }
                         if (packet) {
@@ -67,11 +67,11 @@ public class HiredMerchantHandler {
                         }
                         return true;
                     } else {
-                        c.getPlayer().dropMessage(1, "Please close the existing store and try again.");
+                        c.getPlayer().dropMessage(1, "請先關閉開張中的商店,重新再試.");
                     }
                     break;
                 default:
-                    c.getPlayer().dropMessage(1, "An unknown error occured.");
+                    c.getPlayer().dropMessage(1, "發生未知的錯誤.");
                     break;
             }
         } else {
@@ -138,16 +138,16 @@ public class HiredMerchantHandler {
         final int conv = c.getPlayer().getConversation();
         boolean merch = World.hasMerchant(c.getPlayer().getAccountID(), c.getPlayer().getId());
         if (merch) {
-            c.getPlayer().dropMessage(1, "Please close the existing store and try again.");
+            c.getPlayer().dropMessage(1, "請關閉已開張的商店並重新嘗試.");
             c.getPlayer().setConversation(0);
         } else if (c.getChannelServer().isShutdown()) {
-            c.getPlayer().dropMessage(1, "The world is going to shut down.");
+            c.getPlayer().dropMessage(1, "伺服器將要關閉.");
             c.getPlayer().setConversation(0);
         } else if (conv == 3) { // Hired Merch
             final MerchItemPackage pack = loadItemFrom_Database(c.getPlayer().getAccountID());
 
             if (pack == null) {
-                c.getPlayer().dropMessage(1, "You do not have any item(s) with Fredrick.");
+                c.getPlayer().dropMessage(1, "您沒有任何道具在我這邊保管.");
                 c.getPlayer().setConversation(0);
             } else if (pack.getItems().size() <= 0) { //error fix for complainers.
                 if (!check(c.getPlayer(), pack)) {
@@ -162,9 +162,9 @@ public class HiredMerchantHandler {
                         c.getPlayer().gainMeso(pack.getMeso(), false);
                     }
                     c.sendPacket(PlayerShopPacket.merchItem_Message((byte) 32));
-                    c.getPlayer().dropMessage(1, "You have retrieved your " + (ServerConstants.MerchantsUseCurrency ? "Munny" : "mesos") + ".");
+                    c.getPlayer().dropMessage(1, "您獲得您的 " + (ServerConstants.MerchantsUseCurrency ? "楓幣" : "楓幣") + ".");
                 } else {
-                    c.getPlayer().dropMessage(1, "An unknown error occured.");
+                    c.getPlayer().dropMessage(1, "未知的錯誤.");
                 }
                 c.getPlayer().setConversation(0);
             } else {
@@ -172,7 +172,7 @@ public class HiredMerchantHandler {
                 MapleInventoryManipulator.checkSpace(c, conv, conv, null);
                 for (final Item item : pack.getItems()) {
                     if (c.getPlayer().getInventory(GameConstants.getInventoryType(item.getItemId())).isFull()) {
-                        c.getPlayer().dropMessage(1, "Your inventory is full, please make room before claiming items back.");
+                        c.getPlayer().dropMessage(1, "您的道具欄已滿, 請確認是否有足夠的空間.");
                         c.getPlayer().setConversation(0);
                         break;
                     }
@@ -204,16 +204,16 @@ public class HiredMerchantHandler {
         }
         boolean merch = World.hasMerchant(c.getPlayer().getAccountID(), c.getPlayer().getId());
         if (merch) {
-            c.getPlayer().dropMessage(1, "Please close the existing store and try again.");
+            c.getPlayer().dropMessage(1, "請先關閉已開張的商店.");
             c.getPlayer().setConversation(0);
             return;
         }
         final MerchItemPackage pack = loadItemFrom_Database(c.getPlayer().getAccountID());
         if (pack == null) {
-            c.getPlayer().dropMessage(1, "An unknown error occured.");
+            c.getPlayer().dropMessage(1, "未知的錯誤.");
             return;
         } else if (c.getChannelServer().isShutdown()) {
-            c.getPlayer().dropMessage(1, "The world is going to shut down.");
+            c.getPlayer().dropMessage(1, "伺服器即將關閉.");
             c.getPlayer().setConversation(0);
             return;
         }
@@ -246,7 +246,7 @@ public class HiredMerchantHandler {
             }
             c.sendPacket(PlayerShopPacket.merchItem_Message(32));
         } else {
-            c.getPlayer().dropMessage(1, "An unknown error occured.");
+            c.getPlayer().dropMessage(1, "未知的錯誤.");
         }
     }
 
