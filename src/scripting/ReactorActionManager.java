@@ -207,7 +207,7 @@ public class ReactorActionManager extends AbstractPlayerInteraction {
             return;
         }
         final int pID = getReactor().getReactorId() < 200000 ? 92000000 : 92010000;
-        final String pName = (getReactor().getReactorId() < 200000 ? "Herbalism" : "Mining");
+        final String pName = (getReactor().getReactorId() < 200000 ? "藥草採集" : "採礦");
         final int he = getPlayer().getProfessionLevel(pID);
         if (he <= 0) {
             return;
@@ -249,9 +249,9 @@ public class ReactorActionManager extends AbstractPlayerInteraction {
             }
         }
         cancelHarvest(succ);
-        playerMessage(-5, pName + "'s Mastery increased. (+" + masteryIncrease + ")");
+        playerMessage(-5, pName + "的熟練度增加。 (+" + masteryIncrease + ")");
         if (getPlayer().addProfessionExp(pID, masteryIncrease)) {
-            playerMessage(-5, pName + " has gained a level.");
+            playerMessage(-5, pName + "已升級。");
         }
     }
 }

@@ -469,10 +469,10 @@ public class ItemMakerHandler {
         }
         long lastTime = Long.parseLong(marr.getCustomData());
         if (lastTime + (5000) > System.currentTimeMillis()) {
-            c.getPlayer().dropMessage(5, "You may not harvest yet.");
+            c.getPlayer().dropMessage(5, "還無法進行採集。");
         } else {
             marr.setCustomData(String.valueOf(System.currentTimeMillis()));
-            c.sendPacket(CField.harvestMessage(reactor.getObjectId(), GameConstants.GMS ? 13 : 11)); //ok to harvest, gogo
+            c.getSession().write(CField.harvestMessage(reactor.getObjectId(), 11)); //ok to harvest, gogo
             c.getPlayer().getMap().broadcastMessage(chr, CField.showHarvesting(chr.getId(), item.getItemId()), false);
         }
     }
