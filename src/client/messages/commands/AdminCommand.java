@@ -28,9 +28,7 @@ import server.life.MapleLifeFactory;
 import server.life.MapleMonster;
 import server.life.MapleNPC;
 import server.life.OverrideMonsterStats;
-import server.maps.MapleMap;
-import server.maps.MapleMapObject;
-import server.maps.MapleMapObjectType;
+import server.maps.*;
 import tools.StringUtil;
 import tools.packet.CField;
 import tools.types.Pair;
@@ -305,6 +303,24 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "!unhide - 解除管理員隱藏";
+        }
+    }
+
+    public static class SReactor extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            MapleReactorStats reactorSt = MapleReactorFactory.getReactor(Integer.parseInt(args.get(1)));
+            MapleReactor reactor = new MapleReactor(reactorSt, Integer.parseInt(args.get(1)));
+            reactor.setDelay(-1);
+            reactor.setPosition(c.getPlayer().getPosition());
+            c.getPlayer().getMap().spawnReactor(reactor);
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!SReactor [ID]- 招喚反應物";
         }
     }
 

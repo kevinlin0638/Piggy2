@@ -468,7 +468,7 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
     public static final void reloadValues() {
         String fileName = "send.properties";
         Properties props = new Properties();
-        try (FileInputStream fileInputStream = new FileInputStream(fileName); BufferedReader br = new BufferedReader(new InputStreamReader(fileInputStream, StringUtil.codeString(fileName)))) {
+        try (FileInputStream fileInputStream = new FileInputStream("D:\\Source\\Maplestory\\piggy\\src\\properties\\" + fileName); BufferedReader br = new BufferedReader(new InputStreamReader(fileInputStream, StringUtil.codeString("D:\\Source\\Maplestory\\piggy\\src\\properties\\" + fileName)))) {
             props.load(br);
         } catch (IOException ex) {
             InputStream in = SendPacketOpcode.class.getClassLoader().getResourceAsStream("properties/" + fileName);
