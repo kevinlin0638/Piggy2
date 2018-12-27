@@ -8542,7 +8542,12 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (getRockSize() >= 10) {
             return;
         }
-        rocks[getRockSize()] = getMapId();
+        for (int i = 0; i < 10; i++) {
+            if (rocks[i] == 999999999) {
+                rocks[i] = getMapId();
+                break;
+            }
+        }
         changed_trocklocations = true;
     }
 
@@ -8583,7 +8588,12 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (getRegRockSize() >= 5) {
             return;
         }
-        regrocks[getRegRockSize()] = getMapId();
+        for (int i = 0; i < 5; i++) {
+            if (regrocks[i] == 999999999) {
+                regrocks[i] = getMapId();
+                break;
+            }
+        }
         changed_regrocklocations = true;
     }
 

@@ -2159,6 +2159,18 @@ public class InventoryHandler {
                     }
                     break;
                 }
+                case 5560000: // The Teleport tick
+                case 5561000:{ // The VIP Teleport tick
+                    slea.skip(1);
+                    final MapleMap target = c.getChannelServer().getMapFactory().getMap(slea.readInt());
+                    if (c.getPlayer().getEventInstance() == null) { //Makes sure this map doesn't have a forced return map
+                        if(target.getId() == 280030000 || target.getId() == 211042400)
+                            break;
+                        c.getPlayer().changeMap(target, target.getPortal(0));
+                        used = true;
+                    }
+                    break;
+                }
                 case 5041001:
                 case 5040004:
                 case 5040003:
@@ -4286,17 +4298,15 @@ public class InventoryHandler {
     }
 
     public static void TeleRock(LittleEndianAccessor slea, MapleClient c) {
-        byte slot = (byte) slea.readShort();
-        int itemId = slea.readInt();
-        Item toUse = c.getPlayer().getInventory(MapleInventoryType.USE).getItem(slot);
-
-        if (toUse == null || toUse.getQuantity() < 1 || toUse.getItemId() != itemId || itemId / 10000 != 232 || c.getPlayer().hasBlockedInventory()) {
-            c.sendPacket(CWvsContext.enableActions());
-            return;
-        }
-        boolean used = UseTeleRock(slea, c, itemId);
-        if (used) {
-            MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (short) 1, false);
+        slea.readInt(); // time
+        final MapleMap target = c.getChannelServer().getMapFactory().getMap(slea.readInt());
+        if (c.getPlayer().getEventInstance() == null) { //Makes sure this map doesn't have a forced return map
+            if(target.getId() == 280030000 || target.getId() == 211042400) {
+                c.getPlayer().dropMessage(1, "無法傳送至此地區");
+                c.sendPacket(CWvsContext.enableActions());
+                return;
+            }
+            c.getPlayer().changeMap(target, target.getPortal(0));
         }
         c.sendPacket(CWvsContext.enableActions());
     }
@@ -4327,6 +4337,8 @@ public class InventoryHandler {
         }
         return used && itemId != 5041001 && itemId != 5040004;
     }
+
+
 
 //    public static final void useInnerCirculator(LittleEndianAccessor slea, MapleClient c) {
 //        int itemid = slea.readInt();

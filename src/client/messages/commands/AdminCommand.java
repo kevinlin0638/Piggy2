@@ -608,18 +608,12 @@ public class AdminCommand {
                 c.getPlayer().dropMessage(5, itemId + "  不存在");
             } else {
                 client.inventory.Item item;
-                byte flag = 0;
-                flag |= ItemFlag.LOCK.getValue();
 
                 if (GameConstants.getInventoryType(itemId) == MapleInventoryType.EQUIP) {
                     item = ii.randomizeStats((Equip) ii.getEquipById(itemId));
-                    item.setFlag(flag);
 
                 } else {
                     item = new client.inventory.Item(itemId, (byte) 0, quantity, (byte) 0);
-                    if (GameConstants.getInventoryType(itemId) != MapleInventoryType.USE) {
-                        item.setFlag(flag);
-                    }
                 }
                 item.setOwner(c.getPlayer().getName());
                 item.setGMLog(c.getPlayer().getName());

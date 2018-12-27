@@ -302,7 +302,7 @@ public enum RecvPacketOpcode implements WritableShortValueHolder {
 
     public static Properties getDefaultProperties() throws FileNotFoundException, IOException {
         Properties props = new Properties();
-        FileInputStream fileInputStream = new FileInputStream("recv.properties");
+        FileInputStream fileInputStream = new FileInputStream("properties/recv.properties");
         props.load(fileInputStream);
         fileInputStream.close();
         return props;
@@ -311,7 +311,7 @@ public enum RecvPacketOpcode implements WritableShortValueHolder {
     public static final void reloadValues() {
         String fileName = "recv.properties";
         Properties props = new Properties();
-        try (FileInputStream fileInputStream = new FileInputStream(fileName); BufferedReader br = new BufferedReader(new InputStreamReader(fileInputStream, StringUtil.codeString(fileName)))) {
+        try (FileInputStream fileInputStream = new FileInputStream("D:\\Source\\Maplestory\\piggy\\src\\properties\\" + fileName); BufferedReader br = new BufferedReader(new InputStreamReader(fileInputStream, StringUtil.codeString("D:\\Source\\Maplestory\\piggy\\src\\properties\\" + fileName)))) {
             props.load(br);
         } catch (IOException ex) {
             InputStream in = RecvPacketOpcode.class.getClassLoader().getResourceAsStream("properties/" + fileName);
