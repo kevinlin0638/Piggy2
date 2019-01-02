@@ -151,6 +151,8 @@ public class MapleData implements MapleDataEntity, Iterable<MapleData> {
                 return MapleDataType.STRING;
             case "vector":
                 return MapleDataType.VECTOR;
+            case "long":
+                return MapleDataType.LONG;
             case "null":
                 return MapleDataType.IMG_0x00;
         }

@@ -65,6 +65,7 @@ public class CField {
         mplew.writeShort(SendPacketOpcode.SERVER_IP.getValue());
         mplew.writeShort(0);
         byte[] address = inetAddr.getAddress();
+        byte[] address2 = {127, 0, 0, 1};
         mplew.write(address);
         mplew.writeShort(port);
         mplew.writeInt(clientId);
@@ -1582,21 +1583,23 @@ public class CField {
             mplew.write(chr.getStat().passive_mastery());
             mplew.writeInt(itemId > 0 ? itemId : attackInfo.charge);
             attackInfo.allDamage.stream().forEach(oned -> {
-                mplew.writeInt(oned.objectId);
-                if (oned.objectId > 0) {
-                    mplew.write(7);
-                    if (attackInfo.skill == 4211006) {
-                        mplew.write(oned.attack.size());
-                        for (Pair eachd : oned.attack) {
-                            mplew.writeInt((Integer) eachd.left);
-                        }
-                    } else {
-                        for (Pair<Integer, Boolean> eachd : oned.attack) {
-                            //mplew.write(!eachd.right ? 0 : 1);
-                            if (eachd.right) {
-                                mplew.writeInt(eachd.left + 0x80000000);
-                            } else {
-                                mplew.writeInt(eachd.left);
+                if (oned.attack != null) {
+                    mplew.writeInt(oned.objectId);
+                    if (oned.objectId > 0) {
+                        mplew.write(7);
+                        if (attackInfo.skill == 4211006) {
+                            mplew.write(oned.attack.size());
+                            for (Pair eachd : oned.attack) {
+                                mplew.writeInt((Integer) eachd.left);
+                            }
+                        } else {
+                            for (Pair<Integer, Boolean> eachd : oned.attack) {
+                                //mplew.write(!eachd.right ? 0 : 1);
+                                if (eachd.right) {
+                                    mplew.writeInt(eachd.left + 0x80000000);
+                                } else {
+                                    mplew.writeInt(eachd.left);
+                                }
                             }
                         }
                     }

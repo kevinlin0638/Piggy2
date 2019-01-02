@@ -75,7 +75,9 @@ public class MapleDataTool {
                 return Integer.parseInt(getString(data));
             } else if (data.getType() == MapleDataType.SHORT) {
                 return Integer.valueOf(((Short) data.getData()).shortValue());
-            } else {
+            }  else if (data.getType() == MapleDataType.CANVAS) {
+                return -1;
+            }else {
                 return ((Integer) data.getData()).intValue();
             }
         }

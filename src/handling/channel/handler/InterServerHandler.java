@@ -196,8 +196,8 @@ public class InterServerHandler {
                 player.setMegaHide(true); // on 
             }
             //SkillFactory.getSkill(9001004).getEffect(1).applyTo(c.getPlayer());
-            player.dropMessage(6, "Hide Deactivated.");
-            player.toggleHide(false, !player.isHidden());
+            //player.dropMessage(6, "Hide Deactivated.");
+            //player.toggleHide(false, !player.isHidden());
         }
         //管理員上線預設隱藏
         if (player.isGM()) {

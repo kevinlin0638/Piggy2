@@ -2978,7 +2978,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             final MapleStatEffect echeff = echskill.getEffect(skilllevel);
             if (targets > 0) {
                 if (getBuffedValue(MapleBuffStatus.ENERGY_CHARGE) == null) {
-                    //    echeff.applyEnergyBuff(this, true); // Infinity time
+                    echeff.applyEnergyBuff(this, true); // Infinity time
                 } else {
                     Integer energyLevel = getBuffedValue(MapleBuffStatus.ENERGY_CHARGE);
                     //TODO: bar going down
@@ -2994,7 +2994,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                         client.sendPacket(BuffPacket.giveEnergyChargeTest(energyLevel, echeff.getDuration() / 1000));
                         setBuffedValue(MapleBuffStatus.ENERGY_CHARGE, Integer.valueOf(energyLevel));
                     } else if (energyLevel == 10000) {
-                        //  echeff.applyEnergyBuff(this, false); // One with time
+                        echeff.applyEnergyBuff(this, false); // One with time
                         setBuffedValue(MapleBuffStatus.ENERGY_CHARGE, Integer.valueOf(10001));
                     }
                 }
@@ -8196,7 +8196,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             coolDowns.remove(skillId);
         }
         if (isShowInfo()) {
-            dropMessage(10, info);
+            dropMessage(6, info);
         }
         client.getSession().writeAndFlush(CField.skillCooldown(skillId, 0));
     }

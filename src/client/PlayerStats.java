@@ -972,7 +972,7 @@ public class PlayerStats implements Serializable {
                     damageIncrease.put(31001007, (int) eff.getX());
                     damageIncrease.put(31001008, (int) eff.getX());
                 }
-                bx = SkillFactory.getSkill(31111007);
+                bx = SkillFactory.getSkill(31110007);
                 bof = chra.getTotalSkillLevel(bx);
                 if (bof > 0) {
                     eff = bx.getEffect(bof);
@@ -997,7 +997,7 @@ public class PlayerStats implements Serializable {
                     mpRecover += 1;
                     mpRecoverProp += eff.getProb();
                 }
-                bx = SkillFactory.getSkill(31111006);
+                bx = SkillFactory.getSkill(31110006);
                 bof = chra.getTotalSkillLevel(bx);
                 if (bof > 0) {
                     eff = bx.getEffect(bof);
@@ -1027,7 +1027,7 @@ public class PlayerStats implements Serializable {
                     trueMastery += eff.getMastery();
                     passive_sharpeye_min_percent += eff.getCriticalMin();
                 }
-                bx = SkillFactory.getSkill(31120010);
+                bx = SkillFactory.getSkill(31120009);
                 bof = chra.getTotalSkillLevel(bx);
                 if (bof > 0) {
                     percent_wdef += bx.getEffect(bof).getT();

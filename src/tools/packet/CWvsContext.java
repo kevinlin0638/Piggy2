@@ -437,6 +437,10 @@ public class CWvsContext {
                     mplew.writeLong(statUpdate.getValue());
                     mplew.writeLong(statUpdate.getValue());
                     break;
+                default:
+                    mplew.writeInt(statUpdate.getValue());
+                    break;
+
             }
         }
         mplew.write(0); // SetSecondaryStatChangedPoint [byte]
@@ -780,7 +784,7 @@ public class CWvsContext {
         mplew.writeShort(SendPacketOpcode.CHAR_INFO.getValue());
         mplew.writeInt(chr.getId());
         mplew.write(chr.getLevel());
-        mplew.writeShort(chr.getSubcategory());
+        mplew.writeShort(chr.getJob());
         mplew.write(chr.getStat().pvpRank);
         mplew.writeInt(chr.getFame());
         mplew.write(chr.getMarriageId() > 0 ? 1 : 0);
@@ -2540,7 +2544,7 @@ public class CWvsContext {
                 } else if (statup.getKey() == MapleBuffStatus.FAMILIAR_SHADOW) {
                     mplew.writeInt((Integer) statup.getValue());
                     mplew.writeInt(effect.getCharColor());
-                } else {
+                }else {
                     mplew.writeShort(((Integer) statup.getValue()).shortValue());
                 }
             }

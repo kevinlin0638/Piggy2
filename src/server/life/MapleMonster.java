@@ -1034,7 +1034,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
                     reflection.clear();
                 }
                 if (con != null && ServerConstants.DEBUG) {
-                    con.dropMessage(10, "結束 => 持續傷害: 結束時間[" + System.currentTimeMillis() + "]");
+                    con.dropMessage(6, "結束 => 持續傷害: 結束時間[" + System.currentTimeMillis() + "]");
                 }
             }
         };
@@ -1075,7 +1075,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
             for (Entry<MonsterStatus, Integer> z : effect.entrySet()) {
                 bfn += "[" + z.getKey().name() + "] ";
             }
-            con.dropMessage(10, "開始 => 怪物施放狀態: 持續時間[" + duration + "] 開始時間[" + System.currentTimeMillis() + "] 狀態效果:" + bfn);
+            con.dropMessage(6, "開始 => 怪物施放狀態: 持續時間[" + duration + "] 開始時間[" + System.currentTimeMillis() + "] 狀態效果:" + bfn);
         }
     }
 

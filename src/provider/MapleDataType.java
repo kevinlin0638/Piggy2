@@ -26,6 +26,7 @@ public enum MapleDataType {
     IMG_0x00,
     SHORT,
     INT,
+    LONG,
     FLOAT,
     DOUBLE,
     STRING,

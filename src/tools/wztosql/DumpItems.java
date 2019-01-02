@@ -25,8 +25,12 @@ package tools.wztosql;
 import client.inventory.EquipAdditions;
 import client.inventory.MapleInventoryType;
 import constants.GameConstants;
+import constants.ServerConfig;
+import constants.ServerConstants;
 import database.DatabaseConnection;
+import handling.login.LoginServer;
 import provider.*;
+import server.ServerProperties;
 import server.life.Element;
 import tools.types.Pair;
 
@@ -63,6 +67,10 @@ public class DumpItems {
     }
 
     public static void main(String[] args) {
+
+        ServerProperties.load();
+        ServerConstants.SERVER_IP = ServerConfig.WORLD_INTERFACE;
+        LoginServer.PORT = ServerConfig.LOGIN_PORT;
         boolean hadError = false;
         boolean update = false;
         long startTime = System.currentTimeMillis();

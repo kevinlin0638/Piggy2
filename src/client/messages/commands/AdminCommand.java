@@ -20,14 +20,10 @@ import provider.MapleData;
 import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
 import provider.MapleDataTool;
-import server.ItemInformation;
-import server.MapleInventoryManipulator;
-import server.MapleItemInformationProvider;
-import server.Timer;
-import server.life.MapleLifeFactory;
-import server.life.MapleMonster;
-import server.life.MapleNPC;
-import server.life.OverrideMonsterStats;
+import scripting.PortalScriptManager;
+import scripting.ReactorScriptManager;
+import server.*;
+import server.life.*;
 import server.maps.*;
 import tools.StringUtil;
 import tools.packet.CField;
@@ -41,7 +37,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import server.MapleCarnivalChallenge;
+import java.util.concurrent.ScheduledFuture;
+
 import server.MapleInventoryManipulator;
 import tools.packet.CWvsContext;
 
@@ -321,6 +318,57 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "!SReactor [ID]- 招喚反應物";
+        }
+    }
+
+    public static class SetHair extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            int id = Integer.parseInt(splitted.get(1));
+            MapleCharacter player = c.getPlayer();
+            player.setHair(id);
+            player.updateSingleStat(MapleStat.HAIR, id);
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!SetHair [ID]- 更換髮型";
+        }
+    }
+
+    public static class SetFace extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            int id = Integer.parseInt(splitted.get(1));
+            MapleCharacter player = c.getPlayer();
+            player.setFace(id);
+            player.updateSingleStat(MapleStat.FACE, id);
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!SetFace [ID]- 更換臉型";
+        }
+    }
+
+    public static class SetSkin extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            byte id = Byte.parseByte(splitted.get(1));
+            MapleCharacter player = c.getPlayer();
+            player.setSkinColor(id);
+            player.updateSingleStat(MapleStat.SKIN, id);
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!SetSkin [ID]- 更換皮膚";
         }
     }
 
@@ -619,7 +667,7 @@ public class AdminCommand {
             MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
             if (GameConstants.isPet(itemId)) {
                 MapleInventoryManipulator.addById(c, itemId, (short) 1, "", client.inventory.MaplePet.createPet(itemId, MapleInventoryIdentifier.getInstance()), 10, "GM獲得");
-                c.getPlayer().dropMessage(5, "Please purchase a pet from the cash shop instead.");
+                c.getPlayer().dropMessage(5, "獲得寵物.");
             } else if (!ii.itemExists(itemId)) {
                 c.getPlayer().dropMessage(5, itemId + "  不存在");
             } else {
@@ -653,9 +701,9 @@ public class AdminCommand {
             final short quantity = (short) CommandProcessorUtil.getOptionalIntArg(splitted.toArray(new String[0]), 2, 1);
             MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
             if (GameConstants.isPet(itemId)) {
-                c.getPlayer().dropMessage(5, "Please purchase a pet from the cash shop instead.");
+                c.getPlayer().dropMessage(5, "請在購物商城購買.");
             } else if (!ii.itemExists(itemId)) {
-                c.getPlayer().dropMessage(5, itemId + " does not exist");
+                c.getPlayer().dropMessage(5, itemId + " 不存在");
             } else {
                 client.inventory.Item toDrop;
                 if (GameConstants.getInventoryType(itemId) == MapleInventoryType.EQUIP) {
@@ -694,6 +742,116 @@ public class AdminCommand {
             return "!heal - 回復血魔";
         }
     }
+
+    public static class ReloadPortal extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            PortalScriptManager.getInstance().clearScripts();
+            c.getPlayer().dropMessage("重新載入傳送點腳本");
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!ReloadPortal - 重新載入傳送點腳本";
+        }
+    }
+
+    public static class ReloadDrops extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            MapleMonsterInformationProvider.getInstance().clearDrops();
+            ReactorScriptManager.getInstance().clearDrops();
+            c.getPlayer().dropMessage("重新載入掉寶腳本");
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!ReloadDrops - 重新載入掉寶腳本";
+        }
+    }
+
+    public static class 關閉伺服器 extends AbstractsCommandExecute {
+
+        protected static Thread t = null;
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            c.getPlayer().dropMessage(6, "正在關閉伺服器...");
+            if (t == null || !t.isAlive()) {
+                t = new Thread(ShutdownServer.getInstance());
+                ShutdownServer.getInstance().shutdown();
+                t.start();
+            } else {
+                c.getPlayer().dropMessage(6, "關閉進程正在進行或者關閉已完成，請稍候。");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "關閉伺服器";
+        }
+    }
+
+    public static class shutdowntime extends 定時關閉伺服器{
+
+    }
+
+    public static class 定時關閉伺服器 extends 關閉伺服器 {
+
+        private static ScheduledFuture<?> ts = null;
+        private int minutesLeft = 0;
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 2) {
+                c.getPlayer().dropMessage(0, splitted.get(0) + " <時間:分鐘>");
+                return false;
+            }
+            minutesLeft = Integer.parseInt(splitted.get(1));
+            c.getPlayer().dropMessage(6, "伺服器將在" + minutesLeft + " 分鐘后關閉");
+            if (ts == null && (t == null || !t.isAlive())) {
+                t = new Thread(ShutdownServer.getInstance());
+                ts = Timer.EventTimer.getInstance().register(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (minutesLeft == 0) {
+                            ShutdownServer.getInstance().shutdown();
+                            t.start();
+                            ts.cancel(false);
+                            return;
+                        }
+                        World.Broadcast.broadcastMessage(c.getWorld(), CWvsContext.broadcastMsg(6,"伺服器將在" + minutesLeft + " 分鐘后進行停機維護, 請及時安全的下線, 以免造成不必要的損失。"));
+                        minutesLeft--;
+                    }
+                }, 60000);
+            } else {
+                c.getPlayer().dropMessage(6, "關閉進程正在進行或者關閉已完成，請稍候。");
+            }
+            return true;
+        }
+    }
+
+    public static class ReloadShops extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            MapleShopFactory.getInstance().clear();
+            c.getPlayer().dropMessage("重新載入商店數據");
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!ReloadShops - 重新載入商店數據";
+        }
+    }
+
+
 
     public static class Kill extends AbstractsCommandExecute {
 

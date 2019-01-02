@@ -30,6 +30,7 @@ import client.skill.SkillFactory;
 import client.skill.SkillFactory.CraftingEntry;
 import constants.GameConstants;
 import constants.ItemConstants;
+import scripting.ReactorScriptManager;
 import server.*;
 import server.ItemMakerFactory.GemCreateEntry;
 import server.ItemMakerFactory.ItemMakerCreateEntry;
@@ -479,17 +480,17 @@ public class ItemMakerHandler {
 
     public static void StopHarvest(final LittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         //its ok if a hacker bypasses this as we do everything in the reactor anyway
-        /*final MapleReactor reactor = c.getPlayer().getMap().getReactorByOid(slea.readInt());
-        if (reactor == null || !reactor.isAlive() || reactor.getReactorId() > 200011 || chr.getStat().harvestingTool <= 0 || reactor.getTruePosition().distanceSq(chr.getTruePosition()) > 40000.0 || reactor.getState() < 3 || c.getPlayer().getFatigue() >= 100) { //bug in global, so we use this to bug fix
-        return;
-        }
-        Item item = c.getPlayer().getInventory(MapleInventoryType.EQUIP).getItem((short) c.getPlayer().getStat().harvestingTool);
-        if (item == null || ((Equip) item).getDurability() == 0) {
-        c.getPlayer().getStat().handleProfessionTool(c.getPlayer());
-        return;
-        }
-        c.getPlayer().getMap().destroyReactor(reactor.getObjectId());
-        ReactorScriptManager.getInstance().act(c, reactor);*/
+//        final MapleReactor reactor = c.getPlayer().getMap().getReactorByOid(slea.readInt());
+//        if (reactor == null || !reactor.isAlive() || reactor.getReactorId() > 200011 || chr.getStat().harvestingTool <= 0 || reactor.getTruePosition().distanceSq(chr.getTruePosition()) > 40000.0 || reactor.getState() < 3 || c.getPlayer().getFatigue() >= 100) { //bug in global, so we use this to bug fix
+//        return;
+//        }
+//        Item item = c.getPlayer().getInventory(MapleInventoryType.EQUIP).getItem((short) c.getPlayer().getStat().harvestingTool);
+//        if (item == null || ((Equip) item).getDurability() == 0) {
+//        c.getPlayer().getStat().handleProfessionTool(c.getPlayer());
+//        return;
+//        }
+//        c.getPlayer().getMap().destroyReactor(reactor.getObjectId());
+//        ReactorScriptManager.getInstance().act(c, reactor);
     }
 
     public static void ProfessionInfo(final LittleEndianAccessor slea, final MapleClient c) { //so pointless

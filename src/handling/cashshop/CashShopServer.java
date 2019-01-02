@@ -68,7 +68,7 @@ public class CashShopServer {
         System.out.println("Saving all connected clients (CS)...");
         players.disconnectAll();
         playersMTS.disconnectAll();
-        MTSStorage.getInstance().saveBuyNow(true);
+//        MTSStorage.getInstance().saveBuyNow(true);
         System.out.println("Shutting down CS...");
         acceptor.close();
         finishedShutdown = true;

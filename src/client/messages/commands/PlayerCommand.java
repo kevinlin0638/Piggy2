@@ -2,8 +2,14 @@ package client.messages.commands;
 
 import client.MapleClient;
 import client.MapleStat;
+import client.inventory.Item;
+import client.inventory.MapleInventoryType;
+import constants.GameConstants;
 import constants.ServerConstants.PlayerGMRank;
+import server.MapleInventoryManipulator;
+import server.MapleItemInformationProvider;
 import server.life.MapleMonster;
+import server.maps.MapleMap;
 import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
 
@@ -101,6 +107,135 @@ public class PlayerCommand {
         }
     }
 
+    public static class 自殺 extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            c.getPlayer().getStat().setHp( 0, c.getPlayer());
+            c.getPlayer().getStat().setMp(0, c.getPlayer());
+            c.getPlayer().updateSingleStat(MapleStat.HP, 0);
+            c.getPlayer().updateSingleStat(MapleStat.MP, 0);
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@自殺 - 自殺";
+        }
+    }
+
+    public static class emo extends 自殺{
+    }
+
+    public static class sell extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            final int inv, start, end;
+            if(splitted.size() < 4) {
+                c.getPlayer().dropMessage(1, "使用方式 @sell 欄位 開始格數 結束格數.");
+                return false;
+            }
+            MapleInventoryType innv;
+            try {
+                inv = Integer.parseInt(splitted.get(1));
+
+                if(inv > 5 || inv < 1){
+                    c.getPlayer().dropMessage(1, "欄位無效 只能 1 ~ 5.");
+                    return false;
+                }
+                innv = MapleInventoryType.getByType((byte) inv);
+            } catch (NumberFormatException nfe) {
+                if(splitted.get(1).equals("裝備欄")){
+                    innv = MapleInventoryType.getByType((byte) 1);
+                }else if(splitted.get(1).equals("消耗欄")){
+                    innv = MapleInventoryType.getByType((byte) 2);
+                }else if(splitted.get(1).equals("裝飾欄")){
+                    innv = MapleInventoryType.getByType((byte) 3);
+                }else if(splitted.get(1).equals("其他欄")){
+                    innv = MapleInventoryType.getByType((byte) 4);
+                }else if(splitted.get(1).equals("特殊欄")){
+                    innv = MapleInventoryType.getByType((byte) 5);
+                }else
+                    return false;
+            }
+
+            try {
+                start = Integer.parseInt(splitted.get(2));
+                end = Integer.parseInt(splitted.get(3));
+            } catch (NumberFormatException nfe) {
+                c.getPlayer().dropMessage(1, "輸入的數字無效.");
+                return false;
+            }
+
+            if(start > 96 || end > 96){
+                c.getPlayer().dropMessage(1, "格數無效 最多96.");
+                return false;
+            }
+
+
+
+            int count = 0;
+            for(int i = start; i <= end;i++) {
+                Item item = c.getPlayer().getInventory(innv).getItem((short) i);
+                if(item == null)
+                    continue;
+                int qua = item.getQuantity();
+                int price = new Double(MapleItemInformationProvider.getInstance().getPrice(item.getItemId())).intValue();
+                if(price > 0 && !MapleItemInformationProvider.getInstance().isCash(item.getItemId())){
+                    count += price;
+                }
+
+
+                MapleInventoryManipulator.removeFromSlot(c, innv, (short) i, (short) qua, false);
+                c.getSession().write(CWvsContext.InfoPacket.getShowItemGain(item.getItemId(), (short) -qua, true));
+            }
+            if(count > 0)
+                c.getPlayer().gainMeso(count, true, true);
+
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@sell 欄位(1~5) 開始格數(1~96) 結束格數(1~96) <賣東西(若誤賣 恕不補償)>";
+        }
+    }
+    public static class fm extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            for (int i : GameConstants.blockedMaps) {
+                if (c.getPlayer().getMapId() == i) {
+                    c.getPlayer().dropMessage(1, "你不能在這裡使用指令.");
+                    return false;
+                }
+            }
+            if (c.getPlayer().getLevel() < 10) {
+                c.getPlayer().dropMessage(1, "你的等級必須是10等.");
+                return false;
+            }
+            if (c.getPlayer().getMap().getSquadByMap() != null || c.getPlayer().getEventInstance() != null || c.getPlayer().getMap().getEMByMap() != null || c.getPlayer().getMapId() >= 990000000/* || FieldLimitType.VipRock.check(c.getPlayer().getMap().getFieldLimit())*/) {
+                c.getPlayer().dropMessage(1, "你不能在這裡使用指令.");
+                return false;
+            }
+            if ((c.getPlayer().getMapId() >= 680000210 && c.getPlayer().getMapId() <= 680000502) || (c.getPlayer().getMapId() / 1000 == 980000 && c.getPlayer().getMapId() != 980000000) || (c.getPlayer().getMapId() / 100 == 1030008) || (c.getPlayer().getMapId() / 100 == 922010) || (c.getPlayer().getMapId() / 10 == 13003000)) {
+                c.getPlayer().dropMessage(1, "你不能在這裡使用指令.");
+                return false;
+            }
+            MapleMap free = c.getChannelServer().getMapFactory().getMap(910000000);
+            c.getPlayer().changeMap(free, free.getPortal(0));
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@fm - 回自由";
+        }
+    }
+    public static class 自由 extends fm{
+
+    }
     public static class 清除克隆 extends AbstractsCommandExecute {
 
         @Override

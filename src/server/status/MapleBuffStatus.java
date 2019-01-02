@@ -255,8 +255,8 @@ public enum MapleBuffStatus implements WritableLongValueHolder, IBuffStat {
     DICE_ROLL(115),
     DIVINE_SHIELD(116),
     PIRATES_REVENGE(117),
-    TELEPORT_MASTERY(118),
-    COMBAT_ORDERS(119),
+    TELEPORT_MASTERY(119),
+    COMBAT_ORDERS(118), // 戰鬥命令 完成
     BEHOLDER(120),
     BUFF_121(121),
     GIANT_POTION(122),
@@ -305,11 +305,11 @@ public enum MapleBuffStatus implements WritableLongValueHolder, IBuffStat {
     HOLY_MAGIC_SHELL(164), //max amount of attacks absorbed
     BUFF_165(165),
     ARCANE_AIM(166, true),
-    BUFF_MASTERY(167), //buff duration increase
+    BUFF_MASTERY(171),
     ABNORMAL_STATUS_R(168), // %
     ELEMENTAL_STATUS_R(169), // %
     WATER_SHIELD(170),
-    DARK_METAMORPHOSIS(171), // mob count
+    DARK_METAMORPHOSIS(167), //惡魔殺手的變形 萬成
     BUFF_172(172),
     SPIRIT_SURGE(173),
     SPIRIT_LINK(174, true),
@@ -462,7 +462,7 @@ public enum MapleBuffStatus implements WritableLongValueHolder, IBuffStat {
     public static void reloadValues() {
         String fileName = "buffstatus.properties";
         Properties props = new Properties();
-        try (FileInputStream fileInputStream = new FileInputStream(fileName); BufferedReader br = new BufferedReader(new InputStreamReader(fileInputStream, StringUtil.codeString(fileName)))) {
+        try (FileInputStream fileInputStream = new FileInputStream("D:\\Source\\Maplestory\\piggy\\src\\properties\\" + fileName); BufferedReader br = new BufferedReader(new InputStreamReader(fileInputStream, StringUtil.codeString("D:\\Source\\Maplestory\\piggy\\src\\properties\\" + fileName)))) {
             props.load(br);
         } catch (IOException ex) {
             InputStream in = MapleBuffStatus.class.getClassLoader().getResourceAsStream("properties/" + fileName);

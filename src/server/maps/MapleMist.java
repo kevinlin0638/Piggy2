@@ -61,7 +61,7 @@ public class MapleMist extends MapleMapObject {
         this.skilllevel = owner.getTotalSkillLevel(SkillFactory.getSkill(source.getSourceId()));
 
         switch (source.getSourceId()) {
-            // case 4221006: // Smoke Screen
+            case 4221006: // Smoke Screen
             case 32121006: //Party Shield
                 isPoisonMist = 2;
                 break;

@@ -160,7 +160,7 @@ public enum MonsterStatus implements Serializable, IBuffStat {
     private MonsterStatus(int i) {
         this.bitnum = i;
         this.i = 1 << (i % 32);
-        this.pos = 3 - (int) Math.floor(i / 32);
+        this.pos = 7 - (int) Math.floor(i / 32);
         this.isDefault = false;
         this.order = i;
     }
@@ -169,7 +169,7 @@ public enum MonsterStatus implements Serializable, IBuffStat {
         this.bitnum = i;
 
         this.i = 1 << (i % 32);
-        this.pos = 3 - (int) Math.floor(i / 32);
+        this.pos = 7 - (int) Math.floor(i / 32);
         this.isDefault = false;
         this.order = order;
     }
@@ -177,7 +177,7 @@ public enum MonsterStatus implements Serializable, IBuffStat {
     private MonsterStatus(int i, int order, boolean isDefault) {
         this.bitnum = i;
         this.i = 1 << (i % 32);
-        this.pos = 3 - (int) Math.floor(i / 32);
+        this.pos = 7 - (int) Math.floor(i / 32);
         this.isDefault = isDefault;
         this.order = order;
     }
@@ -185,7 +185,7 @@ public enum MonsterStatus implements Serializable, IBuffStat {
     private MonsterStatus(int i, boolean isDefault) {
         this.bitnum = i;
         this.i = 1 << (i % 32);
-        this.pos = 3 - (int) Math.floor(i / 32);
+        this.pos = 7 - (int) Math.floor(i / 32);
         this.isDefault = isDefault;
         this.order = i;
     }

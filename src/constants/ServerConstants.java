@@ -9,7 +9,7 @@ public class ServerConstants {
     public static final short MAPLE_VERSION = 145;
     public static final String MAPLE_PATCH = "1";
     public static final String WZ_PATH = "./wz";
-    public static String SERVER_IP = "apple040285.ddns.net";
+    public static String SERVER_IP = "piggyms.sytes.net";
 
     public static String SERVER_NAME = "開發中 v145";
 

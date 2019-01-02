@@ -1147,6 +1147,10 @@ public class DamageParse {
 
         if (ret.skill == 4211006) {
             return parseMesoExplosion(lea, ret, chr);
+        }else if(ret.skill == 2111007 || ret.skill == 2211007 || ret.skill == 2311007 || ret.skill == 12111007 || ret.skill == 22161005 || ret.skill == 32111010){
+            lea.skip(1);
+        }else if(ret.skill == 21101003){
+            lea.skip(1);
         }
 
         for (int i = 0; i < ret.targets; i++) {
@@ -1279,7 +1283,7 @@ public class DamageParse {
             //	    return null;
             //    }
             //}
-            lea.skip(16);
+            lea.skip(12);
             bullets = lea.readByte();
             allDamageNumbers = new ArrayList<Pair<Integer, Boolean>>();
             for (int j = 0; j < bullets; j++) {
@@ -1289,6 +1293,7 @@ public class DamageParse {
             lea.skip(4); // C3 8F 41 94, 51 04 5B 01
         }
         lea.skip(4);
+        ret.position = lea.readPos();
         bullets = lea.readByte();
 
         for (int j = 0; j < bullets; j++) {

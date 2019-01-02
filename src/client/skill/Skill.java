@@ -156,6 +156,7 @@ public class Skill {
                 case 14111007:
                 case 3121002:
                 case 3221002:
+                case 1121010:
                 case 5311004:
                 case 5121015:
                 case 5211009:

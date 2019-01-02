@@ -735,6 +735,7 @@ public class MapleStatEffect implements Serializable {
                     ret.duration = 60 * 1000;
                     ret.hpR = -ret.x / 100.0;
                     ret.statups.put(MapleBuffStatus.FINAL_CUT, ret.y);
+                    ret.statups.put(MapleBuffStatus.ATTACK_BUFF, ret.x);
                     break;
                 case 2111007:
                 case 2211007:
@@ -1441,10 +1442,10 @@ public class MapleStatEffect implements Serializable {
         } else if (sourceid == 33101008 && (applyfrom.getBuffedValue(MapleBuffStatus.RAINING_MINES) == null || applyfrom.getBuffedValue(MapleBuffStatus.SUMMON) != null || !applyfrom.canSummon())) {
             applyfrom.getClient().sendPacket(CWvsContext.enableActions());
             return false;
-        } else if (isShadow() && applyfrom.getJob() != 412 && applyfrom.getJob() != 422) { //pirate/shadow = dc
+        } else if (isShadow() && applyfrom.getJob() != 412 && applyfrom.getJob() != 422 && applyfrom.getJob() != 1411 && applyfrom.getJob() != 1412) { //pirate/shadow = dc
             applyfrom.getClient().sendPacket(CWvsContext.enableActions());
             return false;
-        } else if (isMI() && applyfrom.getJob() != 434) { //pirate/shadow = dc
+        } else if (isMI() && (applyfrom.getJob() != 434 && applyfrom.getJob() != 433)) { //pirate/shadow = dc
             applyfrom.getClient().sendPacket(CWvsContext.enableActions());
             return false;
         } else if (sourceid == 33101004 && applyfrom.getMap().isTown()) {
@@ -3163,7 +3164,7 @@ public class MapleStatEffect implements Serializable {
     }
 
     private boolean isMist() {
-        return skill && (sourceid == 2111003 || /*sourceid == 4221006 ||*/ sourceid == 12111005 || sourceid == 14111006 || sourceid == 22161003 || sourceid == 32121006 || sourceid == 1076 || sourceid == 11076); // poison mist, smokescreen and flame gear, recovery aura
+        return skill && (sourceid == 2111003 || sourceid == 4221006 || sourceid == 12111005 || sourceid == 14111006 || sourceid == 22161003 || sourceid == 32121006 || sourceid == 1076 || sourceid == 11076); // poison mist, smokescreen and flame gear, recovery aura
     }
 
     private boolean isSpiritClaw() {

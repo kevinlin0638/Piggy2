@@ -44,6 +44,7 @@ import server.status.MapleBuffStatus;
 import tools.FileoutputUtil;
 import tools.MapleAESOFB;
 import tools.data.LittleEndianAccessor;
+import tools.packet.CWvsContext;
 import tools.packet.LoginPacket;
 import tools.packet.MTSCSPacket;
 
@@ -185,6 +186,8 @@ public class MapleServerHandler extends ChannelDuplexHandler {
             WorldConfig.雪吉拉.setMesoRate(100);
             c.getPlayer().addHP(c.getPlayer().getStat().getCurrentMaxHp() - c.getPlayer().getStat().getHp());
             c.getPlayer().addMP(c.getPlayer().getStat().getCurrentMaxMp(c.getPlayer().getJob()) - c.getPlayer().getStat().getMp());
+            if(c.getPlayer().getStat().getHp() > 70000)
+                c.getPlayer().addHP(-70000);
             RecvPacketOpcode.reloadValues();
             SendPacketOpcode.reloadValues();
             MapleBuffStatus.reloadValues();
@@ -372,11 +375,13 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                 PlayersHandler.LeaveAzwan(slea, client);
                 break;
             case ENTER_CASH_SHOP:
-                InterServerHandler.EnterCS(client, client.getPlayer(), false);
+                client.getPlayer().dropMessage(1, "購物商城 暫不開放");
+                client.sendPacket(CWvsContext.enableActions());
+//                InterServerHandler.EnterCS(client, client.getPlayer(), false);
                 break;
             case ENTER_MTS:
                 client.getSession().writeAndFlush(tools.packet.CWvsContext.enableActions());
-                scripting.NPCScriptManager.getInstance().start(client, 9900007, "home");
+                scripting.NPCScriptManager.getInstance().start(client, 9900002);
                 //  InterServerHandler.EnterMTS(c, c.getPlayer());
                 break;
             case MOVE_PLAYER:

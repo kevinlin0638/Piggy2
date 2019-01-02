@@ -160,14 +160,14 @@ public class MapleReactor extends MapleMapObject {
     }
 
     public void hitReactor(int charPos, short stance, MapleClient c) {
-        if (stats.getType(state) < 999 && stats.getType(state) != -1) {
+         if (stats.getType(state) < 999 && stats.getType(state) != -1) {
             //type 2 = only hit from right (kerning swamp plants), 00 is air left 02 is ground left
             final byte oldState = state;
             if (!(stats.getType(state) == 2 && (charPos == 0 || charPos == 2))) { // next state
                 state = stats.getNextState(state);
 
                 if (stats.getNextState(state) == -1 || stats.getType(state) == 999) { //end of reactor
-                    if ((stats.getType(state) < 100 || stats.getType(state) == 999) && delay > 0) { //reactor broken
+                    if ((stats.getType(state) < 100 || stats.getType(state) == 999) && (delay > 0 && !(getReactorId() >= 100000 && getReactorId() < 300000))) { //reactor broken
                         map.destroyReactor(getObjectId());
                     } else { //item-triggered on final step
                         map.broadcastMessage(CField.triggerReactor(this, stance));

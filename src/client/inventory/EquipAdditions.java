@@ -30,7 +30,8 @@ public enum EquipAdditions {
     boss("prob", "damage"),
     mobdie("hpIncOnMobDie", "mpIncOnMobDie"),
     hpmpchange("hpChangerPerTime", "mpChangerPerTime"),
-    skill("id", "level");
+    skill("id", "level"),
+    statinc("incDEX", "incPAD");
 
     private final String i1, i2;
     private final boolean element;
