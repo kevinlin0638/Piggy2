@@ -1222,7 +1222,7 @@ public class MapleStatEffect implements Serializable {
                 case 10001075: // Cygnus Echo
                     ret.statups.put(MapleBuffStatus.ECHO_OF_HERO, ret.x);
                     break;
-                case 31121007: // boundless rage
+                case 31121007: //無限力量
                     ret.statups.put(MapleBuffStatus.BOUNDLESS_RAGE, 1); // for now
                     break;
                 case 31111004: // black hearted strength
@@ -1514,10 +1514,9 @@ public class MapleStatEffect implements Serializable {
             if ((mpchange < 0 && GameConstants.isDemon(applyto.getJob())) || !GameConstants.isDemon(applyto.getJob())) { // heal
                 stat.setMp(stat.getMp() + mpchange, applyto);
             }
-            hpmpupdate.put(MapleStat.MP, Integer.valueOf(stat.getMp()));
         }
         hpmpupdate.put(MapleStat.HP, Integer.valueOf(stat.getHp()));
-
+        hpmpupdate.put(MapleStat.MP, Integer.valueOf(stat.getMp()));
         applyto.getClient().sendPacket(CWvsContext.updatePlayerStats(hpmpupdate, true, applyto));
         if (expinc != 0) {
             applyto.gainExp(expinc, true, true, false);
@@ -1869,8 +1868,6 @@ public class MapleStatEffect implements Serializable {
                     applyTo(applyfrom, mc, false, null, newDuration);
                 }
             }
-
-
         }
         return true;
     }
