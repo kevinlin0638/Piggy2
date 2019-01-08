@@ -14,6 +14,8 @@ import constants.GameConstants;
 import constants.MapConstants;
 import constants.ServerConstants;
 import database.DatabaseConnection;
+import handling.RecvPacketOpcode;
+import handling.SendPacketOpcode;
 import handling.channel.ChannelServer;
 import handling.world.World;
 import provider.MapleData;
@@ -23,8 +25,11 @@ import provider.MapleDataTool;
 import scripting.PortalScriptManager;
 import scripting.ReactorScriptManager;
 import server.*;
+import server.cashshop.CashItemFactory;
 import server.life.*;
 import server.maps.*;
+import server.quest.MapleQuest;
+import server.status.MapleBuffStatus;
 import tools.StringUtil;
 import tools.packet.CField;
 import tools.types.Pair;
@@ -693,6 +698,66 @@ public class AdminCommand {
         }
     }
 
+    public static class ReloadOps extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            SendPacketOpcode.reloadValues();
+            RecvPacketOpcode.reloadValues();
+            MapleBuffStatus.reloadValues();
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!ReloadOps - 重載包頭";
+        }
+    }
+
+    public static class ReloadCashshop extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            CashItemFactory.getInstance().initialize();
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!ReloadCashshop - 重載商城";
+        }
+    }
+
+    public static class ReloadEvents extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            for (ChannelServer instance : ChannelServer.getAllInstance(0)) {
+                instance.reloadEvents();
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!ReloadEvents - 重載活動";
+        }
+    }
+
+    public static class ReloadQuests extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            MapleQuest.InitQuests();
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!ReloadQuests - 重載任務";
+        }
+    }
+
     public static class Drop extends AbstractsCommandExecute {
 
         @Override
@@ -848,6 +913,24 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "!ReloadShops - 重新載入商店數據";
+        }
+    }
+
+    public static class Shop extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            MapleShopFactory shop = MapleShopFactory.getInstance();
+            int shopId = Integer.parseInt(splitted.get(1));
+            if (shop.getShop(shopId) != null) {
+                shop.getShop(shopId).sendShop(c);
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!shop <ID> - 開啟商店";
         }
     }
 

@@ -1,11 +1,13 @@
 package client.messages.commands;
 
+import client.MapleCharacter;
 import client.MapleClient;
 import client.MapleStat;
 import client.inventory.Item;
 import client.inventory.MapleInventoryType;
 import constants.GameConstants;
 import constants.ServerConstants.PlayerGMRank;
+import handling.channel.ChannelServer;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.life.MapleMonster;
@@ -13,6 +15,7 @@ import server.maps.MapleMap;
 import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import scripting.NPCScriptManager;
@@ -66,6 +69,58 @@ public class PlayerCommand {
         @Override
         public String getHelpMessage() {
             return "@經驗值歸零 - 經驗值歸零";
+        }
+    }
+
+    public static class Online extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            ArrayList<ArrayList<MapleCharacter>> onl = new ArrayList<>();
+            for (ChannelServer cserv : ChannelServer.getAllInstance(0)) {
+                ArrayList<MapleCharacter> arr = new ArrayList<>();
+                for (MapleCharacter chrr : cserv.getPlayerStorage().getAllCharacters()){
+                    if(!chrr.isGM()){
+                        arr.add(chrr);
+                    }
+                }
+                onl.add(arr);
+            }
+
+            int cha = 1;
+            int total = 0;
+            if(splitted.size() < 2){
+                for (ArrayList<MapleCharacter> ar : onl){
+                    c.getPlayer().dropMessage(5, "頻道 " + cha + " : " + ar.size() + " 人在線");
+                    cha++;
+                    total += ar.size();
+                }
+                c.getPlayer().dropMessage(5, "總上線人數 : " + total + " 人在線");
+            }else {
+                int ch;
+                try {
+                    ch = Integer.valueOf(splitted.get(1));
+                } catch (NumberFormatException nfe) {
+                    c.getPlayer().dropMessage(5, "錯誤 : 輸入的數字無效 .");
+                    return false;
+                }
+                if (ch > 0 && ch <= 10) {
+                    ArrayList<MapleCharacter> ar = onl.get(ch - 1);
+                    c.getPlayer().dropMessage(5, "頻道 " + ch + " : " + ar.size() + " 人在線");
+                    c.getPlayer().dropMessage(5, "在線ID:");
+                    StringBuilder sb = new StringBuilder();
+                    for (MapleCharacter cc : ar) {
+                        sb.append(cc.getName()).append(" ");
+                    }
+                    c.getPlayer().dropMessage(5, sb.toString());
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@online <頻道(可選)> - 當前在線人數";
         }
     }
 

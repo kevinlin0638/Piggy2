@@ -9,16 +9,16 @@ public class ServerConstants {
     public static final short MAPLE_VERSION = 145;
     public static final String MAPLE_PATCH = "1";
     public static final String WZ_PATH = "./wz";
-    public static String SERVER_IP = "piggyms.sytes.net";
+    public static String SERVER_IP = "127.0.0.1";
 
-    public static String SERVER_NAME = "開發中 v145";
+    public static String SERVER_NAME = "小豬谷 v145";
 
     public static boolean BLOCK_CASH_SHOP = false;
     public static boolean DEBUG = true;
     public static boolean ADMIN_ONLY = false;
     public static boolean ONLY_LOCALHOST = false; // Only allow accounted admins to connect pass login server
     public static boolean USE_SECOND_PASSWORD_AUTH = false;
-    public static int CHANNEL_LOAD = 150; // players per channel
+    public static int CHANNEL_LOAD = 120; // players per channel
 
     // 登入畫面氣球
     private static final List<MapleLoginBalloon> mapleLoginBalloonList = Arrays.asList(
@@ -32,8 +32,8 @@ public class ServerConstants {
     public static boolean moreThanOne = true;
 
     // 歡迎訊息
-    public static String SERVER_MESSAGE = "歡迎來到v145.1，此端正在開發中 OuO/";
-    public static String WELCOME_MESSAGE = "【歡迎訊息】";
+    public static String SERVER_MESSAGE = "歡迎來到小豬谷 v145.1，目前正在 封測中";
+    public static String WELCOME_MESSAGE = "【歡迎加入 小豬谷 v145.1】";
 
     public static List<MapleLoginBalloon> getBalloons() {
         return mapleLoginBalloonList;

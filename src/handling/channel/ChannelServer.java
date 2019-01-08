@@ -278,7 +278,7 @@ public class ChannelServer {
             for (MapleCharacter chr : worlds.getPlayerStorage().getAllCharacters()) {
                 chr.saveToDB(false, false);
                 if (!chr.Spam(3600000, 26)) { // every hour will notify yet still save.
-                    chr.dropMessage(6, "AutoSave Complete - Character Successfully Saved.");
+                    chr.dropMessage(6, "自動存檔成功!");
                 }
             }
         }

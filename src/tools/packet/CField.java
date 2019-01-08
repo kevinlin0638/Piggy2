@@ -30,16 +30,14 @@ import handling.channel.handler.AttackInfo;
 import handling.world.World;
 import handling.world.guild.MapleGuild;
 import scripting.NPCTalkType;
-import server.MapleDueyActions;
-import server.MapleShop;
-import server.MapleTrade;
-import server.Randomizer;
+import server.*;
 import server.life.MapleNPC;
 import server.maps.*;
 import server.maps.MapleNodes.MaplePlatform;
 import server.movement.ILifeMovementFragment;
 import server.quest.MapleQuest;
 import server.worldevents.MapleSnowball.MapleSnowballs;
+import tools.BitTools;
 import tools.HexTool;
 import tools.data.MaplePacketLittleEndianWriter;
 import tools.types.AttackPair;
@@ -2132,7 +2130,8 @@ public class CField {
         mplew.write(mist.getSkillLevel());
         mplew.writeShort(mist.getSkillDelay());
         mplew.writeRect(mist.getBox());
-        mplew.writeLong(0);
+        mplew.writeInt(0); //dunno
+        mplew.writePos(mist.getPosition());
         mplew.writeInt(0); //dunno
 //        mplew.writeZeroBytes(50);
         return mplew.getPacket();
@@ -2729,7 +2728,7 @@ public class CField {
             MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
             mplew.writeShort(SendPacketOpcode.SHOW_ITEM_GAIN_INCHAT.getValue());
-            mplew.write(10);
+            mplew.write(0x0B);
 
             return mplew.getPacket();
         }

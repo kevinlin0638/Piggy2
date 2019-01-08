@@ -1162,6 +1162,9 @@ public class PlayerHandler {
                     AOE = true;
                     bulletCount = 6;
                     break;
+                case 14111002:
+                    bulletCount = 3;
+                    break;
                 default:
                     bulletCount = effect.getBulletCount();
                     break;
@@ -1605,7 +1608,7 @@ public class PlayerHandler {
 
     public static void ChangeMap(final LittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
         /**
-         *
+         *You
          * 40 00 01 FF FF FF FF 05 00 6F 75 74 30 30 36 04 E5 01 00 00 00 00 00
          * 00
          *

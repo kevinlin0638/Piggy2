@@ -32,7 +32,8 @@ public enum SavedLocationType {
     EVENT(7),
     AMORIA(8),
     CHRISTMAS(9),
-    ARDENTMILL(10);
+    ARDENTMILL(10),
+    Gachapon(11);
     private int index;
 
     private SavedLocationType(int index) {

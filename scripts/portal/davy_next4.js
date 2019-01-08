@@ -6,6 +6,6 @@ function enter(pi) {
 	    pi.playerMessage(5, "The leader must be here");
 	}
     } else {
-	pi.playerMessage(5, "The portal is not opened yet.");
+	pi.playerMessage(5, "此傳點尚未開啟");
     }
 }

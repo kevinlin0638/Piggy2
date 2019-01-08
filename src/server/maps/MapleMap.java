@@ -2385,10 +2385,10 @@ public final class MapleMap {
         if (environment.size() > 0) {
             chr.getClient().sendPacket(CField.getUpdateEnvironment(this));
         }
-        if (partyBonusRate > 0) {
-            chr.dropMessage(-1, partyBonusRate + "% additional EXP will be applied per each party member here.");
-            chr.dropMessage(-1, "You've entered the party play zone.");
-        }
+//        if (partyBonusRate > 0) {
+//            chr.dropMessage(-1, partyBonusRate + "% additional EXP will be applied per each party member here.");
+//            chr.dropMessage(-1, ".");
+//        }
         if (isTown()) {
             chr.cancelEffectFromBuffStat(MapleBuffStatus.RAINING_MINES);
         }

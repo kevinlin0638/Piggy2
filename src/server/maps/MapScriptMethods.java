@@ -55,11 +55,11 @@ public class MapScriptMethods {
 
     private static final Point witchTowerPos = new Point(-60, 184);
     private static final String[] mulungEffects = {
-            "I have been waiting for you! If you still have any courage left, come on in!",
-            "If you want to taste the bitterness of defeat, come on in!",
-            "You have quite the nerve! Don't mistake recklessness for wisdom!",
-            "I will make you thoroughly regret challenging the Mu Lung Dojo! Hurry up!",
-            "Your courage for challenging the Mu Lung Dojo is commendable!"};
+            "我等你很久了! 如果有種的話,就進來吧!",
+            "如果你想嘗嘗被打敗的滋味,就進來吧!",
+            "膽小鬼! 竟敢在我門前撒野!",
+            "你會後悔來挑戰武陵道場的!",
+            "竟然敢挑戰武陵道場,你的勇氣真令人佩服!"};
 
     public static void startScript_FirstUser(MapleClient c, String scriptName) {
         if (c.getPlayer() == null) {

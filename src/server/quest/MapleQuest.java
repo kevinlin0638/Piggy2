@@ -103,6 +103,8 @@ public class MapleQuest implements Serializable {
     }
 
     public static void InitQuests() {
+        if(!quests.isEmpty())
+            quests.clear();
         try {
             Connection con = DatabaseConnection.getConnection();
             PreparedStatement psr;

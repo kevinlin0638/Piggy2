@@ -323,6 +323,13 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                         InterServerHandler.Loggedin(playerid, client);
                     }
                     break;
+                case CHANGE_MAP:
+                    if (cs) {
+                        CashShopHandler.LeaveCS(slea, client, client.getPlayer());
+                    } else {
+                        PlayerHandler.ChangeMap(slea, client, client.getPlayer());
+                    }
+                    break;
             }
             return;
         }
@@ -375,9 +382,9 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                 PlayersHandler.LeaveAzwan(slea, client);
                 break;
             case ENTER_CASH_SHOP:
-                client.getPlayer().dropMessage(1, "購物商城 暫不開放");
-                client.sendPacket(CWvsContext.enableActions());
-//                InterServerHandler.EnterCS(client, client.getPlayer(), false);
+//                client.getPlayer().dropMessage(1, "購物商城 暫不開放");
+//                client.sendPacket(CWvsContext.enableActions());
+                InterServerHandler.EnterCS(client, client.getPlayer(), false);
                 break;
             case ENTER_MTS:
                 client.getSession().writeAndFlush(tools.packet.CWvsContext.enableActions());
