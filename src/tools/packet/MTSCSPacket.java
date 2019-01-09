@@ -43,40 +43,43 @@ import java.util.Map.Entry;
 
 public class MTSCSPacket {
 
-    private static final byte[] bestItems = HexTool.getByteArrayFromHexString("02 00 00 00 31 00 00 00 0A 00 10 00 12 00 0E 07 E0 3B 8B 0B 60 CE 8A 0B 69 00 6C 00 6C 00 2F 00 35 00 33 00 32 00 30 00 30 00 31 00 31 00 2F 00 73 00 75 00 6D 00 6D 00 6F 00 6E 00 2F 00 61 00 74 00 74 00 61 00 63 00 6B 00 31 00 2F 00 31 00 00 00 00 00 00 00 00 00 02 00 1A 00 04 01 08 07 02 00 00 00 32 00 00 00 05 00 1C 00 06 00 08 07 A0 01 2E 00 58 CD 8A 0B");
+    private static final byte[] bestItems = HexTool.getByteArrayFromHexString("02 00 00 00 31 00 00 00 0A 00 10 00 12 00 0E 07 E0 3B 8B 0B 60 CE 8A 0B 69 00 6C 00 6C 00 2F 00 35 00 33 00 32 00 30 00 30 00 31 00 31 00 2F 00 73 00 75 00 6D 00 6D 00 6F 00 6E 00 2F 00 61 00 74 00 74 00 61 00 63 00 6B 00 31 00 2F 00 31 0000 00 00 00 00 00 00 00 02 00 1A 00 04 01 08 07 02 00 00 00 32 00 00 00 05 00 1C 00 06 00 08 07 A0 01 2E 00 58 CD 8A 0B");
     private static byte Operation_Code = 100; // We could just change this everytime a version updates
 
     public static byte[] warpCSInfo(MapleClient c) {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_INFO.getValue());
-        /*mplew.writeAsciiString(c.getAccountName());
+        
+        mplew.writeShort(c.getAccountName().length());//帳號長度
+        mplew.writeAsciiString(c.getAccountName());//帳號
+        //CWvsContext__SetSaleInfo Start
+        //Unknow(maybe this is hide cash item)
+        int CashItem[] = new int[]{};
+        mplew.writeInt(0);
+        for(int i = 0 ; i< CashItem.length; i++){
+            mplew.writeInt(CashItem[i]);
+        }
+        //自訂義商品
+        //CCashShop__decodeModCashItemInfo
+        final Collection<CashModInfo> csItems = CashItemFactory.getInstance().getAllModInfo();
+        mplew.writeShort(csItems.size());
 
-        mplew.writeInt(0); //
-
-        final Collection<CashModInfo> cmi = CashItemFactory.getInstance().getAllModInfo();
-        mplew.writeShort(cmi.size());
-        for (CashModInfo cm : cmi) {
+        for (CashModInfo cm : csItems) {
             addModCashItemInfo(mplew, cm);
         }
-
+        //未知
         short unk2 = 0;
         mplew.writeShort(unk2);
         for (int i = 0; i < unk2; i++) {
             mplew.writeInt(0);
             mplew.writeMapleAsciiString("");
         }
-
-        byte unk3 = 0;
-        mplew.write(unk3);
-        for(int i  = 0; i< unk3; i++){
-            mplew.write(0);
-            mplew.write(0);
-            mplew.write(0);
-        }
-
+        //未知
+        mplew.write(0);
+        //隨機箱子
         final Map<Integer, List<Integer>> rmi = CashItemFactory.getInstance().getRandomItemInfo();
-        mplew.writeInt(0);
+        mplew.writeInt(rmi.size()); 
         for (final Entry<Integer, List<Integer>> i : rmi.entrySet()) {
             mplew.writeInt(i.getKey()); // Item Id
             if (i.getKey() / 1000 != 5533) {
@@ -87,8 +90,14 @@ public class MTSCSPacket {
                 mplew.writeInt(x); // SN
             }
         }
+        //CWvsContext__SetSaleInfo End
 
+        //DecodeBuff 1080 Start
+        for(int i = 0; i < 107 ; i++){
+            mplew.write(0);
+        }
         mplew.write(bestItems);
+        
         int[] itemz = CashItemFactory.getInstance().getBestItems();
         for (int i = 1; i <= 8; i++) { // 1080 bytes including 120 above.
             for (int j = 0; j <= 1; j++) {
@@ -99,21 +108,13 @@ public class MTSCSPacket {
                 }
             }
         }
-
-        mplew.writeShort(0);//Stock
-
-        mplew.writeShort(0);// Limited
-
+        
+        //decodeBuff 1080 End
+        mplew.writeShort(0);//DecodeStock
+        mplew.writeShort(0);//DecodeLimitGoods
         mplew.write(0);
-        mplew.write(0);*/
-        mplew.writeMapleAsciiString(c.getAccountName());
-        mplew.write(HexTool.getByteArrayFromHexString("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00"));
-        // 6F A2 98 00 01 00 00 00 00 00 00 00 92 A2 98 00 01 00 00 00 00 00 00 00 A8 2A 9A 00 01 00 00 00 00 00 00 00 10 A2 98 00 01 00 00 00 00 00 00 00 43 2A 9A 00 01 00 00 00 01 00 00 00 6F A2 98 00 01 00 00 00 01 00 00 00 92 A2 98 00 01 00 00 00 01 00 00 00 A8 2A 9A 00 01 00 00 00 01 00 00 00 10 A2 98 00 01 00 00 00 01 00 00 00 43 2A 9A 00 02 00 00 00 00 00 00 00 6F A2 98 00 02 00 00 00 00 00 00 00 92 A2 98 00 02 00 00 00 00 00 00 00 A8 2A 9A 00 02 00 00 00 00 00 00 00 10 A2 98 00 02 00 00 00 00 00 00 00 43 2A 9A 00 02 00 00 00 01 00 00 00 6F A2 98 00 02 00 00 00 01 00 00 00 92 A2 98 00 02 00 00 00 01 00 00 00 A8 2A 9A 00 02 00 00 00 01 00 00 00 10 A2 98 00 02 00 00 00 01 00 00 00 43 2A 9A 00 03 00 00 00 00 00 00 00 6F A2 98 00 03 00 00 00 00 00 00 00 92 A2 98 00 03 00 00 00 00 00 00 00 A8 2A 9A 00 03 00 00 00 00 00 00 00 10 A2 98 00 03 00 00 00 00 00 00 00 43 2A 9A 00 03 00 00 00 01 00 00 00 6F A2 98 00 03 00 00 00 01 00 00 00 92 A2 98 00 03 00 00 00 01 00 00 00 A8 2A 9A 00 03 00 00 00 01 00 00 00 10 A2 98 00 03 00 00 00 01 00 00 00 43 2A 9A 00 04 00 00 00 00 00 00 00 6F A2 98 00 04 00 00 00 00 00 00 00 92 A2 98 00 04 00 00 00 00 00 00 00 A8 2A 9A 00 04 00 00 00 00 00 00 00 10 A2 98 00 04 00 00 00 00 00 00 00 43 2A 9A 00 04 00 00 00 01 00 00 00 6F A2 98 00 04 00 00 00 01 00 00 00 92 A2 98 00 04 00 00 00 01 00 00 00 A8 2A 9A 00 04 00 00 00 01 00 00 00 10 A2 98 00 04 00 00 00 01 00 00 00 43 2A 9A 00 05 00 00 00 00 00 00 00 6F A2 98 00 05 00 00 00 00 00 00 00 92 A2 98 00 05 00 00 00 00 00 00 00 A8 2A 9A 00 05 00 00 00 00 00 00 00 10 A2 98 00 05 00 00 00 00 00 00 00 43 2A 9A 00 05 00 00 00 01 00 00 00 6F A2 98 00 05 00 00 00 01 00 00 00 92 A2 98 00 05 00 00 00 01 00 00 00 A8 2A 9A 00 05 00 00 00 01 00 00 00 10 A2 98 00 05 00 00 00 01 00 00 00 43 2A 9A 00 06 00 00 00 00 00 00 00 6F A2 98 00 06 00 00 00 00 00 00 00 92 A2 98 00 06 00 00 00 00 00 00 00 A8 2A 9A 00 06 00 00 00 00 00 00 00 10 A2 98 00 06 00 00 00 00 00 00 00 43 2A 9A 00 06 00 00 00 01 00 00 00 6F A2 98 00 06 00 00 00 01 00 00 00 92 A2 98 00 06 00 00 00 01 00 00 00 A8 2A 9A 00 06 00 00 00 01 00 00 00 10 A2 98 00 06 00 00 00 01 00 00 00 43 2A 9A 00 07 00 00 00 00 00 00 00 6F A2 98 00 07 00 00 00 00 00 00 00 92 A2 98 00 07 00 00 00 00 00 00 00 A8 2A 9A 00 07 00 00 00 00 00 00 00 10 A2 98 00 07 00 00 00 00 00 00 00 43 2A 9A 00 07 00 00 00 01 00 00 00 6F A2 98 00 07 00 00 00 01 00 00 00 92 A2 98 00 07 00 00 00 01 00 00 00 A8 2A 9A 00 07 00 00 00 01 00 00 00 10 A2 98 00 07 00 00 00 01 00 00 00 43 2A 9A 00 08 00 00 00 00 00 00 00 6F A2 98 00 08 00 00 00 00 00 00 00 92 A2 98 00 08 00 00 00 00 00 00 00 A8 2A 9A 00 08 00 00 00 00 00 00 00 10 A2 98 00 08 00 00 00 00 00 00 00 43 2A 9A 00 08 00 00 00 01 00 00 00 6F A2 98 00 08 00 00 00 01 00 00 00 92 A2 98 00 08 00 00 00 01 00 00 00 A8 2A 9A 00 08 00 00 00 01 00 00 00 10 A2 98 00 08 00 00 00 01 00 00 00 43 2A 9A 00 00 00 00 00 00
-        final Collection<CashModInfo> cmi = CashItemFactory.getInstance().getAllModInfo();
-//        mplew.writeShort(cmi.size());
-        for (CashModInfo cm : cmi) {
-            addModCashItemInfo(mplew, cm);
-        }
+        mplew.write(0);
+        
         return mplew.getPacket();
     }
 
@@ -121,9 +122,9 @@ public class MTSCSPacket {
         final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_OPEN.getValue());
-
+        
         PacketHelper.addCharacterInfo(mplew, c.getPlayer());
-
+        
         return mplew.getPacket();
     }
 
@@ -239,12 +240,16 @@ public class MTSCSPacket {
 
         return mplew.getPacket();
     }
-
+     /**
+     * 獲得購物商城內的庫存[完成]
+     * @param c
+     * @return 
+     */
     public static byte[] getCSInventory(MapleClient c) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(Operation_Code + 3); // 5 = Failed + transfer
+        mplew.write(Operation_Code - 5); // 5 = Failed + transfer
         CashShop mci = c.getPlayer().getCashInventory();
         mplew.writeShort(mci.getItemsSize());
         if (mci.getItemsSize() > 0) {
@@ -269,12 +274,17 @@ public class MTSCSPacket {
 
         return mplew.getPacket();
     }
+    /**
+     * 獲得購物商城禮物[完成]
+     * @param c
+     * @return 
+     */
 
     public static byte[] getCSGifts(MapleClient c) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(Operation_Code + 6); // 7 = Failed + transfer
+        mplew.write(Operation_Code -3); // 7 = Failed + transfer
         List<Pair<Item, String>> mci = c.getPlayer().getCashInventory().loadGifts();
         mplew.writeShort(mci.size());
         for (Pair<Item, String> mcz : mci) { // 70 Bytes, need to recheck.
@@ -286,12 +296,17 @@ public class MTSCSPacket {
 
         return mplew.getPacket();
     }
-
+    /**
+     * 購物商城 購物車列表[完成]
+     * @param chr
+     * @param update
+     * @return 
+     */
     public static byte[] sendWishList(MapleCharacter chr, boolean update) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(Operation_Code + (update ? 15 : 8)); // 9 = Failed + transfer, 16 = Failed.
+        mplew.write(Operation_Code + (update ? 1 : -1)); // 9 = Failed + transfer, 16 = Failed.
         int[] list = chr.getWishlist();
         for (int i = 0; i < 10; i++) {
             mplew.writeInt(list[i] != -1 ? list[i] : 0);
@@ -299,34 +314,52 @@ public class MTSCSPacket {
 
         return mplew.getPacket();
     }
-
+    /**
+     * 顯示購買完成[完成]
+     * @param item
+     * @param sn
+     * @param accid
+     * @return 
+     */
     public static byte[] showBoughtCSItem(Item item, int sn, int accid) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(Operation_Code + 17);
+        mplew.write(Operation_Code + 3);
         addCashItemInfo(mplew, item, accid, sn);
 
         return mplew.getPacket();
     }
-
+    /**
+     * 顯示購買完成[完成]
+     * @param item
+     * @param sn
+     * @param accid
+     * @return 
+     */
     public static byte[] showBoughtCSItem(int itemid, int sn, int uniqueid, int accid, int quantity, String giftFrom, long expire) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(Operation_Code + 17);
+        mplew.write(Operation_Code + 3);
         addCashItemInfo(mplew, uniqueid, accid, itemid, sn, quantity, giftFrom, expire);
 
         return mplew.getPacket();
     }
-
+    /**
+     * 顯示購買失敗[完成]
+     * @param item
+     * @param sn
+     * @param accid
+     * @return 
+     */
     public static byte[] showBoughtCSItemFailed(final int mode, final int sn) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(Operation_Code + 18);
+        mplew.write(Operation_Code + 4);
         mplew.write(mode); // 0/1/2 = transfer, Rest = code
-        if (mode == 29 || mode == 30) { // Limit Goods update. this item is out of stock, and therefore not available for sale.
+        if (mode == 29 || mode == 28) { // Limit Goods update. this item is out of stock, and therefore not available for sale.
             mplew.writeInt(sn);
         } else if (mode == 69) { // You cannot make any more purchases in %d.\r\nPlease try again in (%d + 1).
             mplew.write(1);    // Hour?
@@ -353,7 +386,13 @@ public class MTSCSPacket {
 
         return mplew.getPacket();
     }
-
+    /**
+     * 顯示發送禮物[未完成]
+     * @param item
+     * @param sn
+     * @param accid
+     * @return 
+     */
     public static byte[] sendGift(int price, int itemid, int quantity, String receiver, boolean packages) {
         // [ %s ] \r\nwas sent to %s. \r\n%d NX Prepaid \r\nwere spent in the process.
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
@@ -405,45 +444,65 @@ public class MTSCSPacket {
 
         return mplew.getPacket();
     }
-
+    /**
+     * 擴充Inv欄位[完成]
+     * @param inv
+     * @param slots
+     * @return 
+     */
     public static byte[] increasedInvSlots(int inv, int slots) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(Operation_Code + 26);
+        mplew.write(Operation_Code + 12);
         mplew.write(inv);
         mplew.writeShort(slots);
 
         return mplew.getPacket();
     }
-
+    /**
+     * 擴充Storage欄位[完成]
+     * @param inv
+     * @param slots
+     * @return 
+     */
     public static byte[] increasedStorageSlots(int slots, boolean characterSlots) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(Operation_Code + (characterSlots ? 30 : 28)); // 32 = Buy Character. O.O
+        mplew.write(Operation_Code + (characterSlots ? 16 : 14)); // 32 = Buy Character. O.O
         mplew.writeShort(slots);
 
         return mplew.getPacket();
     }
-
+    /**
+     * 擴充Pendant欄位[完成]
+     * @param inv
+     * @param slots
+     * @return 
+     */
     public static byte[] increasedPendantSlots() {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(Operation_Code + 34); // 35 = Failed
+        mplew.write(Operation_Code + 20); // 35 = Failed
         mplew.writeShort(0); // 0 = Add, 1 = Extend
         mplew.writeShort(100); // Related to time->Low/High fileTime
         // The time limit for the %s slot \r\nhas been extended to %d-%d-%d %d:%d.
 
         return mplew.getPacket();
     }
-
+    /**
+     * 點商物品從CS庫 移置玩家欄位[完成]
+     * @param item
+     * @param pos
+     * @return 
+     */
     public static byte[] confirmFromCSInventory(Item item, short pos) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(Operation_Code + 36); // 37 = Failed
+        mplew.write(Operation_Code + 22); // 37 = Failed
         mplew.writeShort(pos);
         PacketHelper.GW_ItemSlotBase_Decode(mplew, item);
         mplew.writeInt(0); // For each: 8 bytes(Could be 2 ints or 1 long)
@@ -455,8 +514,8 @@ public class MTSCSPacket {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(Operation_Code + 38); // 39 = Failed
-        addCashItemInfo(mplew, item, accId, sn, false);
+        mplew.write(0xCD); // 39 = Failed or 0xCD
+        addCashItemInfo(mplew, item, accId, sn, true);
 
         return mplew.getPacket();
     }
@@ -845,36 +904,15 @@ public class MTSCSPacket {
         mplew.writeAsciiString(sender, 13); //owner for the lulzlzlzl
         PacketHelper.addExpirationTime(mplew, expire);
         mplew.writeLong(isFirst ? 0 : sn);
-        mplew.writeZeroBytes(10);
-        //additional 4 bytes for some stuff?
-        //if (isFirst && uniqueid > 0 && GameConstants.isEffectRing(itemid)) {
-        //	MapleRing ring = MapleRing.loadFromDb(uniqueid);
-        //	if (ring != null) { //or is this only for friendship rings, i wonder. and does isFirst even matter
-        //		mplew.writeMapleAsciiString(ring.getPartnerName());
-        //		mplew.writeInt(itemid);
-        //		mplew.writeShort(quantity);
-        //	}
-        //}
+        mplew.writeZeroBytes(12);
     }
 
-    /*
-    public static byte[] sendCSFail(int err) {
-        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
-        mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(0x7F);
-        mplew.write(err);
-
-        return mplew.getPacket();
-    }
-    * 
-     */
 
     public static byte[] sendCSFail(int err) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.CS_OPERATION.getValue());
-        mplew.write(Operation_Code + 95);
+        mplew.write(Operation_Code + 4);
         mplew.write(err);
 
         return mplew.getPacket();
