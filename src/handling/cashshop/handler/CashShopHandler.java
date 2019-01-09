@@ -156,8 +156,10 @@ public class CashShopHandler {
             CouponCode(slea.readMapleAsciiString(), c);
         } else if (action == 3) {
             slea.skip(1);
-            final int toCharge = GameConstants.GMS ? slea.readInt() : 1;
-            final CashItemInfo item = CashItemFactory.getInstance().getItem(slea.readInt());
+            final int toCharge = slea.readByte()+1;
+            final int sn = slea.readInt();
+            System.out.println(sn);
+            final CashItemInfo item = CashItemFactory.getInstance().getItem(sn);
 
             if (item != null && chr.getCSPoints(toCharge) >= item.getPrice()) {
                 if (!item.genderEquals(c.getPlayer().getGender())) {
@@ -335,7 +337,7 @@ public class CashShopHandler {
                 item_.setPosition((byte) 0);
                 c.getPlayer().getCashInventory().addToInventory(item_);
                 //warning: this d/cs
-                //c.sendPacket(MTSCSPacket.confirmToCSInventory(item, c.getAccID(), c.getPlayer().getCashInventory().getSNForItem(item)));
+                c.sendPacket(MTSCSPacket.confirmToCSInventory(item, c.getAccID(), CashItemFactory.getInstance().getItemSN(item.getItemId())));
             } else {
                 c.sendPacket(MTSCSPacket.sendCSFail(0xB1));
             }
@@ -393,13 +395,13 @@ public class CashShopHandler {
             }
         } else if (action == 33) {
             slea.skip(1);
-            final int toCharge = slea.readInt();
+           // final int toCharge = slea.readByte();
             final CashItemInfo item = CashItemFactory.getInstance().getItem(slea.readInt());
             List<Integer> ccc = null;
             if (item != null) {
                 ccc = CashItemFactory.getInstance().getPackageItems(item.getId());
             }
-            if (item == null || ccc == null || c.getPlayer().getCSPoints(toCharge) < item.getPrice()) {
+            if (item == null || ccc == null /*|| c.getPlayer().getCSPoints(toCharge) < item.getPrice()*/) {
                 c.sendPacket(MTSCSPacket.sendCSFail(0));
                 doCSPackets(c);
                 return;
@@ -437,7 +439,7 @@ public class CashShopHandler {
                 ccz.put(i, itemz);
                 c.getPlayer().getCashInventory().addToInventory(itemz);
             }
-            chr.modifyCSPoints(toCharge, -item.getPrice(), false);
+            chr.modifyCSPoints(1, -item.getPrice(), false);
             c.sendPacket(MTSCSPacket.showBoughtCSPackage(ccz, c.getAccID()));
 
         } else if (action == 35) {
@@ -479,6 +481,8 @@ public class CashShopHandler {
             final int uniqueid = (int) slea.readLong();
 
             //c.sendPacket(MTSCSPacket.sendRandomBox(uniqueid, new Item(1302000, (short) 1, (short) 1, (short) 0, 10), (short) 0));
+        } else if(action == 46){
+            //Unknow TODO
         } else {
             System.out.println("New Action: " + action + " Remaining: " + slea.toString());
             c.sendPacket(MTSCSPacket.sendCSFail(0));
