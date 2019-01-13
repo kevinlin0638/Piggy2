@@ -486,7 +486,7 @@ public class PacketHelper {
         if ((mask & 2) != 0) {
             mplew.writeInt(chr.getMeso());
             mplew.writeInt(chr.getId());
-            mplew.writeInt(763); // 小鋼珠
+            mplew.writeInt(chr.getCSPoints(2)); // 小鋼珠
             mplew.writeInt(chr.getCSPoints(2)); // 楓葉點數
         }
 
@@ -937,9 +937,7 @@ public class PacketHelper {
         mplew.writeInt(pet.getPetItemId() == 5000054 && pet.getSecondsLeft() > 0 ? pet.getSecondsLeft() : 0); //in seconds, 3600 = 1 hr.
         mplew.writeShort(0);
         mplew.write(active ? (pet.getSummoned() ? pet.getSummonedValue() : 0) : 0); // 1C 5C 98 C6 01
-        for (int i = 0; i < 4; i++) {
-            mplew.write(0); //0x40 before, isChanged to 0?
-        }
+        mplew.writeInt(active ? pet.getSkillid() : 0); //宠物自动加BUFF的技能ID
     }
 
 
@@ -966,22 +964,23 @@ public class PacketHelper {
 /*      */
         }
 /* 1013 */
-        mplew.writeShort(shop.getItems().size() + c.getPlayer().getRebuy().size());
+        mplew.writeShort(shop.getItems().size() /*+ c.getPlayer().getRebuy().size()*/);
 /* 1014 */
         for (MapleShopItem item : shop.getItems()) {
 /* 1015 */
             addShopItemInfo(mplew, item, shop, ii, null);
 /*      */
         }
-        for (Iterator<Item> it = c.getPlayer().getRebuy().iterator(); it.hasNext(); ) {
+        /*for (Iterator<Item> it = c.getPlayer().getRebuy().iterator(); it.hasNext(); ) {
             Item i = it.next();
             addShopItemInfo(mplew, new MapleShopItem(i.getItemId(), (int) ii.getPrice(i.getItemId())), shop, ii, i);
-        }
+        }*/
     }
 
     /*      */
 /*      */
     public static void addShopItemInfo(MaplePacketLittleEndianWriter mplew, MapleShopItem item, MapleShop shop, MapleItemInformationProvider ii, Item i) {
+
 
         mplew.writeInt(item.getItemId());
         mplew.writeInt(item.getPrice());
@@ -991,8 +990,13 @@ public class PacketHelper {
         mplew.writeInt(item.getExpiration());
         mplew.writeInt(item.getMinLevel());
         mplew.writeInt(item.getCategory());
-        mplew.write(0);
         mplew.writeInt(0);
+        mplew.writeInt(0);
+
+        mplew.writeMapleAsciiString("1900010100");
+        mplew.writeMapleAsciiString("2079010100");
+
+        mplew.write(0);
         mplew.writeInt(0);
 
         if ((!GameConstants.isThrowingStar(item.getItemId())) && (!GameConstants.isBullet(item.getItemId()))) {
@@ -1004,18 +1008,14 @@ public class PacketHelper {
             mplew.writeShort(ii.getSlotMax(item.getItemId()));
         }
         mplew.write(i == null ? 0 : 1);
-        if (i != null) {
+        /*if (i != null) {
             PacketHelper.GW_ItemSlotBase_Decode(mplew, i);
-        }
+        }*/
         if (shop.getRanks().size() > 0) {
             mplew.write(item.getRank() >= 0 ? 1 : 0);
             if (item.getRank() >= 0) {
                 mplew.write(item.getRank());
             }
-        }
-        mplew.writeZeroBytes(16);
-        for (int j = 0; j < 4; j++) {
-            mplew.writeReversedLong(System.currentTimeMillis());
         }
     }
 

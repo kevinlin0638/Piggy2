@@ -5881,8 +5881,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
         final Map<MapleStat, Integer> statup = new EnumMap<>(MapleStat.class);
 
-        statup.put(MapleStat.MAX_HP, maxhp);
-        statup.put(MapleStat.MAX_MP, maxmp);
+        statup.put(MapleStat.MAX_HP, stats.getCurrentMaxHp());
+        statup.put(MapleStat.MAX_MP, stats.getCurrentMaxMp(getJob()));
         statup.put(MapleStat.HP, stats.getCurrentMaxHp());
         statup.put(MapleStat.MP, stats.getCurrentMaxMp(getJob()));
         statup.put(MapleStat.EXP, exp);
@@ -7248,6 +7248,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     return;
                 }
                 maplepoints += quantity;
+                updateSingleStat(MapleStat.MESO, meso, true);
                 break;
             case 4:
                 if (nxprepaid + quantity < 0) {
@@ -7262,7 +7263,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 break;
         }
         if (show && quantity != 0) {
-            dropMessage(-1, "You have " + (quantity > 0 ? "gained " : "lost ") + quantity + (type == 1 ? " cash." : " maple points."));
+            dropMessage(-1, (quantity > 0 ? "獲得了 " : "失去了 ") + quantity + (type == 1 ? " 樂豆點." : " 楓點."));
             //client.sendPacket(EffectPacket.showForeignEffect(20));
         }
     }

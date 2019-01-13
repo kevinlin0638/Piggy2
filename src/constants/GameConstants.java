@@ -9900,9 +9900,9 @@ public class GameConstants {
             case 5220084:
             case 5220092:
                 //cube
-                return "This item is blocked from the Cash Shop.";
+                return "這個道具目前無法購買.";
         }
-        return "This item is blocked from the Cash Shop.";
+        return "這個道具目前無法購買.";
     }
 
     public static int getCustomReactItem(int rid, int original) {

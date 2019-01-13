@@ -39,6 +39,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static client.MapleCharacterUtil.isEligibleCharName;
+
 public class GuildHandler {
 
     private static final Map<String, Pair<Integer, Long>> invited = new HashMap<>();
@@ -52,14 +54,10 @@ public class GuildHandler {
     }
 
     private static boolean isGuildNameAcceptable(final String name) {
-        if (name.length() < 3 || name.length() > 12) {
+        if (name.length() < 3 || name.length() > 12 || !isEligibleCharName(name, false)) {
             return false;
         }
-        for (int i = 0; i < name.length(); i++) {
-            if (!Character.isLowerCase(name.charAt(i)) && !Character.isUpperCase(name.charAt(i))) {
-                return false;
-            }
-        }
+
         return true;
     }
 

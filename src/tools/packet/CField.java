@@ -3570,6 +3570,7 @@ public class CField {
             mplew.writeShort(SendPacketOpcode.OPEN_NPC_SHOP.getValue());
             mplew.writeInt(0);
             mplew.writeInt(sid);
+            mplew.writeInt(GameConstants.getCurrentDate());
             PacketHelper.addShopInfo(mplew, shop, c);
             return mplew.getPacket();
         }
@@ -3579,7 +3580,7 @@ public class CField {
 
             mplew.writeShort(SendPacketOpcode.CONFIRM_SHOP_TRANSACTION.getValue());
             mplew.write(code); // 8 = sell, 0 = buy, 0x20 = due to an error
-            if (code == 4) {
+            if (code == 8) {
                 mplew.writeInt(0);
                 mplew.writeInt(shop.getNpcId()); //oops
                 PacketHelper.addShopInfo(mplew, shop, c);

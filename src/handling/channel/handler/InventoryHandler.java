@@ -3407,6 +3407,8 @@ public class InventoryHandler {
                 case 5190006:
                 case 5190007:
                 case 5190008:
+                case 5190009:
+                case 5190010:
                 case 5190000: { // Pet Flags
                     MapleCharacter chr = c.getPlayer();
                     int uniqueid = (int) slea.readLong();

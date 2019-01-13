@@ -7,6 +7,8 @@ import client.inventory.MapleInventoryType;
 import client.inventory.MaplePet;
 import client.inventory.PetCommand;
 import client.inventory.PetDataFactory;
+import client.skill.Skill;
+import client.skill.SkillFactory;
 import constants.GameConstants;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
@@ -38,6 +40,20 @@ public class PetHandler {
         //chr.updateTick(slea.readInt());
         slea.readInt();
         chr.spawnPet(slea.readByte(), slea.readByte() > 0);
+    }
+    public static void Pet_AutoBuff(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
+        int petid = slea.readInt();
+        MaplePet pet = chr.getSpawnPet(petid);
+        if (chr.getMap() == null || pet == null) {
+            return;
+        }
+        int skillId = slea.readInt();
+        Skill buffId = SkillFactory.getSkill(skillId);
+        if (chr.getSkillLevel(buffId) > 0 || skillId == 0) {
+            pet.setSkillid(skillId);
+            chr.petUpdateStats(pet, true);
+        }
+        c.sendPacket(CWvsContext.enableActions());
     }
 
     /*

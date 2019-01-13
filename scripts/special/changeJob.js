@@ -229,7 +229,7 @@ function action(mode, type, selection) {
         }
     } else if (status == 2) {
         select = selection;
-		var text = "There are the available jobs you can take#b";
+		var text = "以下是您選擇的職業#b";
 			text += "\r\n"+cm.getPlayer().getJobName(select)+"#l";
 		cm.sendYesNo(text);
     } else if (status == 3) {

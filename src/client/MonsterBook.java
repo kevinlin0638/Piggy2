@@ -329,8 +329,8 @@ public final class MonsterBook implements Serializable {
     public final boolean monsterCaught(final MapleClient c, final int cardid, final String cardname) {
         if (!cards.containsKey(cardid) || cards.get(cardid) < 2) {
             changed = true;
-            c.getPlayer().dropMessage(-6, "Book entry updated - " + cardname);
-            c.sendPacket(EffectPacket.showForeignEffect(16));
+            c.getPlayer().dropMessage(-6, "怪物圖鑑更新 - " + cardname);
+            c.sendPacket(EffectPacket.showForeignEffect(17));
             cards.put(cardid, 2);
             if (GameConstants.GMS) {
                 if (c.getPlayer().getQuestStatus(50195) != 1) {

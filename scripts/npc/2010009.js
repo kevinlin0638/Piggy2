@@ -56,7 +56,7 @@ function action(mode, type, selection) {
 			cm.dispose();
 		} else if(selection == 2) {
 			if (cm.getPlayer().getParty() == null || partymembers == null || partymembers.size() != 2 || !cm.isLeader()) {
-				cm.sendOk("You may not create an alliance until you get into a party of 2 people"); //Not real text
+				cm.sendOk("You may not create an alliance until you get into a party of 2 people" +partymembers.size()); //Not real text
 				cm.dispose();
 			} else if (partymembers.get(0).getGuildId() <= 0 || partymembers.get(0).getGuildRank() > 1) {
 				cm.sendOk("You cannot form a Guild Union until you own a guild");

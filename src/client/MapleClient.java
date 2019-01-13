@@ -1435,7 +1435,7 @@ public class MapleClient implements Serializable {
     }
 
     public final String getSecondPassword() {
-        return "13337"; // fake pic 4 dayz
+        return "00000000"; // fake pic 4 dayz
     }
 
     public final void setSecondPassword(final String secondPassword) {

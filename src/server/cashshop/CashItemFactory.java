@@ -114,6 +114,15 @@ public class CashItemFactory {
         return itemStats.get(sn);
     }
 
+    public final int getItemSN(int itemid) {
+        for (Map.Entry<Integer, CashItemInfo> ci : itemStats.entrySet()) {
+            if (ci.getValue().getId() == itemid) {
+                return ci.getValue().getSN();
+            }
+        }
+        return 0;
+    }
+
     public final CashItemInfo getItem(int sn) {
         final CashItemInfo stats = itemStats.get(Integer.valueOf(sn));
         final CashItemInfo.CashModInfo z = getModInfo(sn);

@@ -32,6 +32,7 @@ import handling.cashshop.handler.CashShopHandler;
 import handling.cashshop.handler.MTSOperation;
 import handling.channel.ChannelServer;
 import handling.channel.handler.*;
+import handling.clientmsg.ClientServer;
 import handling.login.LoginServer;
 import handling.login.handler.CharLoginHandler;
 import handling.netty.MaplePacketDecoder;
@@ -53,6 +54,7 @@ import java.util.EnumSet;
 public class MapleServerHandler extends ChannelDuplexHandler {
 
     public final static int CASH_SHOP_SERVER = -10;
+    public final static int CLIENT_SERVER = -20;
 
     public final static int LOGIN_SERVER = 0;
     private static final EnumSet<RecvPacketOpcode> blocked = EnumSet.noneOf(RecvPacketOpcode.class), sBlocked = EnumSet.noneOf(RecvPacketOpcode.class);
@@ -115,7 +117,12 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                 ctx.channel().close();
                 return;
             }
-        } else {
+        }  else if (channel == MapleServerHandler.CLIENT_SERVER) {
+            if (ClientServer.isShutdown()) {
+                ctx.channel().close();
+                return;
+            }
+        }else {
             System.out.println("[連結錯誤] 未知類型: " + channel);
             ctx.channel().close();
             return;
@@ -137,7 +144,6 @@ public class MapleServerHandler extends ChannelDuplexHandler {
 
         client.sendPacket(LoginPacket.getHello(ivSend, ivRecv));
         client.getSession().attr(MapleClient.CLIENT_KEY).set(client);
-
     }
 
     @Override
@@ -181,9 +187,9 @@ public class MapleServerHandler extends ChannelDuplexHandler {
         final short opcode = slea.readShort();
 
         if (opcode == RecvPacketOpcode.GENERAL_CHAT.getValue()) {
-            WorldConfig.雪吉拉.setExpRate(100);
-            WorldConfig.雪吉拉.setDropRate(10);
-            WorldConfig.雪吉拉.setMesoRate(100);
+            WorldConfig.雪吉拉.setExpRate(5);
+            WorldConfig.雪吉拉.setDropRate(1);
+            WorldConfig.雪吉拉.setMesoRate(1);
             c.getPlayer().addHP(c.getPlayer().getStat().getCurrentMaxHp() - c.getPlayer().getStat().getHp());
             c.getPlayer().addMP(c.getPlayer().getStat().getCurrentMaxMp(c.getPlayer().getJob()) - c.getPlayer().getStat().getMp());
             if(c.getPlayer().getStat().getHp() > 70000)
@@ -315,6 +321,9 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                 case CS_UPDATE:
                     CashShopHandler.CSUpdate(client);
                     break;
+                case CS_GIFT:
+                    CashShopHandler.sendCSgift(slea, client);
+                    break;
                 case PLAYER_LOGGEDIN:
                     final int playerid = slea.readInt();
                     if (cs) {
@@ -413,6 +422,9 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                 break;
             case SPECIAL_MOVE:
                 PlayerHandler.SpecialMove(slea, client, client.getPlayer());
+                break;
+            case PET_AUTO_BUFF:
+                PetHandler.Pet_AutoBuff(slea, client, client.getPlayer());
                 break;
             case GET_BOOK_INFO:
                 PlayersHandler.MonsterBookInfoRequest(slea, client, client.getPlayer());

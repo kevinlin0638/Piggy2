@@ -12,6 +12,7 @@ import handling.RecvPacketOpcode;
 import handling.SendPacketOpcode;
 import handling.cashshop.CashShopServer;
 import handling.channel.MapleGuildRanking;
+import handling.clientmsg.ClientServer;
 import handling.login.LoginInformationProvider;
 import handling.login.LoginServer;
 import handling.world.World;
@@ -90,8 +91,9 @@ public class Start {
         // Servers
         LoginServer.initiate();
         CashShopServer.initiate();
+        ClientServer.initiate();
 
-        LoginServer.setOn();
+
         // Every other instance cache :)
         SkillFactory.load();
         LoginInformationProvider.getInstance();
@@ -112,6 +114,8 @@ public class Start {
         PlayerNPC.LoadAll();// touch - so we see database problems early...
         MapleMonsterInformationProvider.getInstance().addExtra();
         RankingWorker.run();
+
+        LoginServer.setOn();
         System.out.printf("Server is Opened - %ds ", (System.currentTimeMillis() - startTime) / 1000);
     }
 }

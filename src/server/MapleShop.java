@@ -91,7 +91,7 @@ public class MapleShop {
             ps = con.prepareStatement("SELECT * FROM shopitems WHERE shopid = ? ORDER BY position ASC");
             ps.setInt(1, shopId);
             rs = ps.executeQuery();
-            List<Integer> recharges = new ArrayList<>(rechargeableItems);
+            List<Integer> recharges = new ArrayList<>();
             while (rs.next()) {
                 if (!ii.itemExists(rs.getInt("itemid"))) {
                     continue;
@@ -138,6 +138,7 @@ public class MapleShop {
     }
 
     public void sendShop(MapleClient c) {
+        c.getPlayer().dropMessage("您現在對話的商店ID為 " + getId() + " NPC ID:" + getNpcId());
         c.getPlayer().setShop(this);
         c.sendPacket(NPCTalkPacket.getNPCShop(getNpcId(), this, c));
     }
@@ -275,7 +276,7 @@ public class MapleShop {
             if (price != -1.0 && recvMesos > 0) {
                 c.getPlayer().gainMeso(recvMesos, false);
             }
-            c.sendPacket(NPCTalkPacket.confirmShopTransaction((byte) 0x4, this, c, -1));
+            c.sendPacket(NPCTalkPacket.confirmShopTransaction((byte) 0x8, this, c, -1));
         }
     }
 

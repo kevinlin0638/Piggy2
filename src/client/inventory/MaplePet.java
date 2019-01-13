@@ -42,7 +42,7 @@ public class MaplePet implements Serializable {
     private static final long serialVersionUID = 9179541993413738569L;
     public long lastAttack;
     private String name;
-    private int Fh = 0, stance = 0, uniqueid, petitemid, secondsLeft = 0;
+    private int Fh = 0, stance = 0, uniqueid, petitemid, secondsLeft = 0, skillid;
     private Point pos;
     private byte fullness = 100, level = 1, summoned = 0;
     private short inventorypos = 0, closeness = 0, flags = 0;
@@ -78,6 +78,7 @@ public class MaplePet implements Serializable {
                     ret.setFullness(rs.getByte("fullness"));
                     ret.setSecondsLeft(rs.getInt("seconds"));
                     ret.setFlags(rs.getShort("flags"));
+                    ret.setSkillid(rs.getInt("skill"));
                 }
             }
 
@@ -97,7 +98,7 @@ public class MaplePet implements Serializable {
             uniqueid = MapleInventoryIdentifier.getInstance();
         }
         try {
-            try (PreparedStatement pse = DatabaseConnection.getConnection().prepareStatement("INSERT INTO pets (petid, name, level, closeness, fullness, seconds, flags) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+            try (PreparedStatement pse = DatabaseConnection.getConnection().prepareStatement("INSERT INTO pets (petid, name, level, closeness, fullness, seconds, flags, skill) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
                 pse.setInt(1, uniqueid);
                 pse.setString(2, name);
                 pse.setByte(3, (byte) level);
@@ -105,6 +106,7 @@ public class MaplePet implements Serializable {
                 pse.setByte(5, (byte) fullness);
                 pse.setInt(6, secondsLeft);
                 pse.setShort(7, flag);
+                pse.setInt(8, 0);
                 pse.executeUpdate();
             }
         } catch (final SQLException ex) {
@@ -123,14 +125,15 @@ public class MaplePet implements Serializable {
 
     public final void saveToDb() {
         try {
-            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE pets SET name = ?, level = ?, closeness = ?, fullness = ?, seconds = ?, flags = ? WHERE petid = ?")) {
+            try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE pets SET name = ?, level = ?, closeness = ?, fullness = ?, seconds = ?, flags = ?, skill = ? WHERE petid = ?")) {
                 ps.setString(1, name); // Set name
                 ps.setByte(2, level); // Set Level
                 ps.setShort(3, closeness); // Set Closeness
                 ps.setByte(4, fullness); // Set Fullness
                 ps.setInt(5, secondsLeft);
                 ps.setShort(6, flags);
-                ps.setInt(7, uniqueid); // Set ID
+                ps.setInt(7, skillid);
+                ps.setInt(8, uniqueid); // Set ID
                 ps.executeUpdate();
             }
         } catch (final SQLException ex) {
@@ -207,6 +210,14 @@ public class MaplePet implements Serializable {
 
     }
 
+    public int getSkillid() {
+        return skillid;
+    }
+
+    public void setSkillid(int skillid) {
+        this.skillid = skillid;
+    }
+
     public final int getFh() {
         return Fh;
     }
@@ -273,9 +284,10 @@ public class MaplePet implements Serializable {
         LEFTOVER_PICKUP(0x10, 5190004, 5191004), //idk
         HP_CHARGE(0x20, 5190001, 5191001),
         MP_CHARGE(0x40, 5190006, -1),
-        PET_BUFF(0x80, -1, -1), //idk
-        PET_DRAW(0x100, 5190007, -1), //nfs
-        PET_DIALOGUE(0x200, 5190008, -1); //nfs
+        PET_BUFF(0x80, 5190007, -1), //idk
+        PET_DRAW(0x100, 5190008, -1), //nfs
+        PET_ALLCURE(0x400, 5190009, -1), // 寵物萬能療傷藥自動使用技能
+        PET_DIALOGUE(0x200, 5190010, -1); //nfs
 
         private final int i, item, remove;
 

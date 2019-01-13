@@ -535,8 +535,8 @@ public final class MapleMap {
         }
         final List<MonsterGlobalDropEntry> globalEntry = new ArrayList<>(mi.getGlobalDrop());
         Collections.shuffle(globalEntry);
-        //   final int cashz = (int) ((mob.getStats().isBoss() && mob.getStats().getHPDisplayType() == 0 ? 20 : 1) * caServerrate);
-        // final int cashModifier = (int) ((mob.getStats().isBoss() ? (mob.getStats().isPartyBonus() ? (mob.getMobExp() / 1000) : 0) : (mob.getMobExp() / 1000 + mob.getMobMaxHp() / 20000))); //no rate
+        final int cashz = (int) ((mob.getStats().isBoss() && mob.getStats().getHPDisplayType() == 0 ? 20 : 1));
+        final int cashModifier = (int) ((mob.getStats().isBoss() ? 0 : ((mob.getMobExp() / 351 + 1) + (mob.getMobMaxHp() / 20000 + 1)))); //no rate
         // Global Drops
         for (final MonsterGlobalDropEntry de : globalEntry) {
             if (Randomizer.nextInt(999999) < de.chance && (de.continent < 0 || (de.continent < 10 && mapid / 100000000 == de.continent) || (de.continent < 100 && mapid / 10000000 == de.continent) || (de.continent < 1000 && mapid / 1000000 == de.continent))) {
@@ -544,7 +544,12 @@ public final class MapleMap {
                     continue;
                 }
                 if (de.itemId == 0) {
-                    //chr.modifyCSPoints(1, 10, true);
+                    int all = Randomizer.rand(70, 100);
+                    int pre = (int) ((Randomizer.nextInt(cashz) + cashz + cashModifier) * (chr.getStat().cashBuff / 100.0) * chr.getCashMod());
+                    all = (all * pre) / 100;
+                    if(chr.getLevel() > 251)
+                        all += (all / 10 * (chr.getLevel() - 251));
+                    chr.modifyCSPoints(2, all, true);
                 } else if (!gDropsDisabled) {
                     if (droptype == 3) {
                         pos.x = (mobpos + (d % 2 == 0 ? (40 * (d + 1) / 2) : -(40 * (d / 2))));
@@ -2360,10 +2365,8 @@ public final class MapleMap {
                 chr.dojoMapEndTime = System.currentTimeMillis();
             } else if (mapid == 910000000) {
                 chr.getClient().sendPacket(CField.musicChange(MapConstants.FM_BGM));
-                chr.dropMessage("    **** Welcome to Development's FM! ****");
-                chr.dropMessage("- @dev - All-In-One NPC");
-                chr.dropMessage("- @commands - Full Command List");
-                chr.dropMessage("- Vote Daily to receive Munny!");
+                chr.dropMessage("    **** 歡迎來到小豬谷的 自由市場! ****");
+                chr.dropMessage("- @help - 查看可使用指令");
             }
         }
         if (GameConstants.isEvan(chr.getJob()) && chr.getJob() >= 2200) {

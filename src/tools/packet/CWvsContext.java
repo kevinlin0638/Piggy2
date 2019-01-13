@@ -2716,46 +2716,47 @@ public class CWvsContext {
             /*  898 */
             mplew.write(0);
             /*  899 */
-            mplew.writeInt(0);
+            mplew.writeInt(0);//活動獎勵經驗值
             /*  900 */
             mplew.write(0);
             /*  901 */
             mplew.write(0);
             /*  902 */
-            mplew.writeInt(0);
+            mplew.writeInt(0);//婚禮紅利經驗
             /*  903 */
-            mplew.write(0);
             /*  904 */
-            mplew.writeInt(partyinc);
+            mplew.writeInt(0);//組隊經驗值
             /*      */
  /*  906 */
-            mplew.writeInt(Equipment_Bonus_EXP);
-            /*  907 */
-            mplew.writeInt(0);
-            /*  908 */
-            mplew.writeInt(0);
-            /*  909 */
             mplew.write(0);
+            mplew.writeInt(0);//組隊額外經驗值
+            /*  907 */
+            mplew.writeInt(Equipment_Bonus_EXP);
+            /*  908 */
+            mplew.writeInt(0); //高級服務贈送經驗值
             /*  910 */
-            mplew.writeInt(0);
+            mplew.writeInt(0);//彩虹周獎勵經驗值
             /*  911 */
-            mplew.writeInt(0);
+            mplew.writeInt(0);//爆發獎勵經驗值
             /*  912 */
-            mplew.writeInt(0);
+            mplew.writeInt(0);//秘藥額外經驗值
+
             /*      */
  /*  915 */
-            mplew.writeInt(0);
+            mplew.writeInt(0);//null額外經驗值
             /*  916 */
-            mplew.writeInt(0);
+            mplew.writeInt(0);//加持額外經驗值
             /*  917 */
-            mplew.writeInt(0);
+            mplew.writeInt(0);// 休息獎勵 經驗值
             /*  918 */
-            mplew.writeInt(0);
             /*  919 */
-            mplew.writeInt(Premium_Bonus_EXP);
+            mplew.writeInt(Premium_Bonus_EXP);// 道具獎勵 經驗值
             /*  920 */
-            mplew.writeInt(0);
+            mplew.writeInt(0);// 蛋糕VS派餅 額外經驗值
             /*      */
+            mplew.writeInt(0);// PVP Bonus 額外經驗值
+
+            mplew.write(0);
 
             return mplew.getPacket();
         }

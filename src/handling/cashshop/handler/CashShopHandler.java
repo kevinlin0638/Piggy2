@@ -155,7 +155,6 @@ public class CashShopHandler {
             slea.skip(2);
             CouponCode(slea.readMapleAsciiString(), c);
         } else if (action == 3) {
-            slea.skip(1);
             final int toCharge = slea.readByte()+1;
             final int sn = slea.readInt();
             System.out.println(sn);
@@ -173,7 +172,7 @@ public class CashShopHandler {
                 }
                 for (int i : GameConstants.cashBlock) {
                     if (item.getId() == i) {
-                        //   c.getPlayer().dropMessage(1, GameConstants.getCashBlockedMsg(item.getWorldId()));
+                        c.getPlayer().dropMessage(1, GameConstants.getCashBlockedMsg(0));
                         doCSPackets(c);
                         return;
                     }
@@ -486,6 +485,37 @@ public class CashShopHandler {
         } else {
             System.out.println("New Action: " + action + " Remaining: " + slea.toString());
             c.sendPacket(MTSCSPacket.sendCSFail(0));
+        }
+        doCSPackets(c);
+    }
+    public static void sendCSgift(final LittleEndianAccessor slea, final MapleClient c) {
+        String secondPassword = slea.readMapleAsciiString();
+        final CashItemInfo item = CashItemFactory.getInstance().getItem(slea.readInt());
+        String partnerName = slea.readMapleAsciiString();
+        String msg = slea.readMapleAsciiString();
+        if (!secondPassword.equals(c.getSecondPassword())) {
+            c.getSession().write(MTSCSPacket.sendCSFail(32));      // 2nd password error
+            doCSPackets(c);
+            return;
+        }
+        if (item == null || c.getPlayer().getCSPoints(1) < item.getPrice() || msg.getBytes().length > 73 || msg.getBytes().length < 1) { //dont want packet editors gifting random stuff =P
+            c.getSession().write(MTSCSPacket.sendCSFail(0));
+            doCSPackets(c);
+            return;
+        }
+        Triple<Integer, Integer, Integer> info = MapleCharacterUtil.getInfoByName(partnerName, c.getPlayer().getWorld());
+        if (info == null || info.getLeft() <= 0 || info.getLeft() == c.getPlayer().getId() || info.getMid() == c.getAccID()) {
+            c.getSession().write(MTSCSPacket.sendCSFail(0xA2));
+            doCSPackets(c);
+            return;
+        } else if (!item.genderEquals(info.getRight())) {
+            c.getSession().write(MTSCSPacket.sendCSFail(0xA3));
+            doCSPackets(c);
+            return;
+        } else {
+            c.getPlayer().getCashInventory().gift(info.getLeft(), c.getPlayer().getName(), msg, item.getSN(), MapleInventoryIdentifier.getInstance());
+            c.getPlayer().modifyCSPoints(1, -item.getPrice(), false);
+            c.getSession().write(MTSCSPacket.sendGift(item.getPrice(), item.getId(), item.getCount(), partnerName, true));
         }
         doCSPackets(c);
     }

@@ -326,7 +326,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
     public void askAvatar(String text, int... args) {
         c.getSession().writeAndFlush(NPCTalkPacket.getNPCTalkStyle(id, text, args));
-        lastMsg = NPCTalkType.PET;
+        lastMsg = NPCTalkType.AVATAR;
     }
 
     public void sendSimple(String text) {

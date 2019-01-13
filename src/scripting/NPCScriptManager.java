@@ -54,7 +54,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             }
             if (!cms.containsKey(c) && c.canClickNPC()) {
                 Invocable iv;
-                if (script == null) {
+                if (script == null || script.equals("0")) {
                     iv = getInvocable("npc/" + npc + ".js", c, true); //safe disposal
                 } else {
                     iv = getInvocable("special/" + script + ".js", c, true); //safe disposal
