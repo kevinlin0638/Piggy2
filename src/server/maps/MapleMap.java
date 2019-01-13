@@ -1682,6 +1682,16 @@ public final class MapleMap {
     public final void spawnMonster(final MapleMonster monster, final int spawnType, final boolean overwrite) {
         monster.setMap(this);
         checkRemoveAfter(monster);
+
+
+        if(channel > 10 && monster.getStats().getLevel() > 10){
+            int level = monster.getStats().getLevel();
+            if (level >= 200)
+                level = 250;
+            else
+                level = (short) ((level * 150 / 200) + 100);
+            monster.HellChangeLevel(level, 512, 90);
+        }
         spawnAndAddRangedMapObject(monster, new DelayedPacketCreation() {
 
             @Override

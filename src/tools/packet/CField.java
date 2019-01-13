@@ -3455,7 +3455,7 @@ public class CField {
             mplew.write(8);
             mplew.writeInt(0);
             mplew.write(0); // Boolean
-            mplew.write(NPCTalkType.IMAGE.getType());
+            mplew.write(1);
             mplew.write(1);
             mplew.write(0);
             mplew.write(1);

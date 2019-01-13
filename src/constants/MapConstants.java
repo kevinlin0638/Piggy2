@@ -2,7 +2,7 @@ package constants;
 
 public class MapConstants {
 
-    public static String FM_BGM = "Bgm04/WhiteChristmas";
+    public static String FM_BGM = "BgmTW.img/NightMarket";
 
     public static boolean isStartingEventMap(final int mapid) {
         switch (mapid) {

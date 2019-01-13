@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package database;
 
 import constants.ServerConfig;
+import server.ServerProperties;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -84,7 +85,30 @@ public class DatabaseConnection {
     private static final ThreadLocal<Connection> con = new ThreadLocalConnection();
 
     public static Connection getConnection() {
-        return con.get();
+        Connection conn = con.get();
+        try {
+            if(conn == null || conn.isClosed()){
+                Properties props = new Properties();
+                String database = ServerConfig.DB_NAME;
+                String host = ServerConfig.DB_IP;
+                String dbUser = ServerConfig.DB_USER;
+                String dbPass = ServerConfig.DB_PASSWORD;
+                String dbUrl = "jdbc:mysql://" + host + ":3306/" + database;//+ "?autoReconnect=true&characterEncoding=UTF8&connectTimeout=120000000";
+                props.put("user", dbUser);
+                props.put("password", dbPass);
+                props.put("autoReconnect", "true");
+                props.put("characterEncoding", "UTF8");
+                props.put("connectTimeout", "2000000");
+                props.put("serverTimezone", "Asia/Taipei");
+                props.put("zeroDateTimeBehavior", "convertToNull");
+                conn = DriverManager.getConnection(dbUrl, props);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            con.set(conn);
+        }
+        return conn;
     }
 
     public static void closeAll() throws SQLException {

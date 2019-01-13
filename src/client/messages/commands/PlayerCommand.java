@@ -123,6 +123,8 @@ public class PlayerCommand {
             return "@online <頻道(可選)> - 當前在線人數";
         }
     }
+    public static class mob extends 怪物{
+    }
 
     public static class 怪物 extends AbstractsCommandExecute {
 
@@ -132,12 +134,12 @@ public class PlayerCommand {
             for (final MapleMapObject obj : c.getPlayer().getMap().getMapObjectsInRange(c.getPlayer().getPosition(), 100000, Arrays.asList(MapleMapObjectType.MONSTER))) {
                 mob = (MapleMonster) obj;
                 if (mob.isAlive()) {
-                    c.getPlayer().dropMessage(-11, "怪物: " + mob.toString());
+                    c.getPlayer().dropMessage(6, "怪物: " + mob.toString());
                     break; //only one
                 }
             }
             if (mob == null) {
-                c.getPlayer().dropMessage(-11, "沒找到任何怪物");
+                c.getPlayer().dropMessage(6, "沒找到任何怪物");
             }
             return true;
         }

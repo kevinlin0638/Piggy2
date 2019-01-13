@@ -26,7 +26,7 @@ public class WorldConstants {
             + "HorntailBattle,LudiPQ,KerningPQ,ZakumBattle,MV,MVBattle,DollHouse,Amoria,CWKPQ,BossBalrog_EASY,BossBalrog_NORMAL,PinkBeanBattle,ZakumPQ,ProtectTylus,ChaosHorntail,"
             + "ChaosZakum,Ravana_EASY,Ravana_HARD,Ravana_MED,GuildQuest";
 
-    public static int GLOBAL_EXP_RATE = 1;
+    public static int GLOBAL_EXP_RATE = 5;
     public static int GLOBAL_MESO_RATE = 1;
     public static int GLOBAL_DROP_RATE = 1; // Default: 2
 
@@ -111,7 +111,7 @@ public class WorldConstants {
 
         WorldConfig.雪吉拉.setMaxCharacters(15);
         WorldConfig.雪吉拉.setUserLimit(1500);
-        WorldConfig.雪吉拉.setChnnaelCount(2);
+        WorldConfig.雪吉拉.setChnnaelCount(20);
 
         WorldConfig.三眼章魚.setMaxCharacters(15);
         WorldConfig.三眼章魚.setUserLimit(1500);

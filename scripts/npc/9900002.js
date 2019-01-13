@@ -2,24 +2,27 @@
 
 
 var status;
+var blue_heart = "#fEffect/CharacterEff/1112902/0/0#";
+var pony_heart = "#fEffect/CharacterEff/1112904/0/0#";
+var pink_heart = "#fEffect/CharacterEff/1112903/0/0#";
 
 var NPC_List_1 = [ //id, text
 	[0, 0, "帳號資訊"],
 	[1012117, 0, "萬能造型師"],
-	[9330003, 2, "貨幣兌換"],
+	/*[9330003, 2, "貨幣兌換"],
 	[9330003, 5, "新手專區"],
-	[9330003, 9, "成就系統"],
-	[9330003, 8, "#r獎勵活動"],
+	[9330003, 9, "成就系統"],*/
 	[9330003, 11, "每日任務"],
 	[9330003, "home", "萬能轉職"],
 	[9310055, null, "#r地圖傳送#b"],
-	[9330003, 12, "等級獎勵"],
-	[9330003, 17, "我要變性"],
+	[9330003, "等級獎勵", "等級獎勵"],
+	//[9330003, 17, "我要變性"],
 ]
 
 var NPC_List_2 = [ //id, text
-	[9330003, 3, "道具刪除"],
-	[9330003, 10, "道具回真"],
+	[9330003, "封測道具販賣", "封測道具購買"],
+	[9330003, "獎勵", "獎勵"],
+	/*[9330003, 10, "道具回真"],
 	[9209000, 0, "#r雜貨店"],
 	[9330003, 14, "萬能剪刀"],
 	[9330003, 6, "裝備墳墓"],
@@ -28,7 +31,7 @@ var NPC_List_2 = [ //id, text
 	[9209000, 0, "#r道具合成"],
 	[9209001, 7, "騎寵相關"],
 	[9330003, 16, "#r道具鐵砧"],
-	[9330003, 15, "Gash轉換"]
+	[9330003, 15, "Gash轉換"]*/
 ]
 
 var NPC_List_3 = [ //id, text
@@ -57,26 +60,26 @@ function action(mode, type, selection) {
 
     switch (status) {
         case 0: 
-			var Text = "歡迎加入 #b小熊谷#k 請問您有什麼需求:#b";
+			var Text = "\t\t\t\t   #fEffect/CharacterEff/1042107/0/0##b小豬谷#fEffect/CharacterEff/1042107/0/0#";
 			
-			Text += "\r\n\r\n\r\n#r---------------------角色相關---------------------#b\r\n\r\n"
+			Text += "\r\n\r\n\r\n#r"+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+" 角色相關 "+ blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+"#b\r\n\r\n"
 			for(var i = 0; i < NPC_List_1.length;i++){
-				Text += "#b#L" + i + "#" + NPC_List_1[i][2] + "#l";
-				if((i + 1) % 4 == 0)
+				Text += "#b#L" + i + "##fEffect/CharacterEff/1082229/0/0# " + NPC_List_1[i][2] + "#l  ";
+				if((i + 1) % 3 == 0)
 					Text += "\r\n"
 			}
 			
-			Text += "\r\n\r\n\r\n#r---------------------萬能百貨---------------------#b\r\n\r\n"
+			Text += "\r\n\r\n\r\n#r"+pony_heart+pony_heart+pony_heart+pony_heart+pony_heart+pony_heart+pony_heart+pony_heart+pony_heart+pony_heart+" 萬能百貨 "+pony_heart+pony_heart+pony_heart+pony_heart+pony_heart+pony_heart+pony_heart+pony_heart+pony_heart+pony_heart+"#b\r\n\r\n"
 			for(var i = 0; i < NPC_List_2.length;i++){
-				Text += "#b#L" + (i+100) + "#" + NPC_List_2[i][2] + "#l";
-				if((i + 1) % 4 == 0)
+				Text += "#b#L" + (i+100) + "##fEffect/CharacterEff/1082229/0/0# " + NPC_List_2[i][2] + "#l  ";
+				if((i + 1) % 3 == 0)
 					Text += "\r\n"
 			}
 			
-			Text += "\r\n\r\n\r\n#r---------------------贊助相關---------------------#b\r\n\r\n"
+			Text += "\r\n\r\n\r\n#r"+pink_heart+pink_heart+pink_heart+pink_heart+pink_heart+pink_heart+pink_heart+pink_heart+pink_heart+pink_heart+" 贊助相關 "+pink_heart+pink_heart+pink_heart+pink_heart+pink_heart+pink_heart+pink_heart+pink_heart+pink_heart+pink_heart+"#b\r\n\r\n"
 			for(var i = 0; i < NPC_List_3.length;i++){
-				Text += "#b#L" + (i+200) + "#" + NPC_List_3[i][2] + "#l";
-				if((i + 1) % 4 == 0)
+				Text += "#b#L" + (i+200) + "##fEffect/CharacterEff/1082229/0/0# " + NPC_List_3[i][2] + "#l  ";
+				if((i + 1) % 3 == 0)
 					Text += "\r\n"
 			}
 			cm.sendOk(Text);

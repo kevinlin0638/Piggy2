@@ -12,7 +12,12 @@ function start(mode, type, selection) {
 			return;
 		}
 	}
-	if (status == 0)
+
+
+    qm.forceStartQuest();
+    qm.forceCompleteQuest();
+    qm.dispose();
+	/*if (status == 0)
 		qm.sendNext("I'm finally here! *inhales* Ah, this must be air I'm breathing. And that, that must be the sun! And that, a tree! And that, a plant! And that, a flower! Woohahahaha! This is incredible! This is much better than I imagined the world to be while I was trapped inside the egg. And you... Are you my master? Hm, I pictured you differently.");
 	if (status == 1)
 		qm.PlayerToNpc("#bWhoooooa, it talks!");
@@ -46,7 +51,7 @@ function start(mode, type, selection) {
 	if (status == 15){
 		qm.evanTutorial("UI/tutorial/evan/11/0", -1);
 		qm.dispose();
-	}
+	}*/
 }
 
 function end(mode, type, selection) {
@@ -59,7 +64,8 @@ function end(mode, type, selection) {
 			return;
 		}
 	}
-	if(status == 0)
+    qm.dispose();
+	/*if(status == 0)
 		qm.sendOk("Ha! What do you think of that?! My skills are amazing, right? You can use them as much as you want. That's what it means to be in a pact with me. Isn't it amazing?");
 	if(status == 1){
 		qm.forceCompleteQuest();
@@ -67,5 +73,5 @@ function end(mode, type, selection) {
 		qm.getPlayer().gainSP(1, 0);
 		qm.sendOk("Ohhh... I'm so hungry. I used my energy too soon after being born...");
 		qm.dispose();
-	}
+	}*/
 }

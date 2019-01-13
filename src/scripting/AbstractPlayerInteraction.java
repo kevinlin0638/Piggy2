@@ -1125,9 +1125,9 @@ public abstract class AbstractPlayerInteraction {
         c.sendPacket(CField.Aran_Start());
     }
 
-    // public final void evanTutorial(final String data, final int v1) {
-    //   c.sendPacket(NPCTalkPacket.getEvanTutorial(data));
-    // }
+     public final void evanTutorial(final String data, final int v1) {
+       //c.sendPacket(CField.NPCTalkPacket.getEvanTutorial(data));
+     }
     public final void AranTutInstructionalBubble(final String data) {
         c.sendPacket(EffectPacket.AranTutInstructionalBalloon(data));
     }
@@ -1393,4 +1393,37 @@ public abstract class AbstractPlayerInteraction {
             }, (8 * 60) * 1000);
         }
     }
+
+
+    /*
+     * 新增函数
+     */
+    public int getEventCount(String eventId) {
+        return getClient().getPlayer().getEventCount(eventId);
+    }
+
+    public int getEventCount(String eventId, int type) {
+        return getClient().getPlayer().getEventCount(eventId, type);
+    }
+
+    public void setEventCount(String eventId) {
+        getClient().getPlayer().setEventCount(eventId);
+    }
+
+    public void setEventCount(String eventId, int type) {
+        getClient().getPlayer().setEventCount(eventId, type);
+    }
+
+    public void setEventCount(String eventId, int type, int count) {
+        getClient().getPlayer().setEventCount(eventId, type, count);
+    }
+
+    public void resetEventCount(String eventId) {
+        getClient().getPlayer().resetEventCount(eventId);
+    }
+
+    public void resetEventCount(String eventId, int type) {
+        getClient().getPlayer().resetEventCount(eventId, type);
+    }
+
 }

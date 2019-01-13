@@ -201,6 +201,11 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         this.hp = ostats.getHp();
         this.mp = ostats.getMp();
     }
+    public final void HellChangeLevel(final int newLevel, final int rate_hp, final int rate_exp) { //Custom hell
+        this.ostats = new ChangeableStats(stats, newLevel, rate_hp, rate_exp);
+        this.hp = ostats.getHp();
+        this.mp = ostats.getMp();
+    }
 
     public final MapleMonster getSponge() {
         return sponge.get();
@@ -761,7 +766,10 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         sb.append("(");
         sb.append(getId());
         sb.append(") (Level ");
-        sb.append(stats.getLevel());
+        if(ostats != null)
+            sb.append(ostats.level);
+        else
+            sb.append(stats.getLevel());
         sb.append(") at (X");
         sb.append(getTruePosition().x);
         sb.append("/ Y");

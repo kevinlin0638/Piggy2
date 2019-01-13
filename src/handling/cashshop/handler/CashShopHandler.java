@@ -493,7 +493,7 @@ public class CashShopHandler {
         final CashItemInfo item = CashItemFactory.getInstance().getItem(slea.readInt());
         String partnerName = slea.readMapleAsciiString();
         String msg = slea.readMapleAsciiString();
-        if (!secondPassword.equals(c.getSecondPassword())) {
+        if (!c.check2ndPassword(secondPassword)) {
             c.getSession().write(MTSCSPacket.sendCSFail(32));      // 2nd password error
             doCSPackets(c);
             return;

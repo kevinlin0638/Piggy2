@@ -15,7 +15,10 @@ function start(mode, type, selection) {
 	}
 	status--;
     }
-    if (status == 0) {
+    qm.forceStartQuest();
+    qm.forceCompleteQuest();
+    qm.dispose();
+    /*if (status == 0) {
 	qm.sendNext("Yo, master. Now that I've shown you what I can do, it's your turn. Prove to me...that you can find food! I'm starving. You can use my power now, so you have to take care of me.");
     } else if (status == 1) {
 	qm.forceStartQuest();
@@ -27,7 +30,7 @@ function start(mode, type, selection) {
     } else if (status == 4) {
 	qm.forceStartQuest();
 	qm.sendOkS("#b(Mir the baby Dragon appears to be extremely hungry. You must feed him. Maybe your Dad can give you advice on what dragons eat.)", 2);
-    }
+    }*/
 }
 
 function end(mode, type, selection) {
@@ -36,7 +39,7 @@ function end(mode, type, selection) {
     } else {
 	status--;
     }
-    if (status == 0) {
+    /*if (status == 0) {
 	qm.sendNext("What is it, Evan? You want to know what Dragons eat? Why do you... Huh? You found a Dragon?");
     } else if (status == 1) {
 	qm.sendNextS("#b(You show Mir to Dad.)#k", 2);
@@ -62,5 +65,6 @@ function end(mode, type, selection) {
 	qm.gainExp(180);
 	qm.forceCompleteQuest();
 	qm.dispose();
-    }
+    }*/
+    qm.dispose();
 }

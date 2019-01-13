@@ -239,11 +239,11 @@ function action(mode, type, selection) {
             cm.dispose();
             return;
         } else 
-            cm.sendSimple("As a Demon Slayer, you will have to choose a #bDemon Marking#k.\r\n#L1012276##i1012276##l\r\n#L1012277##i1012277##l\r\n#L1012278##i1012278##l\r\n#L1012279##i1012279##l\r\n#L1012280##i1012280##l");
+            cm.sendSimple("成為一個 惡魔殺手, 你必須選擇一個 #b惡魔臉部圖騰#k.\r\n#L1012276##i1012276##l\r\n#L1012277##i1012277##l\r\n#L1012278##i1012278##l\r\n#L1012279##i1012279##l\r\n#L1012280##i1012280##l");
         if (getSubcategory(select) != 0) {
             cm.getPlayer().changeJob(getRealJob(select));
             cm.getPlayer().setSubcategory(getSubcategory(select));
-            cm.getPlayer().dropMessage(0, "You will change channel now so the special job change will effect you. No worries, you will land on the same channel you were in before.");
+            cm.getPlayer().dropMessage(0, "您現在將會重新載入腳色以應用轉職的變更.");
             cm.dispose();
             return;
         }
@@ -252,11 +252,11 @@ function action(mode, type, selection) {
         cm.getPlayer().setSkinColor(4);
         cm.getPlayer().changeJob(getRealJob(select));
         if (select == 3100) {
-            cm.sendOk("As a Demon Slayer, your Mana Points(MP) will turn into Demon Force (DF) as soon as you log off.");
+            cm.sendOk("成為一個 惡魔殺手, 您的魔力(MP) 在你重啟後將會轉變成惡魔力量 (DF).");
         }
         cm.dispose();
     }
-	cm.getPlayer().maxSkillsByJob();
+	//cm.getPlayer().maxSkillsByJob();
 }
 
 function jobSelection(index) {
@@ -265,7 +265,7 @@ function jobSelection(index) {
     for (var i = 0; i < job[index].length; i++)
         choose += "\r\n#L" + job[index][i][0] + "#" + job[index][i][1] + "#l";
     if (extra == true && index <= 2/*Beginner Jobs Only*/) {
-        choose += "\r\n\r\n#e#b目前可選職業#k#n: #e#r(New)#k#n";
+        choose += "\r\n\r\n#e#b目前可選職業#k#n: #e#r(特殊職業)#k#n";
         for (var e = 0; e < extrajobs.length; e++)
             choose += "\r\n#L" + extrajobs[e][0] + "#" + extrajobs[e][1] + "#l";
         for (var s = 0; s < specialextrajobs.length; s++)

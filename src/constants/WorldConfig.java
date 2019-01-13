@@ -39,7 +39,7 @@ public enum WorldConfig {
 
     WorldConfig(int serverId) {
         worldId = serverId;
-        this.expRate = 1;
+        this.expRate = 5;
         this.mesoRate = 1;
         this.dropRate = 1;
         this.eventMessage = "";

@@ -3389,6 +3389,128 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public String getJQWinner() {
         return getJQWinner(true);
     }
+    public int getEventCount(String eventId) {
+        return getEventCount(eventId, 0);
+    }
+
+    public int getEventCount(String eventId, int type) {
+        try (Connection con = DatabaseConnection.getConnection()) {
+            int count = 0;
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts_event WHERE accId = ? AND eventId = ?");
+            ps.setInt(1, getAccountID());
+            ps.setString(2, eventId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                /*
+                 * 年：calendar.get(Calendar.YEAR)
+                 * 月：calendar.get(Calendar.MONTH)+1
+                 * 日：calendar.get(Calendar.DAY_OF_MONTH)
+                 * 星期：calendar.get(Calendar.DAY_OF_WEEK)-1
+                 */
+                count = rs.getInt("count");
+                Timestamp updateTime = rs.getTimestamp("updateTime");
+                if (type == 0) {
+                    Calendar sqlcal = Calendar.getInstance();
+                    if (updateTime != null) {
+                        sqlcal.setTimeInMillis(updateTime.getTime());
+                    }
+                    if (sqlcal.get(Calendar.DAY_OF_MONTH) + 1 <= Calendar.getInstance().get(Calendar.DAY_OF_MONTH) || sqlcal.get(Calendar.MONTH) + 1 <= Calendar.getInstance().get(Calendar.MONTH) || sqlcal.get(Calendar.YEAR) + 1 <= Calendar.getInstance().get(Calendar.YEAR)) {
+                        count = 0;
+                        PreparedStatement psu = con.prepareStatement("UPDATE accounts_event SET count = 0, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND eventId = ?");
+                        psu.setInt(1, getAccountID());
+                        psu.setString(2, eventId);
+                        psu.executeUpdate();
+                        psu.close();
+                    }
+                }
+            } else {
+                PreparedStatement psu = con.prepareStatement("INSERT INTO accounts_event (accId, eventId, count, type) VALUES (?, ?, ?, ?)");
+                psu.setInt(1, getAccountID());
+                psu.setString(2, eventId);
+                psu.setInt(3, 0);
+                psu.setInt(4, type);
+                psu.executeUpdate();
+                psu.close();
+            }
+            rs.close();
+            ps.close();
+            return count;
+        } catch (Exception Ex) {
+            Ex.printStackTrace();
+            return -1;
+        }
+    }
+
+    /*
+     * 增加帐号下的角色统计计算每日活动次数
+     */
+    public void setEventCount(String eventId) {
+        setEventCount(eventId, 0);
+    }
+
+    public void setEventCount(String eventId, int type) {
+        setEventCount(eventId, type, 1);
+    }
+
+    public void setEventCount(String eventId, int type, int count) {
+        int eventCount = getEventCount(eventId, type);
+        PreparedStatement ps = null;
+        try (Connection con = DatabaseConnection.getConnection()) {
+            ps = con.prepareStatement("UPDATE accounts_event SET count = ?, type = ?, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND eventId = ?");
+            ps.setInt(1, eventCount + count);
+            ps.setInt(2, type);
+            ps.setInt(3, getAccountID());
+            ps.setString(4, eventId);
+            ps.executeUpdate();
+            ps.close();
+        } catch (Exception Ex) {
+            Ex.printStackTrace();
+        }
+    }
+
+    public int getEventCountAll(String eventId) {
+        try (Connection con = DatabaseConnection.getConnection()) {
+            int count = 0;
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM accounts_event WHERE eventId = ?");
+            ps.setString(1, eventId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                /*
+                 * 年：calendar.get(Calendar.YEAR)
+                 * 月：calendar.get(Calendar.MONTH)+1
+                 * 日：calendar.get(Calendar.DAY_OF_MONTH)
+                 * 星期：calendar.get(Calendar.DAY_OF_WEEK)-1
+                 */
+                count += rs.getInt("count");
+            }
+            rs.close();
+            ps.close();
+            return count;
+        } catch (Exception Ex) {
+            Ex.printStackTrace();
+            return -1;
+        }
+    }
+
+    /*
+     * 重置帐号下的角色统计计算每日活动次数
+     */
+    public void resetEventCount(String eventId) {
+        resetEventCount(eventId, 0);
+    }
+
+    public void resetEventCount(String eventId, int type) {
+        try (Connection con = DatabaseConnection.getConnection()) {
+            PreparedStatement ps = con.prepareStatement("UPDATE accounts_event SET count = 0, type = ?, updateTime = CURRENT_TIMESTAMP() WHERE accId = ? AND eventId = ?");
+            ps.setInt(1, type);
+            ps.setInt(2, getAccountID());
+            ps.setString(3, eventId);
+            ps.executeUpdate();
+            ps.close();
+        } catch (Exception Ex) {
+            Ex.printStackTrace();
+        }
+    }
 
     public final boolean canHold(final int itemid) {
         return getInventory(GameConstants.getInventoryType(itemid)).getNextFreeSlot() > -1;
@@ -3747,8 +3869,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 if (MapleJob.getJobGrade(newJob) == 1 && level >= 10 && MapleJob.is龍魔導士(newJob)) {
                     MapleQuest.getInstance(22100).forceStart(this, 0, null);
                     MapleQuest.getInstance(22100).forceComplete(this, 0);
-                    client.getSession().writeAndFlush(CField.NPCTalkPacket.getEvanTutorial("UI/tutorial/evan/14/0"));
-                    dropMessage(5, "The baby Dragon hatched and appears to have something to tell you. Click the baby Dragon to start a conversation.");
+                    //client.getSession().writeAndFlush(CField.NPCTalkPacket.getEvanTutorial("UI/tutorial/evan/14/0"));
+                    dropMessage(5, "你的寶貝龍好像有話想說. 雙擊寶貝龍跟他對話吧.");
                 }
                 updateSingleStat(MapleStat.AVAILABLE_SP, 0); // we don't care the value here
             }
@@ -5907,7 +6029,23 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         silentPartyUpdate();
         guildUpdate();
         familyUpdate();
-        //autoJob();
+        if (GameConstants.isEvan(job)) {
+            switch (level) {
+                case 20:
+                case 30:
+                case 40:
+                case 50:
+                case 60:
+                case 80:
+                case 100:
+                case 120:
+                case 160:
+                    if (job < 2218) {
+                        changeJob(job == 2001 ? 2200 : (job == 2200 ? 2210 : (job + 1))); //automatic
+                    }
+                    break;
+            }
+        }
     }
 
     public void changeSkillsLevel(final Map<Skill, SkillEntry> ss) {
