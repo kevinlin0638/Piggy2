@@ -123,7 +123,7 @@ public class ChannelServer {
         System.out.println("Channel " + channel + ", Unbinding...");
         acceptor.close();
         acceptor = null;
-        LoginServer.getWorld(world).removeChannel(this.channel);
+        //LoginServer.getWorld(world).removeChannel(this.channel);
         setFinishShutdown();
     }
 

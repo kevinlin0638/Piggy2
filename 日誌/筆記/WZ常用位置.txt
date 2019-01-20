@@ -1,0 +1,27 @@
+常用之WZ 位置
+#fUI/Basic.img/icon/arrow# - 向右小箭頭
+
+#fUI/Basic.img/BtYes2/normal/0# - 確定
+#fUI/Basic.img/BtYes2/disabled/0# - 確定(Disable)
+
+#fUI/Basic.img/CheckBox/0# - CheckBox 空
+#fUI/Basic.img/CheckBox/1# - CheckBox 勾
+
+
+#fEffect/CharacterEff/1082229/0/0# - 小愛心
+#fEffect/CharacterEff/1062114/1/0# - 粉紅色小愛心
+#fEffect/CharacterEff/1112902/0/0# - 藍色小愛心
+#fEffect/CharacterEff/1112903/0/0# - 粉色小愛心
+#fEffect/CharacterEff/1112904/0/0# - 彩色小愛心
+#fEffect/CharacterEff/1112905/0/0# - 紅色小愛心
+#fEffect/CharacterEff/1052203/3/0# - 超級小星星(綠色)
+#fEffect/CharacterEff/1042107/0/0# - 小櫻花
+#fEffect/CharacterEff/1032063/0/0# - 一串音符
+#fEffect/CharacterEff/1032053/0/0# - 小幸運草
+#fEffect/CharacterEff/1002667/0/0# - 小太陽
+#fEffect/CharacterEff/1102232/0/0# - 黃色大星星
+#fEffect/CharacterEff/1102232/1/0# - 黃色中星星
+#fEffect/CharacterEff/1102232/2/0# - 黃色星星
+#fEffect/CharacterEff/1112900/0~3/1~2# - 各種音符
+#fEffect/CharacterEff/1112916/0/38# - Single
+#fEffect/CharacterEff/1112916/0/15# - 寂寞

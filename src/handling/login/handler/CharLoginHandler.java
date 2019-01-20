@@ -149,7 +149,7 @@ public class CharLoginHandler {
                     }
                     break;
                 case SYSTEM_ERROR:
-                    errorInfo = "系統錯誤(錯誤代碼:0)";
+                    errorInfo = "請確認您已在登入器打上正確的帳號";
                     break;
                 case SYSTEM_ERROR2:
                     errorInfo = "系統錯誤(錯誤代碼:1)";

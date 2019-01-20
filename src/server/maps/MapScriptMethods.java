@@ -69,12 +69,12 @@ public class MapScriptMethods {
             case dojang_Eff: {
                 int temp = (c.getPlayer().getMapId() - 925000000) / 100;
                 int stage = (int) (temp - ((temp / 100) * 100));
-                if ((c.getPlayer().getMapId() >= 925020100 && c.getPlayer().getMapId() <= 925020109)) {
+                /*if ((c.getPlayer().getMapId() >= 925020100 && c.getPlayer().getMapId() <= 925020109)) {
                     if (c.getPlayer().getDojoMode() == DojoMode.RANKED)
                         c.getPlayer().getMap().startMapEffect("Don't forget that you have a 10-minute time limit! Defeat the monster quickly, and head to the next floor!", 5120024);
                     else
                         c.getPlayer().getMap().startMapEffect("Don't forget that you have to clear it within the time limit! Take down the monster and head to the next floor!", 5120024);
-                }
+                }*/
                 c.getPlayer().dojoStartTime = System.currentTimeMillis();
                 sendDojoClock(c, c.getPlayer().getDojoMode() != DojoMode.RANKED ? (getTiming(stage) * 60) : 600); // how to reload the clock back to current time? always resets..
                 sendDojoStart(c, stage - getDojoStageDec(stage));
@@ -1221,7 +1221,7 @@ public class MapScriptMethods {
         c.sendPacket(CField.getClock(time));
     }
 
-    private static void sendDojoStart(MapleClient c, int stage) {
+    public static void sendDojoStart(MapleClient c, int stage) {
         c.sendPacket(CField.environmentChange("Dojang/start", 4));
         c.sendPacket(CField.environmentChange("dojang/start/stage", 3));
         c.sendPacket(CField.environmentChange("dojang/start/number/" + stage, 3));

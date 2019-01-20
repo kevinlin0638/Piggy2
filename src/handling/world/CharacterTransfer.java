@@ -57,7 +57,7 @@ public class CharacterTransfer implements Externalizable {
             familyid, seniorid, junior1, junior2, currentrep, totalrep, battleshipHP, gachexp, guildContribution, totalWins, totalLosses, buddysize, remainingAp;
     public byte channel, gender, gmLevel, guildrank, alliancerank,
             fairyExp, world, initialSpawnPoint, skinColor, mount_level, mount_Fatigue, subcategory;
-    public long dps, lastfametime, TranferTime;
+    public long dps, lastfametime, TranferTime, dojo_time;
     public String name, accountname, BlessOfFairy, BlessOfEmpress, chalkboard, tempIP;
     public short level, str, dex, int_, luk, hpApUsed, job, fatigue;
     public Object inventorys, skillmacro, storage, cs, anticheat;
@@ -105,6 +105,7 @@ public class CharacterTransfer implements Externalizable {
         this.nxcredit = chr.getCSPoints(1);
         this.MaplePoints = chr.getCSPoints(2);
         this.nxprepaid = chr.getCSPoints(4);
+        this.dojo_time = chr.getDojo_time();
 
         this.redeemhn = chr.getHN();
         this.vpoints = chr.getVPoints();

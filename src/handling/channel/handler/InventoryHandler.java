@@ -55,6 +55,7 @@ import tools.packet.CWvsContext.InventoryPacket;
 import tools.types.Pair;
 
 import java.awt.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -614,14 +615,22 @@ public class InventoryHandler {
             c.sendPacket(InventoryPacket.getInventoryFull());
             return;
         }
+
         Equip eqq = (Equip) toReveal;
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         int reqLevel = ii.getReqLevel(eqq.getItemId()) / 10;
+
+
         if (eqq.getState() == 1 && (insight || magnify.getItemId() == 2460003 || (magnify.getItemId() == 2460002 && reqLevel <= 12) || (magnify.getItemId() == 2460001 && reqLevel <= 7) || (magnify.getItemId() == 2460000 && reqLevel <= 3))) {
             List<List<StructItemOption>> pots = new LinkedList<>(ii.getAllPotentialInfo().values());
             int new_state = Math.abs(eqq.getPotential1());
             if (new_state > 20 || new_state < 17) { // incase overflow
                 new_state = 17;
+            }
+
+            if(!chargeMeso(new_state, ii.getReqLevel(toReveal.getItemId()), c.getPlayer())){
+                c.getSession().write(CWvsContext.enableActions());
+                return;
             }
             int lines = 2; // default
             if (eqq.getPotential2() != 0) {
@@ -669,6 +678,75 @@ public class InventoryHandler {
         } else {
             c.sendPacket(InventoryPacket.getInventoryFull());
         }
+    }
+
+    public static Equip UseMagnify(byte eqSlot, MapleClient c) {
+        c.getPlayer().setScrolledPosition((short) 0);
+        Item toReveal = c.getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(eqSlot);
+
+        if (toReveal == null) {
+            c.sendPacket(InventoryPacket.getInventoryFull());
+            return null;
+        }
+
+        Equip eqq = (Equip) toReveal;
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        int reqLevel = ii.getReqLevel(eqq.getItemId()) / 10;
+
+
+        if (eqq.getState() == 1 ) {
+            List<List<StructItemOption>> pots = new LinkedList<>(ii.getAllPotentialInfo().values());
+            int new_state = Math.abs(eqq.getPotential1());
+            if (new_state < 17) { // incase overflow
+                new_state = 17;
+            }else{
+                new_state = 20;
+            }
+
+            if(!chargeMeso(new_state, ii.getReqLevel(toReveal.getItemId()), c.getPlayer())){
+                c.getSession().write(CWvsContext.enableActions());
+                return null;
+            }
+            int lines = 2; // default
+            if (eqq.getPotential2() != 0) {
+                lines++;
+            }
+            if (eqq.getPotential3() != 0) {
+                lines++;
+            }
+            if (eqq.getPotential4() != 0) {
+                lines++;
+            }
+            while (eqq.getState() != new_state) {
+                //31001 = haste, 31002 = door, 31003 = se, 31004 = hb, 41005 = combat orders, 41006 = advanced blessing, 41007 = speed infusion
+                for (int i = 0; i < lines; i++) { // minimum 2 lines, max 5
+                    boolean rewarded = false;
+                    while (!rewarded) {
+                        StructItemOption pot = pots.get(Randomizer.nextInt(pots.size())).get(reqLevel);
+                        if (pot != null && pot.reqLevel / 10 <= reqLevel && GameConstants.optionTypeFits(pot.optionType, eqq.getItemId()) && GameConstants.potentialIDFits(pot.opID, new_state, i)) { //optionType
+                            //have to research optionType before making this truely official-like
+                            if (i == 0) {
+                                eqq.setPotential1(pot.opID);
+                            } else if (i == 1) {
+                                eqq.setPotential2(pot.opID);
+                            } else if (i == 2) {
+                                eqq.setPotential3(pot.opID);
+                            } else if (i == 3) {
+                                eqq.setPotential4(pot.opID);
+                            } else if (i == 4) {
+                                eqq.setPotential5(pot.opID);
+                            }
+                            rewarded = true;
+                        }
+                    }
+                }
+            }
+            c.getPlayer().forceReAddItem(toReveal, MapleInventoryType.EQUIP);
+            c.sendPacket(CWvsContext.enableActions());
+        } else {
+            c.sendPacket(InventoryPacket.getInventoryFull());
+        }
+        return eqq;
     }
 
     private static int getRandomChair() {
@@ -720,6 +798,62 @@ public class InventoryHandler {
             FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
         }
     }
+    private static boolean chargeMeso(int new_state, int level, MapleCharacter chr){
+        int[] money;
+        if(level <= 100){
+            money = new int[]{1000, 5000, 10000, 15000};
+        } else if (level <= 120) {
+            money = new int[]{5000, 10000, 30000, 50000};
+        } else if (level <= 130) {
+            money = new int[]{50000, 100000, 150000, 200000};
+        } else{
+            money = new int[]{50000, 200000, 420000, 550000};
+        }
+
+        switch (new_state){
+            case 17:
+                if(chr.getMeso() < money[0]){
+                    chr.dropMessage(1, "您的楓幣不足! 需要 " + money[0] + "  楓幣");
+                    return false;
+                }else{
+                    chr.gainMeso(-money[0], true);
+                }
+                break;
+            case 18:
+                if(chr.getMeso() < money[1]){
+                    chr.dropMessage(1, "您的楓幣不足! 需要 " + money[1] + " 楓幣");
+                    return false;
+                }else{
+                    chr.gainMeso(-money[1], true);
+                }
+                break;
+            case 19:
+                if(chr.getMeso() < money[2]){
+                    chr.dropMessage(1, "您的楓幣不足! 需要 " + money[2] + " 楓幣");
+                    return false;
+                }else{
+                    chr.gainMeso(-money[2], true);
+                }
+                break;
+            case 20:
+                if(chr.getMeso() < money[3]){
+                    chr.dropMessage(1, "您的楓幣不足! 需要 " + money[3] + " 楓幣");
+                    return false;
+                }else{
+                    chr.gainMeso(-money[3], true);
+                }
+                break;
+            default:
+                if(chr.getMeso() < 1000){
+                    chr.dropMessage(1, "您的楓幣不足! 需要 1000 楓幣");
+                    return false;
+                }else{
+                    chr.gainMeso(-1000, true);
+                }
+                break;
+        }
+        return true;
+    }
 
     public static boolean UseUpgradeScroll(short slot, short dst, short ws, MapleClient c, MapleCharacter chr, boolean legendarySpirit) {
         return UseUpgradeScroll(slot, dst, ws, c, chr, 0, legendarySpirit);
@@ -738,7 +872,7 @@ public class InventoryHandler {
         } else if (legendarySpirit) {
             toScroll = (Equip) chr.getInventory(MapleInventoryType.EQUIP).getItem(dst);
         }
-        if (toScroll == null || c.getPlayer().hasBlockedInventory()) {
+        if (toScroll == null) {
             c.sendPacket(CWvsContext.enableActions());
             return false;
         }
@@ -757,8 +891,15 @@ public class InventoryHandler {
                 return false;
             }
         }
-        if (!GameConstants.isSpecialScroll(scroll.getItemId()) && !GameConstants.isCleanSlate(scroll.getItemId()) && !GameConstants.isEquipScroll(scroll.getItemId()) && !GameConstants.isPotentialScroll(scroll.getItemId())) {
+        if (!GameConstants.isSpecialScroll(scroll.getItemId()) && !GameConstants.isCleanSlate(scroll.getItemId()) && !GameConstants.isEquipScroll(scroll.getItemId()) && !GameConstants.isPotentialScroll(scroll.getItemId()) && !GameConstants.isInnocence(scroll.getItemId())) {
             if (toScroll.getUpgradeSlots() < 1) {
+                c.sendPacket(InventoryPacket.getInventoryFull());
+                c.sendPacket(CWvsContext.enableActions());
+                return false;
+            }
+        }else if(GameConstants.isInnocence(scroll.getItemId())){
+            if (!MapleInventoryManipulator.checkSpace(c,toScroll.getItemId(), 1, "")) {
+                c.getPlayer().dropMessage(1, "背包已滿");
                 c.sendPacket(InventoryPacket.getInventoryFull());
                 c.sendPacket(CWvsContext.enableActions());
                 return false;
@@ -901,6 +1042,75 @@ public class InventoryHandler {
         }
 
         if (scrollSuccess == Equip.ScrollResult.CURSE) {
+            if (GameConstants.isEquipScroll(scroll.getItemId())) {
+                Connection con = DatabaseConnection.getConnection();
+
+                PreparedStatement ps = null;
+                try {
+                    ps = con.prepareStatement("INSERT INTO equipgrave (equipgraveid , characterid, accountid, itemid, upgradeslots, level, str, dex, `int`, luk, hp, mp, watk, matk, wdef, mdef, acc, avoid, hands, speed, jump, ViciousHammer, itemEXP, durability, enhance, potential1, potential2, potential3, potential4, potential5, owner, GM_Log, flag, expiredate, type, sender, extrascroll, addi_str, addi_dex, addi_int, addi_luk, addi_watk, addi_matk, break_dmg) VALUES (DEFAULT , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+                    ps.setInt(1, chr.getId()); // characterid
+                    ps.setInt(2, chr.getAccountID()); // accountid
+                    ps.setInt(3, toScroll.getItemId()); // itemid
+                    ps.setByte(4, toScroll.getUpgradeSlots()); // upgradeslots
+                    ps.setByte(5, toScroll.getLevel()); // level
+                    ps.setShort(6, toScroll.getStr()); // str
+                    ps.setShort(7, toScroll.getDex()); // dex
+                    ps.setShort(8, toScroll.getInt()); // int
+                    ps.setShort(9, toScroll.getLuk()); // luk
+                    ps.setShort(10, toScroll.getHp()); // hp
+                    ps.setShort(11, toScroll.getMp()); // mp
+                    ps.setShort(12, toScroll.getWatk()); // watk
+                    ps.setShort(13, toScroll.getMatk()); // matk
+                    ps.setShort(14, toScroll.getWdef()); // wdef
+                    ps.setShort(15, toScroll.getMdef()); // mdef
+                    ps.setShort(16, toScroll.getAcc()); // acc
+                    ps.setShort(17, toScroll.getAvoid()); // avoid
+                    ps.setShort(18, toScroll.getHands()); // hands
+                    ps.setShort(19, toScroll.getSpeed()); // speed
+                    ps.setShort(20, toScroll.getJump()); // jump
+                    ps.setByte(21, toScroll.getViciousHammer()); // ViciousHammer
+                    ps.setInt(22, toScroll.getItemEXP()); // itemEXP
+                    ps.setInt(23, toScroll.getDurability()); // durability
+                    ps.setByte(24, toScroll.getEnhance()); // enhance
+
+                    ps.setInt(25, toScroll.getPotential1()); // potential1
+                    ps.setInt(26, toScroll.getPotential2()); // potential2
+                    ps.setInt(27, toScroll.getPotential3()); // potential3
+                    ps.setInt(28, toScroll.getPotential4()); // potential2
+                    ps.setInt(29, toScroll.getPotential5()); // potential3
+
+                    ps.setString(30, toScroll.getOwner()); // owner
+                    ps.setString(31, toScroll.getGMLog()); // GM_Log
+                    ps.setShort(32, toScroll.getFlag()); // flag
+
+                    ps.setLong(33, toScroll.getExpiration()); // expiredate
+                    ps.setByte(34, toScroll.getType()); // type
+                    ps.setString(35, String.valueOf(scroll.getItemId())); // 因什麼卷軸而爆炸
+
+                    ps.setInt(36, toScroll.getExtraScroll());
+                    ps.setInt(37, toScroll.getAddi_str());
+                    ps.setInt(38, toScroll.getAddi_dex());
+                    ps.setInt(39, toScroll.getAddi_int());
+                    ps.setInt(40, toScroll.getAddi_luk());
+                    ps.setInt(41, toScroll.getAddi_watk());
+                    ps.setInt(42, toScroll.getAddi_matk());
+                    ps.setInt(43, toScroll.getBreak_dmg());
+
+                    ps.executeUpdate();
+                    ps.close();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println("[charsave] Error saving character data");
+                    try {
+                        con.rollback();
+                    } catch (SQLException ex) {
+                        e.printStackTrace();
+                        System.err.println("[charsave] Error Rolling Back");
+                    }
+                }
+            }
             c.sendPacket(InventoryPacket.scrolledItem(scroll, MapleInventoryType.EQUIP, toScroll, true, false, false));
             if (dst < 0) {
                 chr.getInventory(MapleInventoryType.EQUIPPED).removeItem(toScroll.getPosition());
@@ -914,7 +1124,8 @@ public class InventoryHandler {
             c.sendPacket(InventoryPacket.scrolledItem(scroll, MapleInventoryType.EQUIP, toScroll, true, false, false));
             chr.getInventory(MapleInventoryType.EQUIPPED).removeItem(toScroll.getPosition());
         }
-        chr.getMap().broadcastMessage(chr, CField.getScrollEffect(c.getPlayer().getId(), scrollSuccess, legendarySpirit, whiteScroll, scroll.getItemId(), toScroll.getItemId()), vegas == 0);
+        if(!c.getPlayer().hasBlockedInventory())
+            chr.getMap().broadcastMessage(chr, CField.getScrollEffect(c.getPlayer().getId(), scrollSuccess, legendarySpirit, whiteScroll, scroll.getItemId(), toScroll.getItemId()), vegas == 0);
 
         //addToScrollLog(chr.getAccountID(), chr.getWorldId(), scroll.getItemId(), itemID, oldSlots, (byte)(scrolled == null ? -1 : scrolled.getUpgradeSlots()), oldVH, scrollSuccess.name(), whiteScroll, legendarySpirit, vegas);
         // equipped item was scrolled and isChanged

@@ -25,14 +25,18 @@ import client.inventory.*;
 import client.skill.Skill;
 import client.skill.SkillEntry;
 import client.skill.SkillFactory;
+import com.mysql.cj.api.mysqla.result.Resultset;
 import constants.GameConstants;
+import constants.ItemConstants;
 import constants.Occupations;
 import constants.ServerConstants;
 import database.DatabaseConnection;
+import ecpay.payment.integration.PaymentAIO;
 import extensions.temporary.DirectionType;
 import handling.channel.ChannelServer;
 import handling.channel.MapleGuildRanking;
 import handling.channel.handler.HiredMerchantHandler;
+import handling.channel.handler.InventoryHandler;
 import handling.channel.handler.PlayersHandler;
 import handling.login.LoginInformationProvider;
 import handling.login.LoginServer;
@@ -42,6 +46,10 @@ import handling.world.World;
 import handling.world.exped.ExpeditionType;
 import handling.world.guild.MapleGuild;
 import handling.world.guild.MapleGuildAlliance;
+import provider.MapleData;
+import provider.MapleDataProvider;
+import provider.MapleDataProviderFactory;
+import provider.MapleDataTool;
 import server.*;
 import server.Timer.WorldTimer;
 import server.life.*;
@@ -49,24 +57,28 @@ import server.maps.*;
 import server.quest.MapleQuest;
 import tools.FileoutputUtil;
 import tools.StringUtil;
+import tools.data.MaplePacketLittleEndianWriter;
 import tools.packet.CField;
 import tools.packet.CField.NPCTalkPacket;
 import tools.packet.CField.UIPacket;
 import tools.packet.CWvsContext;
 import tools.packet.CWvsContext.GuildPacket;
 import tools.packet.CWvsContext.InfoPacket;
+import tools.types.Pair;
 import tools.types.Triple;
 
 import javax.script.Invocable;
 import java.awt.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -1763,9 +1775,9 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         // c.getPlayer().getClient().sendPacket(CWvsContext.Mulung_Pts(data, dojo));
     }
 
-    public boolean start_DojoAgent(final boolean dojo, final boolean party) {
+    public boolean start_DojoAgent(final boolean dojo, final boolean party, final int level) {
         if (dojo) {
-            return Event_DojoAgent.warpStartDojo(c.getPlayer(), party);
+            return Event_DojoAgent.warpStartDojo(c.getPlayer(), party, level);
         }
         return Event_DojoAgent.warpStartAgent(c.getPlayer(), party);
     }
@@ -2116,6 +2128,78 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         Collections.sort(list);
         return list;
     }
+    public boolean doEnhance(int itemid, short dst,short scrollslot){
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        Item scroll = getPlayer().getInventory(MapleInventoryType.USE).getItem(scrollslot);
+        Equip equip = (Equip) getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(dst);
+
+        return InventoryHandler.UseUpgradeScroll(scrollslot, dst, (short) 0, c, c.getPlayer(), 0, true);
+
+    }
+
+    public void doCube(int itemid, byte dst,int CubeID){
+        byte src = (byte) 127;
+        boolean insight = src == 127;
+        Item magnify = getPlayer().getInventory(MapleInventoryType.USE).getItem(src);
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        Equip equip = (Equip) getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(dst);
+        Item cube = getPlayer().getInventory(MapleInventoryType.CASH).findById(CubeID);
+        equip.renewPotential(CubeID - 5062000);
+
+        c.getPlayer().getMap().broadcastMessage(CField.showPotentialReset(false, c.getPlayer().getId(), true, equip.getItemId()));
+        c.getSession().writeAndFlush(CWvsContext.InventoryPacket.scrolledItem(cube, MapleInventoryType.EQUIP, equip, false, true, false));
+        c.getPlayer().forceReAddItem_NoUpdate(equip, MapleInventoryType.EQUIP);
+
+        int reqLevel = ii.getReqLevel(equip.getItemId()) / 10;
+        final int n3 = (reqLevel >= 20) ? 19 : reqLevel;
+        if ((equip.getState() < 17 && equip.getState() > 0) || (equip.getState() < 17 && equip.getState() > 0)) {
+            final boolean isPotAdd = equip.getState() < 17 && equip.getState() > 0;
+            if (insight) {
+                final int meso = 5000;
+                if (getPlayer().getMeso() < meso) {
+                    getPlayer().dropMessage(5, "您沒有足夠的金幣。");
+                    getClient().sendPacket(CWvsContext.enableActions());
+                    return;
+                }
+                getPlayer().gainMeso(-meso, false);
+            }
+            final Equip nEquip = InventoryHandler.UseMagnify((byte) equip.getPosition(), c);
+            if(nEquip == null)
+                return;
+            getPlayer().getTrait(MapleTrait.MapleTraitType.insight).addExp((insight ? 10 : ((magnify.getItemId() + 2) - 2460000)) * 2, getPlayer());
+            getPlayer().getMap().broadcastMessage(CField.showMagnifyingEffect(getPlayer().getId(), equip.getPosition()));
+            if (!insight) {
+                MapleInventoryManipulator.removeFromSlot(getClient(), MapleInventoryType.USE, magnify.getPosition(), (short) 1, false);
+            }
+            getPlayer().forceUpdateItem(equip, true);
+            if (dst < 0) { //当 dst 小于 就是鉴定装备中的装备 需要重新计算角色的属性
+                getPlayer().equipChanged();
+            }
+            getClient().sendPacket(CWvsContext.enableActions());
+        } else {
+            getClient().sendPacket(CWvsContext.InventoryPacket.getInventoryFull());
+        }
+    }
+
+    public byte getEquipPotState(int itemid) {
+        if(itemid < 100)
+            return 0;
+        Equip equip = (Equip) getPlayer().getInventory(MapleInventoryType.EQUIP).findById(itemid);
+        return equip.getState();
+    }
+
+    public void openWeb(String url){
+        final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        mplew.writeShort(20);
+        mplew.write(url.getBytes());
+        c.getClinetS().sendPacket(mplew.getPacket());
+    }
+
+    public int getPotID(int itemID, int Pot_position){
+        Equip equip = (Equip) getPlayer().getInventory(MapleInventoryType.EQUIP).findById(itemID);
+        return equip.getPotential(Pot_position);
+    }
+
 
     public final String getPotentialInfo(final int id) {
         final List<StructItemOption> potInfo = MapleItemInformationProvider.getInstance().getPotentialInfo(id);
@@ -2350,12 +2434,10 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         getClient().sendPacket(CWvsContext.ultimateExplorer());
     }
 
-    public void sendPendant(boolean b) {
-        c.sendPacket(CWvsContext.pendantSlot(b));
-    }
 
     public void addPendantSlot(int days) {
         c.getPlayer().getQuestNAdd(MapleQuest.getInstance(GameConstants.PENDANT_SLOT)).setCustomData(String.valueOf(System.currentTimeMillis() + ((long) days * 24 * 60 * 60 * 1000)));
+        c.sendPacket(CWvsContext.pendantSlot(Long.parseLong(c.getPlayer().getQuestNAdd(MapleQuest.getInstance(GameConstants.PENDANT_SLOT)).getCustomData())));
     }
 
     public Triple<Integer, Integer, Integer> getCompensation() {
@@ -2403,8 +2485,549 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             }
         }
     }
+    public ArrayList<Equip> getbangbang(int charid) {
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        ArrayList<Equip> all = new ArrayList<>();
+        Equip eq = null;
+        try {
+            Connection con = DatabaseConnection.getConnection();
+            PreparedStatement ps;
+            ps = con.prepareStatement("SELECT * FROM equipgrave WHERE characterid = ? ORDER BY equipgraveid desc");
+            ps.setInt(1, charid);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                eq = (Equip) ii.getEquipById(rs.getInt("itemid"));
+                eq.setUpgradeSlots(rs.getByte("upgradeslots"));
+                eq.setLevel(rs.getByte("level"));
+
+                eq.setStr(rs.getShort("str"));
+                eq.setDex(rs.getShort("dex"));
+                eq.setInt(rs.getShort("int"));
+                eq.setLuk(rs.getShort("luk"));
+                eq.setHp(rs.getShort("hp"));
+                eq.setMp(rs.getShort("mp"));
+                eq.setWatk(rs.getShort("watk"));
+                eq.setMatk(rs.getShort("matk"));
+                eq.setWdef(rs.getShort("wdef"));
+                eq.setMdef(rs.getShort("mdef"));
+
+                eq.setAcc(rs.getShort("acc"));
+                eq.setAvoid(rs.getShort("avoid"));
+                eq.setHands(rs.getShort("hands"));
+                eq.setSpeed(rs.getShort("speed"));
+                eq.setJump(rs.getShort("jump"));
+
+                eq.setViciousHammer(rs.getByte("ViciousHammer"));
+                eq.setItemEXP(rs.getInt("itemEXP"));
+                eq.setDurability(rs.getInt("durability"));
+
+                eq.setEnhance(rs.getByte("enhance"));
+                eq.setPotential1(rs.getShort("potential1"));
+                eq.setPotential2(rs.getShort("potential2"));
+                eq.setPotential3(rs.getShort("potential3"));
+                eq.setPotential4(rs.getShort("potential4"));
+                eq.setPotential5(rs.getShort("potential5"));
+
+
+                eq.setOwner(rs.getString("owner"));
+                eq.setGMLog(String.valueOf(rs.getInt("equipgraveid")));
+                eq.setFlag(rs.getByte("flag"));
+                eq.setExpiration(rs.getLong("expiredate"));
+                eq.setGiftFrom(rs.getString("sender"));
+
+                eq.setExtraScroll(rs.getInt("extrascroll"));
+                eq.setAddi_str((short) rs.getInt("addi_str"));
+                eq.setAddi_dex((short) rs.getInt("addi_dex"));
+                eq.setAddi_int((short) rs.getInt("addi_int"));
+                eq.setAddi_luk((short) rs.getInt("addi_luk"));
+                eq.setAddi_watk((short) rs.getInt("addi_watk"));
+                eq.setAddi_matk((short) rs.getInt("addi_matk"));
+                eq.setBreak_dmg(rs.getInt("break_dmg"));
+            }
+            all.add(eq);
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            System.err.println("Error getting character default" + e);
+        }
+        return all;
+    }
+
+    public int getItemQuantity(int itemid) {
+        return c.getPlayer().getItemQuantity(itemid, false);
+    }
+
+
+    public String getPotentialString(int potId) {
+        String potInfo = getPotentialInfo(potId);
+        return potInfo;
+    }
+
+    public Connection getConnection() {
+        return DatabaseConnection.getConnection();
+    }
+
+    public void DeleteBangEquip(int eid) {
+        try {
+            Connection con = DatabaseConnection.getConnection();
+            PreparedStatement ps;
+            ps = con.prepareStatement("DELETE FROM equipgrave WHERE equipgraveid = ?");
+            ps.setInt(1, eid);
+            ps.execute();
+            ps.close();
+        } catch (SQLException e) {
+            System.err.println("Error getting character default" + e);
+        }
+    }
+
+    public List<Integer> getSMob(String name) {
+        MapleDataProvider dataProvider = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/" + "String.wz"));
+        List<Integer> retMobs = new ArrayList<Integer>();
+        MapleData data = null;
+        data = dataProvider.getData("Mob.img");
+        List<Pair<Integer, String>> mobPairList = new LinkedList<Pair<Integer, String>>();
+        for (MapleData mobIdData : data.getChildren()) {
+
+            mobPairList.add(new Pair<Integer, String>(Integer.parseInt(mobIdData.getName()), MapleDataTool.getString(mobIdData.getChildByPath("name"), "NO-NAME")));
+        }
+        for (Pair<Integer, String> mobPair : mobPairList) {
+            if (mobPair.getRight().toLowerCase().contains(name.toLowerCase())) {
+                if(MapleLifeFactory.getMonster(mobPair.getLeft()) != null)
+                    retMobs.add(mobPair.getLeft());
+            }
+            if(retMobs.size() >= 100)
+                break;
+        }
+        return retMobs;
+    }
+
+    public List<Integer> getSItem(String name) {
+        List<Integer> retItems = new ArrayList<Integer>();
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        for (ItemInformation itemPair : MapleItemInformationProvider.getInstance().getAllItems()) {
+            if (itemPair.name.toLowerCase().contains(name.toLowerCase())) {
+                if(ii.itemExists(itemPair.itemId) && !ii.isCash(itemPair.itemId))
+                    if(itemPair.itemId < 1800000 && itemPair.itemId > 1300000) {
+                        if (GameConstants.isWeapon(itemPair.itemId))
+                            retItems.add(itemPair.itemId);
+                    }else {
+                        retItems.add(itemPair.itemId);
+                    }
+            }
+            if(retItems.size() >= 100)
+                break;
+        }
+        return retItems;
+    }
+
+    public List<Integer> getSItemCash(String name) {
+        List<Integer> retItems = new ArrayList<Integer>();
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        for (ItemInformation itemPair : MapleItemInformationProvider.getInstance().getAllItems()) {
+            if (itemPair.name.toLowerCase().contains(name.toLowerCase())) {
+                if(ii.itemExists(itemPair.itemId) && !ii.isCash(itemPair.itemId))
+                    retItems.add(itemPair.itemId);
+            }
+            if(retItems.size() >= 100)
+                break;
+        }
+        return retItems;
+    }
+
+    public List<Integer> getDropers(String name) {
+        final MapleMonsterInformationProvider mi = MapleMonsterInformationProvider.getInstance();
+        return mi.retrieveDroper(Integer.parseInt(name));
+    }
+
+    public List<Integer> getDrops(String name) {
+        List<Integer> retItems = new ArrayList<Integer>();
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        final MapleMonsterInformationProvider mi = MapleMonsterInformationProvider.getInstance();
+        final List<MonsterDropEntry> dropEntry = mi.retrieveDrop(Integer.parseInt(name));
+        for(MonsterDropEntry dr : dropEntry){
+            if(dr.itemId != 0 && ii.itemExists(dr.itemId) && !ii.isCash(dr.itemId))
+                retItems.add(dr.itemId);
+        }
+        return retItems;
+    }
+
+    public boolean isEnhanceItem(short slot){
+        Equip equip = (Equip) getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(slot);
+        return equip.getUpgradeSlots() == 0;
+
+    }
+
+    public Pair<Integer, Integer> getEnhRate(short slot, short scroll){
+        return null;
+    }
+
+
+    public ArrayList<Pair<String, Integer>> getEnhDes(short slot){
+        Equip equip = (Equip) getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(slot);
+        boolean isW = false;
+        if(GameConstants.isWeapon(equip.getItemId())){
+            isW = true;
+        }
+        ArrayList<Pair<String, Integer>> al = new ArrayList<Pair<String, Integer>>();
+        switch (equip.getEnhance()) {
+            case 0:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 5));
+                } else {
+                    al.add(new Pair<>("全能力", 5));
+                }
+                break;
+            case 1:
+                if (isW) {
+                    al.add(new Pair<>("閃避 精準", 15));
+                } else {
+                    al.add(new Pair<>("閃避 精準", 7));
+                }
+                break;
+            case 2:
+                if (isW) {
+                    al.add(new Pair<>("跳躍 速度", 5));
+                } else {
+                    al.add(new Pair<>("跳躍 速度", 8));
+                }
+                break;
+            case 3:
+                if (isW) {
+                    al.add(new Pair<>("物防 魔防", 25));
+                } else {
+                    al.add(new Pair<>("物防 魔防", 40));
+                }
+                break;
+            case 4:
+                if (isW) {
+                    al.add(new Pair<>("閃避 精準", 15));
+                } else {
+                    al.add(new Pair<>("閃避 精準", 7));
+                }
+                break;
+            case 5:
+                if (isW) {
+                    al.add(new Pair<>("跳躍 速度", 5));
+                } else {
+                    al.add(new Pair<>("跳躍 速度", 8));
+                }
+                break;
+            case 6:
+                if (isW) {
+                    al.add(new Pair<>("物防 魔防", 25));
+                } else {
+                    al.add(new Pair<>("物防 魔防", 40));
+                }
+                break;
+            case 7:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 5));
+                } else {
+                    al.add(new Pair<>("全能力", 5));
+                }
+                break;
+            case 8:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 6));
+                } else {
+                    al.add(new Pair<>("全能力", 6));
+                }
+                break;
+            case 9:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 7));
+                } else {
+                    al.add(new Pair<>("全能力", 10));
+                }
+                break;
+            case 10:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 8));
+                } else {
+                    al.add(new Pair<>("全能力", 13));
+                }
+                break;
+            case 11:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 9));
+                } else {
+                    al.add(new Pair<>("全能力", 15));
+                }
+                break;
+            case 12:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 10));
+                    al.add(new Pair<>("全能力", 10));
+                } else {
+                    al.add(new Pair<>("全能力", 18));
+                }
+                break;
+            case 13:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 15));
+                    al.add(new Pair<>("全能力", 10));
+                } else {
+                    al.add(new Pair<>("全能力", 20));
+                }
+                break;
+            case 14:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 20));
+                    al.add(new Pair<>("全能力", 11));
+                } else {
+                    al.add(new Pair<>("全能力", 25));
+                }
+                break;
+            case 15:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 21));
+                    al.add(new Pair<>("全能力", 12));
+                } else {
+                    al.add(new Pair<>("全能力", 30));
+                }
+                break;
+            case 16:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 22));
+                    al.add(new Pair<>("全能力", 13));
+                } else {
+                    al.add(new Pair<>("物攻魔攻", 3));
+                    al.add(new Pair<>("全能力", 30));
+                }
+                break;
+            case 17:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 23));
+                    al.add(new Pair<>("全能力", 14));
+                } else {
+                    al.add(new Pair<>("物攻魔攻", 3));
+                    al.add(new Pair<>("全能力", 32));
+                }
+                break;
+            case 18:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 24));
+                    al.add(new Pair<>("全能力", 15));
+                } else {
+                    al.add(new Pair<>("物攻魔攻", 5));
+                    al.add(new Pair<>("全能力", 33));
+                }
+                break;
+            case 19:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 25));
+                    al.add(new Pair<>("全能力", 20));
+                } else {
+                    al.add(new Pair<>("物攻魔攻", 5));
+                    al.add(new Pair<>("全能力", 34));
+                }
+                break;
+            case 20:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 30));
+                    al.add(new Pair<>("全能力", 21));
+                } else {
+                    al.add(new Pair<>("物攻魔攻", 10));
+                    al.add(new Pair<>("全能力", 40));
+                }
+                break;
+            case 21:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 31));
+                    al.add(new Pair<>("全能力", 22));
+                } else {
+                    al.add(new Pair<>("物攻魔攻", 11));
+                    al.add(new Pair<>("全能力", 41));
+                }
+                break;
+            case 22:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 32));
+                    al.add(new Pair<>("全能力", 23));
+                } else {
+                    al.add(new Pair<>("物攻魔攻", 12));
+                    al.add(new Pair<>("全能力", 42));
+                }
+                break;
+            case 23:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 33));
+                    al.add(new Pair<>("全能力", 24));
+                } else {
+                    al.add(new Pair<>("物攻魔攻", 13));
+                    al.add(new Pair<>("全能力", 43));
+                }
+                break;
+            case 24:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 34));
+                    al.add(new Pair<>("全能力", 25));
+                } else {
+                    al.add(new Pair<>("物攻魔攻", 14));
+                    al.add(new Pair<>("全能力", 44));
+                }
+                break;
+            case 25:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 50));
+                    al.add(new Pair<>("全能力", 30));
+                } else {
+                    al.add(new Pair<>("物攻魔攻", 20));
+                    al.add(new Pair<>("全能力", 50));
+                }
+                break;
+            case 26:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 60));
+                    al.add(new Pair<>("全能力", 40));
+                } else {
+                    al.add(new Pair<>("物攻魔攻", 25));
+                    al.add(new Pair<>("全能力", 60));
+                }
+                break;
+            case 27:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 70));
+                    al.add(new Pair<>("全能力", 50));
+                } else {
+                    al.add(new Pair<>("物攻魔攻", 30));
+                    al.add(new Pair<>("全能力", 70));
+                }
+                break;
+            case 28:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 80));
+                    al.add(new Pair<>("全能力", 60));
+                } else {
+                    al.add(new Pair<>("物攻魔攻", 35));
+                    al.add(new Pair<>("全能力", 80));
+                }
+                break;
+            case 29:
+                if (isW) {
+                    al.add(new Pair<>("物攻魔攻", 90));
+                    al.add(new Pair<>("全能力", 70));
+                } else {
+                    al.add(new Pair<>("物攻魔攻", 40));
+                    al.add(new Pair<>("全能力", 90));
+                }
+                break;
+                default:
+                    al.add(new Pair<>("錯誤", 0));
+        }
+        return al;
+    }
+
+
+    public boolean isPotItem(short ID){
+        Equip equip = (Equip) getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(ID);
+        return equip.getPotential1() > 0;
+    }
+
+    public boolean itemExit(int id) {
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        return ii.itemExists(id);
+    }
+
+    public MapleItemInformationProvider getItemInfo() {
+        return MapleItemInformationProvider.getInstance();
+    }
 
     public String getScript() {
         return this.script;
+    }
+
+    public int getMaxEnhance(Equip eqp) {
+        return  MapleItemInformationProvider.getInstance().getSlots(eqp.getItemId());
+    }
+
+    public boolean doScissor(Item item, int typep) {
+        if (item != null) {
+            short flag = item.getFlag();
+            if ((ItemFlag.KARMA_USE.check(flag) || ItemFlag.KARMA_EQ.check(flag)) && flag != 24) {
+                return false;
+            }
+
+            if(ItemFlag.LOCK.check(flag) && item.getItemId() == 1112127){
+                return false;
+            }
+            MapleInventoryType type = MapleInventoryType.getByType((byte) typep);
+            if (type == MapleInventoryType.EQUIP) {
+                flag = (byte) ItemFlag.KARMA_EQ.getValue();
+                item.setFlag(flag);
+                c.getPlayer().forceReAddItem_Flag(item, type);
+            } else {
+                flag = (byte) ItemFlag.KARMA_USE.getValue();
+                item.setFlag(flag);
+                c.getPlayer().fakeRelog();
+            }
+
+        }
+        return true;
+    }
+
+    public String getPayBill(int amount){
+        Date time = Calendar.getInstance().getTime();
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(time);
+        PaymentAIO mp = new PaymentAIO();
+        String as = amount >= 1000?String.valueOf(amount / 100):String.valueOf(amount);
+        String ss = timeStamp+as;
+        String url = "";
+        int key = 0;
+        try (Connection con = DatabaseConnection.getConnection()) {
+            boolean isC = true;
+            while(isC){
+                Random r = new Random();
+                String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                StringBuilder s = new StringBuilder();
+                for (int i = 0; i < 6; i++) {
+                    s.append(alphabet.charAt(r.nextInt(alphabet.length())));
+                }
+                try (PreparedStatement ps = con.prepareStatement("SELECT url from paybill_bills where url = ?")){
+                    ps.setString(1, s.toString());
+                    ResultSet rs = ps.executeQuery();
+                    if(rs.next()){
+                        continue;
+                    }
+                    url = s.toString();
+                    isC = false;
+                }
+            }
+
+            try (PreparedStatement ps = con.prepareStatement("INSERT INTO paybill_bills (BillID, money, account, accountID, characterID, Date,isSent,TradeNo, url) VALUES (DEFAULT,?, ?, ?, ?, CURRENT_TIMESTAMP,?,?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+                ps.setInt(1, (int)Math.floor(amount * 1.2));
+                ps.setString(2, getPlayer().getClient().getAccountName());
+                ps.setInt(3, getPlayer().getAccountID());
+                ps.setInt(4, getPlayer().getId());
+                ps.setInt(5, -1);
+                ps.setString(6, ss);
+                ps.setString(7, url);
+                ps.executeUpdate();
+
+                ResultSet rs = ps.getGeneratedKeys();
+                if (!rs.next()) {
+                    throw new RuntimeException("[saveItems] 保存道具失败.");
+                }else{
+                    key = rs.getInt(1);
+                }
+            }
+
+        } catch (SQLException ex) {//130.211.243.179
+            ex.printStackTrace();
+        }
+
+        String poststr = mp.getCustomBill(amount, Integer.toString(getPlayer().getAccountID()), key,time, ss);
+        try {
+            FileWriter fw = new FileWriter(new File("C:/Bills/" + url + ".html "));
+            fw.write(poststr);
+            fw.close();
+        }catch (IOException e){
+            System.out.println(e);
+        }
+        return url;
+    }
+    public String getDateStr(){
+        return new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
     }
 }

@@ -71,9 +71,7 @@ public class ShutdownServer implements ShutdownServerMBean {
                 for (World world : LoginServer.getWorlds()) {
                     try {
                         for (ChannelServer channelServer : world.getChannels()) {
-                            synchronized (this) {
-                                channelServer.shutdown();
-                            }
+                            channelServer.shutdown();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

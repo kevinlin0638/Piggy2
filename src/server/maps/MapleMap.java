@@ -664,19 +664,24 @@ public final class MapleMap {
             chr.setHp(0);
             chr.updateSingleStat(MapleStat.HP, 0);
         } else if (mobid == 8810018 && mapid == 240060200) {
-            World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM-Message] Horntail was killed by : " + chr.getName()));
-            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "To the crew that have finally conquered Horned Tail after numerous attempts, I salute thee! You are the true heroes of Leafre!!"));
+            World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] Horntail was killed by : " + chr.getName()));
+            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "經過無數次的挑戰，"+ chr.getName() +" 所帶領的隊伍終於擊破了闇黑龍王的遠征隊！你們才是龍之林的真正英雄~"));
+            for (MapleCharacter c : getCharactersThreadsafe()) {
+                c.finishAchievement(16);
+                c.finishDailyQuest(17);
+            }
             if (speedRunStart > 0) {
                 type = ExpeditionType.Horntail;
             }
             doShrine(true);
         } else if (mobid == 8810122 && mapid == 240060201) { // Horntail
-            World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM-Message] 寒霜冰龍 Horntail was killed by : " + chr.getName()));
+            World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] 寒霜冰龍 Horntail was killed by : " + chr.getName()));
             World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "To the crew that have finally conquered 寒霜冰龍 Horned Tail after numerous attempts, I salute thee! You are the true heroes of Leafre!!"));
             charactersLock.readLock().lock();
             try {
                 for (MapleCharacter c : characters) {
-                    // c.finishAchievement(24);
+                     c.finishAchievement(24);
+                    c.finishDailyQuest(24);
                 }
             } finally {
                 charactersLock.readLock().unlock();
@@ -706,9 +711,23 @@ public final class MapleMap {
             }
         } else if ((mobid == 9420544 || mobid == 9420549) && mapid == 551030200 && monster.getEventInstance() != null && monster.getEventInstance().getName().contains(getEMByMap().getName())) {
             doShrine(getAllReactor().isEmpty());
+            if (speedRunStart > 0) {
+                if (mobid == 9420549) {
+                    for (MapleCharacter c : getCharactersThreadsafe()) {
+                        c.finishAchievement(15);
+                    }
+                } else {
+                    for (MapleCharacter c : getCharactersThreadsafe()) {
+                        c.finishAchievement(16);
+                    }
+                }
+            }
         } else if (mobid == 8820001 && mapid == 270050100) {
-            World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM-Message] Pink bean was killed by : " + chr.getName()));
-            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "Oh, the exploration team who has defeated Pink Bean with undying fervor! You are the true victors of time!"));
+            for (MapleCharacter c : getCharactersThreadsafe()) {
+                c.finishAchievement(17);
+            }
+            World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] Pink bean was killed by : " + chr.getName()));
+            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "經過帶領的隊伍經過無數次的挑戰，終於擊破了時間的寵兒－皮卡丘的遠征隊！你們才是時間神殿的真正英雄~"));
             charactersLock.readLock().lock();
             try {
                 for (MapleCharacter c : characters) {
@@ -722,7 +741,7 @@ public final class MapleMap {
             }
             doShrine(true);
         } else if (mobid == 8850011 && mapid == 271040100) {
-            World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM-Message] Empress was killed by : " + chr.getName()));
+            World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] Empress was killed by : " + chr.getName()));
             World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "To you whom have defeated Empress Cygnus in the future, you are the heroes of time!"));
             if (speedRunStart > 0) {
                 type = ExpeditionType.Cygnus;
@@ -734,12 +753,20 @@ public final class MapleMap {
             }
             doShrine(true);
         } else if (mobid == 8800002 && mapid == 280030000) {
+            for (MapleCharacter c : getCharactersThreadsafe()) {
+                c.finishAchievement(15);
+                c.finishDailyQuest(13);
+            }
 //            FileoutputUtil.log(FileoutputUtil.Zakum_Log, MapDebug_Log());
             if (speedRunStart > 0) {
                 type = ExpeditionType.Zakum;
             }
             doShrine(true);
         } else if (mobid == 8800102 && mapid == 280030001) {
+            for (MapleCharacter c : getCharactersThreadsafe()) {
+                c.finishAchievement(23);
+                c.finishDailyQuest(23);
+            }
             //FileoutputUtil.log(FileoutputUtil.Zakum_Log, MapDebug_Log());
             if (speedRunStart > 0) {
                 type = ExpeditionType.Chaos_Zakum;
@@ -790,55 +817,6 @@ public final class MapleMap {
             for (MaplePartyCharacter pchr : chr.getParty().getMembers()) {
                 MapleCharacter chrz = chr.getClient().getChannelServer().getPlayerStorage().getCharacterById(pchr.getId());
 
-            }
-        } else if ((mobid == 9300215) && (mapid >= 925023800 && mapid <= 925023809)) {
-            if (chr.getDojoMode() == DojoMode.RANKED) {
-                long dojoEndTime = System.currentTimeMillis();
-                int timeDifference = (int) ((dojoEndTime / 1000) - (chr.dojoStartTime / 1000));
-                chr.dropMessage(-1, "Congratulations! You cleared all of the stages in Mu Lung Dojo.");
-                try { // horrendous way to do this. >_>
-                    PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT `time` FROM dojo_ranks ORDER BY `time` ASC LIMIT 1"); // fastest time
-                    ResultSet rs = ps.executeQuery();
-                    while (rs.next()) {
-                        int time = rs.getInt("time");
-
-                        if (timeDifference <= time) {
-                            chr.dojoStartTime = 1337;
-                        }
-                    }
-                    ps.close();
-                    rs.close();
-
-                    ps = DatabaseConnection.getConnection().prepareStatement("SELECT `name` FROM dojo_ranks");
-                    rs = ps.executeQuery();
-                    while (rs.next()) {
-                        String name = rs.getString("name");
-
-                        if (chr.getName().equalsIgnoreCase(name)) { // if they exist :x
-                            ps = DatabaseConnection.getConnection().prepareStatement("UPDATE dojo_ranks SET time = ? WHERE name = ?");
-                            ps.setInt(1, timeDifference);
-                            ps.setString(2, chr.getName());
-                            ps.executeUpdate();
-                            ps.close();
-                            break;
-                        } else { // if they don't have a score already, insert them
-                            ps = DatabaseConnection.getConnection().prepareStatement("INSERT INTO dojo_ranks(name, time) VALUES(?, ?)");
-                            ps.setString(1, chr.getName());
-                            ps.setInt(2, timeDifference);
-                            ps.executeUpdate();
-                            ps.close();
-                            break;
-                        }
-                    }
-                    ps.close();
-                    rs.close();
-                } catch (SQLException e) {
-                    System.out.println("Mu Lung Dojo Ranked Mode failed to read dojo_ranks. Error: " + e);
-                }
-            } else {
-                // long dojoEndTime = System.currentTimeMillis();
-                // int timeDifference = (int)((dojoEndTime / 1000) - (chr.dojoStartTime / 1000));
-                chr.dropMessage(-1, "Congratulations! You have completed Mu Lung Dojo!");
             }
         } else if ((mapid == 955000100 || mapid == 955000200 || mapid == 955000300) && getAllMonstersThreadsafe().isEmpty()) {
             charactersLock.readLock().lock();
@@ -953,6 +931,23 @@ public final class MapleMap {
             }
         } else if (mobid == 8150000 && (chr.getMapId() == 200090000 || chr.getMapId() == 200090000)) {
             chr.getClient().getChannelServer().getMapFactory().getMap(mapid).broadcastMessage(CField.boatPacket(10, 5));
+        }else if ((mapid / 100 == 9250201 && monster.getStats().isBoss() && mobid != 9300216) ||(mapid / 100 == 9250301 && monster.getStats().isBoss()  && mobid != 9300216)){
+            final int current_stage = Event_DojoAgent.CheckStage(this, mobid);
+            final int next_mob = Event_DojoAgent.CheckNextMob(this, mobid);
+
+            if(Event_DojoAgent.startNextStage(chr, this, current_stage, next_mob)) {
+                final MapleMap warp_map = chr.getClient().getChannelServer().getMapFactory().getMap(925020001);
+                if (chr.getParty() != null) {
+                    for (MaplePartyCharacter mem : chr.getParty().getMembers()) {
+                        MapleCharacter chr_mem = this.getCharacterById(mem.getId());
+                        if (chr_mem != null) {
+                            chr_mem.changeMap(warp_map, warp_map.getPortal(0));
+                        }
+                    }
+                } else {
+                    chr.changeMap(warp_map, warp_map.getPortal(0));
+                }
+            }
         }
         if (type != null) {
             if (speedRunStart > 0 && speedRunLeader.length() > 0) {
@@ -1684,7 +1679,7 @@ public final class MapleMap {
         checkRemoveAfter(monster);
 
 
-        if(channel > 10 && monster.getStats().getLevel() > 10){
+        if(channel > 10 && monster.getStats().getLevel() > 10 && !monster.isBoss()){
             int level = monster.getStats().getLevel();
             if (level >= 200)
                 level = 250;
@@ -1721,6 +1716,8 @@ public final class MapleMap {
 
     public final int spawnMonsterWithEffect(final MapleMonster monster, final int effect, Point pos) {
         try {
+            if(this.getId() == 925020000 || this.getId() == 925020001)
+                return -1;
             monster.setMap(this);
             monster.setPosition(pos);
 
@@ -3455,7 +3452,20 @@ public final class MapleMap {
                 }
             }
         } else {
-            final int numShouldSpawn = (GameConstants.isForceRespawn(mapid) ? monsterSpawn.size() : maxRegularSpawn) - spawnedMonstersOnMap.get();
+            List<MapleMonster> ms = getAllMonstersThreadsafe();
+            boolean isFast = false;
+            for(MapleMonster mob : ms){
+                if (mob.getId() == 9700100)
+                    isFast = true;
+            }
+
+            final int numShouldSpawn;
+
+            if (isFast)
+                numShouldSpawn  = (maxRegularSpawn * 3 > 50?maxRegularSpawn * 3: 50) - spawnedMonstersOnMap.get();
+            else
+                numShouldSpawn  = maxRegularSpawn - spawnedMonstersOnMap.get();
+
             if (numShouldSpawn > 0) {
                 int spawned = 0;
 
@@ -4026,9 +4036,20 @@ public final class MapleMap {
     public final List<Integer> getSkillIds() {
         return nodes.getSkillIds();
     }
-
+    //todo: 這邊修改召喚時間
     public final boolean canSpawn(long now) {
-        return lastSpawnTime > 0 && lastSpawnTime + createMobInterval < now;
+        List<MapleMonster> ms = getAllMonstersThreadsafe();
+        boolean isFast = false;
+        for(MapleMonster mob : ms){
+            if (mob.getId() == 9700100)
+                isFast = true;
+        }
+
+        if (isFast) {
+            return lastSpawnTime > 0 && isSpawns && lastSpawnTime + 3000 < now;
+        }else{
+            return lastSpawnTime > 0 && isSpawns && lastSpawnTime + createMobInterval < now;
+        }
     }
 
     public final boolean canHurt(long now) {

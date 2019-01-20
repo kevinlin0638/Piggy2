@@ -54,6 +54,8 @@ import server.Timer.BuffTimer;
 import server.Timer.EventTimer;
 import server.Timer.MapTimer;
 import server.cashshop.CashShop;
+import server.daily.MapleDaily;
+import server.daily.MapleDailyQuests;
 import server.life.*;
 import server.maps.*;
 import server.movement.ILifeMovementFragment;
@@ -63,6 +65,7 @@ import server.status.*;
 import tools.FileoutputUtil;
 import tools.HexTool;
 import tools.StringUtil;
+import tools.data.MaplePacketLittleEndianWriter;
 import tools.packet.*;
 import tools.packet.CField.EffectPacket;
 import tools.packet.CField.SummonPacket;
@@ -103,7 +106,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public EnumMap<MapleTraitType, MapleTrait> traits;
     /*Start of Custom Feature*/
  /*All custom shit declare here*/
-    public boolean keyvalue_changed = false;
+
+    private List<Integer> finishedAchievements = new ArrayList<Integer>();
+    private List<Integer> finishedDailyQuests = new ArrayList<Integer>();
+    public boolean keyvalue_changed = false, isOpenRound;
     public boolean[] warning = new boolean[25];
     public boolean[] gate = new boolean[25];
     public int occupationExp = 0; //I don't give a shit about this fuckin thing. @Eric
@@ -114,7 +120,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public int apprentice = 0; // apprentice ID for master
     public int pvpVictim = 0; // store victim id's for each character
     public long dojoStartTime;
-    public long dojoMapEndTime;
+    public long dojoMapEndTime, last_vac = 0, dojo_time = 0;
     public int[] jqmaps = {
         //Official AutoJQ's:
         280020000, // zakum
@@ -297,6 +303,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private int numClones;
     private transient WeakReference<MapleCharacter>[] clones;
     MapleCharacter cloneOwner;
+
+    private int ShareID = -1;
+    private double SharePercent = -1.0;
 
     public MapleCharacter(final boolean ChannelServer) {
         setStance(0);
@@ -565,6 +574,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.mapid = ct.mapid;
         ret.initialSpawnPoint = ct.initialSpawnPoint;
         ret.world = ct.world;
+        ret.dojo_time = ct.dojo_time;
         ret.guildid = ct.guildid;
         ret.guildrank = ct.guildrank;
         ret.guildContribution = ct.guildContribution;
@@ -1183,6 +1193,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
                 ret.stats.recalcLocalStats(true, ret);
                 ret.antiMacro = new MapleLieDetector(ret);
+
             } else { // Not channel server
                 for (Pair<Item, MapleInventoryType> mit : ItemLoader.INVENTORY.loadItems(true, charId).values()) {
                     ret.getInventory(mit.getRight()).addFromDB(mit.getLeft());
@@ -1203,6 +1214,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             } catch (SQLException ignore) {
             }
         }
+
         return ret;
     }
 
@@ -1882,6 +1894,30 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     }
                 }
             }
+
+            ps = con.prepareStatement("SELECT * FROM achievements WHERE accountid = ?");
+            ps.setInt(1, accountid);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                final int toAdd = rs.getInt("achievementid");
+                if (!finishedAchievements.contains(toAdd))
+                    finishedAchievements.add(toAdd);
+            }
+            rs.close();
+            ps.close();
+
+            ps = con.prepareStatement("DELETE FROM achievements WHERE accountid = ?");
+            ps.setInt(1, accountid);
+            ps.executeUpdate();
+            ps.close();
+            ps = con.prepareStatement("INSERT INTO achievements(characterid, achievementid, accountid) VALUES(?, ?, ?)");
+            for (Integer achid : finishedAchievements) {
+                ps.setInt(1, id);
+                ps.setInt(2, achid);
+                ps.setInt(3, accountid);
+                ps.executeUpdate();
+            }
+            ps.close();
 
             if (changed_regrocklocations) {
                 deleteWhereCharacterId(con, "DELETE FROM regrocklocations WHERE characterid = ?");
@@ -3114,6 +3150,26 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
     }
 
+    public int getShareID() {
+        return ShareID;
+    }
+
+    public void setShareID(int shareID) {
+        ShareID = shareID;
+    }
+
+    public int getSharePercent() {
+        return Double.valueOf(SharePercent * 100).intValue();
+    }
+
+    public double getSharePercentDouble() {
+        return SharePercent;
+    }
+
+    public void setSharePercent(double sharePercent) {
+        SharePercent = sharePercent/100;
+    }
+
     public MapleMap getMap() {
         return map;
     }
@@ -3278,6 +3334,31 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void setFame(int fame) {
         this.fame = fame;
+    }
+    public void setDojo(final int dojo) {
+        getQuestNAdd(MapleQuest.getInstance(GameConstants.DOJO)).setCustomData(String.valueOf(dojo));
+
+    }
+
+    public final int getDojo() {
+        return getIntRecord(GameConstants.DOJO);
+    }
+
+
+    public long getDojo_time() {
+        return dojo_time;
+    }
+
+    public void setDojo_time(long dojo_time) {
+        this.dojo_time = dojo_time;
+    }
+
+    public long getLast_vac() {
+        return last_vac;
+    }
+
+    public void setLast_vac(long last_vac) {
+        this.last_vac = last_vac;
     }
 
     public final int getFallCounter() {
@@ -3654,6 +3735,15 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void addFame(int famechange) {
         this.fame += famechange;
         getTrait(MapleTraitType.charm).addLocalExp(famechange);
+        if (this.fame >= 50) {
+            finishAchievement(7);
+        }
+        if (this.fame >= 100) {
+            finishAchievement(31);
+        }
+        if (this.fame >= 500) {
+            finishAchievement(32);
+        }
     }
 
     public void updateFame() {
@@ -4845,7 +4935,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
          *
          */
         boolean leveled = false;
-        if (level < 200) {
+        if (level < 255) {
             if ((long) this.exp + (long) total > (long) Integer.MAX_VALUE) {
                 int gainFirst = GameConstants.getExpNeededForLevel(level) - this.exp;
                 total -= gainFirst + 1;
@@ -4905,7 +4995,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         //   stats.checkEquipLevels(this, total); //gms like
         // }
         int needed = getNeededExp();
-        if ((level >= 200 || (GameConstants.isKOC(job) && level >= 200))) {// && !isIntern()) {
+        if ((level >= 255 || (GameConstants.isKOC(job) && level >= 255))) {// && !isIntern()) {
             setExp(0);
             //if (exp + total > needed) {
             //    setExp(needed);
@@ -5232,9 +5322,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         MapleQuestStatus stat = getQuestNoAdd(MapleQuest.getInstance(GameConstants.PENDANT_SLOT));
         if (c.getPlayer().isGM()) {
             c.getPlayer().getQuestNAdd(MapleQuest.getInstance(GameConstants.PENDANT_SLOT)).setCustomData(String.valueOf(System.currentTimeMillis() + ((long) 2014 * 24 * 60 * 60000)));
-            c.sendPacket(CWvsContext.pendantSlot(true));
+            c.sendPacket(CWvsContext.pendantSlot(Long.parseLong(stat.getCustomData())));
         } else {
-            c.sendPacket(CWvsContext.pendantSlot(stat != null && stat.getCustomData() != null && Long.parseLong(stat.getCustomData()) > System.currentTimeMillis()));
+            c.sendPacket(CWvsContext.pendantSlot(Long.parseLong(stat.getCustomData())));
         }
         // Pocket Slots
         MapleQuest pocket = MapleQuest.getInstance(6500);
@@ -5436,6 +5526,20 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
         meso += gain;
         updateSingleStat(MapleStat.MESO, meso, false);
+
+        if (meso >= 1000000) {
+            finishAchievement(70);
+        }
+        if (meso >= 10000000) {
+            finishAchievement(71);
+        }
+        if (meso >= 100000000) {
+            finishAchievement(72);
+        }
+        if (meso >= 1000000000) {
+            finishAchievement(73);
+        }
+
         client.sendPacket(CWvsContext.enableActions());
         if (show) {
             client.sendPacket(InfoPacket.showMesoGain(gain, inChat));
@@ -5930,11 +6034,6 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void levelUp() {
-        if (!isGM() && getLevel() >= 200) {
-            setLevel((short) 200); // if they're leveling at a 200+ and not a GM
-            setExp(0); // Let's reset them automatically and reset their exp. :(
-            return;
-        }
         if (GameConstants.isKOC(job) && level <= 70) {
             remainingAp += 6;
         } else {
@@ -5984,16 +6083,49 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             exp = 0;
         }
         level += 1;
+        int level = getLevel();
+        // 成就系統
+        if (level == 10) {
+            finishAchievement(30);
+        }
+        // 成就系統
+        if (level == 30) {
+            finishAchievement(2);
+        }
+        if (level == 70) {
+            finishAchievement(3);
+        }
+        if (level == 120) {
+            finishAchievement(4);
+        }
+        if (level == 200) {
+            finishAchievement(5);
+        }
+        if (level == 210) {
+            finishAchievement(25);
+        }
+        if (level == 220) {
+            finishAchievement(26);
+        }
+        if (level == 230) {
+            finishAchievement(27);
+        }
+        if (level == 240) {
+            finishAchievement(28);
+        }
+        if (level == 250) {
+            finishAchievement(29);
+        }
         if (level == 200 && !isGM()) {
-            final StringBuilder sb = new StringBuilder("[Congratulation] ");
-            final Item medal = getInventory(MapleInventoryType.EQUIPPED).getItem((byte) -46);
+            final StringBuilder sb = new StringBuilder("[恭喜] ");
+            final Item medal = getInventory(MapleInventoryType.EQUIPPED).getItem((byte) -21);
             if (medal != null) { // Medal
                 sb.append("<");
                 sb.append(MapleItemInformationProvider.getInstance().getName(medal.getItemId()));
                 sb.append("> ");
             }
             sb.append(getName());
-            sb.append(" has achieved Level 200. Let us Celebrate Maplers!");
+            sb.append(" 達到了 200 等 是我們的英雄!");
             World.Broadcast.broadcastMessage(getWorld(), CWvsContext.broadcastMsg(6, sb.toString()));
         }
         maxhp = Math.min(99999, Math.abs(maxhp));
@@ -6009,7 +6141,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         statup.put(MapleStat.MP, stats.getCurrentMaxMp(getJob()));
         statup.put(MapleStat.EXP, exp);
         statup.put(MapleStat.LEVEL, (int) level);
-        if (isGM() || !GameConstants.isBeginnerJob(job)) { // Not Beginner, Nobless and Legend
+        if (!GameConstants.isBeginnerJob(job)) { // Not Beginner, Nobless and Legend
             if (GameConstants.isResist(this.job) || GameConstants.isMercedes(this.job)) {
                 remainingSp[GameConstants.getSkillBook(this.job, this.level)] += 3;
             } else {
@@ -7139,6 +7271,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public int getJQLevel() {
         return JQLevel;
+    }
+
+    public void forceUpdateItem(Item item, boolean updateTick) {
+        List<ModifyInventory> mods = new LinkedList<>();
+        mods.add(new ModifyInventory(3, item)); //删除道具
+        mods.add(new ModifyInventory(0, item)); //獲得道具
+        client.sendPacket(InventoryPacket.modifyInventory(updateTick, mods));
     }
 
     public void setJQLevel(int jqlevel) {
@@ -8403,6 +8542,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void getDiseaseBuff(final MapleBuffStatus disease, int x, long duration, int skillid, int level) {
         if (map != null && !hasDisease(disease)) {
+            if(this.getStat().equippedBlackDra)
+                return;
+
             if (!(disease == MapleBuffStatus.SEDUCE || disease == MapleBuffStatus.STUN || disease == MapleBuffStatus.HOLY_SHIELD)) {
                 if (getBuffedValue(MapleBuffStatus.HOLY_SHIELD) != null) {
                     return;
@@ -8968,6 +9110,122 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         client.sendPacket(MonsterCarnivalPacket.playerLeaveMessage(leader, name, team));
     }
 
+    public void setDailyQuestFinished(int id) {
+        if (!finishedDailyQuests.contains(id)) {
+            finishedDailyQuests.add(id);
+        }
+        setEventCount("每日任務" + id, 0, 1);
+    }
+
+    public void setDailyQuestRewarded(int id) {
+        if (!finishedDailyQuests.contains(id)) {
+            finishedDailyQuests.add(id);
+        }
+        setEventCount("每日任務" + id, 0, 2);
+    }
+
+    public boolean DailyQuestFinished(int DailyQuestid) {
+        if(DailyQuestid == 6 && !DailyQuestRewarded(6)) {
+            setEventCount("每日任務" + DailyQuestid, 0, 1);
+            return true;
+        }else if(DailyQuestid == 7 && !DailyQuestRewarded(7)){
+            setEventCount("每日任務" + DailyQuestid, 0, 1);
+            return true;
+        }else if(DailyQuestid == 8 && !DailyQuestRewarded(8)){
+            setEventCount("每日任務" + DailyQuestid, 0, 1);
+            return true;
+        }
+        return getEventCount("每日任務" + DailyQuestid) > 0;
+    }
+
+    public boolean DailyQuestRewarded(int DailyQuestid) {
+        return getEventCount("每日任務" + DailyQuestid) > 1;
+    }
+
+    public void finishDailyQuest(int id) {
+        if (!DailyQuestFinished(id)) {
+            if (isAlive() && !isClone()) {
+                MapleDailyQuests.getInstance().getById(id).finishDailyQuest(this);
+            }
+        }
+    }
+
+    public MapleDaily getDailyQuest(int id) {
+        if (isAlive())
+            return MapleDailyQuests.getInstance().getById(id);
+        else
+            return null;
+    }
+
+    public List<Integer> getFinishedDailyQuests() {
+        for (int i = 1; i <= 20;i++){
+            if(getEventCount("每日任務" + i) > 0 && !finishedDailyQuests.contains(id)){
+                finishedDailyQuests.add(id);
+            }
+        }
+        return finishedDailyQuests;
+    }
+
+    public void setAchievementFinished(int id) {
+        if (!finishedAchievements.contains(id)) {
+            finishedAchievements.add(id);
+        }
+    }
+
+    public boolean achievementFinished(int achievementid) {
+        Connection con = DatabaseConnection.getConnection();
+        try {
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM achievements WHERE accountid = ?");
+            ps.setInt(1, accountid);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                final int toAdd = rs.getInt("achievementid");
+                if (!finishedAchievements.contains(toAdd))
+                    finishedAchievements.add(toAdd);
+            }
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return finishedAchievements.contains(achievementid);
+    }
+
+    public void finishAchievement(int id) {
+        if (!achievementFinished(id)) {
+            if (isAlive() && !isClone()) {
+                MapleAchievements.getInstance().getById(id).finishAchievement(this);
+            }
+        }
+    }
+
+    public MapleAchievement getAchievement(int id) {
+        if (isAlive())
+            return MapleAchievements.getInstance().getById(id);
+        else
+            return null;
+    }
+
+    public List<Integer> getFinishedAchievements() {
+        Connection con = DatabaseConnection.getConnection();
+        try {
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM achievements WHERE accountid = ?");
+            ps.setInt(1, accountid);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                final int toAdd = rs.getInt("achievementid");
+                if (!finishedAchievements.contains(toAdd))
+                    finishedAchievements.add(toAdd);
+            }
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return finishedAchievements;
+    }
+
+
+
     public boolean getCanTalk() {
         return this.canTalk;
     }
@@ -9367,6 +9625,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (getMessenger() != null) {
             World.Messenger.silentLeaveMessenger(getMessenger().getId(), new MapleMessengerCharacter(this));
         }
+        if(isOpenRound){ // 換頻道關閉輪迴
+            MapleMap mp = getMap();
+            mp.killMonster(9700100);
+            this.isOpenRound = false;
+        }
         changeRemoval();
         PlayerBuffStorage.addBuffsToStorage(getId(), getAllBuffs());
         PlayerBuffStorage.addDiseaseToStorage(getId(), getAllDiseases());
@@ -9715,6 +9978,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             resetStats(4, 4, 4, 4);
         }
     }
+    public boolean isOpenRound() {
+        return isOpenRound;
+    }
+
+    public void setOpenRound(boolean openRound) {
+        isOpenRound = openRound;
+    }
 
     public boolean hasSummon() {
         return hasSummon;
@@ -9773,6 +10043,11 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
         if (!getDoors().isEmpty()) {
             removeDoor();
+        }
+        if(isOpenRound){ // 換頻道關閉輪迴
+            MapleMap mp = getMap();
+            mp.killMonster(9700100);
+            this.isOpenRound = false;
         }
         if (!getMechDoors().isEmpty()) {
             removeMechDoor();
@@ -10964,7 +11239,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.guildid = guildid;
         ret.stats = stats;
         ret.effects.putAll(effects);
-        ret.dispelSummons();
+        //ret.dispelSummons();
         ret.guildrank = guildrank;
         ret.guildContribution = guildContribution;
         ret.allianceRank = allianceRank;

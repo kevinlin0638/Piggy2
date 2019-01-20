@@ -38,7 +38,7 @@ public class MaplePacketEncoder extends MessageToByteEncoder<Object> {
     protected void encode(ChannelHandlerContext chc, Object message, ByteBuf buffer) throws Exception {
         final MapleClient client = chc.channel().attr(MapleClient.CLIENT_KEY).get();
 
-        if (client != null) {
+        if (client != null && (!client.isClientServer())) {
             final MapleAESOFB send_crypto = client.getSendCrypto();
 
             byte[] input = ((byte[]) message);

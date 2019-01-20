@@ -5,6 +5,7 @@ import client.MapleJob;
 import client.MapleTrait.MapleTraitType;
 import client.inventory.*;
 import constants.GameConstants;
+import constants.ServerConstants;
 import database.DatabaseConnection;
 import provider.*;
 import server.StructSetItem.SetItem;
@@ -117,6 +118,7 @@ public class MapleItemInformationProvider {
                 item.opID = Integer.parseInt(dat.getName());
                 item.optionType = MapleDataTool.getIntConvert("info/optionType", dat, 0);
                 item.reqLevel = MapleDataTool.getIntConvert("info/reqLevel", dat, 0);
+                item.opString = MapleDataTool.getString("info/string", dat, "");
                 for (String i : StructItemOption.types) {
                     if (i.equals("face")) {
                         item.face = MapleDataTool.getString("face", potLevel, "");
@@ -672,7 +674,7 @@ public class MapleItemInformationProvider {
                     case 2049604:
                         Item item;
                         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-                        item = ii.getStats((Equip) ii.getEquipById(nEquip.getItemId()), nEquip.getPotential1(), nEquip.getPotential2(), nEquip.getPotential3(), nEquip.getPotential4(), nEquip.getPotential5(), nEquip.getSocket1(), nEquip.getSocket2(), nEquip.getSocket3());
+                        item = ii.getStats((Equip) ii.getEquipById(nEquip.getItemId()), nEquip.getPotential1(), nEquip.getPotential2(), nEquip.getPotential3(), nEquip.getPotential4(), nEquip.getPotential5(), nEquip.getExtraScroll(), nEquip.getAddi_str(), nEquip.getAddi_dex() , nEquip.getAddi_int(), nEquip.getAddi_luk(), nEquip.getAddi_watk(), nEquip.getAddi_matk(), nEquip.getBreak_dmg());
                         if (chr.getInventory(GameConstants.getInventoryType(item.getItemId())).getNextFreeSlot() > 0 && !isMSI(nEquip, (short) 32760)) {
                             MapleInventoryManipulator.addbyItem(chr.getClient(), item);
                         } else {
@@ -681,99 +683,102 @@ public class MapleItemInformationProvider {
                         break;
                     default: {
                         if (GameConstants.isChaosScroll(scrollId.getItemId())) {
-                            int z = GameConstants.getChaosNumber(scrollId.getItemId());
+                            final int z = GameConstants.getChaosNumber(scrollId.getItemId());
+                            final int nagtive = scrollId.getItemId() > 2049120? 1: (Randomizer.nextBoolean() ? 1 : -1);
+
                             if (nEquip.getStr() > 0) {
-                                nEquip.setStr((short) (nEquip.getStr() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+                                nEquip.setStr((short) (nEquip.getStr() + Randomizer.nextInt(z) * nagtive));
                             }
                             if (nEquip.getDex() > 0) {
-                                nEquip.setDex((short) (nEquip.getDex() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+                                nEquip.setDex((short) (nEquip.getDex() + Randomizer.nextInt(z) * nagtive));
                             }
                             if (nEquip.getInt() > 0) {
-                                nEquip.setInt((short) (nEquip.getInt() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+                                nEquip.setInt((short) (nEquip.getInt() + Randomizer.nextInt(z) * nagtive));
                             }
                             if (nEquip.getLuk() > 0) {
-                                nEquip.setLuk((short) (nEquip.getLuk() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+                                nEquip.setLuk((short) (nEquip.getLuk() + Randomizer.nextInt(z) * nagtive));
                             }
                             if (nEquip.getWatk() > 0) {
-                                nEquip.setWatk((short) (nEquip.getWatk() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+                                nEquip.setWatk((short) (nEquip.getWatk() + Randomizer.nextInt(z) * nagtive));
                             }
                             if (nEquip.getWdef() > 0) {
-                                nEquip.setWdef((short) (nEquip.getWdef() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+                                nEquip.setWdef((short) (nEquip.getWdef() + Randomizer.nextInt(z) * nagtive));
                             }
                             if (nEquip.getMatk() > 0) {
-                                nEquip.setMatk((short) (nEquip.getMatk() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+                                nEquip.setMatk((short) (nEquip.getMatk() + Randomizer.nextInt(z) * nagtive));
                             }
                             if (nEquip.getMdef() > 0) {
-                                nEquip.setMdef((short) (nEquip.getMdef() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+                                nEquip.setMdef((short) (nEquip.getMdef() + Randomizer.nextInt(z) * nagtive));
                             }
                             if (nEquip.getAcc() > 0) {
-                                nEquip.setAcc((short) (nEquip.getAcc() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+                                nEquip.setAcc((short) (nEquip.getAcc() + Randomizer.nextInt(z) * nagtive));
                             }
                             if (nEquip.getAvoid() > 0) {
-                                nEquip.setAvoid((short) (nEquip.getAvoid() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+                                nEquip.setAvoid((short) (nEquip.getAvoid() + Randomizer.nextInt(z) * nagtive));
                             }
                             if (nEquip.getSpeed() > 0) {
-                                nEquip.setSpeed((short) (nEquip.getSpeed() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+                                nEquip.setSpeed((short) (nEquip.getSpeed() + Randomizer.nextInt(z) * nagtive));
                             }
                             if (nEquip.getJump() > 0) {
-                                nEquip.setJump((short) (nEquip.getJump() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+                                nEquip.setJump((short) (nEquip.getJump() + Randomizer.nextInt(z) * nagtive));
                             }
                             if (nEquip.getHp() > 0) {
-                                nEquip.setHp((short) (nEquip.getHp() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+                                nEquip.setHp((short) (nEquip.getHp() + Randomizer.nextInt(z) * nagtive));
                             }
                             if (nEquip.getMp() > 0) {
-                                nEquip.setMp((short) (nEquip.getMp() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+                                nEquip.setMp((short) (nEquip.getMp() + Randomizer.nextInt(z) * nagtive));
                             }
                             break;
                         } else if (GameConstants.isEquipScroll(scrollId.getItemId())) {
-                            int chanc = Math.max((scrollId.getItemId() == 2049300 || scrollId.getItemId() == 2049303 ? 100 : (scrollId.getItemId() == 2049305 ? 60 : 80)) - (nEquip.getEnhance() * 10), 10) + added;
-                            if (Randomizer.nextInt(100) > chanc) {
-                                return null; //destroyed, nib
+                            boolean isSucc = true;
+                            Pair<Integer, Integer> chanc = (scrollId.getItemId() == 2049300 ? getEnhanceSucceRate(true, nEquip.getEnhance()) : getEnhanceSucceRate(false, nEquip.getEnhance()));
+                            if(chr.getGMLevel() > 4)
+                                chanc = new Pair<Integer, Integer>(100, 0);
+                            if(!ServerConstants.isEnhanceEnable){
+                                chr.dropMessage(1, "裝備強化暫時關閉");
+                                break;
                             }
-                            for (int i = 0; i < (scrollId.getItemId() == 2049308 ? 5 : (scrollId.getItemId() == 2049305 ? 4 : (scrollId.getItemId() == 2049304 ? 3 : 1))); i++) {
-                                if (nEquip.getStr() > 0 || Randomizer.nextInt(50) == 1) { //1/50
-                                    nEquip.setStr((short) (nEquip.getStr() + Randomizer.nextInt(5)));
+                            if(!canlevelEnhance(nEquip)){
+                                chr.dropMessage(1, "裝備已達最高星等");
+                                break;
+                            }
+                            if(getEnhanceFee(true, nEquip.getEnhance()) > chr.getCSPoints(2) || getEnhanceFee(false, nEquip.getEnhance()) > chr.getMeso()){
+                                chr.dropMessage(1, "楓幣或楓點不足，詳細費用請見小豬谷衝星說明");
+                                break;
+                            }else{
+                                chr.modifyCSPoints(2, -1 * getEnhanceFee(true, nEquip.getEnhance()), true);
+                                chr.gainMeso(-1 * getEnhanceFee(false, nEquip.getEnhance()), false, true);
+                            }
+                            if (Randomizer.nextInt(100) > chanc.getLeft()) {
+                                if(Randomizer.nextInt(100) < chanc.getRight())
+                                    return null; //destroyed, nib
+                                else
+                                    isSucc = false;
+                            }
+                            if(!isSucc){
+                                if(nEquip.getEnhance() > 0 && nEquip.getEnhance() != 5 && nEquip.getEnhance() != 10 && nEquip.getEnhance() != 15 && nEquip.getEnhance() != 20 && nEquip.getEnhance() != 25) {
+                                    nEquip.setEnhance((byte) (nEquip.getEnhance() - 1));
+                                    setEnhanceStats(nEquip, true);
+                                    chr.dropMessage("失敗裝備扣星 目前星級 : " + nEquip.getEnhance());
+                                }else{
+                                    chr.dropMessage("失敗星級保護 目前星級 : " + nEquip.getEnhance());
                                 }
-                                if (nEquip.getDex() > 0 || Randomizer.nextInt(50) == 1) { //1/50
-                                    nEquip.setDex((short) (nEquip.getDex() + Randomizer.nextInt(5)));
-                                }
-                                if (nEquip.getInt() > 0 || Randomizer.nextInt(50) == 1) { //1/50
-                                    nEquip.setInt((short) (nEquip.getInt() + Randomizer.nextInt(5)));
-                                }
-                                if (nEquip.getLuk() > 0 || Randomizer.nextInt(50) == 1) { //1/50
-                                    nEquip.setLuk((short) (nEquip.getLuk() + Randomizer.nextInt(5)));
-                                }
-                                if (nEquip.getWatk() > 0 && GameConstants.isWeapon(nEquip.getItemId())) {
-                                    nEquip.setWatk((short) (nEquip.getWatk() + Randomizer.nextInt(5)));
-                                }
-                                if (nEquip.getWdef() > 0 || Randomizer.nextInt(40) == 1) { //1/40
-                                    nEquip.setWdef((short) (nEquip.getWdef() + Randomizer.nextInt(5)));
-                                }
-                                if (nEquip.getMatk() > 0 && GameConstants.isWeapon(nEquip.getItemId())) {
-                                    nEquip.setMatk((short) (nEquip.getMatk() + Randomizer.nextInt(5)));
-                                }
-                                if (nEquip.getMdef() > 0 || Randomizer.nextInt(40) == 1) { //1/40
-                                    nEquip.setMdef((short) (nEquip.getMdef() + Randomizer.nextInt(5)));
-                                }
-                                if (nEquip.getAcc() > 0 || Randomizer.nextInt(20) == 1) { //1/20
-                                    nEquip.setAcc((short) (nEquip.getAcc() + Randomizer.nextInt(5)));
-                                }
-                                if (nEquip.getAvoid() > 0 || Randomizer.nextInt(20) == 1) { //1/20
-                                    nEquip.setAvoid((short) (nEquip.getAvoid() + Randomizer.nextInt(5)));
-                                }
-                                if (nEquip.getSpeed() > 0 || Randomizer.nextInt(10) == 1) { //1/10
-                                    nEquip.setSpeed((short) (nEquip.getSpeed() + Randomizer.nextInt(5)));
-                                }
-                                if (nEquip.getJump() > 0 || Randomizer.nextInt(10) == 1) { //1/10
-                                    nEquip.setJump((short) (nEquip.getJump() + Randomizer.nextInt(5)));
-                                }
-                                if (nEquip.getHp() > 0 || Randomizer.nextInt(5) == 1) { //1/5
-                                    nEquip.setHp((short) (nEquip.getHp() + Randomizer.nextInt(5)));
-                                }
-                                if (nEquip.getMp() > 0 || Randomizer.nextInt(5) == 1) { //1/5
-                                    nEquip.setMp((short) (nEquip.getMp() + Randomizer.nextInt(5)));
-                                }
+                            }else{
+                                setEnhanceStats(nEquip, false);
                                 nEquip.setEnhance((byte) (nEquip.getEnhance() + 1));
+                                chr.dropMessage("成功裝備加星 目前星級 : " + nEquip.getEnhance());
+                                if(nEquip.getEnhance() == 5)
+                                    chr.finishAchievement(40);
+                                if(nEquip.getEnhance() == 10)
+                                    chr.finishAchievement(41);
+                                if(nEquip.getEnhance() == 15)
+                                    chr.finishAchievement(42);
+                                if(nEquip.getEnhance() == 20)
+                                    chr.finishAchievement(43);
+                                if(nEquip.getEnhance() == 25)
+                                    chr.finishAchievement(44);
+                                if(nEquip.getEnhance() == 30)
+                                    chr.finishAchievement(45);
                             }
                             break;
                         } else if (GameConstants.isPotentialScroll(scrollId.getItemId())) {
@@ -862,6 +867,629 @@ public class MapleItemInformationProvider {
         return equip;
     }
 
+    public void setEnhanceStats(final Equip equip, final boolean isCurse){
+        boolean isW = false;
+        if(GameConstants.isWeapon(equip.getItemId())){
+            isW = true;
+        }
+        int curse = isCurse?-1 : 1;
+
+        switch (equip.getEnhance()){
+            case 0:
+                if (isW) {
+                    if(!isCurse)
+                        setStats(equip, (byte) 1, 5, curse);
+                } else {
+                    if(!isCurse) {
+                        equip.setStr((short) (equip.getStr() + 7 * curse));
+                        equip.setDex((short) (equip.getDex() + 7 * curse));
+                        equip.setInt((short) (equip.getInt() + 7 * curse));
+                        equip.setLuk((short) (equip.getLuk() + 7 * curse));
+                    }
+                }
+                break;
+            case 1:
+                if (isW) {
+                    setStats(equip, (byte) 4, 15, curse);
+                } else {
+                    setStats(equip, (byte) 4, 7, curse);
+                }
+                break;
+            case 2:
+                if (isW) {
+                    setStats(equip, (byte) 3, 5, curse);
+                } else {
+                    setStats(equip, (byte) 3, 8, curse);
+                }
+                break;
+            case 3:
+                if (isW) {
+                    setStats(equip, (byte) 2, 25, curse);
+                } else {
+                    setStats(equip, (byte) 2, 40, curse);
+                }
+                break;
+            case 4:
+                if (isW) {
+                    setStats(equip, (byte) 4, 15, curse);
+                } else {
+                    setStats(equip, (byte) 4, 7, curse);
+                }
+                break;
+            case 5:
+                if (isW) {
+                    setStats(equip, (byte) 3, 5, curse);
+                } else {
+                    setStats(equip, (byte) 3, 8, curse);
+                }
+                break;
+            case 6:
+                if (isW) {
+                    setStats(equip, (byte) 2, 25, curse);
+                } else {
+                    setStats(equip, (byte) 2, 40, curse);
+                }
+                break;
+            case 7:
+                if (isW) {
+                    setStats(equip, (byte) 1, 5, curse);
+                } else {
+                    setStats(equip, (byte) 0, 5, curse);
+                }
+                break;
+            case 8:
+                if (isW) {
+                    setStats(equip, (byte) 1, 6, curse);
+                } else {
+                    setStats(equip, (byte) 0, 6, curse);
+                }
+                break;
+            case 9:
+                if (isW) {
+                    setStats(equip, (byte) 1, 7, curse);
+                } else {
+                    setStats(equip, (byte) 0, 10, curse);
+                }
+                break;
+            case 10:
+                if (isW) {
+                    setStats(equip, (byte) 1, 8, curse);
+                } else {
+                    setStats(equip, (byte) 0, 13, curse);
+                }
+                break;
+            case 11:
+                if (isW) {
+                    setStats(equip, (byte) 1, 9, curse);
+                } else {
+                    setStats(equip, (byte) 0, 15, curse);
+                }
+                break;
+            case 12:
+                if (isW) {
+                    setStats(equip, (byte) 1, 10, curse);
+                    setStats(equip, (byte) 0, 10, curse);
+                } else {
+                    setStats(equip, (byte) 0, 18, curse);
+                }
+                break;
+            case 13:
+                if (isW) {
+                    setStats(equip, (byte) 1, 15, curse);
+                    setStats(equip, (byte) 0, 10, curse);
+                } else {
+                    setStats(equip, (byte) 0, 20, curse);
+                }
+                break;
+            case 14:
+                if (isW) {
+                    setStats(equip, (byte) 1, 20, curse);
+                    setStats(equip, (byte) 0, 11, curse);
+                } else {
+                    setStats(equip, (byte) 0, 25, curse);
+                }
+                break;
+            case 15:
+                if (isW) {
+                    setStats(equip, (byte) 1, 21, curse);
+                    setStats(equip, (byte) 0, 12, curse);
+                } else {
+                    setStats(equip, (byte) 0, 30, curse);
+                }
+                break;
+            case 16:
+                if (isW) {
+                    setStats(equip, (byte) 1, 22, curse);
+                    setStats(equip, (byte) 0, 13, curse);
+                } else {
+                    setStats(equip, (byte) 1, 3, curse);
+                    setStats(equip, (byte) 0, 30, curse);
+                }
+                break;
+            case 17:
+                if (isW) {
+                    setStats(equip, (byte) 1, 23, curse);
+                    setStats(equip, (byte) 0, 14, curse);
+                } else {
+                    setStats(equip, (byte) 1, 3, curse);
+                    setStats(equip, (byte) 0, 32, curse);
+                }
+                break;
+            case 18:
+                if (isW) {
+                    setStats(equip, (byte) 1, 24, curse);
+                    setStats(equip, (byte) 0, 15, curse);
+                } else {
+                    setStats(equip, (byte) 1, 5, curse);
+                    setStats(equip, (byte) 0, 33, curse);
+                }
+                break;
+            case 19:
+                if (isW) {
+                    setStats(equip, (byte) 1, 25, curse);
+                    setStats(equip, (byte) 0, 20, curse);
+                } else {
+                    setStats(equip, (byte) 1, 5, curse);
+                    setStats(equip, (byte) 0, 34, curse);
+                }
+                break;
+            case 20:
+                if (isW) {
+                    setStats(equip, (byte) 1, 30, curse);
+                    setStats(equip, (byte) 0, 21, curse);
+                } else {
+                    setStats(equip, (byte) 1, 10, curse);
+                    setStats(equip, (byte) 0, 40, curse);
+                }
+                break;
+            case 21:
+                if (isW) {
+                    setStats(equip, (byte) 1, 31, curse);
+                    setStats(equip, (byte) 0, 22, curse);
+                } else {
+                    setStats(equip, (byte) 1, 11, curse);
+                    setStats(equip, (byte) 0, 41, curse);
+                }
+                break;
+            case 22:
+                if (isW) {
+                    setStats(equip, (byte) 1, 32, curse);
+                    setStats(equip, (byte) 0, 23, curse);
+                } else {
+                    setStats(equip, (byte) 1, 12, curse);
+                    setStats(equip, (byte) 0, 42, curse);
+                }
+                break;
+            case 23:
+                if (isW) {
+                    setStats(equip, (byte) 1, 33, curse);
+                    setStats(equip, (byte) 0, 24, curse);
+                } else {
+                    setStats(equip, (byte) 1, 13, curse);
+                    setStats(equip, (byte) 0, 43, curse);
+                }
+                break;
+            case 24:
+                if (isW) {
+                    setStats(equip, (byte) 1, 34, curse);
+                    setStats(equip, (byte) 0, 25, curse);
+                } else {
+                    setStats(equip, (byte) 1, 14, curse);
+                    setStats(equip, (byte) 0, 44, curse);
+                }
+                break;
+            case 25:
+                if (isW) {
+                    setStats(equip, (byte) 1, 50, curse);
+                    setStats(equip, (byte) 0, 30, curse);
+                } else {
+                    setStats(equip, (byte) 1, 20, curse);
+                    setStats(equip, (byte) 0, 50, curse);
+                }
+                break;
+            case 26:
+                if (isW) {
+                    setStats(equip, (byte) 1, 60, curse);
+                    setStats(equip, (byte) 0, 40, curse);
+                } else {
+                    setStats(equip, (byte) 1, 25, curse);
+                    setStats(equip, (byte) 0, 60, curse);
+                }
+                break;
+            case 27:
+                if (isW) {
+                    setStats(equip, (byte) 1, 70, curse);
+                    setStats(equip, (byte) 0, 50, curse);
+                } else {
+                    setStats(equip, (byte) 1, 30, curse);
+                    setStats(equip, (byte) 0, 70, curse);
+                }
+                break;
+            case 28:
+                if (isW) {
+                    setStats(equip, (byte) 1, 80, curse);
+                    setStats(equip, (byte) 0, 60, curse);
+                } else {
+                    setStats(equip, (byte) 1, 35, curse);
+                    setStats(equip, (byte) 0, 80, curse);
+                }
+                break;
+            case 29:
+                if (isW) {
+                    setStats(equip, (byte) 1, 90, curse);
+                    setStats(equip, (byte) 0, 70, curse);
+                } else {
+                    setStats(equip, (byte) 1, 40, curse);
+                    setStats(equip, (byte) 0, 90, curse);
+                }
+                break;
+        }
+
+    }
+
+    public void setStats(final Equip nEquip,final byte flag, final int q, final int curse){ // 0: stats 1: attack 2: def 3: speed jmp 4:acc avo
+        switch (flag){
+            case 0:
+                nEquip.setStr((short) (nEquip.getStr() + q * curse));
+                nEquip.setDex((short) (nEquip.getDex() + q * curse));
+                nEquip.setInt((short) (nEquip.getInt() + q * curse));
+                nEquip.setLuk((short) (nEquip.getLuk() + q * curse));
+                break;
+            case 1:
+                nEquip.setWatk((short) (nEquip.getWatk() + q * curse));
+                nEquip.setMatk((short) (nEquip.getMatk() + q * curse));
+                break;
+            case 2:
+                nEquip.setWdef((short) (nEquip.getWdef() + q * curse));
+                nEquip.setMdef((short) (nEquip.getMdef() + q * curse));
+                break;
+            case 3:
+                nEquip.setJump((short) (nEquip.getJump() + q * curse));
+                nEquip.setSpeed((short) (nEquip.getSpeed() + q * curse));
+            case 4:
+                nEquip.setAcc((short) (nEquip.getAcc() + q * curse));
+                nEquip.setAvoid((short) (nEquip.getAvoid() + q * curse));
+                break;
+        }
+    }
+
+    public boolean canlevelEnhance(final Equip eq){
+        final int reqLevel = getReqLevel(eq.getItemId());
+        if(eq.getItemId() == 1112915 || eq.getItemId() == 1152082)
+            return eq.getEnhance() < 30;
+
+        if(reqLevel < 30)
+            return eq.getEnhance() < 5;
+        else if(reqLevel < 70)
+            return eq.getEnhance() < 10;
+        else if(reqLevel < 130)
+            return eq.getEnhance() < 20;
+        else
+            return eq.getEnhance() < 30;
+    }
+
+    public Pair<Integer, Integer> getEnhanceSucceRate(final boolean isHigh, final byte level){
+        boolean isW = false;
+        if(isHigh){
+            isW = true;
+        }
+        switch (level){
+            case 0:
+                if(isW)
+                    return new Pair<>(100, 0);
+                else
+                    return new Pair<>(95, 0);
+            case 1:
+                if(isW)
+                    return new Pair<>(100, 0);
+                else
+                    return new Pair<>(90, 0);
+            case 2:
+                if(isW)
+                    return new Pair<>(100, 0);
+                else
+                    return new Pair<>(85, 0);
+            case 3:
+                if(isW)
+                    return new Pair<>(100, 0);
+                else
+                    return new Pair<>(80, 0);
+            case 4:
+                if(isW)
+                    return new Pair<>(95, 0);
+                else
+                    return new Pair<>(75, 0);
+            case 5:
+                if(isW)
+                    return new Pair<>(90, 0);
+                else
+                    return new Pair<>(70, 0);
+            case 6:
+                if(isW)
+                    return new Pair<>(85, 0);
+                else
+                    return new Pair<>(65, 0);
+            case 7:
+                if(isW)
+                    return new Pair<>(80, 1);
+                else
+                    return new Pair<>(60, 1);
+            case 8:
+                if(isW)
+                    return new Pair<>(75, 3);
+                else
+                    return new Pair<>(55, 3);
+            case 9:
+                if(isW)
+                    return new Pair<>(70, 5);
+                else
+                    return new Pair<>(50, 5);
+            case 10:
+                if(isW)
+                    return new Pair<>(65, 10);
+                else
+                    return new Pair<>(45, 10);
+            case 11:
+                if(isW)
+                    return new Pair<>(60, 15);
+                else
+                    return new Pair<>(40, 15);
+            case 12:
+                if(isW)
+                    return new Pair<>(55, 16);
+                else
+                    return new Pair<>(35, 16);
+            case 13:
+                if(isW)
+                    return new Pair<>(50, 17);
+                else
+                    return new Pair<>(30, 17);
+            case 14:
+                if(isW)
+                    return new Pair<>(45, 18);
+                else
+                    return new Pair<>(27, 18);
+            case 15:
+                if(isW)
+                    return new Pair<>(36, 19);
+                else
+                    return new Pair<>(26, 19);
+            case 16:
+                if(isW)
+                    return new Pair<>(35, 20);
+                else
+                    return new Pair<>(25, 20);
+            case 17:
+                if(isW)
+                    return new Pair<>(34, 21);
+                else
+                    return new Pair<>(24, 21);
+            case 18:
+                if(isW)
+                    return new Pair<>(33, 22);
+                else
+                    return new Pair<>(23, 22);
+            case 19:
+                if(isW)
+                    return new Pair<>(32, 23);
+                else
+                    return new Pair<>(22, 23);
+            case 20:
+                if(isW)
+                    return new Pair<>(31, 24);
+                else
+                    return new Pair<>(21, 24);
+            case 21:
+                if(isW)
+                    return new Pair<>(30, 25);
+                else
+                    return new Pair<>(20, 25);
+            case 22:
+                if(isW)
+                    return new Pair<>(30, 30);
+                else
+                    return new Pair<>(15, 30);
+            case 23:
+                if(isW)
+                    return new Pair<>(26, 35);
+                else
+                    return new Pair<>(13, 35);
+            case 24:
+                if(isW)
+                    return new Pair<>(20, 40);
+                else
+                    return new Pair<>(10, 40);
+            case 25:
+                if(isW)
+                    return new Pair<>(18, 42);
+                else
+                    return new Pair<>(9, 42);
+            case 26:
+                if(isW)
+                    return new Pair<>(16, 45);
+                else
+                    return new Pair<>(8, 45);
+            case 27:
+                if(isW)
+                    return new Pair<>(14, 50);
+                else
+                    return new Pair<>(7, 50);
+            case 28:
+                if(isW)
+                    return new Pair<>(12, 55);
+                else
+                    return new Pair<>(6, 55);
+            case 29:
+                if(isW)
+                    return new Pair<>(10, 60);
+                else
+                    return new Pair<>(5, 60);
+            default:
+                return new Pair<>(0, 0);
+        }
+
+    }
+    public int getEnhanceFee(final boolean isMP, final byte level){
+        boolean isW = false; // true : 楓點 false : 楓幣
+        if(isMP){
+            isW = true;
+        }
+        switch (level){
+            case 0:
+                if(isW)
+                    return 50000;
+                else
+                    return 500000;
+            case 1:
+                if(isW)
+                    return 100000;
+                else
+                    return 700000;
+            case 2:
+                if(isW)
+                    return 120000;
+                else
+                    return 800000;
+            case 3:
+                if(isW)
+                    return 150000;
+                else
+                    return 1030000;
+            case 4:
+                if(isW)
+                    return 180000;
+                else
+                    return 1200000;
+            case 5:
+                if(isW)
+                    return 200000;
+                else
+                    return 1500000;
+            case 6:
+                if(isW)
+                    return 250000;
+                else
+                    return 1700000;
+            case 7:
+                if(isW)
+                    return 300000;
+                else
+                    return 2000000;
+            case 8:
+                if(isW)
+                    return 350000;
+                else
+                    return 2400000;
+            case 9:
+                if(isW)
+                    return 400000;
+                else
+                    return 3200000;
+            case 10:
+                if(isW)
+                    return 450000;
+                else
+                    return 4800000;
+            case 11:
+                if(isW)
+                    return 500000;
+                else
+                    return 5200000;
+            case 12:
+                if(isW)
+                    return 550000;
+                else
+                    return 8770000;
+            case 13:
+                if(isW)
+                    return 600000;
+                else
+                    return 11800000;
+            case 14:
+                if(isW)
+                    return 650000;
+                else
+                    return 13200000;
+            case 15:
+                if(isW)
+                    return 700000;
+                else
+                    return 15400000;
+            case 16:
+                if(isW)
+                    return 750000;
+                else
+                    return 20800000;
+            case 17:
+                if(isW)
+                    return 800000;
+                else
+                    return 26900000;
+            case 18:
+                if(isW)
+                    return 900000;
+                else
+                    return 31500000;
+            case 19:
+                if(isW)
+                    return 1100000;
+                else
+                    return 38870000;
+            case 20:
+                if(isW)
+                    return 1400000;
+                else
+                    return 42530000;
+            case 21:
+                if(isW)
+                    return 1800000;
+                else
+                    return 46310000;
+            case 22:
+                if(isW)
+                    return 2300000;
+                else
+                    return 51350000;
+            case 23:
+                if(isW)
+                    return 2900000;
+                else
+                    return 55500000;
+            case 24:
+                if(isW)
+                    return 3600000;
+                else
+                    return 59500000;
+            case 25:
+                if(isW)
+                    return 4400000;
+                else
+                    return 63150000;
+            case 26:
+                if(isW)
+                    return 5300000;
+                else
+                    return 69500000;
+            case 27:
+                if(isW)
+                    return 6300000;
+                else
+                    return 76150000;
+            case 28:
+                if(isW)
+                    return 7400000;
+                else
+                    return 81500000;
+            case 29:
+                if(isW)
+                    return 8700000;
+                else
+                    return 87870000;
+            default:
+                return 0;
+        }
+    }
+
     public Item getEquipById(int equipId) {
         return getEquipById(equipId, -1);
     }
@@ -904,7 +1532,7 @@ public class MapleItemInformationProvider {
         return (short) ((defaultValue) + Randomizer.nextInt(lMaxRange + 1));
     }
 
-    public Equip getStats(Equip equip, int pot1, int pot2, int pot3, int pot4, int pot5, int sock1, int sock2, int sock3) {
+    public Equip getStats(Equip equip, int pot1, int pot2, int pot3, int pot4, int pot5, int addscro, short addstr, short adddex, short addint, short addluk, short addwatk, short addmatk, int bkg) {
         equip.setStr(equip.getStr());
         equip.setDex(equip.getDex());
         equip.setInt(equip.getInt());
@@ -925,9 +1553,14 @@ public class MapleItemInformationProvider {
         equip.setPotential3(pot3);
         equip.setPotential4(pot4);
         equip.setPotential5(pot5);
-        equip.setSocket1(sock1);
-        equip.setSocket2(sock2);
-        equip.setSocket3(sock3);
+        equip.setExtraScroll(addscro);
+        equip.setAddi_str(addstr);
+        equip.setAddi_dex(adddex);
+        equip.setAddi_int(addint);
+        equip.setAddi_luk(addluk);
+        equip.setAddi_watk(addwatk);
+        equip.setAddi_matk(addmatk);
+        equip.setBreak_dmg(bkg);
 
         return equip;
     }
@@ -1061,6 +1694,46 @@ public class MapleItemInformationProvider {
             }
             ret = MapleStatEffect.loadItemEffectFromData(item.getChildByPath("specEx"), itemId);
             itemEffectsEx.put(Integer.valueOf(itemId), ret);
+        }
+        return ret;
+    }
+
+    public String resolvePotentialId(int itemId, int potId) {
+        int eqLevel = getReqLevel(itemId);
+        int potLevel;
+        List<StructItemOption> potInfo = getPotentialInfo(potId);
+        if (eqLevel == 0) {
+            potLevel = 1;
+        } else {
+            potLevel = (eqLevel + 1) / 10;
+            potLevel++;
+        }
+        if (potId <= 0) {
+            return "沒有潛能屬性";
+        }
+        StructItemOption itemOption = potInfo.get((potLevel - 1)<20?potLevel-1:19);
+        String ret = itemOption.opString;
+        for (int i = 0; i < itemOption.opString.length(); i++) {
+            //# denotes the beginning of the parameter name that needs to be replaced, e.g. "Weapon DEF: +#incPDD"
+            if (itemOption.opString.charAt(i) == '#') {
+                int j = i + 2;
+                while ((j < itemOption.opString.length()) && itemOption.opString.substring(i + 1, j).matches("^(?!_)(?!.*?_$)[a-zA-Z0-9_\u4e00-\u9fa5]+$")) {
+                    j++;
+                }
+                String curParam = itemOption.opString.substring(i, j);
+                String curParamStripped;
+                //get rid of any trailing percent signs on the parameter name
+                if (j != itemOption.opString.length() || itemOption.opString.charAt(itemOption.opString.length() - 1) == '%') { //hacky
+                    curParamStripped = curParam.substring(1, curParam.length() - 1);
+                } else {
+                    curParamStripped = curParam.substring(1);
+                }
+                String paramValue = Integer.toString(itemOption.get(curParamStripped));
+                if (curParam.charAt(curParam.length() - 1) == '%') {
+                    paramValue = paramValue.concat("%");
+                }
+                ret = ret.replace(curParam, paramValue);
+            }
         }
         return ret;
     }

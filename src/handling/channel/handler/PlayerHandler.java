@@ -1627,6 +1627,12 @@ public class PlayerHandler {
             final int wheelType = slea.readShort();
             final boolean wheel = wheelType > 0 && !GameConstants.isEventMap(chr.getMapId()) && chr.haveItem(5510000, 1, false, true) && chr.getMapId() / 1000000 != 925;
 
+            if(chr.isOpenRound()){
+                MapleMap mp = chr.getMap();
+                mp.killMonster(9700100);
+                chr.setOpenRound(false);
+            }
+
             if (targetId != -1 && !chr.isAlive()) {
                 chr.setStance(0);
                 if (chr.getEventInstance() != null && chr.getEventInstance().revivePlayer(chr) && chr.isAlive()) {

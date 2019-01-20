@@ -22,6 +22,7 @@ package handling.channel.handler;
 
 import client.MapleCharacter;
 import client.MapleClient;
+import handling.login.handler.LoginResponse;
 import server.status.MapleDiseaseValueHolder;
 import client.skill.SkillFactory;
 import constants.GameConstants;
@@ -37,6 +38,7 @@ import server.maps.FieldLimitType;
 import server.maps.MapleMap;
 import tools.FileoutputUtil;
 import tools.data.LittleEndianAccessor;
+import tools.data.MaplePacketLittleEndianWriter;
 import tools.packet.CField;
 import tools.packet.CWvsContext;
 import tools.packet.CWvsContext.BuddylistPacket;
@@ -131,6 +133,8 @@ public class InterServerHandler {
             return;
         }
 
+
+
         final int state = client.getLoginState();
         if (state != MapleClient.LOGIN_SERVER_TRANSITION && transfer == null) {
             client.getSession().close();
@@ -166,6 +170,23 @@ public class InterServerHandler {
 
         if (world == null) {
             client.getSession().close();
+        }
+
+        boolean is_p = false;
+        for(MapleClient cl : World.pending_clients){
+            if(cl.getAccountName().equals(client.getAccountName()) && cl.getSessionIPAddress().equalsIgnoreCase(client.getSessionIPAddress())){
+                is_p = true;
+                client.setClinetS(cl);
+                final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+                mplew.writeShort(10);
+                mplew.write(Integer.toString(player.getStat().getBkd()).getBytes());
+                client.getClinetS().sendPacket(mplew.getPacket());
+            }
+        }
+
+        if(!is_p) {
+            client.getSession().close();
+            return;
         }
 
         client.setPlayer(player);

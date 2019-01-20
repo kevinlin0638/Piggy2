@@ -18,6 +18,8 @@ import handling.login.LoginServer;
 import handling.world.World;
 import handling.world.family.MapleFamily;
 import handling.world.guild.MapleGuild;
+import server.HttpServer.HttpHandler;
+import server.HttpServer.HttpServer;
 import server.Timer.*;
 import server.cashshop.CashItemFactory;
 import server.life.MapleLifeFactory;
@@ -92,6 +94,11 @@ public class Start {
         LoginServer.initiate();
         CashShopServer.initiate();
         ClientServer.initiate();
+        try {
+            new HttpServer(80).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         // Every other instance cache :)

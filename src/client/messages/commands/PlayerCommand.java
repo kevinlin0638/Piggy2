@@ -10,6 +10,7 @@ import constants.ServerConstants.PlayerGMRank;
 import handling.channel.ChannelServer;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
+import server.life.MapleLifeFactory;
 import server.life.MapleMonster;
 import server.maps.MapleMap;
 import server.maps.MapleMapObject;
@@ -147,6 +148,49 @@ public class PlayerCommand {
         @Override
         public String getHelpMessage() {
             return "@怪物 - 怪物資訊";
+        }
+    }
+
+    public static class round extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            for (int i : GameConstants.blockedMaps) {
+                if (c.getPlayer().getMapId() == i || c.getPlayer().getMapId() == 910000000) {
+                    c.getPlayer().dropMessage(1, "你不能在這裡使用此指令.");
+                    return false;
+                }
+            }
+            if (c.getPlayer().getMap().getSquadByMap() != null || c.getPlayer().getEventInstance() != null || c.getPlayer().getMap().getEMByMap() != null || c.getPlayer().getMapId() >= 990000000/* || FieldLimitType.VipRock.check(c.getPlayer().getMap().getFieldLimit())*/) {
+                c.getPlayer().dropMessage(1, "你不能在這裡使用此指令.");
+                return false;
+            }
+            if ((c.getPlayer().getMapId() >= 680000210 && c.getPlayer().getMapId() <= 680000502) || (c.getPlayer().getMapId() / 1000 == 980000 && c.getPlayer().getMapId() != 980000000) || (c.getPlayer().getMapId() / 100 == 1030008) || (c.getPlayer().getMapId() / 100 == 922010) || (c.getPlayer().getMapId() / 10 == 13003000)) {
+                c.getPlayer().dropMessage(1, "你不能在這裡使用此指令.");
+                return false;
+            }
+            MapleMonster mob = null;
+            Item item = c.getPlayer().getInventory(MapleInventoryType.ETC).findById(4030004);
+            if (item != null) {
+                List<MapleMonster>ms = c.getPlayer().getMap().getAllMonster();
+                for(MapleMonster moo : ms){
+                    if(moo.getId() == 9700100) {
+                        c.getPlayer().dropMessage(6, "地圖上已有 輪迴石碑.");
+                        return true;
+                    }
+                }
+                mob = MapleLifeFactory.getMonster(9700100);
+                c.getPlayer().getMap().spawnMonsterOnGroundBelow(mob, c.getPlayer().getPosition());
+                c.getPlayer().setOpenRound(true);
+            } else {
+                c.getPlayer().dropMessage(6, "您沒有召喚輪迴石碑的道具.");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@round - 招喚輪迴";
         }
     }
 

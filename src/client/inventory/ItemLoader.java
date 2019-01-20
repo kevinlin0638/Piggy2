@@ -129,6 +129,14 @@ public enum ItemLoader {
                             equip.setEquipExp(rs.getInt("equipExp")); // EUS
                             equip.setEquipMSIUpgrades(rs.getInt("equipMSIUpgrades")); // EUS
                             equip.setCharmEXP(rs.getShort("charmEXP"));
+                            equip.setExtraScroll(rs.getInt("extrascroll"));
+                            equip.setAddi_str((short) rs.getInt("addi_str"));
+                            equip.setAddi_dex((short) rs.getInt("addi_dex"));
+                            equip.setAddi_int((short) rs.getInt("addi_int"));
+                            equip.setAddi_luk((short) rs.getInt("addi_luk"));
+                            equip.setAddi_watk((short) rs.getInt("addi_watk"));
+                            equip.setAddi_matk((short) rs.getInt("addi_matk"));
+                            equip.setBreak_dmg(rs.getInt("break_dmg"));
                             if (equip.getCharmEXP() < 0) { //has not been initialized yet
                                 equip.setCharmEXP(((Equip) ii.getEquipById(equip.getItemId())).getCharmEXP());
                             }
@@ -201,7 +209,7 @@ public enum ItemLoader {
         query_2.append(arg);
         query_2.append(", itemid, inventorytype, position, quantity, owner, GM_Log, uniqueid, expiredate, flag, `type`, sender) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         ps = con.prepareStatement(query_2.toString(), Statement.RETURN_GENERATED_KEYS);
-        PreparedStatement pse = con.prepareStatement("INSERT INTO " + table_equip + " VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        PreparedStatement pse = con.prepareStatement("INSERT INTO " + table_equip + " VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?)");
         final Iterator<Pair<Item, MapleInventoryType>> iter = items.iterator();
         Pair<Item, MapleInventoryType> pair;
         while (iter.hasNext()) {
@@ -277,6 +285,14 @@ public enum ItemLoader {
                 pse.setInt(34, equip.getEquipmentLevel()); // EUS
                 pse.setInt(35, equip.getEquipmentExp()); // EUS
                 pse.setInt(36, equip.getEquipMSIUpgrades()); // EUS
+                pse.setInt(37, equip.getExtraScroll());
+                pse.setShort(38, equip.getAddi_str());
+                pse.setShort(39, equip.getAddi_dex());
+                pse.setShort(40, equip.getAddi_int());
+                pse.setShort(41, equip.getAddi_luk());
+                pse.setShort(42, equip.getAddi_watk());
+                pse.setShort(43, equip.getAddi_matk());
+                pse.setInt(44, equip.getBreak_dmg());
                 pse.executeUpdate();
             }
         }

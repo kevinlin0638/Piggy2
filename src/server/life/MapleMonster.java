@@ -206,6 +206,13 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         this.hp = ostats.getHp();
         this.mp = ostats.getMp();
     }
+    public final void dojoChangeLevel(final int newLevel, final Long Hp, final long EXP) { //Custom hell
+
+
+        this.ostats = new ChangeableStats(stats, newLevel, Hp, EXP);
+        this.hp = ostats.getHp();
+        this.mp = ostats.getMp();
+    }
 
     public final MapleMonster getSponge() {
         return sponge.get();
@@ -468,6 +475,9 @@ public class MapleMonster extends AbstractLoadedMapleLife {
                 controll.getClient().sendPacket(MobPacket.stopControllingMonster(getObjectId()));
             }
             controll.stopControllingMonster(this);
+        }
+        if (killer != null && stats.isBoss()) {
+            killer.finishAchievement(18);
         }
         spawnRevives(getMap());
         if (eventInstance != null) {

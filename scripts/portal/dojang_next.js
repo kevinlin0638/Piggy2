@@ -1,6 +1,6 @@
 function enter(pi) {
     if (!pi.haveMonster(9300216)) {
-	pi.playerMessage("There are still some monsters remaining.");
+	pi.playerMessage("地圖上目前還有怪物.");
     } else {
 	pi.dojoAgent_NextMap(true, false);
     }

@@ -940,7 +940,7 @@ public class CWvsContext {
     }
 
     public static byte[] Mulung_Pts(int recv, int total) {
-        return showQuestMsg("You have received " + recv + " training points. Your total training score is now " + total + ".");
+        return showQuestMsg("您獲得了 " + recv + " 道場點數. 目前您的總到場點數為 " + total + ".");
     }
 
     public static byte[] broadcastMessage(String message) {
@@ -1545,11 +1545,11 @@ public class CWvsContext {
         return mplew.getPacket();
     }
 
-    public static byte[] pendantSlot(boolean p) { //slot -59
+    public static byte[] pendantSlot(long p) { //slot -59
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.PENDANT_SLOT.getValue());
-        mplew.write(p ? 1 : 0);
+        mplew.writeBoolean(true);
 
         return mplew.getPacket();
     }

@@ -24,6 +24,7 @@ import client.MapleCharacter;
 import client.MapleCharacter.DojoMode;
 import client.MapleTrait.MapleTraitType;
 import constants.GameConstants;
+import database.DatabaseConnection;
 import handling.channel.ChannelServer;
 import handling.world.MaplePartyCharacter;
 import handling.world.World;
@@ -37,13 +38,26 @@ import tools.FileoutputUtil;
 import tools.packet.CWvsContext;
 
 import java.awt.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Event_DojoAgent {
 
     private final static int baseAgentMapId = 970030000; // 9500337 = mano
-    private final static Point point1 = new Point(140, 0),
-            point2 = new Point(-193, 0),
-            point3 = new Point(355, 0);
+    private static final java.util.List<Integer> mob_easy = new ArrayList<Integer>(
+            Arrays.asList(9300184, 9300185, 9300186, 9300187, 9300188, 9300189, 9300190, 9300191, 9300192, 9300193));
+    private static final java.util.List<Integer> mob_hrad = new ArrayList<Integer>(
+            Arrays.asList(9300194, 9300195, 9300196, 9300197, 9300198, 9300199, 9300200, 9300201, 9300202, 9300203));
+    private static final List<Integer> mob_hell = new ArrayList<Integer>(
+            Arrays.asList(9300204, 9300205, 9300206, 9300207, 9300210, 9300211, 9300212, 9300213, 9300214, 9300215));
+    private static final List<Integer> mob_night = new ArrayList<Integer>(
+            Arrays.asList(9305208, 9305209, 9305210, 9305211, 9305214, 9305216, 9305218, 9305236, 9305237, 9305238));
+
+    private final static Point point1 = new Point(140, 0);
     private static int dojoMode = -1;
 
     public static boolean warpStartAgent(final MapleCharacter c, final boolean party) {
@@ -91,6 +105,63 @@ public class Event_DojoAgent {
             }
         }
         return false;
+    }
+
+    public static boolean warpStartDojo(final MapleCharacter chr, final boolean party, final int level) {
+        int Start_Map = 925020100;
+        Start_Map += (level == 0? 0 : level == 1? 3 : level == 2?6: 10000);
+        final ChannelServer ch = chr.getClient().getChannelServer();
+        MapleMap map = null;
+        boolean can_start = false;
+
+        for(int i = 0; i < (level==2?4:3);i++){
+            map = ch.getMapFactory().getMap(Start_Map);
+            if (map.getCharactersSize() > 0)
+                Start_Map++;
+            else{
+                clearMap(map, false);
+                can_start = true;
+                break;
+            }
+        }
+        if(!can_start)
+            return false;
+
+        if (party && chr.getParty() != null) {
+            final MapleMap pass_map = chr.getMap();
+            for (MaplePartyCharacter mem : chr.getParty().getMembers()) {
+                MapleCharacter chr_mem = pass_map.getCharacterById(mem.getId());
+                if (chr_mem != null) {
+                    chr_mem.setDojo_time(System.currentTimeMillis());
+                    chr_mem.changeMap(map, map.getPortal(0));
+                }
+            }
+        } else {
+            chr.setDojo_time(System.currentTimeMillis());
+            chr.changeMap(map, map.getPortal(0));
+        }
+        spawnDojoMonster(map, 0, level);
+        return true;
+    }
+
+    private static void spawnDojoMonster(final MapleMap map, final int stage, final int level) {
+        List<Integer> mob_list;
+        if (level == 0)
+            mob_list = mob_easy;
+        else if (level == 1)
+            mob_list = mob_hrad;
+        else if (level == 2)
+            mob_list = mob_hell;
+        else
+            mob_list = mob_night;
+
+
+        final int mob_id = mob_list.get(stage);
+        final MapleMonster monster = MapleLifeFactory.getMonster(mob_id);
+        long[] state = getMobState(0, level);
+        monster.dojoChangeLevel((short) state[1], state[0], state[2]);
+        MapTimer.getInstance().schedule(() -> map.spawnMonsterWithEffect(monster
+                , 15, point1), 3000);
     }
 
     public static boolean warpStartDojo(final MapleCharacter c, final boolean party) {
@@ -163,6 +234,218 @@ public class Event_DojoAgent {
                 }
             }
         }
+    }
+
+
+    public static boolean startNextStage(final MapleCharacter chr, final MapleMap map, final int current, final int next_mob){
+        for(MapleMonster mb : map.getAllMonster()){
+            if(mob_night.contains(mb.getId()) || mob_hell.contains(mb.getId()) || mob_hrad.contains(mb.getId()) || mob_easy.contains(mb.getId()))
+                return false;
+        }
+
+        final int next_stage = current + 1;
+        final int level = CheckLevel(next_mob);
+        final int points = getDojoPoints(current, CheckLevel(next_mob));
+        if (chr.getParty() != null) {
+            final MapleMap pass_map = chr.getMap();
+            for (MaplePartyCharacter mem : chr.getParty().getMembers()) {
+                MapleCharacter chr_mem = pass_map.getCharacterById(mem.getId());
+                if (chr_mem != null) {
+                    final int cal = CalculatePoints(points, chr_mem);
+                    chr_mem.modifyCSPoints(2, Double.valueOf(cal * 5.87).intValue(), true);
+                    chr_mem.setDojo(chr_mem.getDojo() + cal);
+                    chr_mem.getClient().getSession().write(CWvsContext.Mulung_Pts(cal, chr_mem.getDojo()));
+                    MapScriptMethods.sendDojoStart(chr_mem.getClient(), next_stage+1);
+                }
+            }
+        } else {
+            chr.modifyCSPoints(2, Double.valueOf(points * 0.1).intValue(), true);
+            chr.setDojo(chr.getDojo() + points);
+
+            MapScriptMethods.sendDojoStart(chr.getClient(), next_stage+1);
+        }
+        if(current != 9) {
+            final MapleMonster monster = MapleLifeFactory.getMonster(next_mob);
+            long[] state = getMobState(next_stage, level);
+            monster.dojoChangeLevel((short)state[1], state[0], state[2]);
+            MapTimer.getInstance().schedule(() -> map.spawnMonsterWithEffect(monster
+                    , 15, point1), 3000);
+            return false;
+        }
+
+        final MapleMap pass_map = chr.getMap();
+        long time = System.currentTimeMillis() - chr.getDojo_time();
+        long minutes = (time)/(60L * 1000L);
+        long secondd = (time-(minutes * 60L * 1000L))/(1000L);
+        switch (CheckLevel(next_mob)){
+            case 0:
+                for (MaplePartyCharacter mem : chr.getParty().getMembers()) {
+                    MapleCharacter chr_mem = pass_map.getCharacterById(mem.getId());
+                    if (chr_mem != null) {
+                        chr_mem.finishAchievement(75);
+                        chr_mem.finishDailyQuest(10);
+                        chr_mem.dropMessage(6, "[道場公告]您通過的時間為 "+ minutes+ " 分 "+ secondd + " 秒。");
+                    }
+                }
+                break;
+            case 1:
+                for (MaplePartyCharacter mem : chr.getParty().getMembers()) {
+                    MapleCharacter chr_mem = pass_map.getCharacterById(mem.getId());
+                    if (chr_mem != null) {
+                        chr_mem.finishAchievement(76);
+                        chr_mem.finishDailyQuest(11);
+                        chr_mem.dropMessage(6, "[道場公告]您通過的時間為 "+ minutes+ " 分 "+ secondd + " 秒。");
+                    }
+                }
+                break;
+            case 2:
+                for (MaplePartyCharacter mem : chr.getParty().getMembers()) {
+                    MapleCharacter chr_mem = pass_map.getCharacterById(mem.getId());
+                    if (chr_mem != null) {
+                        chr_mem.finishAchievement(77);
+                        chr_mem.finishDailyQuest(12);
+                        chr_mem.dropMessage(6, "[道場公告]您通過的時間為 "+ minutes+ " 分 "+ secondd + " 秒。");
+                    }
+                }
+                break;
+            case 3:
+                for (MaplePartyCharacter mem : chr.getParty().getMembers()) {
+                    MapleCharacter chr_mem = pass_map.getCharacterById(mem.getId());
+                    if (chr_mem != null) {
+                        chr_mem.finishAchievement(78);
+                        chr_mem.finishDailyQuest(22);
+                        chr_mem.dropMessage(6, "[道場公告]您通過的時間為 "+ minutes+ " 分 "+ secondd + " 秒。");
+                    }
+                    if (chr.getParty().getMembers().size() == 1) {
+                        long dojoEndTime = System.currentTimeMillis();
+                        int timeDifference = (int) ((dojoEndTime / 1000) - (chr.getDojo_time() / 1000));
+                        chr.dropMessage(-1, "恭喜完成武陵地域-單挑.");
+                        try {
+                            PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM dojo_ranks WHERE name = ?");
+                            ps.setString(1, chr.getName());
+                            ResultSet rs = ps.executeQuery();
+                            if (rs.next()) {
+                                String name = rs.getString("name");
+
+                                if (chr.getName().equalsIgnoreCase(name) && rs.getInt("time") > timeDifference) { // if they exist :x
+                                    ps = DatabaseConnection.getConnection().prepareStatement("UPDATE dojo_ranks SET time = ? WHERE name = ?");
+                                    ps.setInt(1, timeDifference);
+                                    ps.setString(2, chr.getName());
+                                    ps.executeUpdate();
+                                    ps.close();
+                                    rs.close();
+                                    break;
+                                }
+                            }else {
+                                ps = DatabaseConnection.getConnection().prepareStatement("INSERT INTO dojo_ranks(name, time) VALUES(?, ?)");
+                                ps.setString(1, chr.getName());
+                                ps.setInt(2, timeDifference);
+                                ps.executeUpdate();
+                                ps.close();
+                                rs.close();
+                                break;
+                            }
+                            ps.close();
+                            rs.close();
+                        } catch (SQLException e) {
+                            System.out.println("Mu Lung Dojo Ranked Mode failed to read dojo_ranks. Error: " + e);
+                        }
+                    }
+                }
+                break;
+        }
+        return true; // 成功 傳送全部隊員
+    }
+
+    private static int CalculatePoints(final int point, final MapleCharacter chr) {
+        Double final_point = Integer.valueOf(point).doubleValue();
+
+        if(chr.getShareID() != -1 && chr.getMap().getCharacterById(chr.getShareID())!= null) {
+            final_point *= (1-chr.getSharePercentDouble());
+            return final_point.intValue() + 1;
+        }
+
+        if (chr.getParty() != null) {
+            final MapleMap pass_map = chr.getMap();
+            for (MaplePartyCharacter mem : chr.getParty().getMembers()) {
+                MapleCharacter chr_mem = pass_map.getCharacterById(mem.getId());
+                if (chr_mem != null) {
+                    if(!chr_mem.equals(chr) && chr_mem.getShareID() == chr.getId())
+                        final_point += (point * chr_mem.getSharePercentDouble());
+                }
+            }
+        }
+        return final_point.intValue();
+    }
+
+    private static long[] getMobState(final int stage, final int level) {
+        long[] state = new long[3];
+        switch (level){
+            case 0:
+                state[0] = 5000000L;
+                state[1] = 140;
+                state[2] = 500000L;
+                break;
+            case 1:
+                state[0] = 50000000L;
+                state[1] = 170;
+                state[2] = 1500000L;
+                break;
+            case 2:
+                state[0] = 750000000L;
+                state[1] = 200;
+                state[2] = 10000000L;
+                break;
+            case 3:
+                state[0] = 10000000000L;
+                state[1] = 250;
+                state[2] = 100000000L;
+                break;
+        }
+        state[0] =  state[0] * (stage + 1) / 10;
+        state[1] = ( state[1] - 20) + 2 * (stage + 1);
+        state[2] =  state[2] * (stage + 1) / 10;
+        return  state;
+    }
+
+    private static int CheckLevel(final int mobID){
+        if (mob_easy.contains(mobID))
+            return 0;
+        else if (mob_hrad.contains(mobID))
+            return 1;
+        else if (mob_hell.contains(mobID))
+            return 2;
+        else if (mob_night.contains(mobID))
+            return 3;
+        else
+            return -1;
+    }
+
+    public static int CheckStage(final MapleMap map, final int mobID){
+        if (map.getId() % 925020100 < 3)
+            return mob_easy.indexOf(mobID);
+        else if(map.getId() % 925020100 <= 5)
+            return mob_hrad.indexOf(mobID);
+        else if(map.getId() % 925020100 <= 9)
+            return mob_hell.indexOf(mobID);
+        else if(map.getId() % 925030100 <= 9)
+            return mob_night.indexOf(mobID);
+        else
+            return -1;
+    }
+
+
+    public static int CheckNextMob(final MapleMap map, final int mobID){
+        if (map.getId() % 925020100 < 3)
+            return mob_easy.get(mob_easy.indexOf(mobID)<9?mob_easy.indexOf(mobID) + 1:9);
+        else if(map.getId() % 925020100 <= 5)
+            return mob_hrad.get(mob_hrad.indexOf(mobID)<9?mob_hrad.indexOf(mobID) + 1:9);
+        else if(map.getId() % 925020100 <= 9)
+            return mob_hell.get(mob_hell.indexOf(mobID)<9?mob_hell.indexOf(mobID) + 1:9);
+        else if(map.getId() % 925030100 <= 9)
+            return mob_night.get(mob_night.indexOf(mobID)<9?mob_night.indexOf(mobID) + 1:9);
+        else
+            return -1;
     }
 
     // Resting rooms :
@@ -321,6 +604,32 @@ public class Event_DojoAgent {
         map.resetFully();
     }
 
+    private static int getDojoPoints(final int stage, final int level) {
+        switch (stage) {
+            case 0:
+                return 100 + (level * 6) * 100;
+            case 1:
+                return 120 + (level * 6) * 100;
+            case 2:
+                return 140 + (level * 6) * 100;
+            case 3:
+                return 160 + (level * 6) * 100;
+            case 4:
+                return 180 + (level * 6) * 100;
+            case 5:
+                return 200 + (level * 9) * 100;
+            case 6:
+                return 220 + (level * 9) * 100;
+            case 7:
+                return 240 + (level * 9) * 100;
+            case 8:
+                return 260 + (level * 9) * 100;
+            case 9:
+                return 280 + (level * 9) * 100;
+            default:
+                return 0;
+        }
+    }
     private static int getDojoPoints(final int stage) {
         switch (stage) {
             case 1:
@@ -502,7 +811,7 @@ public class Event_DojoAgent {
                             return;
                     }
                     mob.setOverrideStats(dojoStats);
-                    map.spawnMonsterWithEffect(mob, 15, rand == 0 ? point1 : rand == 1 ? point2 : point3);
+                    map.spawnMonsterWithEffect(mob, 15, point1);
                 }
             }, 3000);
         }

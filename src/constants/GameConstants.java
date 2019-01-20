@@ -7057,7 +7057,17 @@ public class GameConstants {
             983538205,
             1042550497,
             1105103527,
-            0
+            1237485928,
+            1347834785,
+            1492347855,
+            1534974749,
+            1634972934,
+            1720341038,
+            1810294739,
+            1920389471,
+            2010238128,
+            2102330434,
+            2147483622
     };
     private static int[] closeness = {
             0,
@@ -8737,7 +8747,23 @@ public class GameConstants {
     }
 
     public static int getChaosNumber(int itemId) {
-        return itemId == 2049116 ? 10 : 5;
+        switch (itemId){
+            case 2049100:
+            case 2049121:
+                return 5;
+            case 2049116:
+                return 10;
+            case 2049117:
+            case 2049118:
+            case 2049122:
+                return 20;
+            case 2049120:
+            case 2049119:
+            case 2049123:
+                return 40;
+            default:
+                return 0;
+        }
     }
 
     public static boolean isEquipScroll(int scrollId) {
@@ -10076,10 +10102,14 @@ public class GameConstants {
 
     public static short getSlotMax(int itemId) {
         switch (itemId) {
+            case 4030002:
             case 4030003:
             case 4030004:
             case 4030005:
-                return 1;
+            case 4030006:
+            case 4030007:
+            case 4030008:
+                return 1000;
             case 4001168:
             case 4031306:
             case 4031307:

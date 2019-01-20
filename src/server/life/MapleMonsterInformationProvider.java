@@ -34,10 +34,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 public class MapleMonsterInformationProvider {
@@ -45,6 +42,7 @@ public class MapleMonsterInformationProvider {
     private static final MapleMonsterInformationProvider instance = new MapleMonsterInformationProvider();
     private static final MapleDataProvider stringDataWZ = MapleDataProviderFactory.getDataProvider("String.wz");
     private static final MapleData mobStringData = stringDataWZ.getData("MonsterBook.img");
+    private final Map<Integer, List<Integer>> dropers = new HashMap<Integer, List<Integer>>();
     private final Map<Integer, ArrayList<MonsterDropEntry>> drops = new HashMap<Integer, ArrayList<MonsterDropEntry>>();
     private final List<MonsterGlobalDropEntry> globaldrops = new ArrayList<MonsterGlobalDropEntry>();
 
@@ -101,6 +99,41 @@ public class MapleMonsterInformationProvider {
             } catch (SQLException ignore) {
             }
         }
+    }
+
+    public final List<Integer> retrieveDroper(final int ItemId) {
+        if (dropers.containsKey(ItemId)) {
+            return dropers.get(ItemId);
+        }
+        final List<Integer> ret = new LinkedList<Integer>();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM drop_data WHERE itemid = ?");
+            ps.setInt(1, ItemId);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                ret.add(rs.getInt("dropperid"));
+            }
+
+        } catch (SQLException e) {
+            return ret;
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ignore) {
+                return ret;
+            }
+        }
+        dropers.put(ItemId, ret);
+        return ret;
     }
 
     public ArrayList<MonsterDropEntry> retrieveDrop(final int monsterId) {

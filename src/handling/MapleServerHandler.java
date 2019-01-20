@@ -36,6 +36,9 @@ import handling.clientmsg.ClientServer;
 import handling.login.LoginServer;
 import handling.login.handler.CharLoginHandler;
 import handling.netty.MaplePacketDecoder;
+import handling.world.World;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.UnpooledUnsafeDirectByteBuf;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.ReadTimeoutException;
@@ -45,6 +48,7 @@ import server.status.MapleBuffStatus;
 import tools.FileoutputUtil;
 import tools.MapleAESOFB;
 import tools.data.LittleEndianAccessor;
+import tools.data.MaplePacketLittleEndianWriter;
 import tools.packet.CWvsContext;
 import tools.packet.LoginPacket;
 import tools.packet.MTSCSPacket;
@@ -73,6 +77,10 @@ public class MapleServerHandler extends ChannelDuplexHandler {
 
     public boolean isLoginServer() {
         return channel == LOGIN_SERVER;
+    }
+
+    public boolean isClientServer() {
+        return channel == CLIENT_SERVER;
     }
 
     public boolean isCashShopServer() {
@@ -138,10 +146,12 @@ public class MapleServerHandler extends ChannelDuplexHandler {
 
         client.setWorld(world);
         client.setChannel(channel);
+        if (channel == MapleServerHandler.CLIENT_SERVER) {
+            client.setClientServer(true);
+        }
 
         MaplePacketDecoder.DecoderState decoderState = new MaplePacketDecoder.DecoderState();
         client.getSession().attr(MaplePacketDecoder.DECODER_STATE_KEY).set(decoderState);
-
         client.sendPacket(LoginPacket.getHello(ivSend, ivRecv));
         client.getSession().attr(MapleClient.CLIENT_KEY).set(client);
     }
@@ -168,6 +178,11 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                     || client.getLoginState() == MapleClient.LOGIN_SERVER_TRANSITION)) {
                 client.updateLoginState(MapleClient.LOGIN_NOT_LOGIN, client.getSessionIPAddress());
             }
+
+            ctx.channel().attr(MapleClient.CLIENT_KEY).set(null);
+        }
+        if(client != null && isClientServer()){
+            World.pending_clients.remove(client);
             ctx.channel().attr(MapleClient.CLIENT_KEY).set(null);
         }
         super.channelInactive(ctx);
@@ -175,8 +190,17 @@ public class MapleServerHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelRead(final ChannelHandlerContext ctx, final Object message) {
-
-        final LittleEndianAccessor slea = new LittleEndianAccessor(new tools.data.ByteArrayByteStream((byte[]) message));
+        byte[] msg;
+        if(message instanceof ByteBuf){
+            ByteBuf buff = (ByteBuf) message;
+            // There is I need get bytes from buff and make serialization
+            msg = new byte[buff.readableBytes()];
+            int readerIndex = buff.readerIndex();
+            buff.getBytes(readerIndex, msg);
+        }else{
+            msg = (byte[]) message;
+        }
+        final LittleEndianAccessor slea = new LittleEndianAccessor(new tools.data.ByteArrayByteStream(msg));
         if (slea.available() < 2) {
             return;
         }
@@ -232,6 +256,25 @@ public class MapleServerHandler extends ChannelDuplexHandler {
             case PONG:
                 client.pongReceived();
                 break;
+        }
+
+        if (isClientServer()){
+            switch (header) {
+                case GET_ACCOUNT_NAME:
+                    long ava = slea.available();
+                    System.out.println(client.getSessionIPAddress());
+                    final String accountname = slea.readAsciiString((int)ava);
+                    client.setAccountName(accountname);
+                    for(MapleClient cl : World.pending_clients){
+                        if(cl.getAccountName().equalsIgnoreCase(accountname))
+                            World.pending_clients.remove(cl);
+                    }
+                    World.pending_clients.add(client);
+
+
+                break;
+            }
+            return;
         }
 
         if (this.isLoginServer()) {

@@ -88,4 +88,19 @@ public class ChangeableStats extends OverrideMonsterStats {
         pushed = (int) Math.round(stats.getPushed() * mod);
         level = newLevel > 250 ? 250 : newLevel;
     }
+
+    public ChangeableStats(MapleMonsterStats stats, int newLevel, long hpp, long expp) {
+        final double mod = (double) newLevel / (double) stats.getLevel();
+        hp = hpp;
+        mp = (int) Math.round(stats.getMp() * 20);
+        exp = (int) (expp);
+        watk = (int) Math.round(stats.getPhysicalAttack() * mod);
+        matk = (int) Math.round(stats.getMagicAttack() * mod);
+        acc = (int) Math.round(stats.getAcc() + Math.max(0, newLevel - stats.getLevel()) * 2);
+        eva = (int) Math.round(stats.getEva() + Math.max(0, newLevel - stats.getLevel()));
+        PDRate = Math.min(stats.isBoss() ? 30 : 20, (int) Math.round(stats.getPDRate() * mod));
+        MDRate = Math.min(stats.isBoss() ? 30 : 20, (int) Math.round(stats.getMDRate() * mod));
+        pushed = (int) Math.round(stats.getPushed() * mod);
+        level = newLevel > 250 ? 250 : newLevel;
+    }
 }

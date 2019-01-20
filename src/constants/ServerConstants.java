@@ -15,6 +15,7 @@ public class ServerConstants {
 
     public static boolean BLOCK_CASH_SHOP = false;
     public static boolean DEBUG = true;
+    public static boolean isEnhanceEnable = true;
     public static boolean ADMIN_ONLY = false;
     public static boolean ONLY_LOCALHOST = false; // Only allow accounted admins to connect pass login server
     public static boolean USE_SECOND_PASSWORD_AUTH = false;

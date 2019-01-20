@@ -304,11 +304,11 @@ public class PetHandler {
                 maxdist = 80;
             }
             //寵物全圖撿物
-            if (chr.getInventory(MapleInventoryType.ETC).findById(4430004) != null) {
+            if (chr.getInventory(MapleInventoryType.ETC).findById(4030003) != null) {
                 bino = true;
                 boots = true;
                 meso = true;
-                item = false;
+                item = true;
                 maxdist = 1000;
             } else {
                 bino = false;
@@ -317,17 +317,10 @@ public class PetHandler {
                 item = false;
             }
 
-            if (chr.getInventory(MapleInventoryType.ETC).findById(4430005) != null) {
-                bino = true;
-                boots = true;
-                meso = true;
-                item = true;
-                maxdist = 1000;
-            }
 
-            if ((boots || bino) || meso || item) {
+            if (((boots || bino) || meso || item) && (System.currentTimeMillis() - chr.getLast_vac() > 7000)) {
                 List<MapleMapObject> objects = player.getMap().getMapObjectsInRange(player.getPosition(), GameConstants.maxViewRangeSq(), Arrays.asList(MapleMapObjectType.ITEM));
-
+                chr.setLast_vac(System.currentTimeMillis());
                 for (ILifeMovementFragment move : res) {
                     Point petPos = move.getPosition();
                     double petX = petPos.getX();
@@ -354,21 +347,23 @@ public class PetHandler {
                                         } else {
                                             if (item) {
                                                 if (mapitem.getItem().getItemId() >= 5000000 && mapitem.getItem().getItemId() <= 5000045) {
-                                                    MapleInventoryManipulator.addById(chr.getClient(), mapitem.getItem().getItemId(), mapitem.getItem().getQuantity(), "Was picked up by " + chr.getName(), null);
+                                                    MapleInventoryManipulator.addById(chr.getClient(), mapitem.getItem().getItemId(), mapitem.getItem().getQuantity(), "撿起人 : " + chr.getName(), null);
                                                     chr.getMap().broadcastMessage(
                                                             CField.removeItemFromMap(mapitem.getObjectId(), 5, chr.getId(), petSlot),
                                                             mapitem.getPosition());
                                                     chr.getMap().removeMapObject(map_object);
                                                     mapitem.setPickedUp(true);
                                                 } else {
-                                                    StringBuilder logInfo = new StringBuilder("Picked up by ");
-                                                    logInfo.append(chr.getName());
-                                                    if (MapleInventoryManipulator.addFromDrop(chr.getClient(), mapitem.getItem(), true)) {
-                                                        chr.getMap().broadcastMessage(
-                                                                CField.removeItemFromMap(mapitem.getObjectId(), 5, chr.getId(), petSlot),
-                                                                mapitem.getPosition());
-                                                        chr.getMap().removeMapObject(map_object);
-                                                        mapitem.setPickedUp(true);
+                                                    if(MapleInventoryManipulator.checkSpace(chr.getClient(), mapitem.getItem().getItemId(), mapitem.getItem().getQuantity(), mapitem.getItem().getOwner())) {
+                                                        StringBuilder logInfo = new StringBuilder("撿起人 : ");
+                                                        logInfo.append(chr.getName());
+                                                        if (MapleInventoryManipulator.addFromDrop(chr.getClient(), mapitem.getItem(), true)) {
+                                                            chr.getMap().broadcastMessage(
+                                                                    CField.removeItemFromMap(mapitem.getObjectId(), 5, chr.getId(), petSlot),
+                                                                    mapitem.getPosition());
+                                                            chr.getMap().removeMapObject(map_object);
+                                                            mapitem.setPickedUp(true);
+                                                        }
                                                     }
                                                 }
                                             }

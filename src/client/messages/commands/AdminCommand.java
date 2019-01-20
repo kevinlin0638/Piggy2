@@ -31,6 +31,7 @@ import server.maps.*;
 import server.quest.MapleQuest;
 import server.status.MapleBuffStatus;
 import tools.StringUtil;
+import tools.data.MaplePacketLittleEndianWriter;
 import tools.packet.CField;
 import tools.types.Pair;
 
@@ -63,6 +64,23 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "@expRate <世界> <頻道> <倍率> - 設定經驗值倍率";
+        }
+    }
+
+    public static class SendToClient extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+            mplew.writeShort(10);
+            mplew.write(args.get(1).getBytes());
+            c.getClinetS().sendPacket(mplew.getPacket());
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "";
         }
     }
 
@@ -137,6 +155,26 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "!online - 查看在線人數";
+        }
+    }
+
+    public static class EnableEnhance extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            if(ServerConstants.isEnhanceEnable){
+                ServerConstants.isEnhanceEnable = false;
+                c.getPlayer().dropMessage(1, "成功 關閉裝備強化");
+            }else{
+                ServerConstants.isEnhanceEnable = true;
+                c.getPlayer().dropMessage(1, "成功 開啟裝備強化");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!EnableEnhance - 裝備強化開關";
         }
     }
 

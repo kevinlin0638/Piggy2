@@ -320,6 +320,8 @@ public class MapleLifeFactory {
                 hpdisplaytype = 1;
             } else if (mid >= 9300184 && mid <= 9300215) { // Mulung TC mobs
                 hpdisplaytype = 2;
+            } else if (mid >= 9305200 && mid <= 9305242) { // Mulung TC mobs
+                hpdisplaytype = 2;
             } else if (!stats.isBoss() || mid == 9410066 || stats.isPartyBonus()) { // Not boss and dong dong chiang
                 hpdisplaytype = 3;
             }

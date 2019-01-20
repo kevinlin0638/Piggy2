@@ -147,7 +147,7 @@ public class NPCScriptManager extends AbstractScriptManager {
     public final void startQuest(final MapleClient c, final int npc, final int quest) {
         if (!MapleQuest.getInstance(quest).canStart(c.getPlayer(), null)) {
             if (c.getPlayer().isShowErr()) {
-                c.getPlayer().showInfo("任務開始腳本", true, "無法開始任務 NPC：" + npc + " 任務：" + MapleQuest.getInstance(quest));
+                c.getPlayer().showInfo("任務開始腳本", true, "無法開始任務 NPC：" + npc + " 任務：" + quest);
             }
             return;
         }
@@ -155,7 +155,7 @@ public class NPCScriptManager extends AbstractScriptManager {
         lock.lock();
         try {
             if (c.getPlayer().isShowInfo()) {
-                c.getPlayer().showInfo("任務開始腳本", false, "腳本 - 開始任務 NPC：" + npc + " 任務：" + MapleQuest.getInstance(quest));
+                c.getPlayer().showInfo("任務開始腳本", false, "腳本 - 開始任務 NPC：" + npc + " 任務：" + quest);
             }
             if (!cms.containsKey(c) && c.canClickNPC()) {
                 final Invocable iv = getInvocable("quest/" + quest + ".js", c, true);
@@ -175,8 +175,8 @@ public class NPCScriptManager extends AbstractScriptManager {
                 c.getPlayer().showInfo("任務開始腳本", true, "無法執行腳本:已有腳本執行-" + cms.containsKey(c) + " | 允許執行腳本-" + c.canClickNPC());
             }
         } catch (final ScriptException | NoSuchMethodException e) {
-            System.err.println("執行任務開始腳本出錯 : NPC - " + npc + "任務 - " + MapleQuest.getInstance(quest) + " ." + e);
-            FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "\r\n\r\n執行任務開始腳本出錯 : NPC - " + npc + "任務 - " + MapleQuest.getInstance(quest) + " ." + e + "\r\n\r\n");
+            System.err.println("執行任務開始腳本出錯 : NPC - " + npc + "任務 - " + quest + " ." + e);
+            FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "\r\n\r\n執行任務開始腳本出錯 : NPC - " + npc + "任務 - " + quest + " ." + e + "\r\n\r\n");
             dispose(c);
             notice(c, npc, String.valueOf(quest), ScriptType.QUEST_START);
         } finally {
@@ -199,8 +199,8 @@ public class NPCScriptManager extends AbstractScriptManager {
                 cm.getIv().invokeFunction("start", mode, type, selection);
             }
         } catch (ScriptException | NoSuchMethodException e) {
-            System.err.println("執行任務開始腳本出錯 : NPC - " + cm.getNpc() + "任務 - " + MapleQuest.getInstance(cm.getQuest()) + " ." + e);
-            FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "\r\n\r\n執行任務開始腳本出錯 : NPC - " + cm.getNpc() + "任務 - " + MapleQuest.getInstance(cm.getQuest()) + " ." + e + "\r\n\r\n");
+            System.err.println("執行任務開始腳本出錯 : NPC - " + cm.getNpc() + "任務 - " + MapleQuest.getInstance(cm.getQuest()).getId() + " ." + e);
+            FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "\r\n\r\n執行任務開始腳本出錯 : NPC - " + cm.getNpc() + "任務 - " + MapleQuest.getInstance(cm.getQuest()).getId() + " ." + e + "\r\n\r\n");
             dispose(c);
             notice(c, cm.getNpc(), String.valueOf(cm.getQuest()), cm.getType());
         } finally {
@@ -211,7 +211,7 @@ public class NPCScriptManager extends AbstractScriptManager {
     public final void endQuest(final MapleClient c, final int npc, final int quest, final boolean customEnd) {
         if (!customEnd && !MapleQuest.getInstance(quest).canComplete(c.getPlayer(), null)) {
             if (c.getPlayer().isShowErr()) {
-                c.getPlayer().showInfo("任務完成腳本", true, "無法完成任務 NPC：" + npc + " 任務：" + MapleQuest.getInstance(quest));
+                c.getPlayer().showInfo("任務完成腳本", true, "無法完成任務 NPC：" + npc + " 任務：" + MapleQuest.getInstance(quest).getId());
             }
             return;
         }
@@ -219,7 +219,7 @@ public class NPCScriptManager extends AbstractScriptManager {
         lock.lock();
         try {
             if (c.getPlayer().isShowInfo()) {
-                c.getPlayer().showInfo("任務完成腳本", false, "腳本 - 完成任務 NPC：" + npc + " 任務：" + MapleQuest.getInstance(quest));
+                c.getPlayer().showInfo("任務完成腳本", false, "腳本 - 完成任務 NPC：" + npc + " 任務：" + MapleQuest.getInstance(quest).getId());
             }
             if (!cms.containsKey(c) && c.canClickNPC()) {
                 final Invocable iv = getInvocable("quest/" + quest + ".js", c, true);
@@ -239,7 +239,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             }
         } catch (ScriptException | NoSuchMethodException e) {
             System.err.println("執行任務完成腳本出錯 : NPC - " + npc + "任務 - " + MapleQuest.getInstance(quest) + " ." + e);
-            FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "\r\n\r\n執行任務完成腳本出錯 : NPC - " + npc + "任務 - " + MapleQuest.getInstance(quest) + " ." + e + "\r\n\r\n");
+            FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "\r\n\r\n執行任務完成腳本出錯 : NPC - " + npc + "任務 - " + MapleQuest.getInstance(quest).getId() + " ." + e + "\r\n\r\n");
             dispose(c);
             notice(c, npc, String.valueOf(quest), ScriptType.QUEST_END);
         } finally {
@@ -262,8 +262,8 @@ public class NPCScriptManager extends AbstractScriptManager {
                 cm.getIv().invokeFunction("end", mode, type, selection);
             }
         } catch (ScriptException | NoSuchMethodException e) {
-            System.err.println("執行任務完成腳本出錯 : NPC - " + cm.getNpc() + "任務 - " + MapleQuest.getInstance(cm.getQuest()) + " ." + e);
-            FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "\r\n\r\n執行任務完成腳本出錯 : NPC - " + cm.getNpc() + "任務 - " + MapleQuest.getInstance(cm.getQuest()) + " ." + e + "\r\n\r\n");
+            System.err.println("執行任務完成腳本出錯 : NPC - " + cm.getNpc() + "任務 - " + MapleQuest.getInstance(cm.getQuest()).getId() + " ." + e);
+            FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "\r\n\r\n執行任務完成腳本出錯 : NPC - " + cm.getNpc() + "任務 - " + MapleQuest.getInstance(cm.getQuest()).getId() + " ." + e + "\r\n\r\n");
             dispose(c);
             notice(c, cm.getNpc(), String.valueOf(cm.getQuest()), cm.getType());
         } finally {

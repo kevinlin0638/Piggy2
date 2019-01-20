@@ -241,6 +241,27 @@ public class DamageParse {
                     if (player == null) { // o_O
                         return;
                     }
+
+                    if(eachd > 50000)
+                        player.finishAchievement(60);
+                    if(eachd > 99999)
+                        player.finishAchievement(61);
+                    if(eachd > 499999)
+                        player.finishAchievement(62);
+                    if(eachd > 999999)
+                        player.finishAchievement(63);
+                    if(eachd > 1999999)
+                        player.finishAchievement(64);
+                    if(eachd > 4999999)
+                        player.finishAchievement(65);
+                    if(eachd > 9999999)
+                        player.finishAchievement(66);
+                    if(eachd > 19999999)
+                        player.finishAchievement(67);
+                    if(eachd > 59999999)
+                        player.finishAchievement(68);
+                    if(eachd > 99999999)
+                        player.finishAchievement(69);
                     totDamageToOneMonster += eachd;
                     //force the miss even if they dont miss. popular wz edit
                     if ((eachd == 0 || monster.getId() == 9700021) && player.getPyramidSubway() != null) { //miss

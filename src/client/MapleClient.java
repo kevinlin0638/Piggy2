@@ -70,6 +70,7 @@ public class MapleClient implements Serializable {
     private transient MapleAESOFB send, receive;
     private transient Channel session;
     private MapleCharacter player;
+    private MapleClient ClinetS;
 
     public long lastsmegaa;
     public long lastsmegacomparee;
@@ -85,7 +86,7 @@ public class MapleClient implements Serializable {
     private transient Calendar tempban = null;
     private String accountName;
     private transient long lastPong = 0, lastPing = 0;
-    private boolean monitored = false, receiving = true;
+    private boolean monitored = false, receiving = true, isClientServer = false;
     private int gmLevel;
     private byte greason = 1, gender = -1;
     private transient List<Integer> allowedChar = new LinkedList<>();
@@ -836,6 +837,17 @@ public class MapleClient implements Serializable {
             return LoginResponse.ACCOUNT_BLOCKED;
         }
 
+        boolean is_p = false;
+        for(MapleClient cl : World.pending_clients){
+            if(cl.getAccountName().equals(account) && cl.getSessionIPAddress().equalsIgnoreCase(getSessionIPAddress())){
+                is_p = true;
+                setClinetS(cl);
+            }
+        }
+
+        if(!is_p)
+            return LoginResponse.SYSTEM_ERROR;
+
         int loginState = getLoginState();
         if (loginState > 0) {
             if (loginState == MapleClient.CHANGE_CHANNEL
@@ -1458,6 +1470,14 @@ public class MapleClient implements Serializable {
         this.world = world;
     }
 
+    public MapleClient getClinetS() {
+        return ClinetS;
+    }
+
+    public void setClinetS(MapleClient clinetS) {
+        ClinetS = clinetS;
+    }
+
     public final int getLatency() {
         return (int) (lastPong - lastPing);
     }
@@ -1510,6 +1530,14 @@ public class MapleClient implements Serializable {
 
     public boolean isAdmin() {
         return gmLevel >= PlayerGMRank.ADMIN.getLevel();
+    }
+
+    public boolean isClientServer() {
+        return isClientServer;
+    }
+
+    public void setClientServer(boolean clientServer) {
+        isClientServer = clientServer;
     }
 
     public int getGmLevel() {

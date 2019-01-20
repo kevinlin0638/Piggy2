@@ -48,7 +48,7 @@ public class PlayerStats implements Serializable {
     private static int[] allJobs = {0, 10000, 10000000, 20000000, 20010000, 20020000, 30000000, 30010000};
     public short str, dex, luk, int_;
     public int hp, maxhp, mp, maxmp;
-    public transient boolean equippedWelcomeBackRing, hasClone, hasPartyBonus, Berserk, canFish, canFishVIP;
+    public transient boolean equippedWelcomeBackRing, equippedBlackDra, hasClone, hasPartyBonus, Berserk, canFish, canFishVIP;
     public transient double expBuff, dropBuff, mesoBuff, cashBuff, mesoGuard, mesoGuardMeso, expMod, pickupRange;
     public transient double dam_r, bossdam_r;
     public transient int recoverHP, recoverMP, mpconReduce, mpconPercent, incMesoProp, reduceCooltime, DAMreflect, DAMreflect_rate, ignoreDAMr, ignoreDAMr_rate, ignoreDAM, ignoreDAM_rate, mpRestore,
@@ -69,6 +69,7 @@ public class PlayerStats implements Serializable {
     private transient int magic, hands, accuracy;
     private transient long watk;
     private transient float localmaxbasedamage, localmaxbasepvpdamage, localmaxbasepvpdamageL;
+    private int bkd;
 
     public static int getSkillByJob(int skillID, int job) {
         if (GameConstants.isKOC(job)) {
@@ -254,6 +255,10 @@ public class PlayerStats implements Serializable {
         return localmaxbasedamage;
     }
 
+    public boolean isEquippedBlackDra() {
+        return equippedBlackDra;
+    }
+
     public float getCurrentMaxBasePVPDamage() {
         return localmaxbasepvpdamage;
     }
@@ -305,6 +310,7 @@ public class PlayerStats implements Serializable {
         passive_sharpeye_percent = 50;
         magic = 0;
         watk = 0;
+        bkd = 0;
         if (chra.getJob() == 500 || (chra.getJob() >= 520 && chra.getJob() <= 522)) {
             watk = 20; //bullet
         } else if (chra.getJob() == 400 || (chra.getJob() >= 410 && chra.getJob() <= 412) || (chra.getJob() >= 1400 && chra.getJob() <= 1412)) {
@@ -342,6 +348,7 @@ public class PlayerStats implements Serializable {
         mpRestore = 0;
         pickRate = 0;
         equippedWelcomeBackRing = false;
+        equippedBlackDra = false;
         equippedFairy = 0;
         equippedSummon = 0;
         hasClone = false;
@@ -404,6 +411,9 @@ public class PlayerStats implements Serializable {
                         }
                     }
                 }
+                bkd = equip.getBreak_dmg();
+                if(bkd > 2100000000)
+                    bkd = 2100000000;
             }
             if (equip.getItemId() / 10000 == 166 && equip.getAndroid() != null && chra.getAndroid() == null) {
                 chra.setAndroid(equip.getAndroid());
@@ -445,6 +455,9 @@ public class PlayerStats implements Serializable {
                 case 1112594:
                 case 1112663:
                     equippedSummon = 1179;
+                    break;
+                case 1152082:
+                    equippedBlackDra = true;
                     break;
                 default:
                     for (int eb_bonus : GameConstants.Equipments_Bonus) {
@@ -633,7 +646,7 @@ public class PlayerStats implements Serializable {
                     break;
                 case 4030004:
                     break;
-                case 4030005:
+                case 4030002:
                     cashMod = 2;
                     break;
             }
@@ -2431,6 +2444,15 @@ public class PlayerStats implements Serializable {
             chra.updatePartyMemberHP();
         }
 
+
+        if(!first_login) {
+            // 改破攻
+            final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+            mplew.writeShort(10);
+            mplew.write(Integer.toString(bkd).getBytes());
+            chra.getClient().getClinetS().sendPacket(mplew.getPacket());
+        }
+
         //[CUSTOM]: Inneral Abilities:
         //Apply formulas from InnerSkillValueHolder.java here;
         //PROOF OF CONCEPT. SEEMS TO WORK JUST FINE INGAME.
@@ -3327,5 +3349,9 @@ public class PlayerStats implements Serializable {
 
     public int getHPPercent() {
         return (int) Math.ceil((hp * 100.0) / localmaxhp);
+    }
+
+    public int getBkd() {
+        return bkd;
     }
 }

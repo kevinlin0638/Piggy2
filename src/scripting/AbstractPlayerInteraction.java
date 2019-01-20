@@ -468,6 +468,14 @@ public abstract class AbstractPlayerInteraction {
         c.getPlayer().modifyCSPoints(1, amount, true);
     }
 
+    public final void gainNX(final int type, final int amount) {
+        c.getPlayer().modifyCSPoints(type, amount, true);
+    }
+
+    public final int getNX(int type) {
+        return getClient().getPlayer().getCSPoints(type);
+    }
+
     public final void gainItemPeriod(final int id, final short quantity, final int period) { //period is in days
         gainItem(id, quantity, false, period, -1, "");
     }
@@ -556,6 +564,10 @@ public abstract class AbstractPlayerInteraction {
             return true;
         }
         return false;
+    }
+
+    public final void gainEquipItem(final Equip eq, final MapleClient cg) {
+        MapleInventoryManipulator.addbyItem(cg, eq.copy());
     }
 
     public final void changeMusic(final String songName) {
@@ -1041,7 +1053,8 @@ public abstract class AbstractPlayerInteraction {
     public final boolean dojoAgent_NextMap(final boolean dojo, final boolean fromresting) {
         if (dojo) {
             //return Event_DojoAgent.warpNextMap(c.getPlayer(), fromresting, c.getPlayer().getMap());
-            c.sendPacket(CField.instantMapWarp((byte) 7));
+            //c.sendPacket(CField.instantMapWarp((byte) 1));
+            c.getPlayer().changeMap(c.getPlayer().getMap().getId(), 1);
             return true;
         }
         return Event_DojoAgent.warpNextMap_Agent(c.getPlayer(), fromresting);

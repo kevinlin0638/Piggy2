@@ -58,6 +58,9 @@ public class ChatHandler {
                 client.getPlayer().getWatcher().dropMessage(5, "[" + client.getPlayer().getName() + "] [Chat Type: All] : " + text);
                 return;
             }
+            if (text.equalsIgnoreCase("我愛小豬谷")) {
+                chr.finishAchievement(11);
+            }
         }
         //TODO: 處理GM、玩家指令
         if (chr != null && !CommandProcessor.processCommand(client, text, CommandType.NORMAL)) {

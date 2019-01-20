@@ -35,8 +35,9 @@ public class Equip extends Item implements Serializable {
     public static final int WEAPON_RATIO = 700000;
     //charm: -1 = has not been initialized yet, 0 = already been worn, >0 = has teh charm exp
     private byte upgradeSlots = 0, level = 0, vicioushammer = 0, enhance = 0;
+    private short addi_str, addi_dex, addi_int, addi_luk, addi_watk, addi_matk;
     private short str = 0, dex = 0, _int = 0, luk = 0, hp = 0, mp = 0, watk = 0, matk = 0, wdef = 0, mdef = 0, acc = 0, avoid = 0, hands = 0, speed = 0, jump = 0, charmExp = 0, pvpDamage = 0;
-    private int itemEXP = 0, durability = -1, incSkill = -1, potential1 = 0, potential2 = 0, potential3 = 0, potential4 = 0, potential5 = 0, socket1 = -1, socket2 = -1, socket3 = -1;
+    private int itemEXP = 0, durability = -1, incSkill = -1, potential1 = 0, potential2 = 0, potential3 = 0, potential4 = 0, potential5 = 0, socket1 = -1, socket2 = -1, socket3 = -1, extrascroll, break_dmg = 0;
     private MapleRing ring = null;
     private MapleAndroid android = null;
     // EUS (Eric's doing something? Whoa!)
@@ -93,6 +94,14 @@ public class Equip extends Item implements Serializable {
         ret.equipLevel = equipLevel;
         ret.equipExp = equipExp;
         ret.equipMSIUpgrades = equipMSIUpgrades;
+        ret.extrascroll = extrascroll;
+        ret.addi_dex = addi_dex;
+        ret.addi_str = addi_str;
+        ret.addi_int = addi_int;
+        ret.addi_luk = addi_luk;
+        ret.addi_matk = addi_matk;
+        ret.addi_watk = addi_watk;
+        ret.break_dmg = break_dmg;
         ret.setGiftFrom(getGiftFrom());
         ret.setOwner(getOwner());
         ret.setQuantity(getQuantity());
@@ -515,6 +524,20 @@ public class Equip extends Item implements Serializable {
         this.potential5 = en;
     }
 
+    public int getPotential(int pos) {
+        switch (pos) {
+            case 1: {
+                return this.potential1;
+            }
+            case 2: {
+                return this.potential2;
+            }
+            case 3: {
+                return this.potential3;
+            }
+        }
+        return 0;
+    }
     public byte getState() {
         final int pots = potential1 + potential2 + potential3 + potential4 + potential5;
         if (potential1 >= 40000 || potential2 >= 40000 || potential3 >= 40000 || potential4 >= 40000 || potential5 >= 40000) {
@@ -558,7 +581,8 @@ public class Equip extends Item implements Serializable {
     }
 
     public void renewPotential(int type) { // 0 = normal miracle cube, 1 = premium, 2 = epic pot scroll, 3 = super
-        final int rank = type == 2 ? -18 : (Randomizer.nextInt(100) < 4 && getState() != (type == 3 ? 20 : 19) ? -(getState() + 1) : -(getState())); // 4 % chance to up 1 tier
+        int rate = getState() == 17 ? 20 : getState() == 18 ? 10 : 6;
+        final int rank = Randomizer.nextInt(1000) < rate && getState() != 20 ? -(getState() + 1) : -(getState());
         setPotential1(rank);
         if (getPotential3() > 0) {
             setPotential2(rank); // put back old 3rd line
@@ -823,6 +847,70 @@ public class Equip extends Item implements Serializable {
                 rewarded = true;
             }
         }
+    }
+
+    public int getExtraScroll() {
+        return extrascroll;
+    }
+
+    public void setExtraScroll(int extrascroll) {
+        this.extrascroll = extrascroll;
+    }
+
+    public short getAddi_str() {
+        return addi_str;
+    }
+
+    public void setAddi_str(short addi_str) {
+        this.addi_str = addi_str;
+    }
+
+    public short getAddi_dex() {
+        return addi_dex;
+    }
+
+    public void setAddi_dex(short addi_dex) {
+        this.addi_dex = addi_dex;
+    }
+
+    public short getAddi_int() {
+        return addi_int;
+    }
+
+    public void setAddi_int(short addi_int) {
+        this.addi_int = addi_int;
+    }
+
+    public short getAddi_luk() {
+        return addi_luk;
+    }
+
+    public void setAddi_luk(short addi_luk) {
+        this.addi_luk = addi_luk;
+    }
+
+    public short getAddi_watk() {
+        return addi_watk;
+    }
+
+    public void setAddi_watk(short addi_watk) {
+        this.addi_watk = addi_watk;
+    }
+
+    public short getAddi_matk() {
+        return addi_matk;
+    }
+
+    public void setAddi_matk(short addi_matk) {
+        this.addi_matk = addi_matk;
+    }
+
+    public int getBreak_dmg() {
+        return break_dmg;
+    }
+
+    public void setBreak_dmg(int break_dmg) {
+        this.break_dmg = break_dmg;
     }
 
     public static enum ScrollResult {

@@ -90,6 +90,7 @@ public class StructItemOption {
     public int optionType, reqLevel, opID; // opID = nebulite Id or potential ID
     public String face; // angry, cheers, love, blaze, glitter
     public Map<String, Integer> data = new HashMap<>();
+    public String opString; //potential string
 
     public int get(final String type) {
         return data.get(type) != null ? data.get(type) : 0;

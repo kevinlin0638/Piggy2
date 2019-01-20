@@ -27,6 +27,11 @@ public class ServerInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel channel) throws Exception {
         ChannelPipeline pipe = channel.pipeline();
+        if(world == -2) {
+            pipe.addLast("handler", new MapleServerHandler(world, channels));
+            pipe.addLast("encoder", new MaplePacketEncoder()); //encodes the packet
+            return;
+        }
         pipe.addLast("decoder", new MaplePacketDecoder()); // decodes the packet
         pipe.addLast("encoder", new MaplePacketEncoder()); //encodes the packet
         pipe.addLast("handler", new MapleServerHandler(world, channels));

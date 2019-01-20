@@ -1,5 +1,6 @@
 package handling.world;
 
+import client.MapleClient;
 import client.buddy.BuddyList;
 import client.buddy.BuddyList.BuddyAddResult;
 import client.buddy.BuddyList.BuddyOperation;
@@ -33,6 +34,7 @@ import server.maps.MapleMapItem;
 import tools.packet.CField;
 import tools.packet.CWvsContext;
 import tools.packet.CWvsContext.*;
+import tools.types.Pair;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -60,6 +62,7 @@ public class World {
     private static int pvpState = 0;
     private WorldConfig worldConfig;
     private int cashRate = 3, traitRate = 3, flags = 0;
+    public  static ArrayList<MapleClient> pending_clients = new ArrayList<>();
     private List<ChannelServer> channels = new ArrayList<>();
 
     public World(WorldConfig worldConfig) {
