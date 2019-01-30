@@ -58,7 +58,7 @@ public class ChatHandler {
                 client.getPlayer().getWatcher().dropMessage(5, "[" + client.getPlayer().getName() + "] [Chat Type: All] : " + text);
                 return;
             }
-            if (text.equalsIgnoreCase("我愛小豬谷")) {
+            if (text.equalsIgnoreCase("我愛小喵谷")) {
                 chr.finishAchievement(11);
             }
         }

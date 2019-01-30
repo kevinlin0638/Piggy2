@@ -5,7 +5,7 @@
 */
 
 var setupTask;
-var serverName = "小豬谷公告"
+var serverName = "小喵谷公告"
 
 function init() {
     scheduleNew();

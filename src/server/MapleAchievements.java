@@ -41,7 +41,7 @@ public class MapleAchievements {
          achievements.put(8, new MapleAchievement("穿著獅王道具", 7, false));
          achievements.put(9, new MapleAchievement("穿著女皇道具", 7, false));
          achievements.put(10, new MapleAchievement("穿著恰吉面具", 7, false));
-         achievements.put(11, new MapleAchievement("說 : 我愛小豬谷", 6, false));
+         achievements.put(11, new MapleAchievement("說 : 我愛小喵谷", 6, false));
          achievements.put(12, new MapleAchievement("擊敗 黑道大姊頭", 500000, false));
          achievements.put(13, new MapleAchievement("擊敗 拉圖斯", 500000, false));
          achievements.put(14, new MapleAchievement("擊敗 海怒斯", 500000, false));

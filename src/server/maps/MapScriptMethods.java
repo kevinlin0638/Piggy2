@@ -450,7 +450,7 @@ public class MapScriptMethods {
             case PRaid_D_Fenter: {
                 switch (c.getPlayer().getMapId() % 10) {
                     case 0:
-                        c.getPlayer().getMap().startMapEffect("Eliminate all the monsters!", 5120033);
+                        c.getPlayer().getMap().startMapEffect("消滅所有怪物!", 5120033);
                         break;
                     case 1:
                         c.getPlayer().getMap().startMapEffect("Break the boxes and eliminate the monsters!", 5120033);
@@ -459,7 +459,7 @@ public class MapScriptMethods {
                         c.getPlayer().getMap().startMapEffect("Eliminate the Officer!", 5120033);
                         break;
                     case 3:
-                        c.getPlayer().getMap().startMapEffect("Eliminate all the monsters!", 5120033);
+                        c.getPlayer().getMap().startMapEffect("消滅所有怪物!", 5120033);
                         break;
                     case 4:
                         c.getPlayer().getMap().startMapEffect("Find the way to the other side!", 5120033);
@@ -501,41 +501,41 @@ public class MapScriptMethods {
             case kenta_mapEnter:
                 switch ((c.getPlayer().getMapId() / 100) % 10) {
                     case 1:
-                        c.getPlayer().getMap().startMapEffect("Eliminate all the monsters!", 5120052);
+                        c.getPlayer().getMap().startMapEffect("消滅所有怪物!", 5120052);
                         break;
                     case 2:
                         c.getPlayer().getMap().startMapEffect("Get me 20 Air Bubbles for me to survive!", 5120052);
                         break;
                     case 3:
-                        c.getPlayer().getMap().startMapEffect("Help! Make sure I live for three minutes!", 5120052);
+                        c.getPlayer().getMap().startMapEffect("救命!請確保我兩分鐘內的安全", 5120052);
                         break;
                     case 4:
-                        c.getPlayer().getMap().startMapEffect("Eliminate the two Pianus!", 5120052);
+                        c.getPlayer().getMap().startMapEffect("清除兩個 Pianus!", 5120052);
                         break;
                 } //TODOO find out which one it really is, lol
                 break;
             case cygnus_Summon: {
-                c.getPlayer().getMap().startMapEffect("It's been a long time since I've had guests. It's been even longer since any have left alive.", 5120043);
+                c.getPlayer().getMap().startMapEffect("真是難得阿!這裡已經很久沒有人來挑戰ㄌ.", 5120043);
                 break;
             }
             case iceman_Boss: {
-                c.getPlayer().getMap().startMapEffect("You will perish!", 5120050);
+                c.getPlayer().getMap().startMapEffect("你將消失!", 5120050);
                 break;
             }
             case Visitor_Cube_poison: {
-                c.getPlayer().getMap().startMapEffect("Eliminate all the monsters!", 5120039);
+                c.getPlayer().getMap().startMapEffect("消滅所有怪物!", 5120039);
                 break;
             }
             case Visitor_Cube_Hunting_Enter_First: {
-                c.getPlayer().getMap().startMapEffect("Eliminate all the Visitors!", 5120039);
+                c.getPlayer().getMap().startMapEffect("消滅所有訪客!", 5120039);
                 break;
             }
             case VisitorCubePhase00_Start: {
-                c.getPlayer().getMap().startMapEffect("Eliminate all the flying monsters!", 5120039);
+                c.getPlayer().getMap().startMapEffect("消滅所有飛行怪物!", 5120039);
                 break;
             }
             case visitorCube_addmobEnter: {
-                c.getPlayer().getMap().startMapEffect("Eliminate all the monsters by moving around the map!", 5120039);
+                c.getPlayer().getMap().startMapEffect("消滅地圖上的怪物", 5120039);
                 break;
             }
             case Visitor_Cube_PickAnswer_Enter_First_1: {

@@ -7,53 +7,53 @@ var status = -1;
 
 function start(mode, type, selection) {
     if (mode == 1) {
-	status++;
+        status++;
     } else {
-	if (status == 2) {
-	    qm.sendNext("Hmm, was that too much to ask? Is it because you don''t know how to break Boxes? I'll tell you how if you accept my Quest. Let me know if you change your mind.");
-	    qm.safeDispose();
-	    return;
-	}
-	status--;
+        if (status == 2) {
+            qm.sendNext("如果需要就回來找我。");
+            qm.safeDispose();
+            return;
+        }
+        status--;
     }
     if (status == 0) {
-	qm.sendNext("#b(*clang clang*)#k");
+        qm.sendNext("#b(*噹噹*)#k");
     } else if (status == 1) {
-	qm.sendNextPrev("Whoa! Hey! You scared me. I didn't know I had a visitor. You must be the Noblesse #p1102006# was talking about. Welcome! I''m #p1102007#, and my hobby is making #bChairs#k. I'm thinking about making you one as a welcome present.");
+        qm.sendNextPrev("嘿！你嚇到我了！. 我不知道我有一個訪客. 你是貴族 #p1102006# 在談論著. 歡迎! 我是 #p1102007#, 我的興趣是製作 #b椅子#k. 我正在考慮讓一個作為歡迎你的禮物。");
     } else if (status == 2) {
-	qm.sendNextPrev("But wait, I can't make you one because I don''t have enough materials. Could you find me the materials I need? Around this area, you will find a lot of Boxes with items inside. Could you bring me back a #t4032267# and a #t4032268# found inside those Boxes?");
+        qm.sendNextPrev("別急，我不能給你一個椅子，因為我沒有足夠的材料。你能找到我需要的材料？在這個區域附近，你會發現很多箱子裡面的物品。你能不能給我帶回 一個 #t4032267# 和一個  #t4032268# 在那些箱子裡面。");
     } else if (status == 3) {
-	qm.sendNextPrev("Do you know how to get items from boxes? All you have to do is break the Boxes like you're attacking a monster. The difference is that you can attack monsters using your Skills, but you can #bonly use Regular Attacks to break Boxes#k.");
+        qm.sendNextPrev("你知道如何打破那個箱子? 使用你的 #b普通攻擊#k 來敲破箱子。");
     } else if (status == 4) {
-	qm.askAcceptDecline("Please bring me 1 #b#t4032267##k and 1 #b#t4032268##k found inside those Boxes. I'll make you an awesome Chair as soon as I have what I need. I'll wait here!");
+        qm.askAcceptDecline("請給我 1個 #b#t4032267##k 和 1個 #b#t4032268##k 在那些箱子裡面. 然後我就會做一個最棒的椅子給你， 我會在這裡等著你！");
     } else if (status == 5) {
-	qm.forceStartQuest();
-	qm.summonMsg(9);
-	qm.dispose();
+        qm.forceStartQuest();
+        qm.summonMsg(9);
+        qm.dispose();
     }
 }
 
 function end(mode, type, selection) {
     if (mode == 1) {
-	status++;
+        status++;
     } else {
-	status--;
+        status--;
     }
     if (status == 0) {
-	qm.sendNext("Did you bring me a Building Stone and a Drape? Let's see. Ah, these are just what I need! They indeed are a #t4032267# and a #t4032268#! I'll make you a Chair right away.");
+        qm.sendNext("你已經完成了？\r\n太棒了！");
     } else if (status == 1) {
-	qm.sendNextPrev("Here it is, a #t3010060#. What do you think? Nifty, huh? You can #bquickly recover your HP by sitting in this Chair#k. It will be stored in the #bSet-up#k window in your Inventory, so confirm that you've received the chair and head over to #b#p1102008##k. You'll see him if you keep following the arrow to the left. \r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0# \r\n#i3010060# 1 #t3010060# \r\n#fUI/UIWindow.img/QuestIcon/8/0# 95 exp");
+        qm.sendNextPrev("來這是給你的 #t3010060#. 你怎麼看?? 漂亮吧呵呵^^ 你可以 #b把椅子放到快捷鍵上面並使用它讓HP恢復更快。#k. 椅子在 #b裝飾欄裡面#k 打開你的道具欄, 所以請確認是不是收到椅子了 #b#p1102008##k. 好了，請按照箭頭指示走你會看到另一個人。 \r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0# \r\n#i3010060# 1 #t3010060# \r\n#fUI/UIWindow.img/QuestIcon/8/0# 95 經驗值");
     } else if (status == 2) {
-	qm.gainItem(4032267, -1);
-	qm.gainItem(4032268, -1);
-	qm.gainItem(3010060, 1);
-	qm.forceCompleteQuest();
-	qm.forceCompleteQuest(20000);
-	qm.forceCompleteQuest(20001);
-	qm.forceCompleteQuest(20002);
-	qm.forceCompleteQuest(20015);
-	qm.gainExp(95);
-	qm.summonMsg(10);
-	qm.dispose();
+        qm.gainItem(4032267, -1);
+        qm.gainItem(4032268, -1);
+        qm.gainItem(3010060, 1);
+        qm.forceCompleteQuest();
+        qm.forceCompleteQuest(20000);
+        qm.forceCompleteQuest(20001);
+        qm.forceCompleteQuest(20002);
+        qm.forceCompleteQuest(20015);
+        qm.gainExp(95);
+        qm.summonMsg(10);
+        qm.dispose();
     }
 }

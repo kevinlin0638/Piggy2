@@ -156,6 +156,13 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         return stats.getHp();
     }
 
+    public final int getMobLevel() {
+        if (ostats != null) {
+            return ostats.level;
+        }
+        return stats.getLevel();
+    }
+
     public final int getMp() {
         return mp;
     }

@@ -13,7 +13,7 @@ function action(mode, type, selection) {
     }
 
     if (status == 0) {
-	cm.sendNext("Hey, there~! I'm J.J.! I'm in charge of the cosmetic lenses here at NLC Shop! If you have a #b#t5152036##k, I can get you the best cosmetic lenses you have ever had! Now, what would you like to do?");
+	cm.sendNext("Hey, there~! I'm J.J.! I'm in charge of the cosmetic lenses here at NLC Shop! If you have a #b#t5152036##k, I can get you the best cosmetic lenses you have ever had! Now, 您想要做什麼?");
     } else if (status == 1) {
 	hair_Colo_new = [];
 

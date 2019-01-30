@@ -17,7 +17,7 @@ function action(mode, type, selection) {
     }
     if (cm.getPlayer().getMapId() != 910010500) {
 	if (status == 0) {
-	    cm.sendYesNo("Would you like to move to the Party Quest map?");
+	    cm.sendYesNo("您想要去組隊任務的地圖嗎?");
 	} else {
 	    cm.saveLocation("MULUNG_TC");
 	    cm.warp(910010500,0);
@@ -27,9 +27,9 @@ function action(mode, type, selection) {
     }
     if (status == 0) {
 	if (cm.getParty() == null) { // No Party
-	    cm.sendSimple("How about you and your party members collectively beating a quest? Here you'll find obstacles and problems where you won't be able to beat it unless with great teamwork. If you want to try it, please tell the #bleader of your party#k to talk to me.\r\n\r\n#rRequirements: " + minPartySize + " Party Members, all between level " + minLevel + " and level " + maxLevel + ".#b\r\n#L0#I want the Rice Cake Hat.#l");
+	    cm.sendSimple("您沒有組隊? . 如果你想要挑戰,麻煩請 #b隊長#k 與我對話.\r\n\r\n#需求: " + minPartySize + " 組隊隊員,成員等級 " + minLevel + " 到 " + maxLevel + ".#b\r\n#L0#我想要年糕帽.#l");
 	} else if (!cm.isLeader()) { // Not Party Leader
-	    cm.sendSimple("If you want to try the quest, please tell the #bleader of your party#k to talk to me.#b\r\n#L0#I want the Rice Cake Hat.#l");
+	    cm.sendSimple("如果你想要挑戰,麻煩請 #b隊長#k 與我對話.\r\n#L0#我想要年糕帽.#l");
 	} else {
 	    // Check if all party members are within PQ levels
 	    var party = cm.getParty().getMembers();
@@ -56,7 +56,7 @@ function action(mode, type, selection) {
 	    if (next) {
 		var em = cm.getEventManager("HenesysPQ");
 		if (em == null) {
-		    cm.sendSimple("The PQ has encountered an error. Please report this on the forums, with a screenshot.#b\r\n#L0#I want the Rice Cake Hat.#l");
+		    cm.sendSimple("發生錯誤,請向粉專回報.#b\r\n#L0#我想要年糕帽.#l");
 		} else {
 		    var prop = em.getProperty("state");
 		    if (prop.equals("0") || prop == null) {
@@ -65,30 +65,30 @@ function action(mode, type, selection) {
 			cm.dispose();
 			return;
 		    } else {
-			cm.sendSimple("Another party has already entered the #rParty Quest#k in this channel. Please try another channel, or wait for the current party to finish.#b\r\n#L0#I want the Rice Cake Hat.#");
+			cm.sendSimple("另一個隊伍正在挑戰中. 請換頻道再試, 或等到此隊伍結束.#b\r\n#L0#我想要年糕帽.#");
 		    }
 		}
 	    } else {
-		cm.sendSimple("Your party is invalid. Please adhere to the following requirements:\r\n\r\n#rRequirements: " + minPartySize + " Party Members, all between level " + minLevel + " and level " + maxLevel + ".#b\r\n#L0#I want the Rice Cake Hat.#l");
+		cm.sendSimple("您有隊員不符合資格:\r\n\r\n#r要求: " + minPartySize + " 隊員, 成員等級 " + minLevel + " 到 " + maxLevel  + ".#b\r\n#L0#I want the Rice Cake Hat.#l");
 	    }
 	}
     } else { //broken glass
 	if (cm.haveItem(1002798,1)) {
 		if (!cm.canHold(1003266,1)) {
-			cm.sendOk("Make room for this Hat.");
+			cm.sendOk("請空出背包空間.");
 		} else if (cm.haveItem(4001101,20) && cm.isGMS()) { //TODO JUMP
 			cm.gainItem(1003266, 1);
 			cm.gainItem(4001101, -20);
 		} else {
-			cm.sendOk("Come back with 20 Rice Cakes.");
+			cm.sendOk("取得 20 個年糕再回來ㄅ.");
 		}
 	} else if (!cm.canHold(1002798,1)) {
-	    cm.sendOk("Make room for this Hat.");
+	    cm.sendOk("請空出背包空間.");
 	} else if (cm.haveItem(4001101,10)) {
 	    cm.gainItem(4001101,-10); //should handle automatically for "have"
 	    cm.gainItem(1002798,1);
 	} else {
-	    cm.sendOk("Come back when you have 10 Rice Cakes.");
+	    cm.sendOk("請確認您有 10 個年糕.");
 	}
 	cm.dispose();
 

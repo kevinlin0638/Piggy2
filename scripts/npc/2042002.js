@@ -17,8 +17,8 @@ function action(mode, type, selection) {
     (mode == 1 ? status++ : mode == 0 ? status-- : cm.dispose());
     if (status == 0) {
 		switch(cm.getPlayer().getMapId()) {
-			case 980000000:
-				cm.sendSimple("What would you like to do? If you have never participated in the Monster Carnival, you'll need to know a thing or two about it before joining.\r\n#b#L0# Go to the Monster Carnival Field.#l");
+			case 103000000:
+				cm.sendSimple("您想要做什麼? If you have never participated in the Monster Carnival, you'll need to know a thing or two about it before joining.\r\n#b#L0# Go to the Monster Carnival Field.#l");
 				break;
 		}
     } else if (status == 1) {

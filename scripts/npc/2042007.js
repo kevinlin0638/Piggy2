@@ -24,7 +24,7 @@ function action(mode, type, selection) {
 	return;
     }
     if (status == 0) {
-        cm.sendSimple("What would you like to do? If you have never participated in the Monster Carnival, you'll need to know a thing or two about it before joining.\r\n#b#L0# Go to the Monster Carnival Field.#l");
+        cm.sendSimple("您想要做什麼? If you have never participated in the Monster Carnival, you'll need to know a thing or two about it before joining.\r\n#b#L0# Go to the Monster Carnival Field.#l");
     } else if (status == 1) {
         switch (selection) {
             case 0: {

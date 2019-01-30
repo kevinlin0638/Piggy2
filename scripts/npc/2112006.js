@@ -46,7 +46,7 @@ function action(mode, type, selection) {
 	    cm.sendOk("You should try investigating around here. Look at the files in the Library until you can find the entrance to the Lab.");
 	    break;
 	case 926100001:
-	    cm.sendOk("Please, eliminate all the monsters! I'll come right behind you.");
+	    cm.sendOk("Please, 消滅所有怪物! I'll come right behind you.");
 	    break;
 	case 926100100:
 	    cm.sendOk("These beakers have leaks in them. We must pour the Suspicious Liquid to the beakers' brims so we can continue.");

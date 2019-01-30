@@ -77,7 +77,7 @@ public class SpeedRunner {
         StringBuilder rettt = new StringBuilder();
 
         String[] membrz = members.split(",");
-        rettt.append("#bThese are the squad members of ").append(leader).append("'s squad at rank ").append(rank).append(".#k\r\n\r\n");
+        rettt.append("#b以下是 ").append(leader).append(" 的遠征隊 ").append(rank).append(".#k\r\n\r\n");
         for (int i = 0; i < membrz.length; i++) {
             rettt.append("#r#e");
             rettt.append(i + 1);

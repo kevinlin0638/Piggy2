@@ -35,15 +35,14 @@ import tools.packet.CWvsContext;
 import tools.packet.PlayerShopPacket;
 import tools.types.Pair;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ScheduledFuture;
 
 public class HiredMerchant extends AbstractPlayerStore {
 
     public ScheduledFuture<?> schedule;
     private List<String> blacklist;
+    private Map<String, Byte> MsgList;
     private int storeid;
     private long start;
 
@@ -51,6 +50,7 @@ public class HiredMerchant extends AbstractPlayerStore {
         super(owner, itemId, desc, "", 6);
         start = System.currentTimeMillis();
         blacklist = new LinkedList<>();
+        MsgList = new LinkedHashMap<String, Byte>();
         this.schedule = EtcTimer.getInstance().schedule(new Runnable() {
 
             @Override
@@ -190,5 +190,15 @@ public class HiredMerchant extends AbstractPlayerStore {
 
     public final void sendVisitor(final MapleClient c) {
         c.sendPacket(PlayerShopPacket.MerchantVisitorView(visitor_t));
+    }
+
+    public final void addMsg(final String msg , final byte slot) {
+        MsgList.put( msg , slot);
+    }
+
+    public final void SendMsg(final MapleClient c) {
+        for (final Map.Entry<String, Byte> s : MsgList.entrySet()) {
+            c.getPlayer().dropMessage(-2, s.getKey());
+        }
     }
 }

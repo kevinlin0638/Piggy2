@@ -7,48 +7,43 @@ var status = -1;
 
 function start(mode, type, selection) {
     if (mode == 1) {
-	status++;
+        status++;
     } else {
-	if (status == 8) {
-	    qm.sendNext("Oh, do you still have some questions? Talk to me again and I'll explain it to you from the very beginning.");
-	    qm.safeDispose();
-	    return;
-	}
-	status--;
+        if (status == 8) {
+            qm.sendNext("Oh, do you still have some questions? Talk to me again and I'll explain it to you from the very beginning.");
+            qm.safeDispose();
+            return;
+        }
+        status--;
     }
     if (status == 0) {
-	qm.sendNext("Hello, #h0#. Welcome to #p1101000# Knights. My name is #p1101002# and I am currently serving as the young Empress's Tactician. We'd better get acquainted since we'll be seeing a lot of each other. Haha!");
+        qm.sendNext("嗨, #h0#. 來迎來到 #p1101000# 騎士團. 我的名字是 #p1101002# 而我目前作為年輕的戰術家。哈哈！");
     } else if (status == 1) {
-	qm.sendNextPrev("I'm sure you have a lot of questions since everything happened so quickly. I'll explain it all, one by one, from where you are to what you're here to do.");
+        qm.sendNextPrev("我敢肯定，你有很多的問題，因為一切都發生得太快。我會解釋這一切，一個接一個，從那裡你是你在這裡做什麼。");
     } else if (status == 2) {
-	qm.sendNextPrev("This island is called Erev. Thanks to the Empress's magic, this island usually floats around like a boat in the sky and patrols around Maple World. Right now, however, we've stopped here for a reason.");
+        qm.sendNextPrev("這個島被稱為耶雷弗。");
     } else if (status == 3) {
-	qm.sendNextPrev("The young Empress is the ruler of Maple World. What? This is the first time you've heard of her? Ah, yes. Well, she's the ruler of Maple World but she doesn't like to control it. She watches from afar to make sure that all is well. Well, at least that's her usual role.");
+        qm.sendNextPrev("這位年輕的女皇是楓之谷世界的統治者。什麼？這是你聽說過她的第一次？啊，是的。嗯，她是楓之谷世界的統治者，但她不喜歡來控制它。她從遠處觀看，以確保一切都很好。好吧，至少這是她一貫的作用。");
     } else if (status == 4) {
-	qm.sendNextPrev("But that's not the case right now. We've been finding signs all over Maple World that foreshadow the revival of the Black Mage. We can't have the Black Mage come back to terrorize Maple World as he has in the past!");
+        qm.sendNextPrev("但是，這不是這種情況現在。我們一直在尋找的標牌立在楓的世界，預示黑法師的復興。我們不能讓黑法師回來恐嚇楓之谷，因為他在過去!");
     } else if (status == 5) {
-	qm.sendNextPrev("But that was ages ago and people today don''t realize how scary the Black Mage is. We've all become spoiled by the peaceful Maple World we enjoy today and forgotten how chaotic and frightening Maple World once was. If we don't do something, the Black Mage will once again rule Maple World!");
+        qm.sendNextPrev("但是，這是很久以前的今天，人們不要為實現黑法師是有多嚇人的。我們都成了被寵壞和平楓之谷世界我們今天所享有和遺忘曾經是如何混亂和可怕的楓之谷世界。如果我們不做些什麼，黑法師將再次統治楓之谷世界！");
     } else if (status == 6) {
-	qm.sendNextPrev("This is why the young Empress has decided to take matters into her own hands. She''s forming a knighthood of brave Maplers to defeat the Black Mage once and for all. You know what you need to do, right? I''m sure you have an idea since you, yourself, signed up to be a Knight.");
+        qm.askAcceptDecline("以上是我的解釋，有問題嗎？ \r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0# \r\n#fUI/UIWindow.img/QuestIcon/8/0# 380 經驗值");
     } else if (status == 7) {
-	qm.sendNextPrev("We have to get stronger so we can defeat the Black Mage if he revives. Our primary goal is to prevent him from destroying Maple World, and you will play a prominent role in that.");
-    } else if (status == 8) {
-	qm.askAcceptDecline("That concludes my explanation. Have I answered all your questions? \r\n\r\n#fUI/UIWindow.img/QuestIcon/4/0# \r\n#fUI/UIWindow.img/QuestIcon/8/0# 380 exp");
-    } else if (status == 9) {
-	if (qm.getQuestStatus(20016) == 0) {
-	    qm.gainExp(380);
-	    qm.forceCompleteQuest();
-	}
-	qm.sendNext("I'm glad you're clear about our current situation, but you know, at your current level, you're not even strong enough to face the Black Mage's minions, let alone the Black Mage himself. Not even his minions' minions, as a matter of fact. How will you protect Maple World at your current level?");
+        if (qm.getQuestStatus(20016) == 0) {
+            qm.gainExp(380);
+            qm.forceCompleteQuest();
+        }
+        qm.sendNext("我很高興你清楚我們目前的情況，但你知道在你目前的能力，你甚至沒有強大到足以面對黑法師的爪牙，更別說黑魔導士本人。連自己的奴才'奴才，作為一個事實問題。你將如何保護楓之谷世界在你目前的等級？");
     } else if (status == 10) {
-	qm.sendNextPrev("Although you've been accepted into the knighthood, you cannot be recognized as a knight yet. You are not an Official Knight because you're not even a Knight-in-Training. If you remain at your current level, you'll be nothing more than the handyman of #p1101000# Knights.");
+        qm.sendNextPrev("雖然你已被錄入爵位，但你還不能被認為是騎士。 你不是官方騎士，因為你甚至不是訓練中的騎士。 如果你保持現有水平，你將只不過是#p1101000#皇家騎士團的掃地工。");
     } else if (status == 11) {
-	qm.sendNextPrev("But no one starts as a strong Knight on day one. The Empress didn''t want someone strong. She wanted someone with courage whom she could develop into a strong Knight through rigorous training. So, you should first become a Knight-in-Training. We'll talk about your missions when you get to that point.");
+        qm.sendNextPrev("但是沒有人在第一天開始作為強大的騎士。 女皇不希望有人強大。 她想要一個有勇氣的人，她可以通過嚴格的訓練發展成為一個強大的騎士。 所以，你應該首先成為一名騎士訓練師。 當你達到這一點時，我們會談談你的任務。")
     } else if (status == 12) {
-	qm.sendPrev("Take the portal on the left to reach the Training Forest. There, you will find #p1102000#, the Training Instructor, who will teach you how to become stronger. I don''t want to find you wandering around aimlessly until you reach Lv. 10, you hear?");
-	qm.safeDispose();
+        qm.sendPrev("從左側的門戶到達訓練森林。 在那裡，你會找到#p1102000#，訓練師，他將教你如何變得更強大。 我不想讓你漫無目的地四處遊蕩，直到你到達Lv10，你聽到了嗎？");
+        qm.safeDispose();
     }
 }
 
-function end(mode, type, selection) {
-}
+function end(mode, type, selection) {}

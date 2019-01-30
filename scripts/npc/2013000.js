@@ -31,7 +31,7 @@ function action(mode, type, selection) {
 		cm.removeAll(i); //holy
 	}
 	if (cm.getParty() == null) { // No Party
-	    cm.sendSimple("How about you and your party members collectively beating a quest? Here you'll find obstacles and problems where you won't be able to beat it unless with great teamwork. If you want to try it, please tell the #bleader of your party#k to talk to me.\r\n\r\n#rRequirements: " + minPartySize + " Party Members, all between level " + minLevel + " and level " + maxLevel + ".#b\r\n#L0#I want the Minerva Wristband.#l\r\n#L1#I want the Minerva Shoes.#l");
+	    cm.sendSimple("How about you and your party members collectively beating a quest? Here you'll find obstacles and problems where you won't be able to beat it unless with great teamwork. If you want to try it, please tell the #bleader of your party#k to talk to me.\r\n\r\n#rRequirements: " + minPartySize + " Party Members, 成員等級 " + minLevel + " 到 " + maxLevel  + ".#b\r\n#L0#I want the Minerva Wristband.#l\r\n#L1#I want the Minerva Shoes.#l");
 	} else if (!cm.isLeader()) { // Not Party Leader
 	    cm.sendSimple("If you want to try the quest, please tell the #bleader of your party#k to talk to me.#b\r\n#L0#I want the Minerva Wristband.#l\r\n#L1#I want the Minerva Shoes.#l");
 	} else {
@@ -72,7 +72,7 @@ function action(mode, type, selection) {
 		    }
 		}
 	    } else {
-		cm.sendSimple("Your party is invalid. Please adhere to the following requirements:\r\n\r\n#rRequirements: " + minPartySize + " Party Members, all between level " + minLevel + " and level " + maxLevel + ".#b\r\n#L0#I want the Minerva Wristband.#l\r\n#L1#I want the Minerva Shoes.#l");
+		cm.sendSimple("Your party is invalid. Please adhere to the following requirements:\r\n\r\n#rRequirements: " + minPartySize + " Party Members, 成員等級 " + minLevel + " 到 " + maxLevel  + ".#b\r\n#L0#I want the Minerva Wristband.#l\r\n#L1#I want the Minerva Shoes.#l");
 	    }
 	}
     } else { //broken glass

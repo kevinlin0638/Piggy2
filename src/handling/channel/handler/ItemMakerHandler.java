@@ -178,7 +178,7 @@ public class ItemMakerHandler {
                         MapleInventoryManipulator.addbyItem(c, toGive);
                         c.getPlayer().getMap().broadcastMessage(c.getPlayer(), EffectPacket.ItemMaker_Success_3rdParty(c.getPlayer().getId()), false);
                     } else {
-                        c.getPlayer().dropMessage(5, "The item was overwhelmed by the stimulator.");
+                        c.getPlayer().dropMessage(5, "無法.");
                     }
                     c.sendPacket(EffectPacket.ItemMaker_Success());
 
@@ -412,6 +412,12 @@ public class ItemMakerHandler {
             return;
         }
         final int itemId = slea.readInt();
+        if(itemId == -1){
+            chr.removeExtractor();
+            c.getPlayer().dropMessage(1, "已關閉您在地圖上之分解機");
+            c.sendPacket(CWvsContext.enableActions());
+            return;
+        }
         final int fee = slea.readInt();
         final Item toUse = chr.getInventory(MapleInventoryType.SETUP).findById(itemId);
         if (toUse == null || toUse.getQuantity() < 1 || itemId / 10000 != 304 || fee <= 0 || chr.getExtractor() != null || !chr.getMap().isTown()) {
@@ -578,7 +584,7 @@ public class ItemMakerHandler {
                     }
                 }
             }
-            toGet = 4031016;
+            toGet = 4021016;
             quantity = (short) Randomizer.rand(3, ItemConstants.類型.武器(itemId) || ItemConstants.類型.雙刀(itemId) || ItemConstants.類型.套服(itemId) ? 11 : 7);
             if (reqLevel <= 60) {
                 toGet = 4021013;
@@ -718,6 +724,9 @@ public class ItemMakerHandler {
                 }
                 chr.changeSkillsLevel(sa);
             } else {
+                for (Triple<Integer, Integer, Integer> i : ce.targetItems) {
+                    toGet = i.left;
+                }
                 quantity = 0;
                 cr = CraftRanking.SOSO;
             }
@@ -727,24 +736,24 @@ public class ItemMakerHandler {
             if (Randomizer.nextInt(100) < chr.getTrait(MapleTrait.MapleTraitType.craft).getLevel() / 5) {
                 expGain *= 2;
             }
-            String s = "Alchemy";
+            String s = "調配藥水";
             switch (craftID / 10000) {
                 case 9200:
-                    s = "Herbalism";
+                    s = "採集";
                     break;
                 case 9201:
-                    s = "Mining";
+                    s = "採礦";
                     break;
                 case 9202:
-                    s = "Smithing";
+                    s = "裝備冶煉";
                     break;
                 case 9203:
-                    s = "Accessory Crafting";
+                    s = "飾品製作";
                     break;
             }
-            chr.dropMessage(-5, s + "'s mastery increased. (+" + expGain + ")");
+            chr.dropMessage(-5, s + " 經驗提升. (+" + expGain + ")");
             if (chr.addProfessionExp((craftID / 10000) * 10000, expGain)) {
-                chr.dropMessage(1, "You've accumulated " + s + " mastery. See an NPC in town to level up.");
+                chr.dropMessage(1, "您的專業技術 " + s + " 已可提升等級. 請找NPC進行等級提升.");
             }
         } else {
             expGain = 0;
@@ -792,7 +801,7 @@ public class ItemMakerHandler {
         }
         final int level = GameConstants.getInventoryType(itemid) == MapleInventoryType.ETC ? MapleItemInformationProvider.getInstance().getItemMakeLevel(itemid) : MapleItemInformationProvider.getInstance().getReqLevel(itemid);
         if (level <= 0 || level < (Math.min(120, c.getPlayer().getLevel()) - 50) || (GameConstants.getInventoryType(itemid) != MapleInventoryType.ETC && GameConstants.getInventoryType(itemid) != MapleInventoryType.EQUIP)) {
-            c.getPlayer().dropMessage(1, "The item must be within 50 levels of you.");
+            c.getPlayer().dropMessage(1, "道具必須與您的等級差50以內.");
             c.sendPacket(CWvsContext.enableActions());
             return;
         }
@@ -852,7 +861,7 @@ public class ItemMakerHandler {
         }
         final int itemid = GameConstants.getRewardPot(c.getPlayer().getImps()[index].getItemId(), c.getPlayer().getImps()[index].getCloseness());
         if (itemid <= 0 || !MapleInventoryManipulator.checkSpace(c, itemid, (short) 1, "")) {
-            c.getPlayer().dropMessage(1, "Please make some space.");
+            c.getPlayer().dropMessage(1, "您的背包空間不足.");
             c.sendPacket(CWvsContext.enableActions());
             return;
         }

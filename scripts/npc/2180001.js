@@ -37,7 +37,7 @@ function action(mode, type, selection) {
     }
 	if (status == 0) {
 		if (cm.getPlayer().getClanId() < 1) {
-			cm.sendSimple("#r< #eWelcome to the Clan System!#n >#k\r\nIt seems you're not in a Clan. What would you like to do?#b\r\n#L0#Create a Clan#l\r\n#L1#Clan Leaderboards#k#l"); 
+			cm.sendSimple("#r< #eWelcome to the Clan System!#n >#k\r\nIt seems you're not in a Clan. 您想要做什麼?#b\r\n#L0#Create a Clan#l\r\n#L1#Clan Leaderboards#k#l"); 
 		} else if (cm.getPlayer().getClanId() > 0 && cm.getPlayer().getId() == cm.getClanLeader()) {
 			cm.sendSimple("#r" + ((cm.getClanMessage() == "" || cm.getClanMessage() == "null") ? "                  < #eWelcome to the Clan System!#n >" : "< #e" + cm.getClanMessage() + "#n >") + "#k\r\nHello, #h #, and welcome to #e" + cm.getClanName() + "#n's Clan Leader Menu!#b\r\n#L100#Change Clan Message#l\r\n#L101#Invite a player to #e" + cm.getClanName() + "#n\r\n#L102#Kick a player from #e" + cm.getClanName() + "#n\r\n#L103#View #e" + cm.getClanName() + "#n's Roster\r\n#L104#Change #e" + cm.getClanName() + "#n's Clantag\r\n#L1#Clan Leaderboards#k#l");
 		} else {

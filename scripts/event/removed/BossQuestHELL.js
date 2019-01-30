@@ -1,4 +1,4 @@
-var eventmapid = 610030600;
+var eventmapid = 551030200;
 var returnmap = 980010000;
 var monster = Array(8800100,9400300,8840000, 1,0, 2);
 
@@ -13,7 +13,7 @@ function setup(partyid) {
     // If there are more than 1 map for this, you'll need to do mapid + instancename
     var map = eim.createInstanceMapS(eventmapid);
     map.toggleDrops();
-    map.spawnNpc(9250156, new java.awt.Point(148, 1));
+    map.spawnNpc(1033001, new java.awt.Point(148, 1));
 
     eim.setProperty("points", 0);
     eim.setProperty("monster_number", 0);

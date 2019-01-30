@@ -463,24 +463,24 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return -1;
     }
 
-    public static String getAriantRoomLeaderName(int room) {
+    public String getAriantRoomLeaderName(int room) {
         return ariantroomleader[room];
     }
 
-    public static int getAriantSlotsRoom(int room) {
+    public int getAriantSlotsRoom(int room) {
         return ariantroomslot[room];
     }
 
-    public static void removeAriantRoom(int room) {
+    public void removeAriantRoom(int room) {
         ariantroomleader[room] = "";
         ariantroomslot[room] = 0;
     }
 
-    public static void setAriantRoomLeader(int room, String charname) {
+    public void setAriantRoomLeader(int room, String charname) {
         ariantroomleader[room] = charname;
     }
 
-    public static void setAriantSlotRoom(int room, int slot) {
+    public void setAriantSlotRoom(int room, int slot) {
         ariantroomslot[room] = slot;
     }
 
@@ -2445,11 +2445,12 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void doFish(long now) {
         lastFishingTime = now;
         final boolean expMulti = haveItem(2300001, 1, false, true);
-        if (client == null || client.getPlayer() == null || !client.isReceiving() || (!expMulti && !haveItem(GameConstants.GMS ? 2270008 : 2300000, 1, false, true)) || !GameConstants.isFishingMap(getMapId()) || !stats.canFish || chair <= 0) {
+        if (client == null || client.getPlayer() == null || !canHold(4031648 ) || !client.isReceiving() || (!expMulti && !haveItem(2300000, 1, false, true)) || !GameConstants.isFishingMap(getMapId()) || !stats.canFish || chair <= 0) {
+            dropMessage("釣魚結束!");
             cancelFishingTask();
             return;
         }
-        MapleInventoryManipulator.removeById(client, MapleInventoryType.USE, expMulti ? 2300001 : (GameConstants.GMS ? 2270008 : 2300000), 1, false, false);
+        MapleInventoryManipulator.removeById(client, MapleInventoryType.USE, expMulti ? 2300001 : (2300000), 1, false, false);
         boolean passed = false;
         while (!passed) {
             int randval = RandomRewards.getFishingReward();
@@ -2460,7 +2461,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     passed = true;
                     break;
                 case 1: // EXP
-                    final int experi = Math.min(Randomizer.nextInt(Math.abs(getNeededExp() / 200) + 1), 500000);
+                    final int experi = Math.min(Randomizer.nextInt(Math.abs(getNeededExp() / 400) + 1), 500000);
                     gainExp(expMulti ? (experi * 3 / 2) : experi, true, false, true);
                     passed = true;
                     break;
@@ -4565,7 +4566,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public List<Integer> getProfessions() {
         List<Integer> prof = new ArrayList<>();
         for (int i = 9200; i <= 9204; i++) {
-            if (getProfessionLevel(id * 10000) > 0) {
+            if (getProfessionLevel(i * 10000) > 0) {
                 prof.add(i);
             }
         }
@@ -4937,9 +4938,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         boolean leveled = false;
         if (level < 255) {
             if ((long) this.exp + (long) total > (long) Integer.MAX_VALUE) {
-                int gainFirst = GameConstants.getExpNeededForLevel(level) - this.exp;
-                total -= gainFirst + 1;
-                this.gainExp(gainFirst + 1, false, inChat, white);
+                total = (int)((long) this.exp + (long) total - (long) Integer.MAX_VALUE);
+                levelUp();
             }
             if (show && total > 0) {
                 client.sendPacket(InfoPacket.GainEXP_Others(total, inChat, white));
@@ -5322,9 +5322,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         MapleQuestStatus stat = getQuestNoAdd(MapleQuest.getInstance(GameConstants.PENDANT_SLOT));
         if (c.getPlayer().isGM()) {
             c.getPlayer().getQuestNAdd(MapleQuest.getInstance(GameConstants.PENDANT_SLOT)).setCustomData(String.valueOf(System.currentTimeMillis() + ((long) 2014 * 24 * 60 * 60000)));
-            c.sendPacket(CWvsContext.pendantSlot(Long.parseLong(stat.getCustomData())));
+            c.sendPacket(CWvsContext.pendantSlot(Long.parseLong(stat.getCustomData()) < System.currentTimeMillis()));
         } else {
-            c.sendPacket(CWvsContext.pendantSlot(Long.parseLong(stat.getCustomData())));
+            if(stat != null)
+                c.sendPacket(CWvsContext.pendantSlot(Long.parseLong(stat.getCustomData()) < System.currentTimeMillis()));
         }
         // Pocket Slots
         MapleQuest pocket = MapleQuest.getInstance(6500);
@@ -5351,7 +5352,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
             }
             pendingExpiration = null;
-            if (pendingSkills != null) {
+            if (pendingSkills != null && pendingSkills.size() > 0) {
                 client.getSession().writeAndFlush(CWvsContext.updateSkills(pendingSkills, false));
                 for (Skill z : pendingSkills.keySet()) {
                     client.sendPacket(CWvsContext.broadcastMsg(5, "[" + SkillFactory.getSkillName(z.getId()) + "] skill has expired and will not be available for use."));
@@ -5389,7 +5390,12 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         Item item;
         for (final Triple<MapleInventoryType, Item, Boolean> itemz : toberemove) {
             item = itemz.getMid();
-            getInventory(itemz.getLeft()).removeItem(item.getPosition(), item.getQuantity(), false);
+            if(item.getPosition() >= 0)
+                MapleInventoryManipulator.removeFromSlot(client, GameConstants.getInventoryType(item.getItemId()), item.getPosition(), item.getQuantity(), true, false);
+            else {
+                MapleInventoryManipulator.removeFromSlot(client, MapleInventoryType.EQUIPPED, item.getPosition(), item.getQuantity(), true, false);
+                fakeRelog();
+            }
             if (itemz.getRight() && getInventory(GameConstants.getInventoryType(item.getItemId())).getNextFreeSlot() > -1) {
                 item.setPosition(getInventory(GameConstants.getInventoryType(item.getItemId())).getNextFreeSlot());
                 getInventory(GameConstants.getInventoryType(item.getItemId())).addFromDB(item);
@@ -6163,6 +6169,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         familyUpdate();
         if (GameConstants.isEvan(job)) {
             switch (level) {
+                case 10:
                 case 20:
                 case 30:
                 case 40:
@@ -8542,8 +8549,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void getDiseaseBuff(final MapleBuffStatus disease, int x, long duration, int skillid, int level) {
         if (map != null && !hasDisease(disease)) {
-            if(this.getStat().equippedBlackDra)
+            if (this.getStat().equippedBlackDra){
+                dropMessage("日出勳章 為您抵擋了 " + disease.name());
                 return;
+            }
 
             if (!(disease == MapleBuffStatus.SEDUCE || disease == MapleBuffStatus.STUN || disease == MapleBuffStatus.HOLY_SHIELD)) {
                 if (getBuffedValue(MapleBuffStatus.HOLY_SHIELD) != null) {
@@ -9085,6 +9094,22 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void startMonsterCarnival(final int enemyavailable, final int enemytotal) {
         client.sendPacket(MonsterCarnivalPacket.startMonsterCarnival(this, enemyavailable, enemytotal));
+    }
+
+    public int getTotalDonate() {
+        int rmb = 0;
+        try (Connection con = DatabaseConnection.getConnection()) {
+            PreparedStatement ps = con.prepareStatement("SELECT SUM(money) FROM paybill_bills WHERE accountID = ? AND isSent = 1");
+            ps.setInt(1, getClient().getAccID());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                rmb = rs.getInt(1);
+            }
+            ps.close();
+        } catch (SQLException Ex) {
+            Ex.printStackTrace();
+        }
+        return rmb;
     }
 
     public void CPUpdate(final boolean party, final int available, final int total, final int team) {

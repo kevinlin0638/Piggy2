@@ -14,7 +14,7 @@ function action(mode, type, selection) {
 	} else
 	status--;
 	if (status == 0) {
-	   cm.sendSimple("What would you like to do?\r\n\r\n" 
+	   cm.sendSimple("您想要做什麼?\r\n\r\n" 
 	   + (cm.getPlayer().AutoJQOnline() ? "#L0#Join a(n) #rAutoJQ#k" : "")
 	   + (cm.getPlayer().GMEventOpen() ? "#L1#Join a(n) #bevent#k " : "")
 	   + (cm.getChannelServer().getEvent() > 0 ? "#L2#Join a(n) #revent#k" : "") // Maple event

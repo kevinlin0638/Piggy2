@@ -26,7 +26,9 @@ import client.inventory.Item;
 import client.inventory.ItemFlag;
 import client.inventory.MapleInventory;
 import client.inventory.MapleInventoryType;
+import client.messages.CommandProcessor;
 import constants.GameConstants;
+import constants.ServerConstants;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.MapleTrade;
@@ -123,6 +125,13 @@ public class PlayerInteractionHandler {
                             chr.setPlayerShop(merch);
                             chr.getMap().addMapObject(merch);
                             c.sendPacket(PlayerShopPacket.getHiredMerch(chr, merch, true));
+                            c.getPlayer().dropMessage(-2, "注意 : 請先開啟商店後再雙擊新增點數裝備.");
+                            c.getPlayer().dropMessage(-2, "幫助 : 使用方式 @pmerch 欄位 位置 組數 每組數量 價格 以下詳細說明.");
+                            c.getPlayer().dropMessage(-2, "幫助 : 欄位 : 1-裝備欄 2-消耗欄 3-裝飾欄 4-其他欄 5-特殊欄");
+                            c.getPlayer().dropMessage(-2, "幫助 : 位置 : 1~96");
+                            c.getPlayer().dropMessage(-2, "幫助 : 組數 : 想要分成幾組販售");
+                            c.getPlayer().dropMessage(-2, "幫助 : 每組數量 : 每一組中道具的數量");
+                            c.getPlayer().dropMessage(-2, "幫助 : 價格 : 每一組的價格");
                         }
                     }
                 }
@@ -183,6 +192,16 @@ public class PlayerInteractionHandler {
                                     chr.setPlayerShop(ips);
                                     merchant.addVisitor(chr);
                                     c.sendPacket(PlayerShopPacket.getHiredMerch(chr, merchant, false));
+                                    if(merchant.getMCOwner() == chr) {
+                                        chr.dropMessage(-2, "注意 : 請先開啟商店後再雙擊新增點數裝備.");
+                                        chr.dropMessage(-2, "幫助 : 使用方式 @pmerch 欄位 位置 組數 每組數量 價格 以下詳細說明.");
+                                        chr.dropMessage(-2, "幫助 : 欄位 : 1-裝備欄 2-消耗欄 3-裝飾欄 4-其他欄 5-特殊欄");
+                                        chr.dropMessage(-2, "幫助 : 位置 : 1~96");
+                                        chr.dropMessage(-2, "幫助 : 組數 : 想要分成幾組販售");
+                                        chr.dropMessage(-2, "幫助 : 每組數量 : 每一組中道具的數量");
+                                        chr.dropMessage(-2, "幫助 : 價格 : 每一組的價格");
+                                    }
+                                    merchant.SendMsg(c);
                                 }
                             }
                             //}
@@ -261,7 +280,14 @@ public class PlayerInteractionHandler {
                     chr.getTrade().chat(message);
                 } else if (chr.getPlayerShop() != null) {
                     final IMaplePlayerShop ips = chr.getPlayerShop();
-                    ips.broadcastToVisitors(PlayerShopPacket.shopChat(chr.getName() + " : " + message, ips.getVisitorSlot(chr)));
+
+                    if (!CommandProcessor.processCommand(chr.getClient(), message, ServerConstants.CommandType.MERCH)) {
+                        //chr.dropMessage(-2, chr.getName() + " : " + message);
+                        ips.broadcastToVisitors(PlayerShopPacket.shopChat(chr.getName() + " : " + message, ips.getVisitorSlot(chr)));
+                        if(ips.getShopType() == 1 ){ // Hired Merchant
+                            ((HiredMerchant) ips).addMsg(chr.getName() + " : " + message , ips.getVisitorSlot(chr) );
+                        }
+                    }
                 }
                 break;
             }

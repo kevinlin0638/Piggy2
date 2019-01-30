@@ -25,7 +25,7 @@ function action(mode, type, selection) {
 			status--;
 		if (status == 0) {
 			cm.forceStartQuest(22011);
-			cm.playerMessage("You have acquired a Dragon Egg.");
+			cm.playerMessage("您獲得了 龍蛋.");
 			cm.warp(900090103);
 			cm.dispose();
 		}

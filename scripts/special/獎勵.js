@@ -96,7 +96,7 @@ function action(mode, type, selection) {
     switch (status) {
         case 0: 
 			//var vip = cm.getEventCount("領獎帳號註冊",1) > 0?"領獎帳號":"非領獎帳號";
-			var Text = "歡迎加入 #b小熊谷#k 請問您有什麼需求:\r\n";
+			var Text = "歡迎加入 #b小喵谷#k 請問您有什麼需求:\r\n";
 			/*if(cm.getEventCount("領獎帳號註冊",1) <= 0){
 				Text += "#r您的帳號是 : " + vip + "\r\n#b"
 			}else{

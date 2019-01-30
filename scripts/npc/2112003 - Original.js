@@ -124,7 +124,7 @@ function action(mode, type, selection) {
 					cm.sendOk("This is the lab where rumors are abound that a suspicious noise can be heard from here every night. If there's anything hidden in here, it has to be in this place. Please look thoroughly into this lab.");
 					break;
 				case 926110001:
-					cm.sendOk("Please, eliminate all the monsters! I'll be right behind you.");
+					cm.sendOk("Please, 消滅所有怪物! I'll be right behind you.");
 					break;
 				case 926110100:
 					cm.sendOk("These beakers have leaks in them. We must pour the Suspicious Liquid to the beakers' brims so we can continue.");

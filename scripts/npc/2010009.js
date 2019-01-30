@@ -44,6 +44,10 @@ function action(mode, type, selection) {
 		cm.dispose();
 		return;
 	}
+	
+	cm.sendOk("本伺服器不開放公會聯盟!");
+	cm.dispose();
+	return;
 	if (status == 0) {
 		cm.sendSimple("Hello there! I'm #bLenario#k\r\n#b#L0#Can you please tell me what Guild Union is all about?#l\r\n#L1#How do I make a Guild Union?#l\r\n#L2#I want to make a Guild Union.#l\r\n#L3#I want to increase the Guild Union's capacity.#l\r\n#L4#I want to break up the Guild Union.#l");
 	} else if (status == 1) {

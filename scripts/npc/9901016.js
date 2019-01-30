@@ -14,7 +14,7 @@ function action(mode, type, selection) {
         return;
     }
 					if (status == 0) {
-		cm.sendSimple ("#r#eHey, I'm the Vote Points NPC of MapleBlade. What would you like to do?#e#d" + 
+		cm.sendSimple ("#r#eHey, I'm the Vote Points NPC of MapleBlade. 您想要做什麼?#e#d" + 
                 "\r\n#L1##kHow do I get Vote Points?" +
 		"\r\n#L2##kCheck how many Vote Points I have!" +
                 "\r\n#L3##kTrade Vote Points for cool, rare, and awesome stuff! :O");

@@ -245,8 +245,8 @@ function action(mode, type, selection) {
 //                                continue;
 //                        }
 						
-						if(!(getItemType(item.getItemId()) == 7) || (item.getItemId() / 10000) == 134 || (item.getItemId() / 10000) == 135)
-							continue;
+							if(!(getItemType(item.getItemId()) == 7) || Math.floor(item.getItemId() / 10000) == 134 || Math.floor(item.getItemId() / 10000) == 135)
+								continue;
                         //过滤已选裝備
 							var flag = 0;
 							for (var key in selectedList) {

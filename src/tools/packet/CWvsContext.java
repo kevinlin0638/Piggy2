@@ -1010,7 +1010,7 @@ public class CWvsContext {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.SERVERMESSAGE.getValue());
-        mplew.write(13); // 15, 16 = twin dragon egg
+        mplew.write(9); // 15, 16 = twin dragon egg
         mplew.writeMapleAsciiString(name + message);
         if (!dragon) {
             mplew.writeInt(0);
@@ -1545,11 +1545,11 @@ public class CWvsContext {
         return mplew.getPacket();
     }
 
-    public static byte[] pendantSlot(long p) { //slot -59
+    public static byte[] pendantSlot(boolean p) { //slot -59
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
         mplew.writeShort(SendPacketOpcode.PENDANT_SLOT.getValue());
-        mplew.writeBoolean(true);
+        mplew.write(1);
 
         return mplew.getPacket();
     }

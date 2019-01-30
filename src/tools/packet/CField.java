@@ -2246,7 +2246,7 @@ public class CField {
 
         mplew.writeShort(SendPacketOpcode.REMOVE_EXTRACTOR.getValue());
         mplew.writeInt(cid);
-        mplew.writeInt(1); //probably 1 = animation, 2 = make something?
+        mplew.writeInt(2); //probably 1 = animation, 2 = make something?
 
         return mplew.getPacket();
     }
@@ -2887,6 +2887,7 @@ public class CField {
             if (mode == 2) {
                 mplew.writeInt(0); // idk
             }
+            mplew.writeZeroBytes(50);
 
             return mplew.getPacket();
         }
@@ -2945,7 +2946,7 @@ public class CField {
         public static byte[] openUI(final int type) {
             final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(3);
             mplew.writeShort(SendPacketOpcode.OPEN_UI.getValue());
-            mplew.write(type);
+            mplew.writeInt(type);
             return mplew.getPacket();
         }
 

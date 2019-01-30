@@ -28,6 +28,7 @@ import client.inventory.MaplePet.PetFlag;
 import client.skill.Skill;
 import client.skill.SkillEntry;
 import client.skill.SkillFactory;
+import io.netty.util.internal.ThreadLocalRandom;
 import server.status.MapleBuffStatus;
 import constants.GameConstants;
 import constants.ServerConstants;
@@ -387,8 +388,12 @@ public class InventoryHandler {
                             if (reward.prob > 0 && Randomizer.nextInt(rewards.getLeft()) < reward.prob) { // Total prob
                                 if (GameConstants.getInventoryType(reward.itemid) == MapleInventoryType.EQUIP) {
                                     Item item = ii.getEquipById(reward.itemid);
-                                    if (reward.period > 0) {
-                                        item.setExpiration(System.currentTimeMillis() + (reward.period * 60 * 60 * 10));
+                                    if (reward.period > 0) { //设置到期时间
+                                        if (reward.period < 1000) {
+                                            item.setExpiration(System.currentTimeMillis() + (reward.period * 24 * 60 * 60 * 1000));
+                                        } else {
+                                            item.setExpiration(System.currentTimeMillis() + reward.period);
+                                        }
                                     }
                                     item.setGMLog("Reward item: " + itemId + " on " + FileoutputUtil.CurrentReadable_Date());
                                     MapleInventoryManipulator.addbyItem(c, item);
@@ -604,7 +609,7 @@ public class InventoryHandler {
         slea.readInt();
         c.getPlayer().setScrolledPosition((short) 0);
         byte src = (byte) slea.readShort();
-        boolean insight = src == 127 && c.getPlayer().getTrait(MapleTraitType.sense).getLevel() >= 30;
+        boolean insight = src == 127 && c.getPlayer().getTrait(MapleTraitType.insight).getLevel() >= 30;
         Item magnify = c.getPlayer().getInventory(MapleInventoryType.USE).getItem(src);
         byte eqSlot = (byte) slea.readShort();
         Item toReveal = c.getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(eqSlot);
@@ -1252,7 +1257,6 @@ public class InventoryHandler {
     }
 
     public static void UseScriptedNPCItem(LittleEndianAccessor slea, MapleClient c, MapleCharacter chr) {
-        slea.readInt();
         byte slot = (byte) slea.readShort();
         int itemId = slea.readInt();
         Item toUse = chr.getInventory(GameConstants.getInventoryType(itemId)).getItem(slot);
@@ -1261,6 +1265,53 @@ public class InventoryHandler {
 
         if (toUse != null && toUse.getQuantity() >= 1 && toUse.getItemId() == itemId && !chr.hasBlockedInventory() && !chr.inPVP()) {
             switch (toUse.getItemId()) {
+                case 2028062:{
+                    int price_id = -1;
+                    while(price_id == -1){
+                        int temp = ThreadLocalRandom.current().nextInt(2510000, 2512293 + 1);
+                        if(MapleItemInformationProvider.getInstance().itemExists(temp)){
+                            price_id = temp;
+                        }
+                    }
+
+                    if(!chr.canHold(price_id)){
+                        chr.dropMessage(-1, "您必須空出背包空間");
+                        break;
+                    }
+                    MapleInventoryManipulator.addById(c, price_id, (short) 1, "Scripted item: " + itemId + " on " + FileoutputUtil.CurrentReadable_Date()); // Blank Compass
+                    MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (byte) 1, false);
+                    break;
+                }
+                case 2430215:{
+                    if(!chr.canHold(4030003)){
+                        chr.dropMessage(-1, "您必須空出背包空間");
+                        break;
+                    }
+                    long time = Long.parseLong(toUse.getGiftFrom());
+                    MapleInventoryManipulator.addById(c, 4030003, (short) 1, null, null,  time,null);
+                    MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (byte) 1, false);
+                    break;
+                }
+                case 2430216:{
+                    if(!chr.canHold(4030002)){
+                        chr.dropMessage(-1, "您必須空出背包空間");
+                        break;
+                    }
+                    long time = Long.parseLong(toUse.getGiftFrom());
+                    MapleInventoryManipulator.addById(c, 4030002, (short) 1, null, null,  time,null);
+                    MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (byte) 1, false);
+                    break;
+                }
+                case 2430217:{
+                    if(!chr.canHold(4030004)){
+                        chr.dropMessage(-1, "您必須空出背包空間");
+                        break;
+                    }
+                    long time = Long.parseLong(toUse.getGiftFrom());
+                    MapleInventoryManipulator.addById(c, 4030004, (short) 1, null, null,  time,null);
+                    MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (byte) 1, false);
+                    break;
+                }
                 case 2430007: { // Blank Compass
                     MapleInventory inventory = chr.getInventory(MapleInventoryType.SETUP);
                     MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (byte) 1, false);
@@ -2399,233 +2450,235 @@ public class InventoryHandler {
                     break;
                 }
                 case 5050000: { // AP Reset
-                    Map<MapleStat, Integer> statupdate = new EnumMap<>(MapleStat.class);
-                    int apto = GameConstants.GMS ? (int) slea.readLong() : slea.readInt();
-                    int apfrom = GameConstants.GMS ? (int) slea.readLong() : slea.readInt();
-
-                    if (apto == apfrom) {
-                        break; // Hack
-                    }
-                    int job = c.getPlayer().getJob();
-                    PlayerStats playerst = c.getPlayer().getStat();
-                    used = true;
-
-                    switch (apto) { // AP to
-                        case 64: // str
-                            if (playerst.getStr() >= 999) {
-                                used = false;
-                            }
-                            break;
-                        case 128: // dex
-                            if (playerst.getDex() >= 999) {
-                                used = false;
-                            }
-                            break;
-                        case 256: // int
-                            if (playerst.getInt() >= 999) {
-                                used = false;
-                            }
-                            break;
-                        case 512: // luk
-                            if (playerst.getLuk() >= 999) {
-                                used = false;
-                            }
-                            break;
-                        case 2048: // hp
-                            if (playerst.getMaxHp() >= 99999) {
-                                used = false;
-                            }
-                            break;
-                        case 8192: // mp
-                            if (playerst.getMaxMp() >= 99999) {
-                                used = false;
-                            }
-                            break;
-                    }
-                    switch (apfrom) { // AP to
-                        case 64: // str
-                            if (playerst.getStr() <= 4 || (c.getPlayer().getJob() % 1000 / 100 == 1 && playerst.getStr() <= 35)) {
-                                used = false;
-                            }
-                            break;
-                        case 128: // dex
-                            if (playerst.getDex() <= 4 || (c.getPlayer().getJob() % 1000 / 100 == 3 && playerst.getDex() <= 25) || (c.getPlayer().getJob() % 1000 / 100 == 4 && playerst.getDex() <= 25) || (c.getPlayer().getJob() % 1000 / 100 == 5 && playerst.getDex() <= 20)) {
-                                used = false;
-                            }
-                            break;
-                        case 256: // int
-                            if (playerst.getInt() <= 4 || (c.getPlayer().getJob() % 1000 / 100 == 2 && playerst.getInt() <= 20)) {
-                                used = false;
-                            }
-                            break;
-                        case 512: // luk
-                            if (playerst.getLuk() <= 4) {
-                                used = false;
-                            }
-                            break;
-                        case 2048: // hp
-                            if (/*
-                                 * playerst.getMaxMp() <
-                                 * ((c.getPlayer().getLevel() * 14) + 134) ||
-                                     */c.getPlayer().getHpApUsed() <= 0 || c.getPlayer().getHpApUsed() >= 10000) {
-                                used = false;
-                                c.getPlayer().dropMessage(1, "You need points in HP or MP in order to take points out.");
-                            }
-                            break;
-                        case 8192: // mp
-                            if (/*
-                                 * playerst.getMaxMp() <
-                                 * ((c.getPlayer().getLevel() * 14) + 134) ||
-                                     */c.getPlayer().getHpApUsed() <= 0 || c.getPlayer().getHpApUsed() >= 10000) {
-                                used = false;
-                                c.getPlayer().dropMessage(1, "You need points in HP or MP in order to take points out.");
-                            }
-                            break;
-                    }
-                    if (used) {
-                        switch (apto) { // AP to
-                            case 64: { // str
-                                int toSet = playerst.getStr() + 1;
-                                playerst.setStr((short) toSet, c.getPlayer());
-                                statupdate.put(MapleStat.STR, toSet);
-                                break;
-                            }
-                            case 128: { // dex
-                                int toSet = playerst.getDex() + 1;
-                                playerst.setDex((short) toSet, c.getPlayer());
-                                statupdate.put(MapleStat.DEX, toSet);
-                                break;
-                            }
-                            case 256: { // int
-                                int toSet = playerst.getInt() + 1;
-                                playerst.setInt((short) toSet, c.getPlayer());
-                                statupdate.put(MapleStat.INT, toSet);
-                                break;
-                            }
-                            case 512: { // luk
-                                int toSet = playerst.getLuk() + 1;
-                                playerst.setLuk((short) toSet, c.getPlayer());
-                                statupdate.put(MapleStat.LUK, toSet);
-                                break;
-                            }
-                            case 2048: // hp
-                                int maxhp = playerst.getMaxHp();
-                                if (GameConstants.isBeginnerJob(job)) { // Beginner
-                                    maxhp += Randomizer.rand(4, 8);
-                                } else if ((job >= 100 && job <= 132) || (job >= 3200 && job <= 3212) || (job >= 1100 && job <= 1112) || (job >= 3100 && job <= 3112)) { // Warrior
-                                    maxhp += Randomizer.rand(36, 42);
-                                } else if ((job >= 200 && job <= 232) || (GameConstants.isEvan(job)) || (job >= 1200 && job <= 1212)) { // Magician
-                                    maxhp += Randomizer.rand(10, 12);
-                                } else if ((job >= 300 && job <= 322) || (job >= 400 && job <= 434) || (job >= 1300 && job <= 1312) || (job >= 1400 && job <= 1412) || (job >= 3300 && job <= 3312) || (job >= 2300 && job <= 2312)) { // Bowman
-                                    maxhp += Randomizer.rand(14, 18);
-                                } else if ((job >= 510 && job <= 512) || (job >= 1510 && job <= 1512)) {
-                                    maxhp += Randomizer.rand(24, 28);
-                                } else if ((job >= 500 && job <= 532) || (job >= 3500 && job <= 3512) || job == 1500) { // Pirate
-                                    maxhp += Randomizer.rand(16, 20);
-                                } else if (job >= 2000 && job <= 2112) { // Aran
-                                    maxhp += Randomizer.rand(34, 38);
-                                } else { // GameMaster
-                                    maxhp += Randomizer.rand(50, 100);
-                                }
-                                maxhp = Math.min(99999, Math.abs(maxhp));
-                                c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() + 1));
-                                playerst.setMaxHp(maxhp, c.getPlayer());
-                                statupdate.put(MapleStat.MAX_HP, (int) maxhp);
-                                break;
-
-                            case 8192: // mp
-                                int maxmp = playerst.getMaxMp();
-
-                                if (GameConstants.isBeginnerJob(job)) { // Beginner
-                                    maxmp += Randomizer.rand(6, 8);
-                                } else if (job >= 3100 && job <= 3112) {
-                                    break;
-                                } else if ((job >= 100 && job <= 132) || (job >= 1100 && job <= 1112) || (job >= 2000 && job <= 2112)) { // Warrior
-                                    maxmp += Randomizer.rand(4, 9);
-                                } else if ((job >= 200 && job <= 232) || (GameConstants.isEvan(job)) || (job >= 3200 && job <= 3212) || (job >= 1200 && job <= 1212)) { // Magician
-                                    maxmp += Randomizer.rand(32, 36);
-                                } else if ((job >= 300 && job <= 322) || (job >= 400 && job <= 434) || (job >= 500 && job <= 532) || (job >= 3200 && job <= 3212) || (job >= 3500 && job <= 3512) || (job >= 1300 && job <= 1312) || (job >= 1400 && job <= 1412) || (job >= 1500 && job <= 1512) || (job >= 2300 && job <= 2312)) { // Bowman
-                                    maxmp += Randomizer.rand(8, 10);
-                                } else { // GameMaster
-                                    maxmp += Randomizer.rand(50, 100);
-                                }
-                                maxmp = Math.min(99999, Math.abs(maxmp));
-                                c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() + 1));
-                                playerst.setMaxMp(maxmp, c.getPlayer());
-                                statupdate.put(MapleStat.MAX_MP, (int) maxmp);
-                                break;
-                        }
-                        switch (apfrom) { // AP from
-                            case 64: { // str
-                                int toSet = playerst.getStr() - 1;
-                                playerst.setStr((short) toSet, c.getPlayer());
-                                statupdate.put(MapleStat.STR, toSet);
-                                break;
-                            }
-                            case 128: { // dex
-                                int toSet = playerst.getDex() - 1;
-                                playerst.setDex((short) toSet, c.getPlayer());
-                                statupdate.put(MapleStat.DEX, toSet);
-                                break;
-                            }
-                            case 256: { // int
-                                int toSet = playerst.getInt() - 1;
-                                playerst.setInt((short) toSet, c.getPlayer());
-                                statupdate.put(MapleStat.INT, toSet);
-                                break;
-                            }
-                            case 512: { // luk
-                                int toSet = playerst.getLuk() - 1;
-                                playerst.setLuk((short) toSet, c.getPlayer());
-                                statupdate.put(MapleStat.LUK, toSet);
-                                break;
-                            }
-                            case 2048: // HP
-                                int maxhp = playerst.getMaxHp();
-                                if (GameConstants.isBeginnerJob(job)) { // Beginner
-                                    maxhp -= 12;
-                                } else if ((job >= 200 && job <= 232) || (job >= 1200 && job <= 1212)) { // Magician
-                                    maxhp -= 10;
-                                } else if ((job >= 300 && job <= 322) || (job >= 400 && job <= 434) || (job >= 1300 && job <= 1312) || (job >= 1400 && job <= 1412) || (job >= 3300 && job <= 3312) || (job >= 3500 && job <= 3512) || (job >= 2300 && job <= 2312)) { // Bowman, Thief
-                                    maxhp -= 15;
-                                } else if ((job >= 500 && job <= 532) || (job >= 1500 && job <= 1512)) { // Pirate
-                                    maxhp -= 22;
-                                } else if (((job >= 100 && job <= 132) || job >= 1100 && job <= 1112) || (job >= 3100 && job <= 3112)) { // Soul Master
-                                    maxhp -= 32;
-                                } else if ((job >= 2000 && job <= 2112) || (job >= 3200 && job <= 3212)) { // Aran
-                                    maxhp -= 40;
-                                } else { // GameMaster
-                                    maxhp -= 20;
-                                }
-                                c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() - 1));
-                                playerst.setMaxHp(maxhp, c.getPlayer());
-                                statupdate.put(MapleStat.MAX_HP, (int) maxhp);
-                                break;
-                            case 8192: // MP
-                                int maxmp = playerst.getMaxMp();
-                                if (GameConstants.isBeginnerJob(job)) { // Beginner
-                                    maxmp -= 8;
-                                } else if (job >= 3100 && job <= 3112) {
-                                    break;
-                                } else if ((job >= 100 && job <= 132) || (job >= 1100 && job <= 1112)) { // Warrior
-                                    maxmp -= 4;
-                                } else if ((job >= 200 && job <= 232) || (job >= 1200 && job <= 1212)) { // Magician
-                                    maxmp -= 30;
-                                } else if ((job >= 500 && job <= 532) || (job >= 300 && job <= 322) || (job >= 400 && job <= 434) || (job >= 1300 && job <= 1312) || (job >= 1400 && job <= 1412) || (job >= 1500 && job <= 1512) || (job >= 3300 && job <= 3312) || (job >= 3500 && job <= 3512) || (job >= 2300 && job <= 2312)) { // Pirate, Bowman. Thief
-                                    maxmp -= 10;
-                                } else if (job >= 2000 && job <= 2112) { // Aran
-                                    maxmp -= 5;
-                                } else { // GameMaster
-                                    maxmp -= 20;
-                                }
-                                c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() - 1));
-                                playerst.setMaxMp(maxmp, c.getPlayer());
-                                statupdate.put(MapleStat.MAX_MP, (int) maxmp);
-                                break;
-                        }
-                        c.sendPacket(CWvsContext.updatePlayerStats(statupdate, true, c.getPlayer()));
-                    }
+                    c.getPlayer().dropMessage(1, "請使用指令進行洗血");
                     break;
+//                    Map<MapleStat, Integer> statupdate = new EnumMap<>(MapleStat.class);
+//                    int apto = GameConstants.GMS ? (int) slea.readLong() : slea.readInt();
+//                    int apfrom = GameConstants.GMS ? (int) slea.readLong() : slea.readInt();
+//
+//                    if (apto == apfrom) {
+//                        break; // Hack
+//                    }
+//                    int job = c.getPlayer().getJob();
+//                    PlayerStats playerst = c.getPlayer().getStat();
+//                    used = true;
+//
+//                    switch (apto) { // AP to
+//                        case 64: // str
+//                            if (playerst.getStr() >= 999) {
+//                                used = false;
+//                            }
+//                            break;
+//                        case 128: // dex
+//                            if (playerst.getDex() >= 999) {
+//                                used = false;
+//                            }
+//                            break;
+//                        case 256: // int
+//                            if (playerst.getInt() >= 999) {
+//                                used = false;
+//                            }
+//                            break;
+//                        case 512: // luk
+//                            if (playerst.getLuk() >= 999) {
+//                                used = false;
+//                            }
+//                            break;
+//                        case 2048: // hp
+//                            if (playerst.getMaxHp() >= 99999) {
+//                                used = false;
+//                            }
+//                            break;
+//                        case 8192: // mp
+//                            if (playerst.getMaxMp() >= 99999) {
+//                                used = false;
+//                            }
+//                            break;
+//                    }
+//                    switch (apfrom) { // AP to
+//                        case 64: // str
+//                            if (playerst.getStr() <= 4 || (c.getPlayer().getJob() % 1000 / 100 == 1 && playerst.getStr() <= 35)) {
+//                                used = false;
+//                            }
+//                            break;
+//                        case 128: // dex
+//                            if (playerst.getDex() <= 4 || (c.getPlayer().getJob() % 1000 / 100 == 3 && playerst.getDex() <= 25) || (c.getPlayer().getJob() % 1000 / 100 == 4 && playerst.getDex() <= 25) || (c.getPlayer().getJob() % 1000 / 100 == 5 && playerst.getDex() <= 20)) {
+//                                used = false;
+//                            }
+//                            break;
+//                        case 256: // int
+//                            if (playerst.getInt() <= 4 || (c.getPlayer().getJob() % 1000 / 100 == 2 && playerst.getInt() <= 20)) {
+//                                used = false;
+//                            }
+//                            break;
+//                        case 512: // luk
+//                            if (playerst.getLuk() <= 4) {
+//                                used = false;
+//                            }
+//                            break;
+//                        case 2048: // hp
+//                            if (/*
+//                                 * playerst.getMaxMp() <
+//                                 * ((c.getPlayer().getLevel() * 14) + 134) ||
+//                                     */c.getPlayer().getHpApUsed() <= 0 || c.getPlayer().getHpApUsed() >= 10000) {
+//                                used = false;
+//                                c.getPlayer().dropMessage(1, "You need points in HP or MP in order to take points out.");
+//                            }
+//                            break;
+//                        case 8192: // mp
+//                            if (/*
+//                                 * playerst.getMaxMp() <
+//                                 * ((c.getPlayer().getLevel() * 14) + 134) ||
+//                                     */c.getPlayer().getHpApUsed() <= 0 || c.getPlayer().getHpApUsed() >= 10000) {
+//                                used = false;
+//                                c.getPlayer().dropMessage(1, "You need points in HP or MP in order to take points out.");
+//                            }
+//                            break;
+//                    }
+//                    if (used) {
+//                        switch (apto) { // AP to
+//                            case 64: { // str
+//                                int toSet = playerst.getStr() + 1;
+//                                playerst.setStr((short) toSet, c.getPlayer());
+//                                statupdate.put(MapleStat.STR, toSet);
+//                                break;
+//                            }
+//                            case 128: { // dex
+//                                int toSet = playerst.getDex() + 1;
+//                                playerst.setDex((short) toSet, c.getPlayer());
+//                                statupdate.put(MapleStat.DEX, toSet);
+//                                break;
+//                            }
+//                            case 256: { // int
+//                                int toSet = playerst.getInt() + 1;
+//                                playerst.setInt((short) toSet, c.getPlayer());
+//                                statupdate.put(MapleStat.INT, toSet);
+//                                break;
+//                            }
+//                            case 512: { // luk
+//                                int toSet = playerst.getLuk() + 1;
+//                                playerst.setLuk((short) toSet, c.getPlayer());
+//                                statupdate.put(MapleStat.LUK, toSet);
+//                                break;
+//                            }
+//                            case 2048: // hp
+//                                int maxhp = playerst.getMaxHp();
+//                                if (GameConstants.isBeginnerJob(job)) { // Beginner
+//                                    maxhp += Randomizer.rand(4, 8);
+//                                } else if ((job >= 100 && job <= 132) || (job >= 3200 && job <= 3212) || (job >= 1100 && job <= 1112) || (job >= 3100 && job <= 3112)) { // Warrior
+//                                    maxhp += Randomizer.rand(36, 42);
+//                                } else if ((job >= 200 && job <= 232) || (GameConstants.isEvan(job)) || (job >= 1200 && job <= 1212)) { // Magician
+//                                    maxhp += Randomizer.rand(10, 12);
+//                                } else if ((job >= 300 && job <= 322) || (job >= 400 && job <= 434) || (job >= 1300 && job <= 1312) || (job >= 1400 && job <= 1412) || (job >= 3300 && job <= 3312) || (job >= 2300 && job <= 2312)) { // Bowman
+//                                    maxhp += Randomizer.rand(14, 18);
+//                                } else if ((job >= 510 && job <= 512) || (job >= 1510 && job <= 1512)) {
+//                                    maxhp += Randomizer.rand(24, 28);
+//                                } else if ((job >= 500 && job <= 532) || (job >= 3500 && job <= 3512) || job == 1500) { // Pirate
+//                                    maxhp += Randomizer.rand(16, 20);
+//                                } else if (job >= 2000 && job <= 2112) { // Aran
+//                                    maxhp += Randomizer.rand(34, 38);
+//                                } else { // GameMaster
+//                                    maxhp += Randomizer.rand(50, 100);
+//                                }
+//                                maxhp = Math.min(99999, Math.abs(maxhp));
+//                                c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() + 1));
+//                                playerst.setMaxHp(maxhp, c.getPlayer());
+//                                statupdate.put(MapleStat.MAX_HP, (int) maxhp);
+//                                break;
+//
+//                            case 8192: // mp
+//                                int maxmp = playerst.getMaxMp();
+//
+//                                if (GameConstants.isBeginnerJob(job)) { // Beginner
+//                                    maxmp += Randomizer.rand(6, 8);
+//                                } else if (job >= 3100 && job <= 3112) {
+//                                    break;
+//                                } else if ((job >= 100 && job <= 132) || (job >= 1100 && job <= 1112) || (job >= 2000 && job <= 2112)) { // Warrior
+//                                    maxmp += Randomizer.rand(4, 9);
+//                                } else if ((job >= 200 && job <= 232) || (GameConstants.isEvan(job)) || (job >= 3200 && job <= 3212) || (job >= 1200 && job <= 1212)) { // Magician
+//                                    maxmp += Randomizer.rand(32, 36);
+//                                } else if ((job >= 300 && job <= 322) || (job >= 400 && job <= 434) || (job >= 500 && job <= 532) || (job >= 3200 && job <= 3212) || (job >= 3500 && job <= 3512) || (job >= 1300 && job <= 1312) || (job >= 1400 && job <= 1412) || (job >= 1500 && job <= 1512) || (job >= 2300 && job <= 2312)) { // Bowman
+//                                    maxmp += Randomizer.rand(8, 10);
+//                                } else { // GameMaster
+//                                    maxmp += Randomizer.rand(50, 100);
+//                                }
+//                                maxmp = Math.min(99999, Math.abs(maxmp));
+//                                c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() + 1));
+//                                playerst.setMaxMp(maxmp, c.getPlayer());
+//                                statupdate.put(MapleStat.MAX_MP, (int) maxmp);
+//                                break;
+//                        }
+//                        switch (apfrom) { // AP from
+//                            case 64: { // str
+//                                int toSet = playerst.getStr() - 1;
+//                                playerst.setStr((short) toSet, c.getPlayer());
+//                                statupdate.put(MapleStat.STR, toSet);
+//                                break;
+//                            }
+//                            case 128: { // dex
+//                                int toSet = playerst.getDex() - 1;
+//                                playerst.setDex((short) toSet, c.getPlayer());
+//                                statupdate.put(MapleStat.DEX, toSet);
+//                                break;
+//                            }
+//                            case 256: { // int
+//                                int toSet = playerst.getInt() - 1;
+//                                playerst.setInt((short) toSet, c.getPlayer());
+//                                statupdate.put(MapleStat.INT, toSet);
+//                                break;
+//                            }
+//                            case 512: { // luk
+//                                int toSet = playerst.getLuk() - 1;
+//                                playerst.setLuk((short) toSet, c.getPlayer());
+//                                statupdate.put(MapleStat.LUK, toSet);
+//                                break;
+//                            }
+//                            case 2048: // HP
+//                                int maxhp = playerst.getMaxHp();
+//                                if (GameConstants.isBeginnerJob(job)) { // Beginner
+//                                    maxhp -= 12;
+//                                } else if ((job >= 200 && job <= 232) || (job >= 1200 && job <= 1212)) { // Magician
+//                                    maxhp -= 10;
+//                                } else if ((job >= 300 && job <= 322) || (job >= 400 && job <= 434) || (job >= 1300 && job <= 1312) || (job >= 1400 && job <= 1412) || (job >= 3300 && job <= 3312) || (job >= 3500 && job <= 3512) || (job >= 2300 && job <= 2312)) { // Bowman, Thief
+//                                    maxhp -= 15;
+//                                } else if ((job >= 500 && job <= 532) || (job >= 1500 && job <= 1512)) { // Pirate
+//                                    maxhp -= 22;
+//                                } else if (((job >= 100 && job <= 132) || job >= 1100 && job <= 1112) || (job >= 3100 && job <= 3112)) { // Soul Master
+//                                    maxhp -= 32;
+//                                } else if ((job >= 2000 && job <= 2112) || (job >= 3200 && job <= 3212)) { // Aran
+//                                    maxhp -= 40;
+//                                } else { // GameMaster
+//                                    maxhp -= 20;
+//                                }
+//                                c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() - 1));
+//                                playerst.setMaxHp(maxhp, c.getPlayer());
+//                                statupdate.put(MapleStat.MAX_HP, (int) maxhp);
+//                                break;
+//                            case 8192: // MP
+//                                int maxmp = playerst.getMaxMp();
+//                                if (GameConstants.isBeginnerJob(job)) { // Beginner
+//                                    maxmp -= 8;
+//                                } else if (job >= 3100 && job <= 3112) {
+//                                    break;
+//                                } else if ((job >= 100 && job <= 132) || (job >= 1100 && job <= 1112)) { // Warrior
+//                                    maxmp -= 4;
+//                                } else if ((job >= 200 && job <= 232) || (job >= 1200 && job <= 1212)) { // Magician
+//                                    maxmp -= 30;
+//                                } else if ((job >= 500 && job <= 532) || (job >= 300 && job <= 322) || (job >= 400 && job <= 434) || (job >= 1300 && job <= 1312) || (job >= 1400 && job <= 1412) || (job >= 1500 && job <= 1512) || (job >= 3300 && job <= 3312) || (job >= 3500 && job <= 3512) || (job >= 2300 && job <= 2312)) { // Pirate, Bowman. Thief
+//                                    maxmp -= 10;
+//                                } else if (job >= 2000 && job <= 2112) { // Aran
+//                                    maxmp -= 5;
+//                                } else { // GameMaster
+//                                    maxmp -= 20;
+//                                }
+//                                c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() - 1));
+//                                playerst.setMaxMp(maxmp, c.getPlayer());
+//                                statupdate.put(MapleStat.MAX_MP, (int) maxmp);
+//                                break;
+//                        }
+//                        c.sendPacket(CWvsContext.updatePlayerStats(statupdate, true, c.getPlayer()));
+//                    }
+//                    break;
                 }
                 case 5220083: {//starter pack
                     used = true;

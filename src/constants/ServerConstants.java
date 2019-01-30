@@ -11,7 +11,7 @@ public class ServerConstants {
     public static final String WZ_PATH = "./wz";
     public static String SERVER_IP = "127.0.0.1";
 
-    public static String SERVER_NAME = "小豬谷 v145";
+    public static String SERVER_NAME = "小喵谷 v145";
 
     public static boolean BLOCK_CASH_SHOP = false;
     public static boolean DEBUG = true;
@@ -33,8 +33,8 @@ public class ServerConstants {
     public static boolean moreThanOne = true;
 
     // 歡迎訊息
-    public static String SERVER_MESSAGE = "歡迎來到小豬谷 v145.1，目前正在 封測中";
-    public static String WELCOME_MESSAGE = "【歡迎加入 小豬谷 v145.1】";
+    public static String SERVER_MESSAGE = "歡迎來到小喵谷 v145.1，目前正在 封測中";
+    public static String WELCOME_MESSAGE = "【歡迎加入 小喵谷 v145.1】";
 
     public static List<MapleLoginBalloon> getBalloons() {
         return mapleLoginBalloonList;
@@ -77,7 +77,8 @@ public class ServerConstants {
     public enum CommandType {
 
         NORMAL(0),
-        TRADE(1);
+        TRADE(1),
+        MERCH(2);
         private int level;
 
         CommandType(int level) {

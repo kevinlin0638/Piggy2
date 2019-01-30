@@ -12,7 +12,7 @@ function action(mode, type, selection) {
 		cm.dispose();
 	} else {
 		if (mode == 0) {
-			cm.sendOk("Alright, see you next time.");
+			cm.sendOk("好吧 下次見.");
 			cm.dispose();
 			return;
 		}
@@ -21,12 +21,13 @@ function action(mode, type, selection) {
 		else
 			status--;
 		if (status == 0) {
-			cm.sendSimple("I am Mar the Fairy and I deal mostly with pets. #b\r\n#L0#Evolve my dragon.#l\r\n#L1#Evolve my robo.#l\r\n#L2#Revive my pet.#l#k");
+			cm.sendSimple("你好 我是寵物的專家?您需要什麼服務呢. #b\r\n#L0#進化我的神奇寶貝.#l\r\n#L1#進化我的機器小子.#l\r\n#L2#復活我的寵物.#l#k");
 		} else if (status == 1) {
 			if (selection == 0) {
 				var currentpet = null;
-				for (var i = 0; i < 3; i++) {
-					currentpet = cm.getPlayer().getPet(i);
+				var pets = cm.getPlayer().getSpawnPets();
+				f或 (var i = 0; i < pets.length; i++) {
+					currentpet = pets[i];
 					if (currentpet != null && pet == null) {
 						if (currentpet.getSummoned() && currentpet.getPetItemId() > 5000028 && currentpet.getPetItemId() < 5000034 && currentpet.getLevel() >= 15) {
 							pet = currentpet;
@@ -35,7 +36,7 @@ function action(mode, type, selection) {
 					}
 				}
 				if (pet == null || !cm.haveItem(5380000,1)) {
-					cm.sendOk("You do not meet the requirements. You need #i5380000##t5380000#, as well as either one of #d#i5000029##t5000029##k, #g#i5000030##t5000030##k, #r#i5000031##t5000031##k, #b#i5000032##t5000032##k, or #e#i5000033##t5000033##n equipped at level 15 or higher. Please come back when you do.");
+					cm.sendOk("您為達到需求. 您需要 #i5380000##t5380000#, 也可以是 #d#i5000029##t5000029##k, #g#i5000030##t5000030##k, #r#i5000031##t5000031##k, #b#i5000032##t5000032##k, 或 #e#i5000033##t5000033##n 其一 招喚中且到達等級15 或 更高. 請達成條件後再回來找我.");
 					cm.dispose();
 				} else {
 					var id = pet.getPetItemId();
@@ -43,12 +44,12 @@ function action(mode, type, selection) {
 					var level = pet.getLevel();
 					var closeness = pet.getCloseness();
 					var fullness = pet.getFullness();
-					var slot = pet.getInventoryPosition();
+					var slot = pet.getInvent或yPosition();
 					var flag = pet.getFlags();
 					var rand = 0;
 					var after = id;
 					while (after == id) {
-						rand = 1 + Math.floor(Math.random() * 10);
+						rand = 1 + Math.flo或(Math.random() * 10);
 						if (rand >= 1 && rand <= 3) {
 							after = 5000030;
 						} else if (rand >= 4 && rand <= 6) {
@@ -62,18 +63,19 @@ function action(mode, type, selection) {
 					if (name.equals(cm.getItemName(id))) {
 						name = cm.getItemName(after);
 					}
-					cm.getPlayer().unequipPet(pet, true, false);
+					cm.getPlayer().unequipSpawnPet(pet, true, false);
 					cm.gainItem(5380000, -1);
 					cm.removeSlot(5, slot, 1);
 					cm.gainPet(after, name, level, closeness, fullness, 45, flag);
 					cm.getPlayer().spawnPet(slot);
-					cm.sendOk("Your dragon has now evolved!! It used to be a #i" + id + "##t" + id + "#, and now it's a #i" + after + "##t" + after + "#!");
+					cm.sendOk("您的 dragon 已經進化了!! 他曾經是 #i" + id + "##t" + id + "#, 現自是 #i" + after + "##t" + after + "#!");
 					cm.dispose();
 				}
 			} else if (selection == 1) {
 				var currentpet = null;
-				for (var i = 0; i < 3; i++) {
-					currentpet = cm.getPlayer().getPet(i);
+				var pets = cm.getPlayer().getSpawnPets();
+				f或 (var i = 0; i < pets.length; i++) {
+					currentpet = pets[i];
 					if (currentpet != null && pet == null) {
 						if (currentpet.getSummoned() && currentpet.getPetItemId() > 5000047 && currentpet.getPetItemId() < 5000054 && currentpet.getLevel() >= 15) {
 							pet = currentpet;
@@ -82,7 +84,7 @@ function action(mode, type, selection) {
 					}
 				}
 				if (pet == null || !cm.haveItem(5380000,1)) {
-					cm.sendOk("You do not meet the requirements. You need #i5380000##t5380000#, as well as either one of #g#i5000048##t5000048##k, #r#i5000049##t5000049##k, #b#i5000050##t5000050##k, #d#i5000051##t5000051##k, #d#i5000052##t5000052##k, or #e#i5000053##t5000053##n equipped at level 15 or higher. Please come back when you do.");
+					cm.sendOk("您為達到需求. 您需要 #i5380000##t5380000#, 也可以是 #g#i5000048##t5000048##k, #r#i5000049##t5000049##k, #b#i5000050##t5000050##k, #d#i5000051##t5000051##k, #d#i5000052##t5000052##k, 或 #e#i5000053##t5000053##n 其一 招喚中且到達等級15 或 更高. 請達成條件後再回來找我.");
 					cm.dispose();
 				} else {
 					var id = pet.getPetItemId();
@@ -90,12 +92,12 @@ function action(mode, type, selection) {
 					var level = pet.getLevel();
 					var closeness = pet.getCloseness();
 					var fullness = pet.getFullness();
-					var slot = pet.getInventoryPosition();
+					var slot = pet.getInvent或yPosition();
 					var flag = pet.getFlags();
 					var rand = 0;
 					var after = id;
 					while (after == id) {
-						rand = 1 + Math.floor(Math.random() * 9);
+						rand = 1 + Math.flo或(Math.random() * 9);
 						if (rand >= 1 && rand <= 2) {
 							after = 5000049;
 						} else if (rand >= 3 && rand <= 4) {
@@ -111,18 +113,18 @@ function action(mode, type, selection) {
 					if (name.equals(cm.getItemName(id))) {
 						name = cm.getItemName(after);
 					}
-					cm.getPlayer().unequipPet(pet, true, false);
+					cm.getPlayer().unequipSpawnPet(pet, true, false);
 					cm.gainItem(5380000, -1);
 					cm.removeSlot(5, slot, 1);
 					cm.gainPet(after, name, level, closeness, fullness, 45, flag);
 					cm.getPlayer().spawnPet(slot);
-					cm.sendOk("Your robo has now evolved!! It used to be a #i" + id + "##t" + id + "#, and now it's a #i" + after + "##t" + after + "#!");
+					cm.sendOk("您的 機器人 已經進化了!! 他曾經是 #i" + id + "##t" + id + "#, 現自是 #i" + after + "##t" + after + "#!");
 					cm.dispose();
 				}
 			} else if (selection == 2) { //revive	
-				var inv = cm.getInventory(5);
+				var inv = cm.getInvent或y(5);
 				var pets = cm.getPlayer().getPets(); //includes non-summon
-				for (var i = 0; i <= inv.getSlotLimit(); i++) {
+				f或 (var i = 0; i <= inv.getSlotLimit(); i++) {
 					var it = inv.getItem(i);
 					if (it != null && it.getItemId() >= 5000000 && it.getItemId() < 5010000 && it.getExpiration() > 0 && it.getExpiration() < cm.getCurrentTime()) {
 						theitems.push(it);
@@ -130,11 +132,11 @@ function action(mode, type, selection) {
 					}
 				}
 				if (theitems.length <= 0) {
-					cm.sendOk("You have no expired pets.");
+					cm.sendOk("您沒有魔法時間已經到的寵物.");
 					cm.dispose();
 				} else {
-					var selStr = "Please choose which pet to revive. You will need the Water of Life to revive it.#b\r\n";
-					for (var i = 0; i < theitems.length; i++) {
+					var selStr = "請選擇要復活哪個寵物. 你會需要 生命水 來復活寵物.#b\r\n";
+					f或 (var i = 0; i < theitems.length; i++) {
 						selStr += "\r\n#L" + i + "##v" + theitems[i].getItemId() + "##i" + theitems[i].getItemId() + "##l";
 					}
 					cm.sendSimple(selStr);
@@ -142,13 +144,13 @@ function action(mode, type, selection) {
 			}
 		} else if (status == 2) {
 			if (theitems.length <= 0) {
-				cm.sendOk("You have no expired pets.");
+				cm.sendOk("您沒有魔法時間已經到的寵物.");
 			} else if (!cm.haveItem(5180000,1)) {
-				cm.sendOk("You will need the #v5180000##i5180000#.");
+				cm.sendOk("你需要 #v5180000##i5180000#.");
 			} else {
 				theitems[selection].setExpiration(cm.getCurrentTime() + (45 * 24 * 60 * 60 * 1000));
 				cm.getPlayer().fakeRelog();
-				cm.sendOk("All done.. your pet's life has been extended to 45 days from today.");
+				cm.sendOk("好了.. 您的 寵物魔法時間已被延長 45 天.");
 				cm.gainItem(5180000,-1);
 			}
 			cm.dispose();

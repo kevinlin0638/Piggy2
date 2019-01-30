@@ -36,6 +36,9 @@ import tools.packet.CWvsContext;
 import tools.packet.CWvsContext.*;
 import tools.types.Pair;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
@@ -406,6 +409,12 @@ public class World {
                 }
             }
         }
+
+
+        chr.expirationTask(false, false);
+        chr.expirationTask(true, false);
+
+
     }
 
     public static List<MapleCharacter> getAllCharacters() {
@@ -548,6 +557,25 @@ public class World {
         WorldTimer.getInstance().register(new Respawn(this), 4500); //divisible by 9000 if possible.
     }
 
+    public static void startAddGift(){
+        EventTimer.getInstance().register(new Runnable() {
+            @Override
+            public void run() {
+                String exe = "python";
+                String command = "C:\\chromedriver\\__main__.py";
+                String num1 = "1";
+                String num2 = "2";
+                String[] cmdArr = new String[] {exe, command, num1, num2};
+                try {
+                    Process process = Runtime.getRuntime().exec(cmdArr);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, 3600000, 0);
+    }
+
     public static class AutoJQ {
 
         private static AutoJQ instance = null;
@@ -609,6 +637,8 @@ public class World {
                 }
             }, 60000);
         }
+
+
     }
 
     public static class Party {

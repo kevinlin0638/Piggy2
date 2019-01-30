@@ -160,9 +160,10 @@ public class PlayerHandler {
         if (toUse == null) {
             return;
         }
-        if (GameConstants.isFishingMap(chr.getMapId()) && (!GameConstants.GMS || itemId == 3011000)) {
+        if (GameConstants.isFishingMap(chr.getMapId())) {
             if (chr.getStat().canFish) {
                 chr.startFishingTask();
+                chr.dropMessage("釣魚計時開始，上鉤時間 " + GameConstants.getFishingTime(chr.getStat().canFishVIP, chr.isGM())/1000 + " 秒");
             }
         }
         chr.setChair(itemId);

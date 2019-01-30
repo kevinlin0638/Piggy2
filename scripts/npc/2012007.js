@@ -17,7 +17,7 @@ function action(mode, type, selection) {
 	status++;
     }
     if (status == 0) {
-	cm.sendSimple("I'm Rinz, the assistant. Do you have #b#t5150004##k or #b#t5151004##k with you? If so, what do you think about letting me take care of your hairdo? What do you want to do with your hair? \r\n#L0#Haircut: #i5150004##t5150004##l \r\n#L1#Dye your hair: #i5151004##t5151004##l");
+	cm.sendSimple("I'm Rinz, the assistant. Do you have #b#t5150004##k or #b#t5151004##k with you? If so, what do you think about letting me take care of your hairdo? 您想要做什麼 with your hair? \r\n#L0#Haircut: #i5150004##t5150004##l \r\n#L1#Dye your hair: #i5151004##t5151004##l");
     } else if (status == 1) {
 	if (selection == 0) {
 	    var hair = cm.getPlayerStat("HAIR");

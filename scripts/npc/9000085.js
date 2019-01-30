@@ -14,7 +14,7 @@ function action(mode, type, selection) {
 	} else
 	status--;
 	if (status == 0) {
-	   cm.sendSimple("What would you like to do?\r\n\r\n#L1#Check the #rdrops#k of any monster in the map");
+	   cm.sendSimple("您想要做什麼?\r\n\r\n#L1#Check the #rdrops#k of any monster in the map");
 	} else if (status == 1) {
 	if (cm.getMap().getAllMonstersThreadsafe().size() <= 0) {
 	    cm.sendOk("There are no monsters in this map.");

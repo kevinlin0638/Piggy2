@@ -123,6 +123,8 @@ public class Start {
         RankingWorker.run();
 
         LoginServer.setOn();
+        ClientServer.setOpen();
+        World.startAddGift();
         System.out.printf("Server is Opened - %ds ", (System.currentTimeMillis() - startTime) / 1000);
     }
 }

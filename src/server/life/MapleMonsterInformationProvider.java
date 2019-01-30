@@ -252,9 +252,10 @@ public class MapleMonsterInformationProvider {
         final double divided = (mons.getLevel() < 100 ? (mons.getLevel() < 10 ? (double) mons.getLevel() : 10.0) : (mons.getLevel() / 10.0));
         final int max = mons.isBoss() && !mons.isPartyBonus() ? (mons.getLevel() * mons.getLevel()) : (mons.getLevel() * (int) Math.ceil(mons.getLevel() / divided));
         for (int i = 0; i < mons.dropsMeso(); i++) {
-            ret.add(new MonsterDropEntry(0, mons.isBoss() && !mons.isPartyBonus() ? 1000000 : (mons.isPartyBonus() ? 100000 : 200000), (int) Math.floor(0.66 * max), max, 0));
+            ret.add(new MonsterDropEntry(0, mons.isBoss() && !mons.isPartyBonus() ? 800000 : (mons.isPartyBonus() ? 500000 : 600000), (int) Math.floor(0.66 * max), max, 0));
         }
     }
+
 
     public void clearDrops() {
         drops.clear();

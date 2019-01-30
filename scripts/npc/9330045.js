@@ -13,7 +13,7 @@ function action(mode, type, selection) {
     }
 
     if (status == 0) {
-	cm.sendSimple("What do you want to do?\n\r #b#L0#Enter the Fishing Lagoon#l \n\r #L1#Buy fishing baits#l \n\r #L2#Buy fishing chair#l \n\r #L3#Use the delicious Bait Can#l \n\r #L4#Guide on fishing#l \n\r #L5##i1142146:#Trade 500 Golden Fish Egg (Medal of Fishing King [Period : 30 days])#l");
+	cm.sendSimple("您想要做什麼?\n\r #b#L0#Enter the Fishing Lagoon#l \n\r #L1#Buy fishing baits#l \n\r #L2#Buy fishing chair#l \n\r #L3#Use the delicious Bait Can#l \n\r #L4#Guide on fishing#l \n\r #L5##i1142146:#Trade 500 Golden Fish Egg (Medal of Fishing King [Period : 30 days])#l");
     } else if (status == 1) {
 	sel = selection;
 	if (sel == 0) {

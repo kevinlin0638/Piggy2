@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package client.inventory;
 
+import server.MapleItemInformationProvider;
+
 import java.io.Serializable;
 
 public class Item implements Comparable<Item>, Serializable {
@@ -212,5 +214,10 @@ public class Item implements Comparable<Item>, Serializable {
     @Override
     public String toString() {
         return "Item: " + id + " quantity: " + quantity;
+    }
+
+    public boolean hasSetOnlyId() {
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        return !(uniqueid > 0 || ii.isCash(id)) && uniqueid <= 0;
     }
 }

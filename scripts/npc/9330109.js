@@ -17,22 +17,22 @@ function action(mode, type, selection) {
     }
 
     if (status == 0) {
-	cm.sendSimple("What do you want to do?#b\n\r #L1#Buy fishing baits#l \n\r #L3#Use the delicious Bait Can#l#k");
+	cm.sendSimple("你想做什麼？#b\n\r #L1#購買釣魚餌#l \n\r #L3#使用高級魚餌罐頭#l#k");
     } else if (status == 1) {
 	sel = selection;
 	if (sel == 1) {
-	    cm.sendYesNo("It requires 300000 meso for 120 baits. Do you want to purchase?");
+	    cm.sendYesNo("#b120個#k 魚餌需要 #b300000#k 楓幣。 您要購買嗎？");
 	} else if (sel == 3) {
 	    if (cm.canHold(2300001,120) && cm.haveItem(5350000,1)) {
 		if (!cm.haveItem(2300001)) {
 		    cm.gainItem(2300001, 120);
 		    cm.gainItem(5350000,-1);
-		    cm.sendNext("Happy Fishing~");
+		    cm.sendNext("快樂釣魚去~");
 		} else {
-		    cm.sendNext("You already have fishing bait.");
+		    cm.sendNext("你已經有魚餌。");
 		}
 	    } else {
-		cm.sendOk("Please check if you have sufficient inventory slot and the Delicious Bait Can from cash shop with you.");
+		cm.sendOk("請確定你有足夠的 #b高級魚餌罐頭#k 或 #b背包空間.");
 	    }
 	    cm.safeDispose();
 	}
@@ -42,12 +42,12 @@ function action(mode, type, selection) {
 		if (!cm.haveItem(2300000)) {
 		    cm.gainMeso(-300000);
 		    cm.gainItem(2300000, 120);
-		    cm.sendNext("Happy Fishing~");
+		    cm.sendNext("快樂釣魚去~");
 		} else {
-		    cm.sendNext("You already have fishing bait.");
+		    cm.sendNext("你已經有魚餌。");
 		}
 	    } else {
-		cm.sendOk("Please check if you have the required meso or sufficient inventory slot.");
+		cm.sendOk("請確定你有足夠的 #b楓幣#k 或 #b背包空間.");
 	    }
 	    cm.safeDispose();
 	}

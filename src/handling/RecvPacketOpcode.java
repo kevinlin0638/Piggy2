@@ -111,6 +111,7 @@ public enum RecvPacketOpcode implements WritableShortValueHolder {
     PET_FOOD,
     USE_MOUNT_FOOD,
     USE_SCRIPTED_NPC_ITEM,
+    USE_RAND_RESP,
     USE_CASH_ITEM,
     USE_CATCH_ITEM,
     USE_SKILL_BOOK,

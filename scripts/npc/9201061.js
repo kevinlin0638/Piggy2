@@ -17,7 +17,7 @@ function action(mode, type, selection) {
     }
 
     if (status == 0) {
-	cm.sendNext("Hi, there~! I'm Bomack. If you have a #b#t5152035##k, I can prescribe the right kind of cosmetic lenses for you. Now, what would you like to do?");
+	cm.sendNext("Hi, there~! I'm Bomack. If you have a #b#t5152035##k, I can prescribe the right kind of cosmetic lenses for you. Now, 您想要做什麼?");
     } else if (status == 1) {
 	cm.sendYesNo("If you use the regular coupon, you'll be awarded a random pair of cosmetic lenses. Are you going to use #b#t5152035##k and really make the change to your eyes?");
     } else if (status == 2){

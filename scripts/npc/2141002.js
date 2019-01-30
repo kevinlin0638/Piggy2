@@ -5,12 +5,12 @@
  */
 
 function start() {
-    cm.sendYesNo("Do you want to get out now?");
+    cm.sendYesNo("你想從這裡出去嗎?");
 }
 
 function action(mode, type, selection) {
     if (mode == 1) {
-	cm.warp(270050000, 0);
+        cm.warp(270050000, 0);
     }
     cm.dispose();
 }

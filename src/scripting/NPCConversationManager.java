@@ -46,6 +46,7 @@ import handling.world.World;
 import handling.world.exped.ExpeditionType;
 import handling.world.guild.MapleGuild;
 import handling.world.guild.MapleGuildAlliance;
+import jdk.nashorn.internal.objects.NativeArray;
 import provider.MapleData;
 import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
@@ -56,6 +57,7 @@ import server.life.*;
 import server.maps.*;
 import server.quest.MapleQuest;
 import tools.FileoutputUtil;
+import tools.KoreanDateUtil;
 import tools.StringUtil;
 import tools.data.MaplePacketLittleEndianWriter;
 import tools.packet.CField;
@@ -1100,27 +1102,104 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         MapleShopFactory.getInstance().getShop(id).sendShop(c, this.id);
     }
 
+    /*
+     * 随机抽奖
+     * 参数 道具的ID
+     * 参数 道具的数量
+     */
     public int gainGachaponItem(int id, int quantity) {
-        return gainGachaponItem(id, quantity, c.getPlayer().getMap().getStreetName());
+        return gainGachaponItem(id, quantity, getPlayer().getMap().getStreetName() + " - " + getPlayer().getMap().getMapName());
     }
 
-    public int gainGachaponItem(int id, int quantity, final String msg) {
+    /*
+     * 随机抽奖
+     * 参数 道具的ID
+     * 参数 道具的数量
+     * 参数 獲得装备的日志
+     */
+    public int gainGachaponItem(int id, int quantity, String msg) {
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         try {
-            if (!MapleItemInformationProvider.getInstance().itemExists(id)) {
+            if (!ii.itemExists(id)) {
                 return -1;
             }
-            final Item item = MapleInventoryManipulator.addbyId_Gachapon(c, id, (short) quantity);
-
+            Item item = MapleInventoryManipulator.addbyId_Gachapon(getClient(), id, (short) quantity, "從 " + msg + " 中獲得時間: " + KoreanDateUtil.getCurrentDate());
             if (item == null) {
                 return -1;
             }
-            final byte rareness = GameConstants.gachaponRareItem(item.getItemId());
-            if (rareness > 0) {
-                World.Broadcast.broadcastMessage(c.getWorld(), CWvsContext.getGachaponMega(c.getPlayer().getName(), " : got a(n)", item, rareness, msg));
+            byte rareness = GameConstants.gachaponRareItem(item.getItemId());
+            if (rareness == 1 || rareness == 2 || rareness == 3) {
+                World.Broadcast.broadcastMessage(c.getWorld(), CWvsContext.getGachaponMega(getPlayer().getName(), " : 從" + msg + "中獲得{" + ii.getName(item.getItemId()) + "}！大家一起恭喜他（她）吧！！！！", item, rareness, msg));
             }
-            c.sendPacket(InfoPacket.getShowItemGain(item.getItemId(), (short) quantity, true));
             return item.getItemId();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    /*
+     * NPC给玩家道具带公告
+     * 参数 道具的ID
+     * 参数 道具的数量
+     * 参数 獲得装备的日志
+     * 参数 公告喇叭的类型[1-3]
+     */
+    public int gainGachaponItem(int id, int quantity, String msg, int rareness) {
+        return gainGachaponItem(id, quantity, msg, rareness, false, 0);
+    }
+
+    /*
+     * NPC给玩家道具带公告
+     * 参数 道具的ID
+     * 参数 道具的数量
+     * 参数 獲得装备的日志
+     * 参数 公告喇叭的类型[1-3]
+     * 参数 道具的使用时间
+     */
+    public int gainGachaponItem(int id, int quantity, String msg, int rareness, long period) {
+        return gainGachaponItem(id, quantity, msg, rareness, false, period);
+    }
+
+    /*
+     * NPC给玩家道具带公告
+     * 参数 道具的ID
+     * 参数 道具的数量
+     * 参数 獲得装备的日志
+     * 参数 公告喇叭的类型[1-3]
+     * 参数 是否NPC購買
+     * 参数 道具的使用时间
+     */
+    public int gainGachaponItem(int id, int quantity, String msg, int rareness, boolean buy) {
+        return gainGachaponItem(id, quantity, msg, rareness, buy, 0);
+    }
+
+    /*
+     * NPC给玩家道具带公告
+     * 参数 道具的ID
+     * 参数 道具的数量
+     * 参数 獲得装备的日志
+     * 参数 公告喇叭的类型[1-3]
+     * 参数 是否NPC購買
+     * 参数 道具的使用时间
+     */
+    public int gainGachaponItem(int id, int quantity, String msg, int rareness, boolean buy, long period) {
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        try {
+            if (!ii.itemExists(id)) {
+                return -1;
+            }
+            Item item = MapleInventoryManipulator.addbyId_Gachapon(getClient(), id, (short) quantity, "從 " + msg + " 中" + (buy ? "購買" : "獲得") + "时间: " + KoreanDateUtil.getCurrentDate(), period);
+            if (item == null) {
+                return -1;
+            }
+            if (rareness == 1 || rareness == 2 || rareness == 3) {
+                //World.Broadcast.broadcastSmega(c.getWorld(), CWvsContext.itemMegaphone("從" + msg + "中" + (buy ? "購買" : "獲得") + "{" + ii.getName(item.getItemId()) + "}！大家一起恭喜他（她）吧！！！！", true, c.getChannel(), item));
+                World.Broadcast.broadcastMessage(c.getWorld(), CWvsContext.getGachaponMega(getPlayer().getName(), " : 從" + msg + "中" + (buy ? "購買" : "獲得") + "{" + ii.getName(item.getItemId()) + "}！大家一起恭喜他（她）吧！！！！", item, (byte) rareness, msg));
+            }
+            return item.getItemId();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return -1;
     }
@@ -1782,6 +1861,14 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return Event_DojoAgent.warpStartAgent(c.getPlayer(), party);
     }
 
+    public final void resetItem(Item item, int type) {
+        c.getPlayer().forceReAddItem(item ,MapleInventoryType.getByType((byte) type));
+    }
+
+    public int getTotalDonate() {
+        return c.getPlayer().getTotalDonate();
+    }
+
     public boolean start_PyramidSubway(final int pyramid) {
         if (pyramid >= 0) {
             return Event_PyramidSubway.warpStartPyramid(c.getPlayer(), pyramid);
@@ -2437,7 +2524,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
     public void addPendantSlot(int days) {
         c.getPlayer().getQuestNAdd(MapleQuest.getInstance(GameConstants.PENDANT_SLOT)).setCustomData(String.valueOf(System.currentTimeMillis() + ((long) days * 24 * 60 * 60 * 1000)));
-        c.sendPacket(CWvsContext.pendantSlot(Long.parseLong(c.getPlayer().getQuestNAdd(MapleQuest.getInstance(GameConstants.PENDANT_SLOT)).getCustomData())));
+        c.sendPacket(CWvsContext.pendantSlot(Long.parseLong(c.getPlayer().getQuestNAdd(MapleQuest.getInstance(GameConstants.PENDANT_SLOT)).getCustomData()) < System.currentTimeMillis()));
     }
 
     public Triple<Integer, Integer, Integer> getCompensation() {
@@ -2996,7 +3083,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             }
 
             try (PreparedStatement ps = con.prepareStatement("INSERT INTO paybill_bills (BillID, money, account, accountID, characterID, Date,isSent,TradeNo, url) VALUES (DEFAULT,?, ?, ?, ?, CURRENT_TIMESTAMP,?,?, ?)", Statement.RETURN_GENERATED_KEYS)) {
-                ps.setInt(1, (int)Math.floor(amount * 1.2));
+                ps.setInt(1, amount);
                 ps.setString(2, getPlayer().getClient().getAccountName());
                 ps.setInt(3, getPlayer().getAccountID());
                 ps.setInt(4, getPlayer().getId());
@@ -3030,4 +3117,115 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     public String getDateStr(){
         return new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
     }
+
+
+    public boolean addWithPara(int itemId, short str, short dex, short intt, short luk, short watk, short matk, long expire, short slot) {
+        Equip eq = (Equip) MapleItemInformationProvider.getInstance().getEquipById(itemId);
+        eq.setStr((short) (eq.getStr() + str));
+        eq.setDex((short) (eq.getDex() + dex));
+        eq.setInt((short) (eq.getInt() + intt));
+        eq.setLuk((short) (eq.getLuk() + luk));
+        eq.setWatk((short) (eq.getWatk() + watk));
+        eq.setMatk((short) (eq.getMatk() + matk));
+        eq.setUpgradeSlots((byte) (eq.getUpgradeSlots() + slot));
+
+        eq.setAddi_str(str);
+        eq.setAddi_dex(dex);
+        eq.setAddi_int(intt);
+        eq.setAddi_luk(luk);
+        eq.setAddi_watk(watk);
+        eq.setAddi_matk(matk);
+        eq.setExtraScroll(slot);
+
+        if(expire > 0 && expire < 1000L)
+            eq.setExpiration(System.currentTimeMillis() + expire * 24 * 60 * 60 * 1000);
+        else if(expire > 1000L)
+            eq.setExpiration(System.currentTimeMillis() + expire);
+
+        return MapleInventoryManipulator.addFromDrop(getClient(), eq, false);
+    }
+
+    public boolean addWithPara(int itemId, long expire) {
+        Equip eq = (Equip) MapleItemInformationProvider.getInstance().getEquipById(itemId);
+
+        if(expire > 0 && expire < 1000L)
+            eq.setExpiration(System.currentTimeMillis() + expire * 24 * 60 * 60 * 1000);
+        else if(expire > 1000L)
+            eq.setExpiration(System.currentTimeMillis() + expire);
+
+        return MapleInventoryManipulator.addFromDrop(getClient(), eq, false);
+    }
+
+    public boolean addWithPara(int itemId, long expire, boolean lock) {
+        Equip eq = (Equip) MapleItemInformationProvider.getInstance().getEquipById(itemId);
+
+        if(expire > 0 && expire < 1000L)
+            eq.setExpiration(System.currentTimeMillis() + expire * 24 * 60 * 60 * 1000);
+        else if(expire > 1000L)
+            eq.setExpiration(System.currentTimeMillis() + expire);
+
+        if(lock) {
+            short flag = eq.getFlag();
+            flag |= ItemFlag.LOCK.getValue();
+            eq.setFlag(flag);
+        }
+
+        return MapleInventoryManipulator.addFromDrop(getClient(), eq, false);
+    }
+
+    public boolean addWithPara(int itemId, int quality, long expire, boolean lock, boolean tradable) {
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+
+        Item eq = ii.getEquipById(itemId);
+        if(!GameConstants.isEquip(itemId)) {
+            final Item ret = new Item(itemId, (byte) 0, (short) quality, (byte) 0, -1);
+            if(expire > 0 && expire < 1000L)
+                ret.setExpiration(System.currentTimeMillis() + expire * 24 * 60 * 60 * 1000);
+            else if(expire > 1000L)
+                ret.setExpiration(System.currentTimeMillis() + expire);
+
+            if(lock) {
+                short flag = ret.getFlag();
+                flag |= ItemFlag.LOCK.getValue();
+                ret.setFlag(flag);
+            }
+
+            if(!tradable){
+                short flag = ret.getFlag();
+                flag |= ItemFlag.UNTRADEABLE.getValue();
+                ret.setFlag(flag);
+            }
+
+            return MapleInventoryManipulator.addFromDrop(getClient(), ret, false);
+        }else {
+            final Item ret = (Item) eq;
+            if(expire > 0 && expire < 1000L)
+                ret.setExpiration(System.currentTimeMillis() + expire * 24 * 60 * 60 * 1000);
+            else if(expire > 1000L)
+                ret.setExpiration(System.currentTimeMillis() + expire);
+
+            if(lock) {
+                short flag = ret.getFlag();
+                flag |= ItemFlag.LOCK.getValue();
+                ret.setFlag(flag);
+            }
+
+            if(!tradable){
+                short flag = ret.getFlag();
+                flag |= ItemFlag.UNTRADEABLE.getValue();
+                ret.setFlag(flag);
+            }
+
+            return MapleInventoryManipulator.addFromDrop(getClient(), ret, false);
+        }
+    }
+
+    public boolean ExistItem(final int item){
+
+        if (!MapleItemInformationProvider.getInstance().itemExists(item))
+            return false;
+        else
+            return true;
+    }
+
 }

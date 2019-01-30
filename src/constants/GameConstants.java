@@ -93,6 +93,22 @@ public class GameConstants {
             2044703
     };
 
+    public static boolean isHellChannelDrop(int id){
+        switch (id){
+            case 2049116:
+            case 2049117:
+            case 2049118:
+            case 2049119:
+            case 2049120:
+            case 2049121:
+            case 2049122:
+            case 2049123:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public static boolean isBossMap(int mapid) {
         switch (mapid) {
             case 0:
@@ -865,7 +881,7 @@ public class GameConstants {
             310010000 //Edelstein
     };
     //Maximum damage to be dealt by OHKO skills.
-    public static final int OHKODamage = 9999999;
+    public static final int OHKODamage = 2100000000;
     /*
   * DURABILITY & ITEM EXP CONSTANTS
   */
@@ -3743,8 +3759,6 @@ public class GameConstants {
             2, // 寒霜冰龍 Scroll
             2430144,
             1,
-            2290285,
-            1,
             2028062,
             1,
             2028061,
@@ -3757,60 +3771,24 @@ public class GameConstants {
             3, // Sword
             1442011,
             1, // Surfboard
-            4000517,
-            8, // Golden Fish
-            4000518,
-            10, // Golden Fish Egg
-            4031627,
-            2, // White Bait (3cm)
-            4031628,
-            1, // Sailfish (120cm)
-            4031630,
-            1, // Carp (30cm)
-            4031631,
-            1, // Salmon(150cm)
-            4031632,
-            1, // Shovel
-            4031633,
-            2, // Whitebait (3.6cm)
-            4031634,
-            1, // Whitebait (5cm)
-            4031635,
-            1, // Whitebait (6.5cm)
-            4031636,
-            1, // Whitebait (10cm)
-            4031637,
-            2, // Carp (53cm)
-            4031638,
-            2, // Carp (60cm)
-            4031639,
-            1, // Carp (100cm)
-            4031640,
-            1, // Carp (113cm)
-            4031641,
-            2, // Sailfish (128cm)
-            4031642,
-            2, // Sailfish (131cm)
-            4031643,
-            1, // Sailfish (140cm)
-            4031644,
-            1, // Sailfish (148cm)
-            4031645,
-            2, // Salmon (166cm)
-            4031646,
-            2, // Salmon (183cm)
-            4031647,
-            1, // Salmon (227cm)
-            4031648,
-            1, // Salmon (288cm)
-            4001187,
-            20,
-            4001188,
-            20,
-            4001189,
-            20,
-            4031629,
-            1 // Pot
+
+            //魚
+            4031648 ,
+            1,
+            4031644 ,
+            1,
+            4031640 ,
+            1,
+            4031627 ,
+            1,
+            4031628 ,
+            1,
+
+            4031630  ,
+            1,
+
+            4031631  ,
+            1
     };
     public static int[] Equipments_Bonus = {
             1122017
@@ -8746,11 +8724,23 @@ public class GameConstants {
         return itemId / 100 == 20491 || itemId == 2040126;
     }
 
+    public static boolean is8HappyScroll(int itemId) {
+        switch (itemId){
+            case 2046025:
+            case 2046026:
+            case 2046119:
+            case 2046120:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public static int getChaosNumber(int itemId) {
         switch (itemId){
             case 2049100:
-            case 2049121:
                 return 5;
+            case 2049121:
             case 2049116:
                 return 10;
             case 2049117:
@@ -9968,7 +9958,7 @@ public class GameConstants {
     }
 
     public static int getFishingTime(boolean vip, boolean gm) {
-        return gm ? 1000 : (vip ? 30000 : 60000);
+        return gm ? 15000 : (vip ? 15000 : 15000);
     }
 
     public static int getCustomSpawnID(int summoner, int def) {
@@ -10105,17 +10095,25 @@ public class GameConstants {
             case 4030002:
             case 4030003:
             case 4030004:
+                return 1;
             case 4030005:
             case 4030006:
             case 4030007:
             case 4030008:
-                return 1000;
+            case 2450000:
+            case 2002020:
+            case 2002021:
+            case 2002022:
+            case 2002023:
+                    return 1000;
             case 4001168:
             case 4031306:
             case 4031307:
             case 3993000:
             case 3993002:
             case 3993003:
+            case 2430144:
+            case 2450022:
                 return 100;
             case 5220010:
             case 5220013:
@@ -10439,7 +10437,7 @@ public class GameConstants {
     }
 
     public static boolean isFishingMap(int mapid) {
-        return mapid == 749050500 || mapid == 749050501 || mapid == 749050502 || mapid == 970020000 || mapid == 970020005;
+        return mapid == 910000000;
     }
 
     public static int getRewardPot(int itemid, int closeness) {

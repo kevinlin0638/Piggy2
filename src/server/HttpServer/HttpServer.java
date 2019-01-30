@@ -38,7 +38,6 @@ public class HttpServer {
                     @Override
                     public void initChannel(SocketChannel ch)
                             throws Exception {
-                        System.out.println("initChannel ch:" + ch);
                         ch.pipeline()
                                 .addLast("decoder", new HttpRequestDecoder())   // 1
                                 .addLast("encoder", new HttpResponseEncoder())  // 2

@@ -27,8 +27,8 @@ var NPC_List_2 = [ //id, text
 	[9330003, "Cuber", "快速上潛"],
 	[9330003, "裝備強化", "裝備強化"],
 	[9330003, "破攻強化", "破攻強化"],
-	/*[9330003, 10, "道具回真"],
-	[9209000, 0, "#r雜貨店"],
+	[9330003, "道具合成主選單", "道具合成"],
+	/*[9209000, 0, "#r雜貨店"],
 	[9209001, 0,  "#d百貨公司"],
 	[9330003, 7, "#b寵物藥水"],
 	[9209000, 0, "#r道具合成"],
@@ -39,11 +39,11 @@ var NPC_List_2 = [ //id, text
 
 var NPC_List_3 = [ //id, text
 	[9250050, "getDonatePage", "#r我要贊助"],
-	[9250050, "衝捲數增加", "裝備捲數增加"],
-	[9250050, 2, "時裝裝飾"],
-	[9250050, 4, "消耗品"],
-	[9250050, 3, "特殊道具"],
-	[9250050, 5, "累積贊助"]
+	[9250050, "衝捲數增加", "捲數增加"],
+	[9250050, "贊助時裝裝飾", "時裝裝飾"],
+	[9250050, "贊助特殊道具", "特殊道具"],
+	[9250050, "累積贊助", "累積贊助"],
+	[9250050, "贊助消耗品", "消耗品"]
 ]
 
 function start() {
@@ -64,7 +64,7 @@ function action(mode, type, selection) {
 
     switch (status) {
         case 0: 
-			var Text = "\t\t\t\t   #fEffect/CharacterEff/1042107/0/0##b小豬谷#fEffect/CharacterEff/1042107/0/0#";
+			var Text = "\t\t\t\t   #fEffect/CharacterEff/1042107/0/0##b小喵谷#fEffect/CharacterEff/1042107/0/0#";
 			
 			Text += "\r\n\r\n\r\n#r"+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+" 角色相關 "+ blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+blue_heart+"#b\r\n\r\n"
 			for(var i = 0; i < NPC_List_1.length;i++){

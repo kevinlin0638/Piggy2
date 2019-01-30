@@ -27,7 +27,7 @@ function action(mode, type, selection) {
 		cm.sendOk("Please remove your protector's rock.");
 		cm.dispose();
 	} else {
-		cm.sendSimple("The path to Sharenian starts here. What would you like to do? #b\r\n#L0#Start a Guild Quest#l\r\n#L1#Join your guild's Guild Quest#l");
+		cm.sendSimple("The path to Sharenian starts here. 您想要做什麼? #b\r\n#L0#Start a Guild Quest#l\r\n#L1#Join your guild's Guild Quest#l");
 	}
 	
     } else if (status == 1) {

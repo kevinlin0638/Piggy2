@@ -50,7 +50,7 @@ import java.util.Map.Entry;
 
 public class PacketHelper {
 
-    public final static long FT_UT_OFFSET = 116444592000000000L; // EDT
+    public final static long FT_UT_OFFSET = 116445024000000000L; // EDT
     public final static long MAX_TIME = 150842304000000000L; //00 80 05 BB 46 E6 17 02
     public final static long ZERO_TIME = 94354848000000000L; //00 40 E0 FD 3B 37 4F 01
     public final static long PERMANENT = 150841440000000000L; // 00 C0 9B 90 7D E5 17 02

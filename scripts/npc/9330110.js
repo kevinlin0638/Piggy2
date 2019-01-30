@@ -17,7 +17,7 @@ function action(mode, type, selection) {
     }
 
     if (status == 0) {
-	cm.sendSimple("What do you want to do?\n\r #L4#Guide on fishing#l \n\r #L5##i1142146:#Trade 500 Golden Fish Egg (Medal of Fishing King [Period : 30 days])#l");
+	cm.sendSimple("您想要做什麼?\n\r #L4#Guide on fishing#l \n\r #L5##i1142146:#Trade 500 Golden Fish Egg (Medal of Fishing King [Period : 30 days])#l");
     } else if (status == 1) {
 	sel = selection;
 	if (sel == 4) {

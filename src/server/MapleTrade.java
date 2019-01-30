@@ -109,8 +109,8 @@ public class MapleTrade {
             c1.getTrade().inTrade = true;
             c2.getClient().sendPacket(PlayerShopPacket.shopVisitorAdd(c1, 1));
             c1.getClient().sendPacket(InteractionPacket.getTradeStart(c1.getClient(), c1.getTrade(), (byte) 1));
-            c1.dropMessage(-2, "System : Use @tradehelp to see the list of trading commands");
-            c2.dropMessage(-2, "System : Use @tradehelp to see the list of trading commands");
+            c1.dropMessage(-2, "系統 : 請使用 @help 來觀看相關指令");
+            c2.dropMessage(-2, "系統 : 請使用 @help 來觀看相關指令");
         } else {
             c1.getClient().sendPacket(CWvsContext.broadcastMsg(5, "The other player has already closed the trade"));
         }
@@ -355,5 +355,17 @@ public class MapleTrade {
             }
         }
         return 0;
+    }
+    public void ShowTradeInfo(){
+        if (getPartner().items.toArray().length == 0){
+            getChr().dropMessage(-2, "系統提示 : 對方尚未提供任何道具");
+            return;
+        }
+
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        getChr().dropMessage(-2, "系統提示 : 以下為對方交易之道具:");
+        for(Item i : getPartner().items){
+            getChr().dropMessage(-2, ii.getName(i.getItemId()) + " x " + i.getQuantity());
+        }
     }
 }

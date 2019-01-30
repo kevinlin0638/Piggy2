@@ -14,9 +14,9 @@ status++;
     if (status == 0) {
 	if (cm.isPlayerInstance()) {
 		if (cm.getMapId() == 749040100) {
-			cm.sendSimple("What would you like to do? \r\n #L0#Leave the Mini Dungeon#l");
+			cm.sendSimple("您想要做什麼? \r\n #L0#Leave the Mini Dungeon#l");
 		} else {
-			cm.sendSimple("What would you like to do? \r\n #L0#Leave the Meso Map#l");
+			cm.sendSimple("您想要做什麼? \r\n #L0#Leave the Meso Map#l");
 		}
 	} else {
 		cm.sendOk("Sorry, I am not coded yet.");

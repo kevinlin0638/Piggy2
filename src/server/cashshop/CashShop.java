@@ -115,8 +115,12 @@ public class CashShop implements Serializable {
         Item ret;
         if (GameConstants.getInventoryType(cItem.getId()) == MapleInventoryType.EQUIP) {
             Equip eq = (Equip) MapleItemInformationProvider.getInstance().getEquipById(cItem.getId(), uniqueid);
-            if (period > 0) {
-                eq.setExpiration(2475606994921L);
+            if (period > 0) { //设置到期时间
+                if (period < 1000) {
+                    eq.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                } else {
+                    eq.setExpiration(System.currentTimeMillis() + period);
+                }
             }
             eq.setGMLog("Cash Shop: " + cItem.getSN() + " on " + FileoutputUtil.CurrentReadable_Date());
             eq.setGiftFrom(gift);
@@ -129,8 +133,12 @@ public class CashShop implements Serializable {
             ret = eq.copy();
         } else {
             Item item = new Item(cItem.getId(), (byte) 0, (short) cItem.getCount(), (byte) 0, uniqueid);
-            if (period > 0) {
-                item.setExpiration(2475606994921L);
+            if (period > 0) { //设置到期时间
+                if (period < 1000) {
+                    item.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                } else {
+                    item.setExpiration(System.currentTimeMillis() + period);
+                }
             }
             item.setGMLog("Cash Shop: " + cItem.getSN() + " on " + FileoutputUtil.CurrentReadable_Date());
             item.setGiftFrom(gift);

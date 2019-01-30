@@ -10,7 +10,7 @@ function start() {
 	var em = cm.getEventManager("2095_tokyo");
 
 	if (em == null) {
-	    cm.sendOk("The event isn't started, please contact a GM.");
+	    cm.sendOk("活動腳本尚未啟用,請聯絡GM.");
 	    cm.dispose();
 	    return;
 	}
@@ -19,46 +19,46 @@ function start() {
 	var squadAvailability = cm.getSquadAvailability("tokyo_2095");
 	if (squadAvailability == -1) {
 	    status = 0;
-	    cm.sendYesNo("Are you interested in becoming the leader of the expedition Squad?");
+	    cm.sendYesNo("您想要成為遠征隊隊長嗎?");
 
 	} else if (squadAvailability == 1) {
 	    // -1 = Cancelled, 0 = not, 1 = true
 	    var type = cm.isSquadLeader("tokyo_2095");
 	    if (type == -1) {
-		cm.sendOk("The squad has ended, please re-register.");
+		cm.sendOk("遠征戰鬥已經開始");
 		cm.dispose();
 	    } else if (type == 0) {
 		var memberType = cm.isSquadMember("tokyo_2095");
 		if (memberType == 2) {
-		    cm.sendOk("You been banned from the squad.");
+		    cm.sendOk("您從遠征隊被剔除.");
 		    cm.dispose();
 		} else if (memberType == 1) {
 		    status = 5;
-		    cm.sendSimple("What do you want to do? \r\n#b#L0#Check out members#l \r\n#b#L1#Join the squad#l \r\n#b#L2#Withdraw from squad#l");
+		    cm.sendSimple("您想要做什麼? \r\n#b#L0#查看隊員#l \r\n#b#L1#加入遠征隊#l \r\n#b#L2#退出遠征隊#l");
 		} else if (memberType == -1) {
-		    cm.sendOk("The squad has ended, please re-register.");
+		    cm.sendOk("遠征戰鬥已經開始");
 		    cm.dispose();
 		} else {
 		    status = 5;
-		    cm.sendSimple("What do you want to do? \r\n#b#L0#Check out members#l \r\n#b#L1#Join the squad#l \r\n#b#L2#Withdraw from squad#l");
+		    cm.sendSimple("您想要做什麼? \r\n#b#L0#查看隊員#l \r\n#b#L1#加入遠征隊#l \r\n#b#L2#退出遠征隊#l");
 		}
 	    } else { // Is leader
 		status = 10;
-		cm.sendSimple("Your task is to acquire 10 energy transmitter.. \r\n#b#L0#Check out members#l \r\n#b#L1#Remove member#l \r\n#b#L2#Edit restricted list#l \r\n#r#L3#Enter map#l \r\n#b#L4#I need Simplified Electric Pulse Transmitter#l");
+		cm.sendSimple("Your task is to acquire 10 energy transmitter.. \r\n#b#L0#查看隊員#l \r\n#b#L1#刪除隊員#l \r\n#b#L2#編輯對戰列表#l \r\n#r#L3#進入地圖#l \r\n#b#L4#I need Simplified Electric Pulse Transmitter#l");
 	    }
     } else {
 			var eim = cm.getDisconnected("2095_tokyo");
 			if (eim == null) {
 				var squd = cm.getSquad("tokyo_2095");
 				if (squd != null) {
-					cm.sendYesNo("The squad's battle against the boss has already begun.\r\n" + squd.getNextPlayer());
+					cm.sendYesNo("遠征隊對戰已經開始.\r\n" + squd.getNextPlayer());
 					status = 3;
 				} else {
-					cm.sendOk("The squad's battle against the boss has already begun.");
+					cm.sendOk("遠征隊對戰已經開始.");
 					cm.safeDispose();
 				}
 			} else {
-				cm.sendYesNo("Ah, you have returned. Would you like to join your squad in the fight again?");
+				cm.sendYesNo("歐,您回來了!您要繼續遠征隊對戰嗎?");
 				status = 2;
 			}
 	    }
@@ -67,14 +67,14 @@ function start() {
 			if (eim == null) {
 				var squd = cm.getSquad("tokyo_2095");
 				if (squd != null) {
-					cm.sendYesNo("The squad's battle against the boss has already begun.\r\n" + squd.getNextPlayer());
+					cm.sendYesNo("遠征隊對戰已經開始.\r\n" + squd.getNextPlayer());
 					status = 3;
 				} else {
-					cm.sendOk("The squad's battle against the boss has already begun.");
+					cm.sendOk("遠征隊對戰已經開始.");
 					cm.safeDispose();
 				}
 			} else {
-				cm.sendYesNo("Ah, you have returned. Would you like to join your squad in the fight again?");
+				cm.sendYesNo("歐,您回來了!您要繼續遠征隊對戰嗎?");
 				status = 2;
 			}
 	}
@@ -89,17 +89,17 @@ function action(mode, type, selection) {
     switch (status) {
 	case 0:
 	    if (mode == 1) {
-			if (cm.registerSquad("tokyo_2095", 5, " has been named the Leader of the squad. If you would you like to join please register for the Expedition Squad within the time period.")) {
-				cm.sendOk("You have been named the Leader of the Squad. For the next 5 minutes, you can add the members of the Expedition Squad.");
+			if (cm.registerSquad("tokyo_2095", 5, " 您已經成為了遠征隊隊長. 請在時間內請隊員加入.")) {
+				cm.sendOk("您已經成為了遠征隊隊長. 您有五分鐘集結時間, 請在時間內請隊員加入.");
 			} else {
-				cm.sendOk("An error has occurred adding your squad.");
+				cm.sendOk("發生錯誤.");
 			}
 	    }
 	    cm.dispose();
 	    break;
 	case 2:
 		if (!cm.reAdd("2095_tokyo", "tokyo_2095")) {
-			cm.sendOk("Error... please try again.");
+			cm.sendOk("錯誤.請在試一次.");
 		}
 		cm.safeDispose();
 		break;
@@ -108,7 +108,7 @@ function action(mode, type, selection) {
 			var squd = cm.getSquad("tokyo_2095");
 			if (squd != null && !squd.getAllNextPlayer().contains(cm.getPlayer().getName())) {
 				squd.setNextPlayer(cm.getPlayer().getName());
-				cm.sendOk("You have reserved the spot.");
+				cm.sendOk("您獲得了保留位置.");
 			}
 		}
 		cm.dispose();
@@ -116,23 +116,23 @@ function action(mode, type, selection) {
 	case 5:
 	    if (selection == 0) {
 		if (!cm.getSquadList("tokyo_2095", 0)) {
-		    cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+		    cm.sendOk("發生未知錯誤.");
 		}
 	    } else if (selection == 1) { // join
 		var ba = cm.addMember("tokyo_2095", true);
 		if (ba == 2) {
-		    cm.sendOk("The squad is currently full, please try again later.");
+		    cm.sendOk("遠征隊目前額滿,請稍後再試.");
 		} else if (ba == 1) {
-		    cm.sendOk("You have joined the squad successfully");
+		    cm.sendOk("您成功加入遠征隊");
 		} else {
-		    cm.sendOk("You are already part of the squad.");
+		    cm.sendOk("您已經是遠征隊的一員.");
 		}
 	    } else {// withdraw
 		var baa = cm.addMember("tokyo_2095", false);
 		if (baa == 1) {
-		    cm.sendOk("You have withdrawed from the squad successfully");
+		    cm.sendOk("你離開了遠征隊.");
 		} else {
-		    cm.sendOk("You are not part of the squad.");
+		    cm.sendOk("你並非遠征隊的一員.");
 		}
 	    }
 	    cm.dispose();
@@ -141,19 +141,19 @@ function action(mode, type, selection) {
 	    if (mode == 1) {
 		if (selection == 0) {
 		    if (!cm.getSquadList("tokyo_2095", 0)) {
-			cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+			cm.sendOk("發生未知錯誤.");
 		    }
 		    cm.dispose();
 		} else if (selection == 1) {
 		    status = 11;
 		    if (!cm.getSquadList("tokyo_2095", 1)) {
-			cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+			cm.sendOk("發生未知錯誤.");
 			cm.dispose();
 		    }
 		} else if (selection == 2) {
 		    status = 12;
 		    if (!cm.getSquadList("tokyo_2095", 2)) {
-			cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+			cm.sendOk("發生未知錯誤.");
 			cm.dispose();
 		    }
 		} else if (selection == 3) { // get insode
@@ -194,7 +194,7 @@ function action(mode, type, selection) {
 		var dd = cm.getEventManager("2095_tokyo");
 		dd.startInstance(cm.getSquad("tokyo_2095"), cm.getMap());
 	    } else {
-		cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+		cm.sendOk("發生未知錯誤.");
 	    }
 	    cm.dispose();
 	    break;

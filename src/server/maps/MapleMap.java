@@ -489,6 +489,25 @@ public final class MapleMap {
             return;
         }
         final List<MonsterDropEntry> dropEntry = new ArrayList<>(drops);
+
+        if(mob.getMobLevel() >= 31 && mob.getMobLevel() <= 50)
+            dropEntry.add(new MonsterDropEntry(4260000, 2500, 1 ,1, 0));
+        else if(mob.getMobLevel() >= 51 && mob.getMobLevel() <= 70)
+            dropEntry.add(new MonsterDropEntry(4260001, 2500, 1 ,1, 0));
+        else if(mob.getMobLevel() >= 71 && mob.getMobLevel() <= 90)
+            dropEntry.add(new MonsterDropEntry(4260002, 2500, 1 ,1, 0));
+        else if(mob.getMobLevel() >= 91 && mob.getMobLevel() <= 110)
+            dropEntry.add(new MonsterDropEntry(4260003, 2500, 1 ,1, 0));
+        else if(mob.getMobLevel() >= 111 && mob.getMobLevel() <= 130)
+            dropEntry.add(new MonsterDropEntry(4260004, 2500, 1 ,1, 0));
+        else if(mob.getMobLevel() >= 131 && mob.getMobLevel() <= 150)
+            dropEntry.add(new MonsterDropEntry(4260005, 2500, 1 ,1, 0));
+        else if(mob.getMobLevel() >= 151 && mob.getMobLevel() <=170)
+            dropEntry.add(new MonsterDropEntry(4260006, 2500, 1 ,1, 0));
+        else if(mob.getMobLevel() >= 171 && mob.getMobLevel() <= 190)
+            dropEntry.add(new MonsterDropEntry(4260007, 2500, 1 ,1, 0));
+        else if(mob.getMobLevel() >= 191)
+            dropEntry.add(new MonsterDropEntry(4260008, 2500, 1 ,1, 0));
         Collections.shuffle(dropEntry);
 
         boolean mesoDropped = false;
@@ -496,6 +515,8 @@ public final class MapleMap {
             if (de.itemId == mob.getStolen()) {
                 continue;
             }
+            if(GameConstants.isHellChannelDrop(de.itemId) && channel < 11)
+                continue;
             if (Randomizer.nextInt(999999) < (int) (de.chance * chServerrate * chr.getDropMod() * (chr.getStat().dropBuff / 100.0) * (showdown / 100.0))) {
                 if (mesoDropped && droptype != 3 && de.itemId == 0) { //not more than 1 sack of meso
                     continue;
@@ -506,6 +527,8 @@ public final class MapleMap {
                 if (de.itemId / 10000 == 238 && !mob.getStats().isBoss() && chr.getMonsterBook().getLevelByCard(ii.getCardMobId(de.itemId)) >= 2) {
                     continue;
                 }
+                if(de.itemId == 2000005 && !mob.getStats().isBoss())
+                    continue;
                 if (droptype == 3) {
                     pos.x = (mobpos + (d % 2 == 0 ? (40 * (d + 1) / 2) : -(40 * (d / 2))));
                 } else {
@@ -742,7 +765,7 @@ public final class MapleMap {
             doShrine(true);
         } else if (mobid == 8850011 && mapid == 271040100) {
             World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] Empress was killed by : " + chr.getName()));
-            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "To you whom have defeated Empress Cygnus in the future, you are the heroes of time!"));
+            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "您是我們的英雄!!"));
             if (speedRunStart > 0) {
                 type = ExpeditionType.Cygnus;
             }
@@ -1654,6 +1677,9 @@ public final class MapleMap {
         monster.setMap(this);
         checkRemoveAfter(monster);
         monster.setLinkOid(oid);
+
+        changelevel(monster);
+
         spawnAndAddRangedMapObject(monster, new DelayedPacketCreation() {
 
             @Override
@@ -1670,6 +1696,17 @@ public final class MapleMap {
         spawnedMonstersOnMap.incrementAndGet();
     }
 
+    private void changelevel(MapleMonster monster) {
+        if(channel > 10 && (monster.getStats().getLevel() > 10 || monster.getStats().isBoss())){
+            int level = monster.getStats().getLevel();
+            if (level >= 200)
+                level = 250;
+            else
+                level = (short) ((level * 150 / 200) + 100);
+            monster.HellChangeLevel(level, 512, 90);
+        }
+    }
+
     public final void spawnMonster(final MapleMonster monster, final int spawnType) {
         spawnMonster(monster, spawnType, false);
     }
@@ -1678,15 +1715,7 @@ public final class MapleMap {
         monster.setMap(this);
         checkRemoveAfter(monster);
 
-
-        if(channel > 10 && monster.getStats().getLevel() > 10 && !monster.isBoss()){
-            int level = monster.getStats().getLevel();
-            if (level >= 200)
-                level = 250;
-            else
-                level = (short) ((level * 150 / 200) + 100);
-            monster.HellChangeLevel(level, 512, 90);
-        }
+        changelevel(monster);
         spawnAndAddRangedMapObject(monster, new DelayedPacketCreation() {
 
             @Override
@@ -2372,7 +2401,7 @@ public final class MapleMap {
                 chr.dojoMapEndTime = System.currentTimeMillis();
             } else if (mapid == 910000000) {
                 chr.getClient().sendPacket(CField.musicChange(MapConstants.FM_BGM));
-                chr.dropMessage("    **** 歡迎來到小豬谷的 自由市場! ****");
+                chr.dropMessage("    **** 歡迎來到小喵谷的 自由市場! ****");
                 chr.dropMessage("- @help - 查看可使用指令");
             }
         }

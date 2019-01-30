@@ -7,6 +7,7 @@ import client.inventory.*;
 import constants.GameConstants;
 import constants.ServerConstants;
 import database.DatabaseConnection;
+import io.netty.util.internal.ThreadLocalRandom;
 import provider.*;
 import server.StructSetItem.SetItem;
 import tools.types.Pair;
@@ -729,7 +730,29 @@ public class MapleItemInformationProvider {
                                 nEquip.setMp((short) (nEquip.getMp() + Randomizer.nextInt(z) * nagtive));
                             }
                             break;
-                        } else if (GameConstants.isEquipScroll(scrollId.getItemId())) {
+                        } else if (GameConstants.is8HappyScroll(scrollId.getItemId())) {
+                            int wtk = 0;
+                            int mtk = 0;
+                            switch (scrollId.getItemId()){
+                                case 2046025:
+                                case 2046119:
+                                    wtk =  ThreadLocalRandom.current().nextInt(7, 8 + 1);
+                                    break;
+                                case 2046026:
+                                case 2046120:
+                                    mtk =  ThreadLocalRandom.current().nextInt(7, 8 + 1);
+                                    break;
+                            }
+                            if (wtk > 0) {
+                                nEquip.setWatk((short) (nEquip.getWatk() + Randomizer.nextInt(wtk)));
+                            }
+
+
+                            if (mtk > 0) {
+                                nEquip.setMatk((short) (nEquip.getMatk() + Randomizer.nextInt(mtk)));
+                            }
+                            break;
+                        }else if (GameConstants.isEquipScroll(scrollId.getItemId())) {
                             boolean isSucc = true;
                             Pair<Integer, Integer> chanc = (scrollId.getItemId() == 2049300 ? getEnhanceSucceRate(true, nEquip.getEnhance()) : getEnhanceSucceRate(false, nEquip.getEnhance()));
                             if(chr.getGMLevel() > 4)
@@ -743,7 +766,7 @@ public class MapleItemInformationProvider {
                                 break;
                             }
                             if(getEnhanceFee(true, nEquip.getEnhance()) > chr.getCSPoints(2) || getEnhanceFee(false, nEquip.getEnhance()) > chr.getMeso()){
-                                chr.dropMessage(1, "楓幣或楓點不足，詳細費用請見小豬谷衝星說明");
+                                chr.dropMessage(1, "楓幣或楓點不足，詳細費用請見小喵谷衝星說明");
                                 break;
                             }else{
                                 chr.modifyCSPoints(2, -1 * getEnhanceFee(true, nEquip.getEnhance()), true);
@@ -1155,7 +1178,7 @@ public class MapleItemInformationProvider {
 
     public boolean canlevelEnhance(final Equip eq){
         final int reqLevel = getReqLevel(eq.getItemId());
-        if(eq.getItemId() == 1112915 || eq.getItemId() == 1152082)
+        if(eq.getItemId() == 1112915)
             return eq.getEnhance() < 30;
 
         if(reqLevel < 30)
@@ -1533,12 +1556,7 @@ public class MapleItemInformationProvider {
     }
 
     public Equip getStats(Equip equip, int pot1, int pot2, int pot3, int pot4, int pot5, int addscro, short addstr, short adddex, short addint, short addluk, short addwatk, short addmatk, int bkg) {
-        equip.setStr(equip.getStr());
-        equip.setDex(equip.getDex());
-        equip.setInt(equip.getInt());
-        equip.setLuk(equip.getLuk());
-        equip.setMatk(equip.getMatk());
-        equip.setWatk(equip.getWatk());
+        setaddition(equip, addstr, adddex, addint, addluk, addwatk, addmatk);
         equip.setAcc(equip.getAcc());
         equip.setAvoid(equip.getAvoid());
         equip.setJump(equip.getJump());
@@ -1553,6 +1571,7 @@ public class MapleItemInformationProvider {
         equip.setPotential3(pot3);
         equip.setPotential4(pot4);
         equip.setPotential5(pot5);
+        equip.setUpgradeSlots((byte)(equip.getUpgradeSlots() + addscro));
         equip.setExtraScroll(addscro);
         equip.setAddi_str(addstr);
         equip.setAddi_dex(adddex);
@@ -1563,6 +1582,15 @@ public class MapleItemInformationProvider {
         equip.setBreak_dmg(bkg);
 
         return equip;
+    }
+
+    private void setaddition(Equip equip, short addstr, short adddex, short addint, short addluk, short addwatk, short addmatk) {
+        equip.setStr((short) (equip.getStr() + addstr));
+        equip.setDex((short) (equip.getDex() + adddex));
+        equip.setInt((short) (equip.getInt() + addint));
+        equip.setLuk((short) (equip.getLuk() + addluk));
+        equip.setMatk((short) (equip.getMatk() + addwatk));
+        equip.setWatk((short) (equip.getWatk() + addmatk));
     }
 
     public Equip randomizeStats(Equip equip) {
@@ -1607,12 +1635,7 @@ public class MapleItemInformationProvider {
 
     public Equip voteitem(Equip equip) {
         short stat = 100;
-        equip.setStr((short) (equip.getStr() + stat));
-        equip.setDex((short) (equip.getDex() + stat));
-        equip.setInt((short) (equip.getInt() + stat));
-        equip.setLuk((short) (equip.getLuk() + stat));
-        equip.setMatk((short) (equip.getMatk() + stat));
-        equip.setWatk((short) (equip.getWatk() + stat));
+        setaddition(equip, stat, stat, stat, stat, stat, stat);
         equip.setAcc((short) (equip.getAcc() + stat));
         equip.setAvoid((short) (equip.getAvoid() + stat));
         equip.setJump((short) (equip.getJump() + stat));

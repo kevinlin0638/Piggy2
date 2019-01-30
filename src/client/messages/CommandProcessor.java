@@ -30,25 +30,42 @@ public class CommandProcessor {
      * @param c MapleClient
      * @param type 0 = NormalCommand
      */
-    public static void dropHelp(MapleClient c, int type) {
+    public static void dropHelp(MapleClient c, CommandType type) {
         final StringBuilder sb = new StringBuilder("指令列表:\r\n");
         HashMap<Integer, ArrayList<String>> commandList = new HashMap<>();
-        int check = 0;
-        if (type == 0) {
-            commandList = commands;
-            check = c.getPlayer().getGMLevel();
-        }
+        int check = c.getPlayer().getGMLevel();
+        commandList = commands;
         for (int i = 0; i <= check; i++) {
             if (commandList.containsKey(i)) {
                 sb.append("權限等級： ").append(i).append("\r\n");
                 for (String s : commandList.get(i)) {
                     CommandObject co = commandObjects.get(s);
+                    if(co.getType() != type)
+                        continue;
                     sb.append(co.getHelpMessage());
                     sb.append(" \r\n");
                 }
             }
         }
         c.getPlayer().dropNPC(sb.toString());
+    }
+
+    private static void sendDisplayMessage(MapleClient c, String msg, CommandType type) {
+        if (c.getPlayer() == null) {
+            return;
+        }
+        switch (type) {
+            case NORMAL:
+                c.getPlayer().dropMessage( msg);
+                break;
+            case TRADE:
+                c.getPlayer().dropMessage("錯誤 : " + msg);
+                break;
+            case MERCH:
+                c.getPlayer().dropMessage(-2, "錯誤 : " + msg);
+                break;
+        }
+
     }
 
     public static boolean processCommand(MapleClient client, String text, CommandType type) {
@@ -66,12 +83,20 @@ public class CommandProcessor {
         CommandObject commandObject = commandObjects.get(args[0]);
         if (commandObject == null) {
             if (args[0].equals("@help")) {
-                dropHelp(client, 0);
+                dropHelp(client, type);
                 return true;
             }
-            player.dropMessage("沒有這個指令,可以使用 @幫助/@help 來查看指令.");
+            if(type == CommandType.NORMAL)
+                sendDisplayMessage(client, "沒有這個指令,可以使用 @幫助/@help 來查看指令", type);
+            else if(type == CommandType.TRADE)
+                sendDisplayMessage(client, "沒有這個指令,可以使用 @helpTrade 來查看指令", type);
+            else if(type == CommandType.MERCH)
+                sendDisplayMessage(client, "沒有這個指令,可以使用 @helpMerch 來查看指令", type);
             return true;
         }
+
+        if(type != commandObject.getType())
+            sendDisplayMessage(client, "使用時機錯誤", type);
 
         if (commandObject.getGmLevelReq() <= player.getGMLevel()) {
 

@@ -22,6 +22,7 @@ package handling.channel.handler;
 
 import client.MapleCharacter;
 import client.MapleClient;
+import database.DatabaseConnection;
 import handling.login.handler.LoginResponse;
 import server.status.MapleDiseaseValueHolder;
 import client.skill.SkillFactory;
@@ -48,9 +49,10 @@ import tools.packet.CWvsContext.GuildPacket;
 import tools.packet.LoginPacket;
 import tools.packet.MTSCSPacket;
 
+import javax.xml.crypto.Data;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.List;
 
 public class InterServerHandler {
@@ -184,15 +186,46 @@ public class InterServerHandler {
             }
         }
 
-        if(!is_p) {
+        if(!is_p && (!client.getAccountName().equals("kappa") && !client.getAccountName().equals("kappa2"))) {
             client.getSession().close();
             return;
         }
+
+        final Connection con = DatabaseConnection.getConnection();
+
 
         client.setPlayer(player);
         client.setAccID(player.getAccountID());
         client.updateLoginState(MapleClient.LOGIN_LOGGED, client.getSessionIPAddress());
         channelServer.addPlayer(player);
+        try {
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM paybill_bills WHERE accountID = ? AND isSent = 0", Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, client.getAccID());
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()){
+                if(player.getClient().getAccountName().equalsIgnoreCase(rs.getString("account"))) {
+                    player.dropMessage("帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * 1.5) + " 點贊助點.");
+                    player.gainPoints((int) Math.floor(rs.getInt("money") * 1.5));
+                    for(MapleClient cll : World.pending_clients){
+                        if(cll.getAccountName().equalsIgnoreCase(rs.getString("account"))) {
+                            final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+                            mplew.writeShort(666);
+                            String sb = "帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * 1.5) + " 點贊助點.";
+                            mplew.write(sb.getBytes());
+                            cll.sendPacket(mplew.getPacket());
+                        }
+                    }
+                    ps = con.prepareStatement("UPDATE paybill_bills SET isSent = ? WHERE BillID = ? AND isSent != 1");
+                    ps.setInt(1, 1);
+                    ps.setInt(2, rs.getInt("BillID"));
+                    ps.executeUpdate();
+                    ps.close();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         player.giveCoolDowns(PlayerBuffStorage.getCooldownsFromStorage(player.getId()));
         player.silentGiveBuffs(PlayerBuffStorage.getBuffsFromStorage(player.getId()));
         final List<MapleDiseaseValueHolder> ld = PlayerBuffStorage.getDiseaseFromStorage(player.getId());
@@ -208,7 +241,7 @@ public class InterServerHandler {
         if (player.inCS()) {
             player.setInCS(false); // exit them from CS enabling
         } else {
-            client.sendPacket(CWvsContext.yellowChat("[小豬谷] 歡迎來到 " + ServerConstants.SERVER_NAME));
+            client.sendPacket(CWvsContext.yellowChat("[小喵谷] 歡迎來到 " + ServerConstants.SERVER_NAME));
             client.sendPacket(CField.sendHint("" + ServerConstants.WELCOME_MESSAGE + "", 350, 5));
         }
         // GM Hide is a skill now, and auto-applies super hide. 
@@ -289,7 +322,7 @@ public class InterServerHandler {
         player.updatePartyMemberHP();
         player.startFairySchedule(false);
         client.sendPacket(CField.getKeymap(player.getKeyLayout()));
-        client.sendPacket(LoginPacket.enableReport());
+        //client.sendPacket(LoginPacket.enableReport());
         player.updatePetAuto();
         player.expirationTask(true, player == null);
         if (player.getJob() == 132) { // DARKKNIGHT

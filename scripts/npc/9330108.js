@@ -17,11 +17,12 @@ function action(mode, type, selection) {
     }
 
     if (status == 0) {
-	cm.sendSimple("What do you want to do?\n\r #b#L0#Enter the Fishing Lagoon#l \n\r #L2#Return to old map#l");
+	cm.sendSimple("在自由市場坐下任何椅子就可以釣魚摟! 您想做什麼？\n\r #b#L3#買魚餌#l");
     } else if (status == 1) {
 	sel = selection;
-	if (sel == 0) {
-	    cm.sendSimple("Which one?\r\n#b#L0#Universe#l\r\n#L1#Fantasy#l\r\n#L2#Fairy#l#k");
+	if (sel == 3) {
+	    cm.dispose();
+			cm.openNpc(9330109);
 	} else if (sel == 2) {
 	    var returnMap = cm.getSavedLocation("FISHING");
 	    if (returnMap < 0 || cm.getMap(returnMap) == null) {

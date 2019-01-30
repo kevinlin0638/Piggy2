@@ -6,7 +6,7 @@
 var status = -1;
 
 function start() {
-    cm.sendYesNo(cm.getMapId() != 951000000 ? "Ah, our favorite customer! Would you like to go to Spiegelmann's Monster Park?" : "Hey there! Need a lift back to town? That's what the Monster Park Shuttle is for!");
+    cm.sendYesNo(cm.getMapId() != 951000000 ? "您好，您想要去怪物公園嗎?" : "您好，您要回城鎮了嗎?");
 }
 
 function action(mode, type, selection) {
@@ -28,14 +28,14 @@ function action(mode, type, selection) {
 			// cm.sendNext("Your current level is " + cm.getPlayer().getLevel() + ", so you can enter the level #bAdvanced Battleground#k.\r\nYou are being moved to the #rChannel " + recChannel + "#k to improve your Monster Park experience.");
 			if (cm.getMapId() != 951000000)
 				cm.saveReturnLocation("MULUNG_TC");
-			(cm.getMapId() != 951000000 ? cm.warp(951000000, 0) : cm.sendNext("Okay, the shuttle will take you back to town."));
+			(cm.getMapId() != 951000000 ? cm.warp(951000000, 0) : cm.sendNext("OK，現在帶您回去."));
 		} else {
 			var map = cm.getSavedLocation("MULUNG_TC");
 			(cm.getMapId() != 951000000 ? cm.dispose() : cm.warp(map, 0));
 			cm.dispose();
 		}
     } else {
-		cm.sendNext(cm.getMapId() != 951000000 ? "The shuttle is always ready for you, so come back anytime." : "Use the shuttle if you want to leave the Monster Park. A comfy ride every time, guaranteed!");
+		cm.sendNext(cm.getMapId() != 951000000 ? "歡迎回來." : "如果您想離開再與我對話. 隨時觀迎!");
 		cm.dispose();
     }
 }

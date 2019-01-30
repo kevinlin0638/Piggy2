@@ -203,7 +203,7 @@ public class LoginPacket {
     public static byte[] enableReport() {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(3);
         mplew.writeShort(SendPacketOpcode.REPORT_STATUS.getValue());
-        mplew.write(1);
+        mplew.write(0);
         return mplew.getPacket();
     }
 

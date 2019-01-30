@@ -217,4 +217,4 @@ function jobSelection(index) {
     for (var i = 0; i < job[index].length; i++)
         choose += "\r\n#L" + job[index][i][0] + "#" + job[index][i][1] + "#l";
     cm.sendSimple(choose);
-}  
+}

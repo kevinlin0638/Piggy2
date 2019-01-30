@@ -20,7 +20,7 @@ var getNewWep;
 var sel;
 
 function start() {
-    cm.sendSimple("What would you like to do ? \r\n\r\n#b#L0#Make the level 35 weapon#l \r\n\r\n#L1#Make the level 42 weapon#l*\r\n\r\n#L2#Make the level 64 weapon#l\r\n\r\n#L4#Make the level 77 weapon#l\r\n\r\n#L3#Trade for Experience#l#k");
+    cm.sendSimple("您想要做什麼 ? \r\n\r\n#b#L0#Make the level 35 weapon#l \r\n\r\n#L1#Make the level 42 weapon#l*\r\n\r\n#L2#Make the level 64 weapon#l\r\n\r\n#L4#Make the level 77 weapon#l\r\n\r\n#L3#Trade for Experience#l#k");
 }
 
 function action(mode, type, selection) {

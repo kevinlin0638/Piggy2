@@ -526,8 +526,12 @@ public abstract class AbstractPlayerInteraction {
             }
             if (type.equals(MapleInventoryType.EQUIP) && !GameConstants.isThrowingStar(id) && !GameConstants.isBullet(id)) {
                 final Equip item = (Equip) (randomStats ? ii.randomizeStats((Equip) ii.getEquipById(id)) : ii.getEquipById(id));
-                if (period > 0) {
-                    item.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                if (period > 0) { //设置到期时间
+                    if (period < 1000) {
+                        item.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                    } else {
+                        item.setExpiration(System.currentTimeMillis() + period);
+                    }
                 }
                 if (slots > 0) {
                     item.setUpgradeSlots((byte) (item.getUpgradeSlots() + slots));

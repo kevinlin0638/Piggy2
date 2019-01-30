@@ -116,6 +116,9 @@ public class ItemConstants {
             return value;
         }
 
+
+
+
         public static int getDamageSkinNumberByItem(int itemid) {
             Map<Integer, Integer> skin = getDamageSkin();
             if (skin.containsKey(itemid)) {

@@ -668,7 +668,11 @@ public class MapleServerHandler extends ChannelDuplexHandler {
             case USE_MAGNIFY_GLASS:
                 InventoryHandler.UseMagnify(slea, client);
                 break;
+            case USE_RAND_RESP:
+                InventoryHandler.UseScriptedNPCItem(slea, client, client.getPlayer());
+                break;
             case USE_SCRIPTED_NPC_ITEM:
+                slea.readInt();
                 InventoryHandler.UseScriptedNPCItem(slea, client, client.getPlayer());
                 break;
             case USE_RETURN_SCROLL:

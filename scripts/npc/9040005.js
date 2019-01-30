@@ -9,7 +9,7 @@ function action(mode, type, selection) {
 status++;
     if (status == 0) {
 	if (cm.isPlayerInstance()) {
-		cm.sendSimple("What would you like to do? \r\n #L0#Leave the Guild Quest#l");
+		cm.sendSimple("您想要做什麼? \r\n #L0#Leave the Guild Quest#l");
 	} else {
 		cm.sendOk("Sorry, but I cannot do anything for you!");
 		cm.dispose();

@@ -10,7 +10,7 @@ function action(mode, type, selection) {
 	status--;
     }
     if (status == 0) {
-	cm.sendYesNo("Would you like to get out?");
+	cm.sendYesNo("您確定要出去了嗎?");
     } else if (status == 1) {
 	cm.warp(100000000,0);
 	cm.dispose();

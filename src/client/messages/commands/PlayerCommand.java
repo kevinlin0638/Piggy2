@@ -4,23 +4,33 @@ import client.MapleCharacter;
 import client.MapleClient;
 import client.MapleStat;
 import client.inventory.Item;
+import client.inventory.ItemFlag;
+import client.inventory.MapleInventory;
 import client.inventory.MapleInventoryType;
 import constants.GameConstants;
 import constants.ServerConstants.PlayerGMRank;
+import database.DatabaseConnection;
 import handling.channel.ChannelServer;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
+import server.Randomizer;
 import server.life.MapleLifeFactory;
 import server.life.MapleMonster;
 import server.maps.MapleMap;
 import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import scripting.NPCScriptManager;
+import server.shops.IMaplePlayerShop;
+import server.shops.MapleMiniGame;
+import server.shops.MaplePlayerShopItem;
+import tools.StringUtil;
 import tools.packet.CWvsContext;
+import tools.packet.PlayerShopPacket;
 
 public class PlayerCommand {
 
@@ -194,7 +204,7 @@ public class PlayerCommand {
         }
     }
 
-    public static class 克隆我 extends AbstractsCommandExecute {
+    /*public static class 克隆我 extends AbstractsCommandExecute {
 
         @Override
         public boolean execute(MapleClient c, List<String> args) {
@@ -206,7 +216,7 @@ public class PlayerCommand {
         public String getHelpMessage() {
             return "@克隆我 - 產生一個克隆人";
         }
-    }
+    }*/
 
     public static class 自殺 extends AbstractsCommandExecute {
 
@@ -228,11 +238,38 @@ public class PlayerCommand {
     public static class emo extends 自殺{
     }
 
+    public static class 查看贊助 extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            Connection con = DatabaseConnection.getConnection();
+            try {
+                PreparedStatement ps = con.prepareStatement("SELECT * FROM paybill_paylog WHERE  account = ?", Statement.RETURN_GENERATED_KEYS);
+                ps.setInt(1, c.getAccID());
+                ResultSet rs = ps.executeQuery();
+                while(rs.next()){
+                    c.getPlayer().dropMessage("帳號 : " + c.getAccountName() + "斗內金額 : " + rs.getInt("money") + " 自" + rs.getDate("paytime").toString() + " 已付款 - " +  rs.getInt("dps") + "贊助點 存入帳號");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@查看贊助 - 查看贊助";
+        }
+    }
+
+
+
     public static class sell extends AbstractsCommandExecute {
 
         @Override
         public boolean execute(MapleClient c, List<String> splitted) {
-            final int inv, start, end;
+            final int start, end;
+            int inv;
             if(splitted.size() < 4) {
                 c.getPlayer().dropMessage(1, "使用方式 @sell 欄位 開始格數 結束格數.");
                 return false;
@@ -240,7 +277,10 @@ public class PlayerCommand {
             MapleInventoryType innv;
             try {
                 inv = Integer.parseInt(splitted.get(1));
-
+                if(inv == 4)
+                    inv = 3;
+                else if(inv == 3)
+                    inv = 4;
                 if(inv > 5 || inv < 1){
                     c.getPlayer().dropMessage(1, "欄位無效 只能 1 ~ 5.");
                     return false;
@@ -252,9 +292,9 @@ public class PlayerCommand {
                 }else if(splitted.get(1).equals("消耗欄")){
                     innv = MapleInventoryType.getByType((byte) 2);
                 }else if(splitted.get(1).equals("裝飾欄")){
-                    innv = MapleInventoryType.getByType((byte) 3);
-                }else if(splitted.get(1).equals("其他欄")){
                     innv = MapleInventoryType.getByType((byte) 4);
+                }else if(splitted.get(1).equals("其他欄")){
+                    innv = MapleInventoryType.getByType((byte) 3);
                 }else if(splitted.get(1).equals("特殊欄")){
                     innv = MapleInventoryType.getByType((byte) 5);
                 }else
@@ -337,7 +377,7 @@ public class PlayerCommand {
     public static class 自由 extends fm{
 
     }
-    public static class 清除克隆 extends AbstractsCommandExecute {
+    /*public static class 清除克隆 extends AbstractsCommandExecute {
 
         @Override
         public boolean execute(MapleClient c, List<String> args) {
@@ -349,6 +389,707 @@ public class PlayerCommand {
         @Override
         public String getHelpMessage() {
             return "@清除克隆 - 清除克隆人";
+        }
+    }*/
+
+    public static class STR extends DistributeStatCommands {
+
+
+        public STR() {
+            stat = MapleStat.STR;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@str <數字>";
+        }
+    }
+
+
+    public static class DEX extends DistributeStatCommands {
+
+
+        public DEX() {
+            stat = MapleStat.DEX;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@dex <數字>";
+        }
+    }
+
+
+    public static class INT extends DistributeStatCommands {
+
+
+        public INT() {
+            stat = MapleStat.INT;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@int <數字>";
+        }
+    }
+
+
+    public static class LUK extends DistributeStatCommands {
+
+
+        public LUK() {
+            stat = MapleStat.LUK;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return"@luk <數字>";
+        }
+    }
+
+    public static class HP extends DistributeStatCommands {
+
+
+        public HP() {
+            stat = MapleStat.MAX_HP;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@hp <數字>";
+        }
+    }
+
+    public static class MP extends DistributeStatCommands {
+
+
+        public MP() {
+            stat = MapleStat.MAX_MP;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@mp <數字>";
+        }
+    }
+
+    public abstract static class DistributeStatCommands extends AbstractsCommandExecute {
+
+
+        protected MapleStat stat = null;
+
+        private void setStat(MapleCharacter player, int amount) {
+            switch (stat) {
+                case STR:
+                    player.getStat().setStr((short) amount, player);
+                    player.updateSingleStat(MapleStat.STR, player.getStat().getStr());
+                    break;
+                case DEX:
+                    player.getStat().setDex((short) amount, player);
+                    player.updateSingleStat(MapleStat.DEX, player.getStat().getDex());
+                    break;
+                case INT:
+                    player.getStat().setInt((short) amount, player);
+                    player.updateSingleStat(MapleStat.INT, player.getStat().getInt());
+                    break;
+                case LUK:
+                    player.getStat().setLuk((short) amount, player);
+                    player.updateSingleStat(MapleStat.LUK, player.getStat().getLuk());
+                    break;
+                case MAX_HP:
+                    amount =  Math.min(99999, Math.abs(amount));
+                    player.getStat().setMaxHp(amount, player);
+                    player.updateSingleStat(MapleStat.MAX_HP, player.getStat().getMaxHp());
+                    break;
+                case MAX_MP:
+                    amount =  Math.min(99999, Math.abs(amount));
+                    player.getStat().setMaxMp(amount, player);
+                    player.updateSingleStat(MapleStat.MAX_MP, player.getStat().getMaxMp());
+                    break;
+            }
+        }
+
+
+        private int getStat(MapleCharacter player) {
+            switch (stat) {
+                case STR:
+                    return player.getStat().getStr();
+                case DEX:
+                    return player.getStat().getDex();
+                case INT:
+                    return player.getStat().getInt();
+                case LUK:
+                    return player.getStat().getLuk();
+                case MAX_HP:
+                    return player.getStat().getMaxHp();
+                case MAX_MP:
+                    return player.getStat().getMaxMp();
+                default:
+                    throw new RuntimeException(); //Will never happen.
+            }
+        }
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 2) {
+                c.getPlayer().dropMessage(5, "使用方式 @STR/DEX/INT/LUK/HP/MP 數字(負的需使用 洗能力點卷軸).");
+                return true;
+            }
+            int change, changestate;
+            try {
+                change = Integer.parseInt(splitted.get(1));
+                changestate = change;
+            } catch (NumberFormatException nfe) {
+                c.getPlayer().dropMessage(1, "輸入的數字無效.");
+                return true;
+            }
+
+            if (change <= 0) {
+                if(getStat(c.getPlayer()) <= 4){
+                    c.getPlayer().dropMessage(1, "能力點不能小於4.");
+                    return true;
+                }
+
+                if(change <= -100){
+                    c.getPlayer().dropMessage(1, "不可減少超過 100 點.");
+                    return true;
+                }
+
+                if (stat.name() == "MAXHP" || stat.name() == "MAXMP") {
+                    if(c.getPlayer().getHpApUsed() <= 0){
+                        c.getPlayer().dropMessage(1, "您在HP與MP沒有投注過任何能力點.");
+                        return true;
+                    }
+                    if(c.getPlayer().getHpApUsed() - Math.abs(change) < 0){
+                        c.getPlayer().dropMessage(1, "您只能輸入不小於 -" + (c.getPlayer().getHpApUsed()) + " 的數字");
+                        return true;
+                    }
+                    if (getStat(c.getPlayer()) <= 50) {
+                        c.getPlayer().dropMessage(1, "您的血(魔)已到達最低.");
+                        return true;
+                    }
+                    changestate = 0;
+                    for(int i  = 1; i <= Math.abs(change);i++) {
+                        changestate -= Randomizer.rand(15, 25);
+                    }
+                }else{
+                    if(getStat(c.getPlayer()) + change < 4){
+                        c.getPlayer().dropMessage(1, "能力點不能小於4.");
+                        return true;
+                    }
+                }
+                if(!c.getPlayer().haveItem(5050000, Math.abs(change))){
+                    c.getPlayer().dropMessage(1, "您沒有足夠的 洗能力點卷軸.");
+                    return true;
+                }
+                if (MapleInventoryManipulator.removeById(c, MapleInventoryType.CASH, 5050000, -change, false, false)) {
+                    c.getSession().write(CWvsContext.InfoPacket.getShowItemGain(5050000, (short) -change, true));
+                }else {
+                    return true;
+                }
+            }else{
+                if (stat.name().equals("MAXHP")) {
+                    if (getStat(c.getPlayer()) == 99999) {
+                        c.getPlayer().dropMessage(1, "您的血已到達上限.");
+                        return true;
+                    }
+                }else if(stat.name().equals("MAXMP")){
+                    if (getStat(c.getPlayer()) == 99999) {
+                        c.getPlayer().dropMessage(1, "您的魔已到達上限.");
+                        return true;
+                    }
+                }
+                if(stat.name() == "MAXHP" || stat.name() == "MAXMP"){
+                    changestate = 0;
+                    for(int i  = 1; i <= Math.abs(change);i++) {
+                        changestate += Randomizer.rand(50, 65);
+                    }
+                }
+            }
+            if (c.getPlayer().getRemainingAp() < change) {
+                c.getPlayer().dropMessage(1, "您的能力點不足.");
+                return true;
+            }
+            if (!(stat.name() == "MAXHP") && !(stat.name() == "MAXMP")) {
+                if (getStat(c.getPlayer()) + change > 99999) {
+                    c.getPlayer().dropMessage(1, "所要分配後的能力總和不可大於 " + 99999 + " 點.");
+                    return true;
+                }
+            }else{
+                if(getStat(c.getPlayer()) + changestate <= 50)
+                    changestate = getStat(c.getPlayer()) - 50;
+            }
+            if(stat.name() == "MAXHP" || stat.name() == "MAXMP"){
+                c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() + change));
+            }
+            setStat(c.getPlayer(), getStat(c.getPlayer()) + changestate);
+            c.getPlayer().setRemainingAp((short) (c.getPlayer().getRemainingAp() - change));
+            c.getPlayer().updateSingleStat(MapleStat.AVAILABLE_AP, c.getPlayer().getRemainingAp());
+            c.getPlayer().dropMessage(5, "加(扣)點成功 您的 " + StringUtil.makeEnumHumanReadable(stat.name()) + " 提高(減少)了 " + changestate + " 點.");
+            return true;
+        }
+    }
+
+
+    public static class tradeInfo extends AbstractsCommandExecute.TradeExecute{
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            c.getPlayer().getTrade().ShowTradeInfo();
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "使用 @tradeInfo 可以查看目前交易物品(以防有些道具不會顯示數量)";
+        }
+    }
+
+    public static class pmerch extends AbstractsCommandExecute.MerchExecute{
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if(splitted.size() < 6)
+            {
+                c.getPlayer().dropMessage(-2, "幫助 : 使用 @help 可以查看如何使用指令");
+                return true;
+            }
+
+            MapleInventoryType type;
+            byte slot;
+            short bundles; // How many in a bundle
+            short perBundle; // Price per bundle
+            int price;
+            final MapleCharacter chr = c.getPlayer();
+            try {
+                byte inv = (byte) Integer.parseInt(splitted.get(1));
+                if(inv == 3)
+                    inv = 4;
+                else if(inv == 4)
+                    inv = 3;
+                type = MapleInventoryType.getByType(inv);
+                if(type == null || type == MapleInventoryType.EQUIPPED)
+                {
+                    c.getPlayer().dropMessage(-2, "錯誤 : 輸入的欄位無效.");
+                    return true;
+                }
+
+                int slo = Integer.parseInt(splitted.get(2));
+                if(slo <= 0 || slo > 96){
+                    c.getPlayer().dropMessage(-2, "錯誤 : 輸入的欄位位置無效.");
+                    return true;
+                }
+                slot = (byte) slo;
+
+                int temp = Integer.parseInt(splitted.get(3));
+                if (temp <= 0 || temp > 32767){
+                    c.getPlayer().dropMessage(-2, "錯誤 : 輸入的組數無效.");
+                    return true;
+                }
+                bundles = (short) temp; // How many in a bundle
+
+                temp = Integer.parseInt(splitted.get(4));
+                if (temp <= 0 || temp > 32767){
+                    c.getPlayer().dropMessage(-2, "錯誤 : 輸入的單組數量無效.");
+                    return true;
+                }
+                perBundle = (short) temp; // Price per bundle
+
+                price = Integer.parseInt(splitted.get(5));
+                if(price <= 0){
+                    c.getPlayer().dropMessage(-2, "錯誤 : 輸入的價格無效.");
+                    return true;
+                }
+
+            } catch (NumberFormatException nfe) {
+                c.getPlayer().dropMessage(-2, "錯誤 : 輸入的數字無效.");
+                return true;
+            }
+
+            final Item ivItem = chr.getInventory(type).getItem(slot);
+
+            if (bundles <= 0 && !GameConstants.isRechargable(ivItem.getItemId()) || perBundle <= 0) {
+                return true;
+            }
+            final IMaplePlayerShop shop = chr.getPlayerShop();
+
+            if (shop == null || !shop.isOwner(chr) || shop instanceof MapleMiniGame) {
+                return true;
+            }
+
+            if(!shop.isAvailable()){
+                c.getPlayer().dropMessage(-2, "錯誤 : 此指令只能在整理商店使用,請先讓商店開張.");
+                return true;
+            }
+            final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+
+
+            if (ivItem != null) {
+                if(!ii.isCash(ivItem.getItemId())){
+                    c.getPlayer().dropMessage(-2, "錯誤 : 只能對點數裝備使用指令.");
+                    return true;
+                }
+
+
+                long check = bundles * perBundle;
+                if (check > 32767 || check <= 0) { //This is the better way to check.
+                    return true;
+                }
+                final short bundles_perbundle = (short) (bundles * perBundle);
+//                    if (bundles_perbundle < 0) { // int_16 overflow
+//                        return;
+//                    }
+                if (ivItem.getQuantity() >= bundles_perbundle || ( !GameConstants.isRechargable(ivItem.getItemId()) && bundles_perbundle == 1  ) ) {
+                    final short flags = ivItem.getFlag();
+                    if (ItemFlag.UNTRADEABLE.check(flags) || ItemFlag.LOCK.check(flags)) {
+                        c.getPlayer().dropMessage(-2, "錯誤 : 此道具已加鎖  ");
+                        c.getSession().write(CWvsContext.enableActions());
+                        return true;
+                    }
+                    if (ii.isDropRestricted(ivItem.getItemId()) || ii.isAccountShared(ivItem.getItemId())) {
+                        if (!(ItemFlag.KARMA_EQ.check(flags) || ItemFlag.KARMA_USE.check(flags))) {
+                            c.getPlayer().dropMessage(-2, "錯誤 : 此道具無法交易  ");
+                            c.getSession().write(CWvsContext.enableActions());
+                            return true;
+                        }
+                    }
+                    if (GameConstants.isThrowingStar(ivItem.getItemId()) || GameConstants.isBullet(ivItem.getItemId())) {
+                        // Ignore the bundles
+                        MapleInventoryManipulator.removeFromSlot(c, type, slot, ivItem.getQuantity(), true);
+
+                        final Item sellItem = ivItem.copy();
+                        shop.addItem(new MaplePlayerShopItem(sellItem, (short) 1, price));
+                    } else {
+                        MapleInventoryManipulator.removeFromSlot(c, type, slot, bundles_perbundle, true);
+
+                        final Item sellItem = ivItem.copy();
+                        sellItem.setQuantity(perBundle);
+                        shop.addItem(new MaplePlayerShopItem(sellItem, bundles, price));
+                    }
+                    c.getSession().write(PlayerShopPacket.shopItemUpdate(shop));
+                }else{
+                    c.getPlayer().dropMessage(-2, "錯誤 : 您沒有足夠的道具.");
+                    return true;
+                }
+            }else{
+                c.getPlayer().dropMessage(-2, "錯誤 : 無此道具.");
+                return true;
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "使用方式 @pmerch 欄位 位置 組數 每組數量 價格";
+        }
+    }
+    public static class peq extends AbstractsCommandExecute.TradeExecute{
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 2) {
+                c.getPlayer().dropMessage(-2, "使用方式 @peq + 道具位置(1~96).");
+                return true;
+            }
+            int slot;
+            try {
+                slot = Integer.parseInt(splitted.get(1));
+            } catch (NumberFormatException nfe) {
+                c.getPlayer().dropMessage(5, "錯誤 : 輸入的數字無效.");
+                return true;
+            }
+            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+
+            MapleInventory invy = c.getPlayer().getInventory(MapleInventoryType.EQUIP);
+            Item item = null;
+            for (Item i : invy.list()) {
+                if (i.getPosition() == slot) {
+                    item = i;
+                    break;
+                }
+            }
+            if(item == null){
+                c.getPlayer().dropMessage(-2, "錯誤 : 沒有此道具");
+                return true;
+            }
+
+
+            final short flag = item.getFlag();
+            if (ItemFlag.UNTRADEABLE.check(flag) || ItemFlag.LOCK.check(flag)) {
+                c.getPlayer().dropMessage(-2, "錯誤 : 此道具已加鎖  ");
+                return true;
+            }
+
+            short quantity = 1;
+            byte targetSlot = -1;
+            if (c.getPlayer().getTrade() != null) {
+                boolean canTrade = true;
+                if(!ii.isCash(item.getItemId()))
+                    canTrade = false;
+                if (item.getItemId() == 4000463 || !canTrade) {
+                    c.getPlayer().dropMessage(-2, "錯誤 : 該道具無法使用指令進行交易.");
+                    c.getSession().write(CWvsContext.enableActions());
+                } else if (quantity <= item.getQuantity() || GameConstants.isThrowingStar(item.getItemId()) || GameConstants.isBullet(item.getItemId())) {
+                    c.getPlayer().getTrade().setItems(c, item, targetSlot, quantity);
+                } else{
+                    c.getPlayer().dropMessage(-2, "錯誤 : 您沒有這麼多這樣道具.  ");
+                    c.getSession().write(CWvsContext.enableActions());
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@peq <位置>";
+        }
+    }
+    public static class pcs extends AbstractsCommandExecute.TradeExecute{
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 3) {
+                c.getPlayer().dropMessage(-2, "使用方式 @pcs+道具位置(1~96)+數量.");
+                return true;
+            }
+            int slot;
+            short quantity;
+            try {
+                slot = Integer.parseInt(splitted.get(1));
+                quantity = (short) Integer.parseInt(splitted.get(2));
+            } catch (NumberFormatException nfe) {
+                c.getPlayer().dropMessage(5, "錯誤 : 輸入的數字無效.");
+                return true;
+            }
+            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+
+            MapleInventory invy = c.getPlayer().getInventory(MapleInventoryType.USE);
+            Item item = null;
+            for (Item i : invy.list()) {
+                if (i.getPosition() == slot) {
+                    item = i;
+                    break;
+                }
+            }
+            if(item == null){
+                c.getPlayer().dropMessage(-2, "錯誤 : 沒有此道具");
+                return true;
+            }
+
+            final short flag = item.getFlag();
+            if (ItemFlag.UNTRADEABLE.check(flag) || ItemFlag.LOCK.check(flag)) {
+                c.getPlayer().dropMessage(-2, "錯誤 : 此道具已加鎖  ");
+                return true;
+            }
+
+            byte targetSlot = -1;
+            if (c.getPlayer().getTrade() != null) {
+                boolean canTrade = true;
+                if(!ii.isCash(item.getItemId()))
+                    canTrade = false;
+                if (item.getItemId() == 4000463 || !canTrade) {
+                    c.getPlayer().dropMessage(-2, "錯誤 : 道具無法使用指令進行交易.");
+                    c.getSession().write(CWvsContext.enableActions());
+                } else if ((quantity <= item.getQuantity() && quantity >= 0) || GameConstants.isThrowingStar(item.getItemId()) || GameConstants.isBullet(item.getItemId())) {
+                    c.getPlayer().getTrade().setItems(c, item, targetSlot, quantity);
+                } else{
+                    c.getPlayer().dropMessage(-2, "錯誤 : 您沒有這麼多這樣道具.  ");
+                    c.getSession().write(CWvsContext.enableActions());
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@pcs <位置> <數量>";
+        }
+    }
+    public static class petc extends AbstractsCommandExecute.TradeExecute{
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 3) {
+                c.getPlayer().dropMessage(-2, "使用方式 @petc + 道具位置(1~96) + 數量.");
+                return true;
+            }
+            int slot;
+            short quantity;
+            try {
+                slot = Integer.parseInt(splitted.get(1));
+                quantity = (short) Integer.parseInt(splitted.get(2));
+            } catch (NumberFormatException nfe) {
+                c.getPlayer().dropMessage(5, "錯誤 : 輸入的數字無效 .");
+                return false;
+            }
+            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+
+            MapleInventory invy = c.getPlayer().getInventory(MapleInventoryType.ETC);
+            Item item = null;
+            for (Item i : invy.list()) {
+                if (i.getPosition() == slot) {
+                    item = i;
+                    break;
+                }
+            }
+            if(item == null){
+                c.getPlayer().dropMessage(-2, "錯誤 : 沒有此道具");
+                return true;
+            }
+
+            final short flag = item.getFlag();
+            if (ItemFlag.UNTRADEABLE.check(flag) || ItemFlag.LOCK.check(flag)) {
+                c.getPlayer().dropMessage(-2, "錯誤 : 此道具已加鎖  ");
+                return true;
+            }
+
+            byte targetSlot = -1;
+            if (c.getPlayer().getTrade() != null) {
+                boolean canTrade = true;
+                if(!ii.isCash(item.getItemId()))
+                    canTrade = false;
+                if (item.getItemId() == 4000463 || !canTrade) {
+                    c.getPlayer().dropMessage(-2, "錯誤 : 道具無法使用指令進行交易 .");
+                    c.getSession().write(CWvsContext.enableActions());
+                } else if ((quantity <= item.getQuantity() && quantity >= 0)|| GameConstants.isThrowingStar(item.getItemId()) || GameConstants.isBullet(item.getItemId())) {
+                    c.getPlayer().getTrade().setItems(c, item, targetSlot, quantity);
+                    c.getPlayer().dropMessage(-2, "玩家 " + c.getPlayer().getName() + " 提供 " + MapleItemInformationProvider.getInstance().getName(item.getItemId()) + "x" + quantity);
+                    c.getPlayer().getTrade().getPartner().getChr().dropMessage(-2, "玩家 " + c.getPlayer().getName() + " 提供 " + MapleItemInformationProvider.getInstance().getName(item.getItemId()) + "x" + quantity);
+                } else{
+                    c.getPlayer().dropMessage(-2, "錯誤 : 您沒有這麼多這樣道具.  ");
+                    c.getSession().write(CWvsContext.enableActions());
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "使用方式 @petc <位置> <數量>";
+        }
+    }
+    public static class pset extends AbstractsCommandExecute.TradeExecute{
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 3) {
+                c.getPlayer().dropMessage(-2, "使用方式 @pset + 道具位置(1~96) + 數量.");
+                return true;
+            }
+            int slot;
+            short quantity;
+            try {
+                slot = Integer.parseInt(splitted.get(1));
+                quantity = (short) Integer.parseInt(splitted.get(2));
+            } catch (NumberFormatException nfe) {
+                c.getPlayer().dropMessage(5, "錯誤 : 輸入的數字無效.  ");
+                return true;
+            }
+            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+
+            MapleInventory invy = c.getPlayer().getInventory(MapleInventoryType.SETUP);
+            Item item = null;
+            for (Item i : invy.list()) {
+                if (i.getPosition() == slot) {
+                    item = i;
+                    break;
+                }
+            }
+            if(item == null){
+                c.getPlayer().dropMessage(-2, "錯誤 : 沒有此道具");
+                return true;
+            }
+
+            final short flag = item.getFlag();
+            if (ItemFlag.UNTRADEABLE.check(flag) || ItemFlag.LOCK.check(flag)) {
+                c.getPlayer().dropMessage(-2, "錯誤 : 此道具已加鎖  ");
+                return true;
+            }
+
+
+
+            byte targetSlot = -1;
+            if (c.getPlayer().getTrade() != null) {
+                boolean canTrade = true;
+                if(!ii.isCash(item.getItemId()))
+                    canTrade = false;
+                if (item.getItemId() == 4000463 || !canTrade) {
+                    c.getPlayer().dropMessage(-2, "錯誤 : 道具無法進行交易  .");
+                    c.getSession().write(CWvsContext.enableActions());
+                } else if ((quantity <= item.getQuantity() && quantity >= 0) || GameConstants.isThrowingStar(item.getItemId()) || GameConstants.isBullet(item.getItemId())) {
+                    c.getPlayer().getTrade().setItems(c, item, targetSlot, quantity);
+                    c.getPlayer().dropMessage(-2, "玩家 " + c.getPlayer().getName() + " 提供 " + MapleItemInformationProvider.getInstance().getName(item.getItemId()) + "x" + quantity);
+                    c.getPlayer().getTrade().getPartner().getChr().dropMessage(-2, "玩家 " + c.getPlayer().getName() + " 提供 " + MapleItemInformationProvider.getInstance().getName(item.getItemId()) + "x" + quantity);
+                } else{
+                    c.getPlayer().dropMessage(-2, "錯誤 : 您沒有這麼多這樣道具.  ");
+                    c.getSession().write(CWvsContext.enableActions());
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@pset <位置> <數量>";
+        }
+    }
+    public static class pcash extends AbstractsCommandExecute.TradeExecute{
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 3) {
+                c.getPlayer().dropMessage(-2, "使用方式 @pcash + 道具位置(1~96) + 數量.");
+                return true;
+            }
+            int slot;
+            short quantity;
+            try {
+                slot = Integer.parseInt(splitted.get(1));
+                quantity = (short) Integer.parseInt(splitted.get(2));
+            } catch (NumberFormatException nfe) {
+                c.getPlayer().dropMessage(5, "錯誤 : 輸入的數字無效.   ");
+                return true;
+            }
+            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+
+            MapleInventory invy = c.getPlayer().getInventory(MapleInventoryType.CASH);
+            Item item = null;
+            for (Item i : invy.list()) {
+                if (i.getPosition() == slot) {
+                    item = i;
+                    break;
+                }
+            }
+            if(item == null){
+                c.getPlayer().dropMessage(-2, "錯誤 : 沒有此道具  ");
+                return true;
+            }
+
+            final short flag = item.getFlag();
+            if (ItemFlag.UNTRADEABLE.check(flag) || ItemFlag.LOCK.check(flag)) {
+                c.getPlayer().dropMessage(-2, "錯誤 : 此道具已加鎖  ");
+                return true;
+            }
+
+
+
+            byte targetSlot = -1;
+            if (c.getPlayer().getTrade() != null) {
+                boolean canTrade = true;
+                if(!ii.isCash(item.getItemId()))
+                    canTrade = false;
+                if (item.getItemId() == 4000463 || !canTrade) {
+                    c.getPlayer().dropMessage(-2, "錯誤 : 道具無法使用指令進行交易.  ");
+                    c.getSession().write(CWvsContext.enableActions());
+                } else if ((quantity <= item.getQuantity() && quantity >= 0)|| GameConstants.isThrowingStar(item.getItemId()) || GameConstants.isBullet(item.getItemId())) {
+                    c.getPlayer().getTrade().setItems(c, item, targetSlot, quantity);
+                    c.getPlayer().dropMessage(-2, "玩家 " + c.getPlayer().getName() + " 提供 " + MapleItemInformationProvider.getInstance().getName(item.getItemId()) + "x" + quantity);
+                    c.getPlayer().getTrade().getPartner().getChr().dropMessage(-2, "玩家 " + c.getPlayer().getName() + " 提供 " + MapleItemInformationProvider.getInstance().getName(item.getItemId()) + "x" + quantity);
+                } else{
+                    c.getPlayer().dropMessage(-2, "錯誤 : 您沒有這麼多這樣道具.  ");
+                    c.getSession().write(CWvsContext.enableActions());
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@pcash <位置> <數量>";
         }
     }
 

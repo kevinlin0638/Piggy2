@@ -468,7 +468,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 3001:
 /* 254 */
-                return "Beginner";
+                return "初心者";
 /*     */
             case 100:
 /*     */
@@ -514,7 +514,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 3112:
 /* 277 */
-                return "Warrior";
+                return "戰士";
 /*     */
             case 200:
 /*     */
@@ -572,7 +572,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 3212:
 /* 306 */
-                return "Magician";
+                return "法師";
 /*     */
             case 300:
 /*     */
@@ -612,7 +612,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 3312:
 /* 326 */
-                return "Bowman";
+                return "弓箭手";
 /*     */
             case 400:
 /*     */
@@ -654,7 +654,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 2412:
 /* 347 */
-                return "Thief";
+                return "盜賊";
 /*     */
             case 500:
 /*     */
@@ -702,7 +702,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 3512:
 /* 371 */
-                return "Pirate";
+                return "海盜";
 /*     */
         }
 /* 373 */

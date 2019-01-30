@@ -456,7 +456,7 @@ public class PlayerStats implements Serializable {
                 case 1112663:
                     equippedSummon = 1179;
                     break;
-                case 1152082:
+                case 1182053:
                     equippedBlackDra = true;
                     break;
                 default:
@@ -2445,7 +2445,7 @@ public class PlayerStats implements Serializable {
         }
 
 
-        if(!first_login) {
+        if(!first_login && chra.getClient().getClinetS() != null) {
             // 改破攻
             final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
             mplew.writeShort(10);

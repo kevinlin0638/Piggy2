@@ -4,23 +4,35 @@
 	Description: 		Horntail Battle starter
 */
 var status = -1;
+var event_s = "HorntailBattle";
+var squal_s = "Horntail";
+var level_res = 80;
+var quest = 160100;
+
+
 
 function start() {
-		if (cm.getPlayer().getLevel() < 80) {
-			cm.sendOk("There is a level requirement of 80 to attempt Horntail.");
+	if(cm.getChannelNumber() > 10){
+		event_s = "ChaosHorntail";
+		squal_s = "ChaosHT"
+		level_res = 140;
+		quest = 160103;
+	}
+		if (cm.getPlayer().getLevel() < level_res) {
+			cm.sendOk("您需要到達"+ level_res +" 等才可挑戰 Horntail.");
 			cm.dispose();
 			return;
 		}
-    var em = cm.getEventManager("HorntailBattle");
+    var em = cm.getEventManager(event_s);
 
     if (em == null) {
-	cm.sendOk("The event isn't started, please contact a GM.");
+	cm.sendOk("活動腳本尚未啟用,請聯絡GM.");
 	cm.dispose();
 	return;
     }
     var prop = em.getProperty("state");
 
-	    var marr = cm.getQuestRecord(160100);
+	    var marr = cm.getQuestRecord(quest);
 	    var data = marr.getCustomData();
 	    if (data == null) {
 		marr.setCustomData("0");
@@ -28,66 +40,66 @@ function start() {
 	    }
 	    var time = parseInt(data);
     if (prop == null || prop.equals("0")) {
-	var squadAvailability = cm.getSquadAvailability("Horntail");
+	var squadAvailability = cm.getSquadAvailability(squal_s);
 	if (squadAvailability == -1) {
 	    status = 0;
-	    cm.sendYesNo("Are you interested in becoming the leader of the expedition Squad?");
+	    cm.sendYesNo("您想要成為遠征隊隊長嗎?");
 
 	} else if (squadAvailability == 1) {
 	    // -1 = Cancelled, 0 = not, 1 = true
-	    var type = cm.isSquadLeader("Horntail");
+	    var type = cm.isSquadLeader(squal_s);
 	    if (type == -1) {
-		cm.sendOk("The squad has ended, please re-register.");
+		cm.sendOk("遠征隊已解散, 請重新組織.");
 		cm.dispose();
 	    } else if (type == 0) {
-		var memberType = cm.isSquadMember("Horntail");
+		var memberType = cm.isSquadMember(squal_s);
 		if (memberType == 2) {
-		    cm.sendOk("You been banned from the squad.");
+		    cm.sendOk("你被從遠征隊剔除.");
 		    cm.dispose();
 		} else if (memberType == 1) {
 		    status = 5;
-		    cm.sendSimple("What do you want to do? \r\n#b#L0#Check out members#l \r\n#b#L1#Join the squad#l \r\n#b#L2#Withdraw from squad#l");
+		    cm.sendSimple("您想要做什麼? \r\n#b#L0#查看隊員#l \r\n#b#L1#加入遠征隊#l \r\n#b#L2#退出遠征隊#l");
 		} else if (memberType == -1) {
-		    cm.sendOk("The squad has ended, please re-register.");
+		    cm.sendOk("遠征戰鬥已經開始");
 		    cm.dispose();
 		} else {
 		    status = 5;
-		    cm.sendSimple("What do you want to do? \r\n#b#L0#Check out members#l \r\n#b#L1#Join the squad#l \r\n#b#L2#Withdraw from squad#l");
+		    cm.sendSimple("您想要做什麼? \r\n#b#L0#查看隊員#l \r\n#b#L1#加入遠征隊#l \r\n#b#L2#退出遠征隊#l");
 		}
 	    } else { // Is leader
 		status = 10;
-		cm.sendSimple("What do you want to do? \r\n#b#L0#Check out members#l \r\n#b#L1#Remove member#l \r\n#b#L2#Edit restricted list#l \r\n#r#L3#Enter map#l");
+		cm.sendSimple("您想要做什麼? \r\n#b#L0#查看隊員#l \r\n#b#L1#刪除隊員#l \r\n#b#L2#編輯對戰列表#l \r\n#r#L3#進入地圖#l");
 	    // TODO viewing!
 	    }
 	} else {
-			var eim = cm.getDisconnected("HorntailBattle");
+			var eim = cm.getDisconnected(event_s);
 			if (eim == null) {
-				var squd = cm.getSquad("Horntail");
+				var squd = cm.getSquad(squal_s);
 				if (squd != null) {
-					cm.sendYesNo("The squad's battle against the boss has already begun.\r\n" + squd.getNextPlayer());
+					cm.sendYesNo("遠征戰鬥已經開始.\r\n" + squd.getNextPlayer());
 					status = 3;
 				} else {
-					cm.sendOk("The squad's battle against the boss has already begun.");
+					cm.sendOk("遠征戰鬥已經開始.");
 					cm.safeDispose();
 				}
 			} else {
-				cm.sendYesNo("Ah, you have returned. Would you like to join your squad in the fight again?");
+				cm.sendYesNo("歐,你回來ㄌ.您要重新加入戰鬥嗎?");
 				status = 1;
 			}
 	}
     } else {
-			var eim = cm.getDisconnected("HorntailBattle");
+			var eim = cm.getDisconnected(event_s);
 			if (eim == null) {
-				var squd = cm.getSquad("Horntail");
+				var squd = cm.getSquad(squal_s);
 				if (squd != null) {
-					cm.sendYesNo("The squad's battle against the boss has already begun.\r\n" + squd.getNextPlayer());
+					cm.sendYesNo("遠征戰鬥已經開始.\r\n" + squd.getNextPlayer());
 					status = 3;
 				} else {
-					cm.sendOk("The squad's battle against the boss has already begun.");
+					cm.sendOk("遠征戰鬥已經開始.");
 					cm.safeDispose();
 				}
 			} else {
-				cm.sendYesNo("Ah, you have returned. Would you like to join your squad in the fight again?");
+				cm.sendYesNo("歐,你回來ㄌ.您要重新加入戰鬥嗎?");
 				status = 1;
 			}
     }
@@ -97,50 +109,50 @@ function action(mode, type, selection) {
     switch (status) {
 	case 0:
 	    	if (mode == 1) {
-			if (cm.registerSquad("Horntail", 5, " has been named the Leader of the squad (Regular). If you would you like to join please register for the Expedition Squad within the time period.")) {
-				cm.sendOk("You have been named the Leader of the Squad. For the next 5 minutes, you can add the members of the Expedition Squad.");
+			if (cm.registerSquad(squal_s, 5, " 您已經成為了遠征隊隊長 . 請在時間內請隊員加入.")) {
+				cm.sendOk("您已經成為了遠征隊隊長. 您有五分鐘集結時間, 請在時間內請隊員加入.");
 			} else {
-				cm.sendOk("An error has occurred adding your squad.");
+				cm.sendOk("發生錯誤.");
 			}
 	    	}
 	    cm.dispose();
 	    break;
 	case 1:
-		if (!cm.reAdd("HorntailBattle", "Horntail")) {
-			cm.sendOk("Error... please try again.");
+		if (!cm.reAdd(event_s, squal_s)) {
+			cm.sendOk("錯誤.請在試一次.");
 		}
 		cm.safeDispose();
 		break;
 	case 3:
 		if (mode == 1) {
-			var squd = cm.getSquad("Horntail");
+			var squd = cm.getSquad(squal_s);
 			if (squd != null && !squd.getAllNextPlayer().contains(cm.getPlayer().getName())) {
 				squd.setNextPlayer(cm.getPlayer().getName());
-				cm.sendOk("You have reserved the spot.");
+				cm.sendOk("您獲得了保留位置.");
 			}
 		}
 		cm.dispose();
 		break;
 	case 5:
 	    if (selection == 0) {
-		if (!cm.getSquadList("Horntail", 0)) {
-		    cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+		if (!cm.getSquadList(squal_s, 0)) {
+		    cm.sendOk("發生未知錯誤.");
 		}
 	    } else if (selection == 1) { // join
-		var ba = cm.addMember("Horntail", true);
+		var ba = cm.addMember(squal_s, true);
 		if (ba == 2) {
-		    cm.sendOk("The squad is currently full, please try again later.");
+		    cm.sendOk("遠征隊目前額滿,請稍後再試.");
 		} else if (ba == 1) {
-		    cm.sendOk("You have joined the squad successfully");
+		    cm.sendOk("您成功加入遠征隊");
 		} else {
-		    cm.sendOk("You are already part of the squad.");
+		    cm.sendOk("您已經是遠征隊的一員.");
 		}
 	    } else {// withdraw
-		var baa = cm.addMember("Horntail", false);
+		var baa = cm.addMember(squal_s, false);
 		if (baa == 1) {
-		    cm.sendOk("You have withdrawed from the squad successfully");
+		    cm.sendOk("你離開了遠征隊");
 		} else {
-		    cm.sendOk("You are not part of the squad.");
+		    cm.sendOk("你並非遠征隊的一員.");
 		}
 	    }
 	    cm.dispose();
@@ -148,28 +160,28 @@ function action(mode, type, selection) {
 	case 10:
 	    if (mode == 1) {
 		if (selection == 0) {
-		    if (!cm.getSquadList("Horntail", 0)) {
-			cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+		    if (!cm.getSquadList(squal_s, 0)) {
+			cm.sendOk("發生未知錯誤.");
 		    }
 		    cm.dispose();
 		} else if (selection == 1) {
 		    status = 11;
-		    if (!cm.getSquadList("Horntail", 1)) {
-			cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+		    if (!cm.getSquadList(squal_s, 1)) {
+			cm.sendOk("發生未知錯誤.");
 			cm.dispose();
 		    }
 		} else if (selection == 2) {
 		    status = 12;
-		    if (!cm.getSquadList("Horntail", 2)) {
-			cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+		    if (!cm.getSquadList(squal_s, 2)) {
+			cm.sendOk("發生未知錯誤.");
 			cm.dispose();
 		    }
 		} else if (selection == 3) { // get insode
-		    if (cm.getSquad("Horntail") != null) {
-			var dd = cm.getEventManager("HorntailBattle");
-			dd.startInstance(cm.getSquad("Horntail"), cm.getMap(), 160100);
+		    if (cm.getSquad(squal_s) != null) {
+			var dd = cm.getEventManager(event_s);
+			dd.startInstance(cm.getSquad(squal_s), cm.getMap(), 160100);
 		    } else {
-			cm.sendOk("Due to an unknown error, the request for squad has been denied.");
+			cm.sendOk("發生未知錯誤.");
 		    }
 		    cm.dispose();
 		}
@@ -178,12 +190,12 @@ function action(mode, type, selection) {
 	    }
 	    break;
 	case 11:
-	    cm.banMember("Horntail", selection);
+	    cm.banMember(squal_s, selection);
 	    cm.dispose();
 	    break;
 	case 12:
 	    if (selection != -1) {
-		cm.acceptMember("Horntail", selection);
+		cm.acceptMember(squal_s, selection);
 	    }
 	    cm.dispose();
 	    break;

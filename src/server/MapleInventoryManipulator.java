@@ -7,6 +7,7 @@ import client.inventory.EquipAdditions.RingSet;
 import client.skill.Skill;
 import client.skill.SkillEntry;
 import client.skill.SkillFactory;
+import constants.ItemConstants;
 import server.cashshop.CashItemFactory;
 import server.cashshop.CashItemInfo;
 import server.status.MapleBuffStatus;
@@ -147,8 +148,22 @@ public class MapleInventoryManipulator {
                         if (owner != null) {
                             nItem.setOwner(owner);
                         }
-                        if (period > 0) {
-                            nItem.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                        if(nItem.getItemId() == 2430215 || nItem.getItemId() == 2430216 || nItem.getItemId() == 2430217){
+                            if (period < 1000) {
+                                nItem.setGiftFrom(Long.valueOf(period * 24 * 60 * 60 * 1000).toString());
+                                nItem.setOwner(period + " 天");
+                            } else {
+                                nItem.setGiftFrom(Long.valueOf(period).toString());
+                                nItem.setOwner((period/1000/60/60) + " 小時");
+                            }
+                        }else {
+                            if (period > 0) { //设置到期时间
+                                if (period < 1000) {
+                                    nItem.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                                } else {
+                                    nItem.setExpiration(System.currentTimeMillis() + period);
+                                }
+                            }
                         }
                         if (pet != null) {
                             nItem.setPet(pet);
@@ -174,9 +189,16 @@ public class MapleInventoryManipulator {
                     c.sendPacket(InventoryPacket.getShowInventoryFull());
                     return -1;
                 }
-                if (period > 0) {
-                    nItem.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+
+
+                if (period > 0) { //设置到期时间
+                    if (period < 1000) {
+                        nItem.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                    } else {
+                        nItem.setExpiration(System.currentTimeMillis() + period);
+                    }
                 }
+
                 if (gmLog != null) {
                     nItem.setGMLog(gmLog);
                 }
@@ -192,8 +214,12 @@ public class MapleInventoryManipulator {
                 if (gmLog != null) {
                     nEquip.setGMLog(gmLog);
                 }
-                if (period > 0) {
-                    nEquip.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                if (period > 0) { //设置到期时间
+                    if (period < 1000) {
+                        nEquip.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                    } else {
+                        nEquip.setExpiration(System.currentTimeMillis() + period);
+                    }
                 }
                 newSlot = c.getPlayer().getInventory(type).addItem(nEquip);
                 if (newSlot == -1) {
@@ -223,7 +249,7 @@ public class MapleInventoryManipulator {
          c.sendPacket(InventoryPacket.showItemUnavailable());
          return null;
          }
-         * 
+         *
          */
         final MapleInventoryType type = GameConstants.getInventoryType(itemId);
 
@@ -309,6 +335,135 @@ public class MapleInventoryManipulator {
         }
         return null;
     }
+
+
+    public static Item addbyId_Gachapon(MapleClient c, int itemId, short quantity, String gmLog) {
+        return addbyId_Gachapon(c, itemId, quantity, null, 0);
+    }
+
+    public static Item addbyId_Gachapon(MapleClient c, int itemId, short quantity, String gmLog, long period) {
+        if (c.getPlayer().getInventory(MapleInventoryType.EQUIP).getNextFreeSlot() == -1 || c.getPlayer().getInventory(MapleInventoryType.USE).getNextFreeSlot() == -1 || c.getPlayer().getInventory(MapleInventoryType.ETC).getNextFreeSlot() == -1 || c.getPlayer().getInventory(MapleInventoryType.SETUP).getNextFreeSlot() == -1) {
+            return null;
+        }
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        if ((c.getPlayer().haveItem(itemId, 1, true, false)) || (!ii.itemExists(itemId))) {
+            c.sendPacket(InventoryPacket.getInventoryFull());
+            c.sendPacket(InventoryPacket.showItemUnavailable());
+            return null;
+        }
+        MapleInventoryType type = GameConstants.getInventoryType(itemId);
+        if (!type.equals(MapleInventoryType.EQUIP)) {
+            short slotMax = ii.getSlotMax(itemId);
+            List<Item> existing = c.getPlayer().getInventory(type).listById(itemId);
+            if (!GameConstants.isRechargable(itemId)) {
+                Item nItem = null;
+                boolean recieved = false;
+                if (existing.size() > 0) { // first update all existing slots to slotMax
+                    Iterator<Item> i = existing.iterator();
+                    while (quantity > 0) {
+                        if (i.hasNext()) {
+                            nItem = i.next();
+                            short oldQ = nItem.getQuantity();
+                            if (oldQ < slotMax) {
+                                recieved = true;
+                                short newQ = (short) Math.min(oldQ + quantity, slotMax);
+                                quantity -= (newQ - oldQ);
+                                nItem.setQuantity(newQ);
+                                c.sendPacket(InventoryPacket.modifyInventory(true, Collections.singletonList(new ModifyInventory(1, nItem))));
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                // add new slots if there is still something left
+                while (quantity > 0) {
+                    short newQ = (short) Math.min(quantity, slotMax);
+                    if (newQ != 0) {
+                        quantity -= newQ;
+                        nItem = new Item(itemId, (byte) 0, newQ, (byte) 0);
+                        short newSlot = c.getPlayer().getInventory(type).addItem(nItem);
+                        if (newSlot == -1 && recieved) {
+                            return nItem;
+                        } else if (newSlot == -1) {
+                            return null;
+                        }
+                        recieved = true;
+                        if (gmLog != null) { //设置装备獲得日志
+                            nItem.setGMLog(gmLog);
+                        }
+                        if (period > 0) { //设置到期时间
+                            if (period < 1000) {
+                                nItem.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                            } else {
+                                nItem.setExpiration(System.currentTimeMillis() + period);
+                            }
+                        }
+                        c.sendPacket(InventoryPacket.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nItem))));
+                        if (GameConstants.isRechargable(itemId) && quantity == 0) {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+                if (recieved && nItem != null) {
+                    c.getPlayer().havePartyQuest(nItem.getItemId());
+                    return nItem;
+                }
+            } else {
+                // Throwing Stars and Bullets - Add all into one slot regardless of quantity.
+                Item nItem = new Item(itemId, (byte) 0, quantity, (byte) 0);
+                short newSlot = c.getPlayer().getInventory(type).addItem(nItem);
+                if (newSlot == -1) {
+                    return null;
+                }
+                if (gmLog != null) { //设置装备獲得日志
+                    nItem.setGMLog(gmLog);
+                }
+                if (period > 0) { //设置到期时间
+                    if (period < 1000) {
+                        nItem.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                    } else {
+                        nItem.setExpiration(System.currentTimeMillis() + period);
+                    }
+                }
+                c.sendPacket(InventoryPacket.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nItem))));
+                c.getPlayer().havePartyQuest(nItem.getItemId());
+                return nItem;
+            }
+        } else {
+            //这个是装备道具  装备道具只能数量为 1
+            if (quantity == 1) {
+                Item nEquip = ii.randomizeStats((Equip) ii.getEquipById(itemId));
+                short newSlot = c.getPlayer().getInventory(type).addItem(nEquip);
+                if (newSlot == -1) {
+                    return null;
+                }
+                if (gmLog != null) { //设置装备獲得日志
+                    nEquip.setGMLog(gmLog);
+                }
+                if (period > 0) { //设置到期时间
+                    if (period < 1000) {
+                        nEquip.setExpiration(System.currentTimeMillis() + (period * 24 * 60 * 60 * 1000));
+                    } else {
+                        nEquip.setExpiration(System.currentTimeMillis() + period);
+                    }
+                }
+                if (nEquip.hasSetOnlyId()) {
+                    final int uid = MapleInventoryIdentifier.getInstance();
+                    nEquip.setUniqueId(uid);
+                }
+                c.sendPacket(InventoryPacket.modifyInventory(true, Collections.singletonList(new ModifyInventory(0, nEquip))));
+                c.getPlayer().havePartyQuest(nEquip.getItemId());
+                return nEquip;
+            } else {
+                throw new InventoryException("Trying to create equip with non-one quantity");
+            }
+        }
+        return null;
+    }
+
 
     public static boolean addFromDrop(final MapleClient c, final Item item, final boolean show) {
         return addFromDrop(c, item, show, false);
@@ -662,7 +817,7 @@ public class MapleInventoryManipulator {
         ////    c.sendPacket(CWvsContext.enableActions());
         //    return;
         // }
-        if (GameConstants.isWeapon(source.getItemId()) && dst != -10 && dst != -11) {
+        if (GameConstants.isWeapon(source.getItemId()) && dst != -10 && dst != -11 && dst != -110) {
             c.sendPacket(CWvsContext.enableActions());
             return;
         }
@@ -674,14 +829,8 @@ public class MapleInventoryManipulator {
             c.sendPacket(CWvsContext.enableActions());
             return;
         }
-        if (dst == (GameConstants.GMS ? -59 : -55)) { //pendant
-            MapleQuestStatus stat = c.getPlayer().getQuestNoAdd(MapleQuest.getInstance(GameConstants.PENDANT_SLOT));
-            if (stat == null || stat.getCustomData() == null || Long.parseLong(stat.getCustomData()) < System.currentTimeMillis()) {
-                c.sendPacket(CWvsContext.enableActions());
-                return;
-            }
-        }
-        if (GameConstants.isKatara(source.getItemId()) || source.getItemId() / 10000 == 135 || source.getItemId() == 1098000) {
+
+        if ((GameConstants.isKatara(source.getItemId()) &&  source.getItemId() != 1342069) || source.getItemId() / 10000 == 135 || source.getItemId() == 1098000) {
             dst = (byte) -10; //shield slot
         }
 
@@ -821,6 +970,15 @@ public class MapleInventoryManipulator {
             c.sendPacket(CWvsContext.enableActions());
             return;
         }
+
+        if (dst == (GameConstants.GMS ? -59 : -55)) { //pendant
+            MapleQuestStatus stat = c.getPlayer().getQuestNoAdd(MapleQuest.getInstance(GameConstants.PENDANT_SLOT));
+            if (stat == null || stat.getCustomData() == null || Long.parseLong(stat.getCustomData()) < System.currentTimeMillis()) {
+                c.sendPacket(CWvsContext.enableActions());
+                return;
+            }
+        }
+
         short flag = source.getFlag();
         if (stats.get("equipTradeBlock") != null || source.getItemId() / 10000 == 167) { // Block trade when equipped.
             if (!ItemFlag.UNTRADEABLE.check(flag)) {

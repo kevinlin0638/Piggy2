@@ -42,13 +42,10 @@ function changedMap(eim, player, mapid) {
     }
 }
 
-function playerDisconnected(eim, player) {
-    return 0;
-}
 
 function monsterValue(eim, mobId) {
     if (mobId == 9300061) {
-	eim.broadcastPlayerMsg(5, "The Moon Bunny has been killed.");
+	eim.broadcastPlayerMsg(5, "月兔被幹掉了.");
 	end(eim);
     }
     return 1;

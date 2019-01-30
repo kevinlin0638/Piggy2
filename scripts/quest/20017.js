@@ -6,32 +6,31 @@
 var status = -1;
 
 function start(mode, type, selection) {
+
     if (mode == 1) {
-	status++;
+        status++;
     } else {
-	if (status == 2) {
-	    qm.sendNext("Hmm, there is nothing to worry about. This will be a breeze for someone your level. Muster your courage and let me know when you're ready.");
-	    qm.safeDispose();
-	    return;
-	}
-	status--;
+        if (status == 2) {
+            qm.sendNext("Hmm, there is nothing to worry about. This will be a breeze for someone your level. Muster your courage and let me know when you're ready.");
+            qm.safeDispose();
+            return;
+        }
+        status--;
     }
     if (status == 0) {
-	qm.sendNext("Hmm? #p1101002# sent you, huh? You must be the newbie that recently joined Cygnus Knights. Welcome, and nice to meet you! My name is #p1102000#. I''m the Training Instructor who trains all Noblesses like yourself. Of course, I'm not a human as you can tell.");
+        qm.sendNext("嗯？是#p1101002#派你來的？啊哈！看來是本次新來的騎士嘛！？歡迎，歡迎，我叫#p1102000#。我是教你們這些貴族的修煉教官。哦…為什麼>      這麼看我…啊，看來你是第一次看到皮妖嘛。");
     } else if (status == 1) {
-	qm.sendNextPrev("We are called Piyos. You''ve seen #p1101001# who is at the Empress''s side all the time, haven't you? Piyos are of the same family as #p1101001#, but we belong to different types. Of course, you haven't seen any of us since we only live in Ereve. You'll get used to Piyos in no time.");
+        qm.sendNextPrev("我們是叫皮妖的種族。與小女皇旁邊的#p1101001#對話過嗎？皮妖跟#p1101001#是同一個種族。雖然系列不同…但基本差不多。只生活在耶雷弗>      ，很快你也會習慣的。");
     } else if (status == 2) {
-	qm.sendNextPrev("Oh, and did you know that there are no monsters in Ereve? Not even a smidgeon of evil dare enter Ereve. But don't you worry. You'll be able to train with illusory monsters created by #p1101001# called Mimis.");
+        qm.sendNextPrev("啊，你知道嗎？在耶雷弗裡沒有怪物。帶有邪惡氣息的東西是無法生存在耶雷弗裡。但不用擔心，用#p1101001#製造的幻想生物「提提」修煉就>      可以，那麼開始吧。");
     } else if (status == 3) {
-	qm.askAcceptDecline("You seem prepared! Looking at what you've accomplished, I think you should jump right into hunting more advanced Mimis. How about you hunt #b15 #r#o100122#s in #m130010100##k#k? Use the portal on the left to reach the #bTraining Forest II#k.");
+        qm.askAcceptDecline("修煉的還不錯嘛！那麼…看你的水準應該能消滅比較強的提提了。去消滅#m130010100#裡的#o0100122# 15隻吧，怎麼樣？能抓到#o0100122#吧？");
     } else if (status == 4) {
-	qm.summonMsg(12);
-	qm.forceStartQuest(20020);
-	qm.forceCompleteQuest(20100);
-	qm.forceStartQuest();
-	qm.dispose();
+        qm.summonMsg(12);
+        qm.forceCompleteQuest(20003);
+        qm.forceStartQuest();
+        qm.dispose();
     }
 }
 
-function end(mode, type, selection) {
-}
+function end(mode, type, selection) {}

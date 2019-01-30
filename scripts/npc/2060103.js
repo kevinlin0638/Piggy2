@@ -97,7 +97,7 @@ function action(mode, type, selection) {
         if (request != null) {
             cm.sendYesNo(request.getChallengeInfo() + "\r\nWould you like to battle this party at the Dual Raid?");
         } else {
-            cm.sendYesNo("Would you like to get out?");
+            cm.sendYesNo("您確定要出去了嗎?");
         }
     } else {
 	if (request == null) {
@@ -116,7 +116,7 @@ function action(mode, type, selection) {
 	    break;
 	default:
 	    if (status == 0) {
-	    	cm.sendYesNo("Would you like to get out?");
+	    	cm.sendYesNo("您確定要出去了嗎?");
 	    } else {
 		cm.warp(923020001,0);
 	    }

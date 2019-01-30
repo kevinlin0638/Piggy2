@@ -74,13 +74,13 @@ public class MapleSquad {
                     break;
                 } else {
                     if (lead != null) {
-                        lead.dropMessage(6, "Your squad has been skipped due to you not being in the right channel and map.");
+                        lead.dropMessage(6, "您的遠征隊被忽略,因為有隊員在不正確的頻道或地圖.");
                     }
-                    getBeginMap().broadcastMessage(CWvsContext.broadcastMsg(6, nextPlayerId + "'s squad has been skipped due to the player not being in the right channel and map."));
+                    getBeginMap().broadcastMessage(CWvsContext.broadcastMsg(6, nextPlayerId + "您的遠征隊被忽略,因為有隊員在不正確的頻道或地圖."));
                     type.queuedPlayers.get(ch).add(new Pair<>(nextPlayerId, "Not in map"));
                 }
             } else {
-                getBeginMap().broadcastMessage(CWvsContext.broadcastMsg(6, nextPlayerId + "'s squad has been skipped due to the player not being online."));
+                getBeginMap().broadcastMessage(CWvsContext.broadcastMsg(6, nextPlayerId + "'您的遠征隊被忽略,因為有隊員沒有在線."));
                 type.queuedPlayers.get(ch).add(new Pair<>(nextPlayerId, "Not online"));
             }
         }
@@ -133,15 +133,15 @@ public class MapleSquad {
     }
 
     public String getNextPlayer() {
-        StringBuilder sb = new StringBuilder("\nQueued members : ");
-        sb.append("#b").append(type.queue.get(ch).size()).append(" #k ").append("List of participants : \n\r ");
+        StringBuilder sb = new StringBuilder("\n隊員 : ");
+        sb.append("#b").append(type.queue.get(ch).size()).append(" #k ").append("參與人員 : \n\r ");
         int i = 0;
         for (Pair<String, Long> chr : type.queue.get(ch)) {
             i++;
             sb.append(i).append(" : ").append(chr.left);
             sb.append(" \n\r ");
         }
-        sb.append("Would you like to #ebe next#n in the queue, or #ebe removed#n from the queue if you are in it?");
+        sb.append("您要加入或刪除成員?");
         return sb.toString();
     }
 
@@ -215,7 +215,7 @@ public class MapleSquad {
             if (!containsMember(member) && !getAllNextPlayer().contains(member.getName())) {
                 if (members.size() <= 30) {
                     members.put(member.getName(), job);
-                    getLeader().dropMessage(5, member.getName() + " (" + job + ") has joined the fight!");
+                    getLeader().dropMessage(5, member.getName() + " (" + job + ") 加入對戰!");
                     return 1;
                 }
                 return 2;
@@ -224,7 +224,7 @@ public class MapleSquad {
         } else {
             if (containsMember(member)) {
                 members.remove(member.getName());
-                getLeader().dropMessage(5, member.getName() + " (" + job + ") have withdrawed from the fight.");
+                getLeader().dropMessage(5, member.getName() + " (" + job + ") 離開對戰.");
                 return 1;
             }
             return -1;
@@ -241,7 +241,7 @@ public class MapleSquad {
             members.put(toadd, bannedMembers.get(toadd));
             bannedMembers.remove(toadd);
 
-            getChar(toadd).dropMessage(5, getLeaderName() + " has decided to add you back to the squad.");
+            getChar(toadd).dropMessage(5, getLeaderName() + " 決定將您重新加入.");
         }
     }
 
@@ -272,7 +272,7 @@ public class MapleSquad {
             bannedMembers.put(toban, members.get(toban));
             members.remove(toban);
 
-            getChar(toban).dropMessage(5, getLeaderName() + " has removed you from the squad.");
+            getChar(toban).dropMessage(5, getLeaderName() + " 將您踢出遠征隊.");
         }
     }
 
@@ -295,14 +295,14 @@ public class MapleSquad {
     public String getSquadMemberString(byte type) {
         switch (type) {
             case 0: {
-                StringBuilder sb = new StringBuilder("Squad members : ");
-                sb.append("#b").append(members.size()).append(" #k ").append("List of participants : \n\r ");
+                StringBuilder sb = new StringBuilder("遠征隊成員 : ");
+                sb.append("#b").append(members.size()).append(" #k ").append("成員列表 : \n\r ");
                 int i = 0;
                 for (Entry<String, String> chr : members.entrySet()) {
                     i++;
                     sb.append(i).append(" : ").append(chr.getKey()).append(" (").append(chr.getValue()).append(") ");
                     if (i == 1) {
-                        sb.append("(Leader of the squad)");
+                        sb.append("(隊長)");
                     }
                     sb.append(" \n\r ");
                 }
@@ -313,8 +313,8 @@ public class MapleSquad {
                 return sb.toString();
             }
             case 1: {
-                StringBuilder sb = new StringBuilder("Squad members : ");
-                sb.append("#b").append(members.size()).append(" #n ").append("List of participants : \n\r ");
+                StringBuilder sb = new StringBuilder("遠征隊成員 : ");
+                sb.append("#b").append(members.size()).append(" #n ").append("成員列表 : \n\r ");
                 int i = 0, selection = 0;
                 for (Entry<String, String> chr : members.entrySet()) {
                     i++;
@@ -322,7 +322,7 @@ public class MapleSquad {
                     selection++;
                     sb.append(i).append(" : ").append(chr.getKey()).append(" (").append(chr.getValue()).append(") ");
                     if (i == 1) {
-                        sb.append("(Leader of the squad)");
+                        sb.append("(隊長)");
                     }
                     sb.append("#l").append(" \n\r ");
                 }
@@ -333,8 +333,8 @@ public class MapleSquad {
                 return sb.toString();
             }
             case 2: {
-                StringBuilder sb = new StringBuilder("Squad members : ");
-                sb.append("#b").append(members.size()).append(" #n ").append("List of participants : \n\r ");
+                StringBuilder sb = new StringBuilder("遠征隊成員 : ");
+                sb.append("#b").append(members.size()).append(" #n ").append("成員列表 : \n\r ");
                 int i = 0, selection = 0;
                 for (Entry<String, String> chr : bannedMembers.entrySet()) {
                     i++;
@@ -350,7 +350,7 @@ public class MapleSquad {
                 return sb.toString();
             }
             case 3: { //CWKPQ
-                StringBuilder sb = new StringBuilder("Jobs : ");
+                StringBuilder sb = new StringBuilder("職業 : ");
                 final Map<String, Integer> jobs = getJobs();
                 for (Entry<String, Integer> chr : jobs.entrySet()) {
                     sb.append("\r\n").append(chr.getKey()).append(" : ").append(chr.getValue());

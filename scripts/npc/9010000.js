@@ -14,7 +14,7 @@ function action(mode, type, selection) {
 	} else
 	status--;
 	if (status == 0) {
-	   cm.sendSimple("What would you like to do?\r\n\r\n#L1#Change my job");
+	   cm.sendSimple("您想要做什麼?\r\n\r\n#L1#Change my job");
 	} else if (status == 1) {
 	   if (selection == 1) { 
 		  cm.dispose();

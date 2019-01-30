@@ -120,7 +120,7 @@ public class PlayerShopPacket {
         mplew.write(6); // ?
         mplew.writeShort(merch.getVisitorSlot(chr));
         mplew.writeInt(merch.getItemId());
-        mplew.writeMapleAsciiString("Hired Merchant");
+        mplew.writeMapleAsciiString("精靈商人");
         for (final Pair<Byte, MapleCharacter> storechr : merch.getVisitors()) {
             mplew.write(storechr.left);
             PacketHelper.addCharLook(mplew, storechr.right, false, chr.getClient());

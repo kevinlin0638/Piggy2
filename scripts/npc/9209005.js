@@ -13,7 +13,7 @@ function action(mode, type, selection) {
     }
 
     if (status == 0) {
-	cm.sendSimple("What do you want to do?#b\n\r #L0#Go to Fishing Map#l\r\n#L1#Buy fishing nets#l#k");
+	cm.sendSimple("您想要做什麼?#b\n\r #L0#Go to Fishing Map#l\r\n#L1#Buy fishing nets#l#k");
     } else if (status == 1) {
 		if (selection == 0) {
 			cm.warp(cm.getMapId() == 970020000 ? 970020005 : 970020000, 0);

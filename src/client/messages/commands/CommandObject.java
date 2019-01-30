@@ -1,6 +1,7 @@
 package client.messages.commands;
 
 import client.MapleClient;
+import constants.ServerConstants;
 
 import java.util.Arrays;
 
@@ -34,4 +35,6 @@ public class CommandObject {
     public String getHelpMessage() {
         return execute.getHelpMessage();
     }
+
+    public ServerConstants.CommandType getType(){return execute.getType();}
 }

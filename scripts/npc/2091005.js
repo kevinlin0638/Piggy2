@@ -56,7 +56,7 @@ function action(mode, type, selection) {
 			cm.dispose();
 		}else if (sel == 2) {
 			cm.dispose();
-			cm.openNpc(2091005, 1);
+			cm.openNpc(2091005, "武陵道場兌換");
 		} else if (sel == 1) {
 			var text = "以下的玩家分配獎勵給您:\r\n"
 			chrs = cm.getPlayer().getMap().getCharacters()

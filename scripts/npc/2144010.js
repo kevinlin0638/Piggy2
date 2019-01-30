@@ -1,7 +1,7 @@
 var status = -1;
 
 function start() {
-    cm.askAcceptDecline("You face me directly, after ruining all I've worked for.\r\n\r\n#rI suppose I should thank you. If you hadn't gone to the trouble of destroying my life's work, I would feel a slight pang of guilt at making you suffer before I demolish you.#k");
+    cm.askAcceptDecline("#r正面挑戰我吧!");
 }
 
 function action(mode, type, selection) {
@@ -11,6 +11,8 @@ function action(mode, type, selection) {
 	if (!cm.getPlayer().isGM()) {
 		cm.getMap().startSpeedRun();
 	}
-    }
+    }else{
+		cm.sendOk("連我的分身都無法擊敗,還想挑戰我?");
+	}
     cm.dispose();
 }

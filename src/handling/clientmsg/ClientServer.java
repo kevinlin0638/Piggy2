@@ -11,7 +11,7 @@ public class ClientServer {
     private static String ip;
     private static ServerConnection acceptor;
     private static PlayerStorage players, playersMTS;
-    private static boolean finishedShutdown = false;
+    private static boolean finishedShutdown = true;
 
     public static void initiate() {
         ip = ServerConstants.SERVER_IP + ":" + PORT;
@@ -54,5 +54,8 @@ public class ClientServer {
 
     public static boolean isShutdown() {
         return finishedShutdown;
+    }
+    public static void setOpen() {
+        finishedShutdown = false;
     }
 }
