@@ -142,7 +142,7 @@ public final class ServerConfig {
     /**
      * 登录端口
      */
-    @Property(key = "login.server.port", defaultValue = "8484")
+    @Property(key = "login.server.port", defaultValue = "8686")
     public static short LOGIN_PORT;
     /**
      * 商城端口

@@ -56,7 +56,7 @@ var giftContent = Array(
 			Array(1032168, 1, 4),
 			Array(1112794, 1, 4),
 			Array(1152119, 1, 4),
-			//Array(1143243, 1, 4),
+			Array(1142538, 1, 4),
 			
 			Array(2450022, 3, 5),//120
 			Array(2022531, 3, 5),
@@ -82,7 +82,7 @@ var giftContent = Array(
 			
 			//200
 			Array(1022189, 1, 9),
-			//Array(1143244, 1, 9),
+			Array(1142539, 1, 9),
 			Array(2022179, 3, 9),
 			Array(2049116, 3, 9),
 			Array(2340000, 5, 9),
@@ -91,13 +91,13 @@ var giftContent = Array(
 			Array(2049116, 5, 10),
 			Array(2340000, 10, 10),
 			Array(2022179, 5, 10),
-			//Array(1143245, 5, 10),
+			Array(1142540, 5, 10),
 			
 			//250
-			Array(2049116, 10, 11),
+			Array(2049117, 10, 11),
 			Array(2340000, 15, 11),
 			Array(2022179, 5, 11),
-			//Array(1143246, 1, 11),
+			Array(1142541, 1, 11),
 			
 			//252
 			Array(2049118, 10, 12),
@@ -213,21 +213,21 @@ function action(mode, type, selection) {
 						case 0:
 							cm.gainMeso(itemQuantity);
 							break;
-						case 1143243:
+						case 1142538:
 							//itemid, str, dex, int, luk, watk, matk, expira, addi_slot
-							cm.addWithPara(1143243, 10, 10, 10, 10, 15, 15, -1, 0);
+							cm.addWithPara(1142538, 10, 10, 10, 10, 15, 15, -1, 0);
 							break;
-						case 1143244:
+						case 1142539:
 							//itemid, str, dex, int, luk, watk, matk, expira, addi_slot
-							cm.addWithPara(1143244, 20, 20, 20, 20, 25, 25, -1, 0);
+							cm.addWithPara(1142539, 20, 20, 20, 20, 25, 25, -1, 0);
 							break;
-						case 1143245:
+						case 1142540:
 							//itemid, str, dex, int, luk, watk, matk, expira, addi_slot
-							cm.addWithPara(1143245, 30, 30, 30, 30, 35, 35, -1, 0);
+							cm.addWithPara(1142540, 30, 30, 30, 30, 35, 35, -1, 0);
 							break;
-						case 1143246:
+						case 1142541:
 							//itemid, str, dex, int, luk, watk, matk, expira, addi_slot
-							cm.addWithPara(1143246, 45, 45, 45, 45, 50, 50, -1, 0);
+							cm.addWithPara(1142541, 45, 45, 45, 45, 50, 50, -1, 0);
 							break;
 						default:
 							cm.gainItem(itemId, itemQuantity);

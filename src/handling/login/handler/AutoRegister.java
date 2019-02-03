@@ -11,7 +11,8 @@ import java.sql.SQLException;
 public class AutoRegister {
 
     public static final boolean autoRegister = true; //enable = true or disable = false
-    private static final int ACCOUNTS_PER_IP = 100; //change the value to the amount of accounts you want allowed for each ip
+    private static final int ACCOUNTS_PER_IP = 6; //change the value to the amount of accounts you want allowed for each ip
+    private static final int ACCOUNTS_PER_MAC = 2;
     public static boolean success = false; // DONT CHANGE
 
     public static boolean getAccountExists(String login) {
@@ -28,6 +29,29 @@ public class AutoRegister {
             System.out.println(ex);
         }
         return accountExists;
+    }
+
+    public static boolean getAcceptAccountNum(String mac){
+        if(mac == null || mac.equals("00-00-00-00-00-00") || mac.equals(""))
+            return true;
+        boolean AcceptMac = false;
+        Connection con = DatabaseConnection.getConnection();
+        try {
+            PreparedStatement ps = con.prepareStatement("SELECT macs FROM accounts");
+            ResultSet rs = ps.executeQuery();
+            int count = 0;
+            while(rs.next()){
+                final String temp = rs.getString("macs");
+                for (String s : temp.split(",")){
+                    if(s.equals(mac))
+                        count++;
+                }
+            }
+            return count < ACCOUNTS_PER_MAC;
+        } catch (SQLException ex) {
+            System.out.println(ex);
+            return false;
+        }
     }
 
     public static void createAccount(String login, String pwd, String eip, String macs) {

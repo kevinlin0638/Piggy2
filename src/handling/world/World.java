@@ -53,6 +53,7 @@ public class World {
     public static int eventMap = 0;
     public static boolean eventOn = false;
     public static int AutoJQ_Channel = -1; // for checks in commands
+    public static String MD5 = "ACBE231C852E774DC26A745F0C2E375E";
     // Monster Rush
     public static boolean MonsterRush = false;
     public static boolean Monster_Rush_Enabled = false;

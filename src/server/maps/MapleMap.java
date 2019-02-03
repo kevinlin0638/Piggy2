@@ -491,21 +491,21 @@ public final class MapleMap {
         final List<MonsterDropEntry> dropEntry = new ArrayList<>(drops);
 
         if(mob.getMobLevel() >= 31 && mob.getMobLevel() <= 50)
-            dropEntry.add(new MonsterDropEntry(4260000, 2500, 1 ,1, 0));
+            dropEntry.add(new MonsterDropEntry(4260000, 25000, 1 ,1, 0));
         else if(mob.getMobLevel() >= 51 && mob.getMobLevel() <= 70)
-            dropEntry.add(new MonsterDropEntry(4260001, 2500, 1 ,1, 0));
+            dropEntry.add(new MonsterDropEntry(4260001, 25000, 1 ,1, 0));
         else if(mob.getMobLevel() >= 71 && mob.getMobLevel() <= 90)
-            dropEntry.add(new MonsterDropEntry(4260002, 2500, 1 ,1, 0));
+            dropEntry.add(new MonsterDropEntry(4260002, 25000, 1 ,1, 0));
         else if(mob.getMobLevel() >= 91 && mob.getMobLevel() <= 110)
-            dropEntry.add(new MonsterDropEntry(4260003, 2500, 1 ,1, 0));
+            dropEntry.add(new MonsterDropEntry(4260003, 25000, 1 ,1, 0));
         else if(mob.getMobLevel() >= 111 && mob.getMobLevel() <= 130)
-            dropEntry.add(new MonsterDropEntry(4260004, 2500, 1 ,1, 0));
+            dropEntry.add(new MonsterDropEntry(4260004, 25000, 1 ,1, 0));
         else if(mob.getMobLevel() >= 131 && mob.getMobLevel() <= 150)
-            dropEntry.add(new MonsterDropEntry(4260005, 2500, 1 ,1, 0));
+            dropEntry.add(new MonsterDropEntry(4260005, 25000, 1 ,1, 0));
         else if(mob.getMobLevel() >= 151 && mob.getMobLevel() <=170)
-            dropEntry.add(new MonsterDropEntry(4260006, 2500, 1 ,1, 0));
+            dropEntry.add(new MonsterDropEntry(4260006, 25000, 1 ,1, 0));
         else if(mob.getMobLevel() >= 171 && mob.getMobLevel() <= 190)
-            dropEntry.add(new MonsterDropEntry(4260007, 2500, 1 ,1, 0));
+            dropEntry.add(new MonsterDropEntry(4260007, 25000, 1 ,1, 0));
         else if(mob.getMobLevel() >= 191)
             dropEntry.add(new MonsterDropEntry(4260008, 2500, 1 ,1, 0));
         Collections.shuffle(dropEntry);

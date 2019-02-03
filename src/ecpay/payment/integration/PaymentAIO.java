@@ -27,7 +27,7 @@ public class PaymentAIO {
 		aio.setTotalAmount(new Integer(amount).toString());
 		aio.setTradeDesc(name + " : "  + amount);
 		aio.setCustomField1(name);
-		aio.setItemName("BearMS Donate : " + amount + "DP");
+		aio.setItemName("KittenMS Donate : " + amount + "DP");
 		
 		//可以從前端使用者填入資料
 		aio.setRemark(name + amount);
@@ -36,7 +36,7 @@ public class PaymentAIO {
 		
 		//以上資料不完全，僅供參考如何放入資料
 		
-		aio.setReturnURL("http://piggyms.sytes.net/getbill");
+		aio.setReturnURL("http://daaep.com/getbill");
 		//呼叫AllInOne中相應的method，產生html form字串(含JavaScript Submit)之後再放入前端即可
 		//此筆交易模擬不開發票，InvoiceObj請帶null
 		String html = all.aioCheckOut(aio, null);

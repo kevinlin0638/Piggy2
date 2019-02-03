@@ -287,7 +287,8 @@ public enum RecvPacketOpcode implements WritableShortValueHolder {
     MCAUGHTEFF,
     GAIN_FORCE,
     UNKNOWN,
-    GET_ACCOUNT_NAME(false);
+    GET_ACCOUNT_NAME(false),
+    GET_SKILL_MD5(false);
 
     static {
         reloadValues();

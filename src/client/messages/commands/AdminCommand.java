@@ -14,6 +14,7 @@ import constants.GameConstants;
 import constants.MapConstants;
 import constants.ServerConstants;
 import database.DatabaseConnection;
+import ecpay.payment.integration.PaymentAIO;
 import handling.RecvPacketOpcode;
 import handling.SendPacketOpcode;
 import handling.channel.ChannelServer;
@@ -25,6 +26,7 @@ import provider.MapleDataTool;
 import scripting.PortalScriptManager;
 import scripting.ReactorScriptManager;
 import server.*;
+import server.Timer;
 import server.cashshop.CashItemFactory;
 import server.life.*;
 import server.maps.*;
@@ -37,16 +39,19 @@ import tools.types.Pair;
 
 import java.awt.*;
 import java.io.File;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 
 import server.MapleInventoryManipulator;
 import tools.packet.CWvsContext;
+
+import static constants.ServerConstants.DonateRate;
 
 public class AdminCommand {
 
@@ -81,6 +86,21 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "";
+        }
+    }
+
+    public static class setDetectMD5 extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            World.MD5 = args.get(1);
+            c.getPlayer().dropMessage("設定成功 : " + args.get(1));
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "設定 !setDetectMD5 <MD5>";
         }
     }
 
@@ -1159,6 +1179,253 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "!lookallmob - 怪物資訊";
+        }
+    }
+
+    public static class setGiftMap extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            int count = 0;
+            for (MapleCharacter victim : c.getPlayer().getMap().getCharactersThreadsafe()) {
+                Connection con = DatabaseConnection.getConnection();
+                try {
+                    PreparedStatement ps = con.prepareStatement("INSERT INTO giftsender (id , GiftName, isSent, charid, account, SentTime, url) VALUES (DEFAULT , ? , ?, ?, ?, CURRENT_TIMESTAMP, ?)");
+                    ps.setString(1, splitted.get(1));
+                    ps.setInt(2, 0);
+                    ps.setInt(3, victim.getId());
+                    ps.setString(4, victim.getClient().getAccountName());
+                    ps.setString(5, "管理員新增");
+                    ps.executeUpdate();
+                    ps.close();
+                    count++;
+                } catch (SQLException se) {
+                    se.printStackTrace();
+                }
+            }
+
+            c.getPlayer().dropMessage("成功添加 " + count + " 人 - " + splitted.get(1));
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!setGiftMap <活動名稱> - 將該地圖所有人設定獎勵";
+        }
+    }
+
+    public static class setGift extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+
+            int chrID = -1;
+            String ChrName = "";
+            Connection con = DatabaseConnection.getConnection();
+            ResultSet rs = null;
+            ChrName = splitted.get(1);
+            chrID = -1;
+            try {
+                PreparedStatement ps = null;
+                if(chrID > 0) {
+                    ps = con.prepareStatement("SELECT * FROM characters WHERE id = ?");
+                    ps.setInt(1, chrID);
+                    rs = ps.executeQuery();
+                    if (!rs.next()) {
+                        c.getPlayer().dropMessage("查無此ID");
+                        ps.close();
+                        rs.close();
+                        return false;
+                    }
+
+                    ps = con.prepareStatement("INSERT INTO giftsender (id , GiftName, isSent, charid, account, SentTime, url) VALUES (DEFAULT , ? , ?, ?, ?, CURRENT_TIMESTAMP, ?)");
+                    ps.setString(1, splitted.get(2));
+                    ps.setInt(2, 0);
+                    ps.setInt(3, chrID);
+                    ps.setString(4, rs.getString("name"));
+                    ps.setString(4, rs.getString("name"));
+
+                    ps.executeUpdate();
+                    ps.close();
+                    rs.close();
+
+                    c.getPlayer().dropMessage("添加成功 腳色id : " + chrID + " 禮物名 : " + splitted.get(2));
+                }else{
+                    ps = con.prepareStatement("SELECT * FROM characters WHERE name = ?");
+                    ps.setString(1, ChrName);
+                    rs = ps.executeQuery();
+                    if (!rs.next()) {
+                        c.getPlayer().dropMessage("查無此名稱");
+                        ps.close();
+                        rs.close();
+                        return false;
+                    }
+
+                    ps = con.prepareStatement("INSERT INTO giftsender (id , GiftName, isSent, charid, account, SentTime, url) VALUES (DEFAULT , ? , ?, ?, ?, CURRENT_TIMESTAMP, ?)");
+                    ps.setString(1, splitted.get(2));
+                    ps.setInt(2, 0);
+                    ps.setInt(3, rs.getInt("id"));
+                    ps.setInt(4, rs.getInt("accountid"));
+                    ps.setString(5, "管理員新增");
+
+                    ps.executeUpdate();
+                    ps.close();
+                    rs.close();
+
+                    c.getPlayer().dropMessage("添加成功 腳色 : " + ChrName + " 禮物名 : " + splitted.get(2));
+
+                }
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!setGift <腳色名稱> <活動名稱> - 將該繳色設定獎勵";
+        }
+    }
+
+
+    public static class setGiftWorld extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            int count = 0;
+            for (ChannelServer cserv : ChannelServer.getAllInstance(c.getWorld())) {
+                for (MapleCharacter victim : cserv.getPlayerStorage().getAllCharacters()) {
+                    Connection con = DatabaseConnection.getConnection();
+                    try {
+                        PreparedStatement ps = null;
+
+                        ps = con.prepareStatement("INSERT INTO giftsender (id , GiftName, isSent, charid, account, SentTime, url) VALUES (DEFAULT , ? , ?, ?, ?, CURRENT_TIMESTAMP, ?)");
+                        ps.setString(1, splitted.get(1));
+                        ps.setInt(2, 0);
+                        ps.setInt(3, victim.getId());
+                        ps.setInt(4, victim.getClient().getAccID());
+                        ps.setString(5, "管理員新增");
+
+                        ps.executeUpdate();
+                        ps.close();
+                        count++;
+                    } catch (SQLException se) {
+                        se.printStackTrace();
+                    }
+                }
+            }
+            c.getPlayer().dropMessage("成功添加 " + count + " 人 - " + splitted.get(1));
+            return true;
+        }
+
+
+        @Override
+        public String getHelpMessage() {
+            return "!setGiftWorld <活動名稱> - 將該伺服器所有人設定獎勵";
+        }
+    }
+
+    public static class SetBillRate extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            DonateRate = Double.parseDouble(splitted.get(1));
+            c.getPlayer().dropMessage(6, "設定成功 目前斗內比 1 : " + DonateRate);
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!SetBillRate <Rate> - 設定贊助比";
+        }
+    }
+
+    public static class openBill extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            String account = splitted.get(1);
+            Integer amount = Integer.parseInt(splitted.get(2));
+            Date time = Calendar.getInstance().getTime();
+            String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(time);
+            PaymentAIO mp = new PaymentAIO();
+            String as = amount >= 1000?String.valueOf(amount / 100):String.valueOf(amount);
+            String ss = timeStamp+as;
+            String url = "";
+            int key = 0;
+            int accid = 0;
+            try (Connection con = DatabaseConnection.getConnection()) {
+                boolean isC = true;
+                while(isC){
+                    Random r = new Random();
+                    String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                    StringBuilder s = new StringBuilder();
+                    for (int i = 0; i < 6; i++) {
+                        s.append(alphabet.charAt(r.nextInt(alphabet.length())));
+                    }
+                    try (PreparedStatement ps = con.prepareStatement("SELECT url from paybill_bills where url = ?")){
+                        ps.setString(1, s.toString());
+                        ResultSet rs = ps.executeQuery();
+                        if(rs.next()){
+                            continue;
+                        }
+                        url = s.toString();
+                        isC = false;
+                    }
+                }
+
+                boolean has_acc = false;
+                PreparedStatement pps = con.prepareStatement("SELECT * FROM accounts WHERE name = ?", Statement.RETURN_GENERATED_KEYS);
+                pps.setString(1, account);
+                ResultSet rs = pps.executeQuery();
+                if (rs.next()) {
+                    has_acc = true;
+                    accid = rs.getInt("id");
+                }
+                if(!has_acc){
+                    c.getPlayer().dropMessage("無此帳號");
+                    return true;
+                }
+
+                try (PreparedStatement ps = con.prepareStatement("INSERT INTO paybill_bills (BillID, money, account, accountID, characterID, Date,isSent,TradeNo, url) VALUES (DEFAULT,?, ?, ?, ?, CURRENT_TIMESTAMP,?,?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setInt(1, amount);
+                    ps.setString(2, account);
+                    ps.setInt(3, accid);
+                    ps.setInt(4, -1);
+                    ps.setInt(5, -1);
+                    ps.setString(6, ss);
+                    ps.setString(7, url);
+                    ps.executeUpdate();
+
+                    rs = ps.getGeneratedKeys();
+                    if (!rs.next()) {
+                        throw new RuntimeException("[saveItems] 保存道具失败.");
+                    }else{
+                        key = rs.getInt(1);
+                    }
+                }
+
+            } catch (SQLException ex) {//130.211.243.179
+                ex.printStackTrace();
+            }
+
+            String poststr = mp.getCustomBill(amount, Integer.toString(accid), key,time, ss);
+            try {
+                FileWriter fw = new FileWriter(new File("C:/Bills/" + url + ".html "));
+                fw.write(poststr);
+                fw.close();
+            }catch (IOException e){
+                System.out.println(e);
+            }
+
+            c.getPlayer().dropMessage(6, "斗內開單成功 帳號 : " + account + " 金額 : " + amount + " 可領取斗內點 : " + (int) Math.ceil(amount.doubleValue() * DonateRate));
+
+            final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+            mplew.writeShort(21);
+            String real = "http://daaep.com:80/" + url;
+            mplew.write(real.getBytes());
+            c.getClinetS().sendPacket(mplew.getPacket());
+            return true;
         }
     }
 

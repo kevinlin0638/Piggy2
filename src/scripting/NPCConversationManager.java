@@ -87,6 +87,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import static constants.ServerConstants.DonateRate;
+
 public class NPCConversationManager extends AbstractPlayerInteraction {
 
     public boolean pendingDisposal = false;
@@ -2077,6 +2079,87 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return replaceItem(slot, invType, statsSel, upgradeSlots, "Slots");
     }
 
+
+    public boolean replaceItem(Object statsSel, Object OppSel){
+        if(statsSel instanceof Equip && OppSel instanceof Equip && (((Equip) statsSel).getItemId() /10000 ==  ((Equip) OppSel).getItemId() / 10000)) {
+            Equip temp = (Equip) ((Equip) statsSel).copy();
+            Equip opp = (Equip) ((Equip) OppSel).copy();
+            if(!isCash(temp.getItemId()) || !isCash(opp.getItemId())){
+                return false;
+            }
+            Equip eq = (Equip) MapleItemInformationProvider.getInstance().getEquipById(opp.getItemId());
+
+
+            eq.setUpgradeSlots((byte) (temp.getExtraScroll()));
+            eq.setExtraScroll(temp.getExtraScroll());
+            eq.setExpiration(temp.getExpiration());
+            eq.setPotential1(temp.getPotential1());
+            eq.setPotential2(temp.getPotential2());
+            eq.setPotential3(temp.getPotential3());
+
+            eq.setStr(temp.getStr());
+            eq.setDex(temp.getDex());
+            eq.setInt(temp.getInt());
+            eq.setLuk(temp.getLuk());
+            eq.setWatk(temp.getWatk());
+            eq.setMatk(temp.getMatk());
+            eq.setUpgradeSlots((temp.getUpgradeSlots()));
+
+            eq.setAddi_str(temp.getAddi_str());
+            eq.setAddi_dex(temp.getAddi_dex());
+            eq.setAddi_int(temp.getAddi_int());
+            eq.setAddi_luk(temp.getAddi_luk());
+            eq.setAddi_watk(temp.getAddi_watk());
+            eq.setAddi_matk(temp.getAddi_matk());
+            eq.setExtraScroll(temp.getExtraScroll());
+
+
+
+            MapleInventoryManipulator.removeFromSlot(getClient(), MapleInventoryType.EQUIP, (short) 1, (short) 1, false);
+            MapleInventoryManipulator.removeFromSlot(getClient(), MapleInventoryType.EQUIP, (short) 2, (short) 1, false);
+            return MapleInventoryManipulator.addFromDrop(getClient(), eq, false);
+        }else
+            return false;
+    }
+
+    public boolean CanGetGitft(final String gif_name){
+        Connection con = DatabaseConnection.getConnection();
+        ResultSet rs = null;
+        try {
+            PreparedStatement ps = null;
+            ps = con.prepareStatement("SELECT * FROM giftsender WHERE charid = ? AND GiftName = ? AND isSent = 0");
+            ps.setInt(1, c.getPlayer().getId());
+            ps.setString(2, gif_name);
+            rs = ps.executeQuery();
+            if (!rs.next()) {
+                ps.close();
+                rs.close();
+                return false;
+            }
+            ps.close();
+            rs.close();
+        } catch (SQLException se) {
+            se.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean SentGitft(final String gif_name){
+        Connection con = DatabaseConnection.getConnection();
+        try {
+            PreparedStatement ps = con.prepareStatement("UPDATE giftsender SET isSent = 1 WHERE charid = ? AND GiftName = ?");
+            ps.setInt(1, c.getPlayer().getId());
+            ps.setString(2, gif_name);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException se) {
+            se.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     public boolean isCash(final int itemId) {
         return MapleItemInformationProvider.getInstance().isCash(itemId);
     }
@@ -3142,6 +3225,12 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         else if(expire > 1000L)
             eq.setExpiration(System.currentTimeMillis() + expire);
 
+        if(eq.getItemId() == 1142544){
+            eq.setPotential1(40650);
+            eq.setPotential2(40656);
+            eq.setPotential3(40656);
+        }
+
         return MapleInventoryManipulator.addFromDrop(getClient(), eq, false);
     }
 
@@ -3226,6 +3315,10 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             return false;
         else
             return true;
+    }
+
+    public double getRealDonate(final int don){
+        return Math.floor(DonateRate * don);
     }
 
 }

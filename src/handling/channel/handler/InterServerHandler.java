@@ -55,6 +55,8 @@ import java.net.UnknownHostException;
 import java.sql.*;
 import java.util.List;
 
+import static constants.ServerConstants.DonateRate;
+
 public class InterServerHandler {
 
     public static final void EnterCS(final MapleClient c, final MapleCharacter chr, final boolean mts) {
@@ -205,13 +207,13 @@ public class InterServerHandler {
 
             while(rs.next()){
                 if(player.getClient().getAccountName().equalsIgnoreCase(rs.getString("account"))) {
-                    player.dropMessage("帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * 1.5) + " 點贊助點.");
+                    player.dropMessage("帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * DonateRate) + " 點贊助點.");
                     player.gainPoints((int) Math.floor(rs.getInt("money") * 1.5));
                     for(MapleClient cll : World.pending_clients){
                         if(cll.getAccountName().equalsIgnoreCase(rs.getString("account"))) {
                             final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
                             mplew.writeShort(666);
-                            String sb = "帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * 1.5) + " 點贊助點.";
+                            String sb = "帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * DonateRate) + " 點贊助點.";
                             mplew.write(sb.getBytes());
                             cll.sendPacket(mplew.getPacket());
                         }

@@ -3147,6 +3147,7 @@ public class InventoryHandler {
                             //  cc = true;
                             c.sendPacket(MTSCSPacket.ViciousHammer(true, (byte) 0));
                         }
+                        c.getPlayer().fakeRelog();
                     }
 
                     break;

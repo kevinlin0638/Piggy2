@@ -22,6 +22,7 @@ package handling.world;
 
 import client.*;
 import client.MapleTrait.MapleTraitType;
+import client.anticheat.CheatTracker;
 import client.buddy.BuddyListEntry;
 import client.buddy.CharacterNameAndId;
 import client.inventory.Item;
@@ -48,6 +49,7 @@ public class CharacterTransfer implements Externalizable {
     public final Map<Integer, Object> Quest = new LinkedHashMap<>(); // Questid instead of MapleQuest, as it's huge. Cant be transporting MapleQuest.java
     public final Map<Integer, SkillEntry> Skills = new LinkedHashMap<>(); // Skillid instead of Skill.java, as it's huge. Cant be transporting Skill.java and MapleStatEffect.java
     /*Start of Custom Feature*/
+    public CheatTracker anticheat;
     public final Map<Integer, CardData> cardsInfo = new LinkedHashMap<>();
     public int characterid, accountid, fame, pvpExp, pvpPoints,
             meso, hair, face, demonMarking, mapid, guildid,
@@ -60,7 +62,7 @@ public class CharacterTransfer implements Externalizable {
     public long dps, lastfametime, TranferTime, dojo_time;
     public String name, accountname, BlessOfFairy, BlessOfEmpress, chalkboard, tempIP;
     public short level, str, dex, int_, luk, hpApUsed, job, fatigue;
-    public Object inventorys, skillmacro, storage, cs, anticheat;
+    public Object inventorys, skillmacro, storage, cs;
     public int[] savedlocation, wishlist, rocks, remainingSp, regrocks, hyperrocks;
     public byte[] petStore;
     public int exp;
@@ -153,6 +155,7 @@ public class CharacterTransfer implements Externalizable {
         this.autoAP = chr.getAutoAP();
         this.autoToken = chr.getAutoToken();
         this.elf = chr.getElf();
+        this.anticheat = chr.getCheatTracker();
         /*End of Custom Feature*/
         this.skinColor = chr.getSkinColor();
         this.job = chr.getJob();
@@ -352,7 +355,6 @@ public class CharacterTransfer implements Externalizable {
         this.gachexp = in.readInt();
         this.totalWins = in.readInt();
         this.totalLosses = in.readInt();
-        this.anticheat = in.readObject();
         this.tempIP = in.readUTF();
         this.pvpExp = in.readInt();
         this.pvpPoints = in.readInt();
@@ -589,7 +591,6 @@ public class CharacterTransfer implements Externalizable {
         out.writeInt(this.gachexp);
         out.writeInt(this.totalWins);
         out.writeInt(this.totalLosses);
-        out.writeObject(this.anticheat);
         out.writeUTF(this.tempIP);
         out.writeInt(this.pvpExp);
         out.writeInt(this.pvpPoints);

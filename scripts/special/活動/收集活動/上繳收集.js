@@ -4,14 +4,11 @@ var choice;
 var type;
 var get_type;
 var set_type;
-var items = Array(//(價格,type,ItemID,批量購買,是否顯示) type : -1 - 楓幣 0 - 贊助點 1 - Gash 2 - 楓點 3 - 道場點數
-		Array(1000,3,1132000,false,true),Array(3000,3,1132001,false,true),Array(6000,3,1132002,false,true),Array(10000,3,1132003,false,true),
-		Array(20000,3,1132004,false,true),Array(500000,3,1142064,false,true),Array(1000000,3,3010054,false,true),
-		Array(500000,3,2022530,true,true),Array(1800,3,2000004,true,true),
-		Array(150000,3,2340000,true,true),
-		Array(10000,3,4008000,true,true),Array(10000,3,4008001,true,true),Array(10000,3,4008002,true,true),Array(10000,3,4008003,true,true),
-		Array(750,3,5050000,true,true)
-		);
+var event_item = 4000306;
+var items = Array(//(價格,type,ItemID,批量購買,是否顯示) type : -1 - 楓幣 0 - 贊助點 1 - Gash 2 - 楓點 3 - 道場點數 其它 - 任意道具
+		Array(300, event_item ,2028061,true,true),Array(400, event_item ,5062000,true,true),Array(600, event_item ,5062002,true,true)
+		,Array(800, event_item ,2028062,true,true),Array(2000, event_item ,2340000,true,true)
+	);	
 
 function start() {
     status = -1;
@@ -43,7 +40,7 @@ function action(mode, type, selection) {
 							break;
 						case 0:
 							type = "贊助點";
-							get_type = cm.getRMB();
+							get_type = cm.getPlayer().getPoints();
 							break;
 						case 1:
 							type = "Gash";
@@ -58,8 +55,8 @@ function action(mode, type, selection) {
 							get_type = cm.getDojoPoints();
 							break;
 						default:
-							type = "#v" + items[i][2] + "##z" + items[i][2]+ "#";
-							get_type = cm.getItemQuantity(items[choice][1]);
+							type = "#v" + items[i][1] + "##z" + items[i][1]+ "#";
+							get_type = cm.getItemQuantity(items[i][1]);
 							break;
 					}
 					choices += "\r\n#b#L" + i + "##v" + items[i][2] + "##z" + items[i][2] + "#　#d需要#r" + items[i][0] + "#d" + type +"#k#l";
@@ -77,7 +74,7 @@ function action(mode, type, selection) {
 					break;
 				case 0:
 					type = "贊助點";
-					get_type = cm.getRMB();
+					get_type = cm.getPlayer().getPoints();
 					break;
 				case 1:
 					type = "Gash";
@@ -109,7 +106,7 @@ function action(mode, type, selection) {
 					break;
 				case 0:
 					type = "贊助點";
-					get_type = cm.getRMB();
+					get_type = cm.getPlayer().getPoints();
 					break;
 				case 1:
 					type = "Gash";
@@ -146,14 +143,19 @@ function action(mode, type, selection) {
 				cm.sendOk("購買失敗，你沒有" + money + type);
 				cm.dispose();
             } else {
+				if(money > 30000){
+					cm.sendOk("消耗的雪球不能超過3萬");
+					cm.dispose();
+					return;
+				}
 				switch(items[choice][1]){
 					case -1:
 						cm.gainMeso(-money);
 						get_type = cm.getMeso();
 						break;
 					case 0:
-						cm.setRMB((cm.getRMB()-money));
-						get_type = cm.getRMB();
+						cm.getPlayer().gainPoints((cm.getPlayer().getPoints()-money));
+						get_type = cm.getPlayer().getPoints();
 						break;
 					case 1:
 						cm.gainNX(1, -money);
@@ -164,7 +166,7 @@ function action(mode, type, selection) {
 						get_type = cm.getPlayer().getCSPoints(2);
 						break;
 					case 3:
-						cm.getPlayer().setDojo(cm.getDojoPoints() - money);
+						cm.setDojoRecord(false,false, -money);
 						get_type = cm.getDojoPoints();
 						break;
 					default:
@@ -173,6 +175,7 @@ function action(mode, type, selection) {
 						break;
 				}
 				cm.gainItem(items[choice][2], fee);
+				cm.getPlayer().setEventCount('雪花活動', 1, money);
 				cm.sendOk("#b恭喜，購買了#r " + fee + " #b個#r #v" + items[choice][2] + "#\r\n\r\n#r"+ type + " #b餘額為:#r " + get_type + " #b");
 				cm.dispose();
             }

@@ -1569,6 +1569,14 @@ public class MapleClient implements Serializable {
         this.idleTask = idleTask;
     }
 
+    public boolean isMonitored() {
+        return monitored;
+    }
+
+    public void setMonitored(boolean m) {
+        this.monitored = m;
+    }
+
     public boolean hasAcceptedToS() {
         return tos;
     }

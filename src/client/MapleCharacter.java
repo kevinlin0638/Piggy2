@@ -21,6 +21,7 @@
 package client;
 
 import client.MapleTrait.MapleTraitType;
+import client.anticheat.CheatTracker;
 import client.buddy.BuddyList;
 import client.buddy.BuddyListEntry;
 import client.inventory.*;
@@ -104,6 +105,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public int pvpExp;
     public transient MapleAndroid android;
     public EnumMap<MapleTraitType, MapleTrait> traits;
+    private Timestamp createDate; //角色创建的时间
     /*Start of Custom Feature*/
  /*All custom shit declare here*/
 
@@ -220,6 +222,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private transient MapleCarnivalParty carnivalParty;
     private BuddyList buddylist;
     private MonsterBook monsterbook;
+    private transient CheatTracker anticheat; //外挂检测系统
     private MapleClient client;
     private transient MapleParty party;
     private PlayerStats stats;
@@ -692,6 +695,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.extendedSlots = ct.extendedSlots;
         ret.storage = (MapleStorage) ct.storage;
         ret.cs = (CashShop) ct.cs;
+        ret.anticheat = ct.anticheat; //外挂检测系统
+        ret.anticheat.start(ret.getId());
         client.setAccountName(ct.accountname);
         ret.nxcredit = ct.nxcredit;
         ret.redeemhn = ct.redeemhn;
@@ -828,6 +833,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ret.CRand = new PlayerRandomStream();
                 MapleMapFactory mapFactory = ChannelServer.getInstance(client.getWorld(), client.getChannel()).getMapFactory();
                 ret.map = mapFactory.getMap(ret.mapid);
+                ret.anticheat = new CheatTracker(ret.getId());
                 if (ret.map == null) { //char is on a map that doesn't exist warp it to henesys
                     ret.map = mapFactory.getMap(100000000);
                 }
@@ -5355,7 +5361,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             if (pendingSkills != null && pendingSkills.size() > 0) {
                 client.getSession().writeAndFlush(CWvsContext.updateSkills(pendingSkills, false));
                 for (Skill z : pendingSkills.keySet()) {
-                    client.sendPacket(CWvsContext.broadcastMsg(5, "[" + SkillFactory.getSkillName(z.getId()) + "] skill has expired and will not be available for use."));
+                    client.sendPacket(CWvsContext.broadcastMsg(5, "[" + SkillFactory.getSkillName(z.getId()) + "] 此技能已經到期無法使用."));
                 }
             } //not real msg
             pendingSkills = null;
@@ -10303,6 +10309,24 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         mapChangeTime = System.currentTimeMillis();
     }
 
+    public void setChangeTime(boolean changeMap) {
+        mapChangeTime = System.currentTimeMillis();
+        if (changeMap) {
+            getCheatTracker().resetInMapIimeCount();
+        }
+    }
+
+    /*
+     * 外挂检测系统
+     */
+    public CheatTracker getCheatTracker() {
+        return anticheat;
+    }
+
+    public void updateTick(int newTick) {
+        anticheat.updateTick(newTick);
+    }
+
     public long getChangeTime() {
         return mapChangeTime;
     }
@@ -11037,6 +11061,31 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 chr.cancelEffect(eff, false, -1, eff.getStatups());
 
             }
+        }
+    }
+
+    /*
+     * 獲取角色创建的日期
+     */
+    public Timestamp getChrCreated() {
+        if (createDate != null) {
+            return createDate;
+        }
+        try (Connection con = DatabaseConnection.getConnection()) {
+            PreparedStatement ps = con.prepareStatement("SELECT createdate FROM characters WHERE id = ?");
+            ps.setInt(1, this.getId());
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next()) {
+                rs.close();
+                ps.close();
+                return null;
+            }
+            createDate = rs.getTimestamp("createdate");
+            rs.close();
+            ps.close();
+            return createDate;
+        } catch (SQLException e) {
+            return new Timestamp(-1);
         }
     }
 

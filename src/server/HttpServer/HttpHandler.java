@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.*;
 
+import static constants.ServerConstants.DonateRate;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -67,7 +68,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> { 
                             ps = con.prepareStatement("INSERT INTO paybill_paylog (id, account, money, dps, paytime) VALUES (DEFAULT,?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
                             ps.setString(1, rs.getString("accountID"));
                             ps.setInt(2, rs.getInt("money"));
-                            ps.setInt(3, (int) Math.floor(rs.getInt("money") * 1.5));
+                            ps.setInt(3, (int) Math.floor(rs.getInt("money") * DonateRate));
                             ps.setDate(4, rs.getDate("Date"));
                             ps.executeUpdate();
                             System.out.println("帳號 : " + rs.getString("account") + "斗內金額 : " + rs.getInt("money") + "\r\n自" + rs.getDate("Date").toString() + " 已付款 並存入帳號");
@@ -78,12 +79,12 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> { 
                             for(MapleCharacter cl : World.getAllCharacters()){
                                 if(cl.getClient().getAccountName().equalsIgnoreCase(rs.getString("account"))) {
                                     cl.dropMessage("帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * 1.5) + " 點贊助點.");
-                                    cl.gainPoints((int) Math.floor(rs.getInt("money") * 1.5));
+                                    cl.gainPoints((int) Math.floor(rs.getInt("money") * DonateRate));
                                     for(MapleClient cll : World.pending_clients){
                                         if(cll.getAccountName().equalsIgnoreCase(rs.getString("account"))) {
                                             final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
                                             mplew.writeShort(666);
-                                            String sb = "帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * 1.5) + " 點贊助點.";
+                                            String sb = "帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * DonateRate) + " 點贊助點.";
                                             mplew.write(sb.getBytes());
                                             cll.sendPacket(mplew.getPacket());
                                         }

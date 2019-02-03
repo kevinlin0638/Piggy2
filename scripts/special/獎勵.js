@@ -5,60 +5,23 @@ var status;
 var sele;
 
 var NPC_List = [ //id, text
-	["新手禮包",//顯示名稱
+	["封測新手禮包",//顯示名稱
 		[
-		 [0, 500000, -1, false, true]
-		],
-		1,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
-		10,// 等級限制
-		"開服禮包"//領獎名稱
-	],
-	/*["RC貢獻獎勵"],
-	["168分享獎勵3",//顯示名稱
-		[[2, 100000, -1, false, true],//道具id, 數量 , 限制天數, 是否鎖定, 是否可交易
-		 [4001126, 3000, -1, false, true],
-		 [5062000, 250, -1, false, true],
-		 [5062006, 15, -1, false, true],
-		 [2000019, 500, -1, false, true],
-		 [2022179, 10, -1, false, true]
-		],
-		2,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
-		10,// 等級限制
-		"168分享獎勵3"//領獎名稱
-	],
-	["招生版回復3",//顯示名稱
-		[[2049402, 2, -1, false, true],//道具id, 數量 , 限制天數, 是否鎖定, 是否可交易
+		 [0, 500000, -1, false, true],
+		 [4310003, 1, -1, false, true],
 		 [5062002, 100, -1, false, true],
-		 [5062006, 15, -1, false, true]
-		],
-		2,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
-		10,// 等級限制
-		"招生版回復3"//領獎名稱
-	],
-	["粉專分享3",//顯示名稱
-		[[2, 100000, -1, false, true],//道具id, 數量 , 限制天數, 是否鎖定, 是否可交易
-		 [5220000, 50, -1, false, true],
-		 [5062006, 15, -1, false, true]
-		],
-		2,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
-		10,// 等級限制
-		"粉專分享3"//領獎名稱
-	],
-	["粉專推薦",//顯示名稱
-		[[4310003, 15, -1, false, true]//道具id, 數量 , 限制天數, 是否鎖定, 是否可交易
-		],
-		2,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
-		10,// 等級限制
-		"粉專推薦"//領獎名稱
-	],
-	["新手嘗鮮禮",//顯示名稱
-		[[4030003, 1, 7, true, true],//道具id, 數量 , 限制天數, 是否鎖定, 是否可交易
-		 [4030002, 1, 7, true, true],
-		 [4030004, 1, 7, true, true]
 		],
 		1,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
 		10,// 等級限制
-		"新手嘗鮮禮"//領獎名稱
+		"封測新手禮包"//領獎名稱
+	],
+	["封測贊助點補助",//顯示名稱
+		[
+		 [4310005, 5, -1, false, true],
+		],
+		3,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
+		10,// 等級限制
+		"封測贊助點補助"//領獎名稱
 	],
 	["領獎帳號註冊",//顯示名稱
 		[[5062002, 50, -1, false, true]//道具id, 數量 , 限制天數, 是否鎖定, 是否可交易
@@ -67,13 +30,6 @@ var NPC_List = [ //id, text
 		10,// 等級限制
 		"領獎帳號註冊"//領獎名稱
 	],
-	["12/31號補償",//顯示名稱
-		[[2049123, 15, -1, false, true]//道具id, 數量 , 限制天數, 是否鎖定, 是否可交易
-		],
-		3,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
-		10,// 等級限制
-		"12/31號補償"//領獎名稱
-	],*/
 ]
 
 
@@ -95,13 +51,13 @@ function action(mode, type, selection) {
 
     switch (status) {
         case 0: 
-			//var vip = cm.getEventCount("領獎帳號註冊",1) > 0?"領獎帳號":"非領獎帳號";
+			var vip = cm.getEventCount("領獎帳號註冊",1) > 0?"領獎帳號":"非領獎帳號";
 			var Text = "歡迎加入 #b小喵谷#k 請問您有什麼需求:\r\n";
-			/*if(cm.getEventCount("領獎帳號註冊",1) <= 0){
+			if(cm.getEventCount("領獎帳號註冊",1) <= 0){
 				Text += "#r您的帳號是 : " + vip + "\r\n#b"
 			}else{
 				Text += "#b您的帳號是 : " + vip + "\r\n"
-			}*/
+			}
 			
 			for(var i = 0; i < NPC_List.length;i++){
 				Text += "#L" + i + "#" + NPC_List[i][0];
@@ -112,12 +68,6 @@ function action(mode, type, selection) {
             break;
         case 1:
 			sele = selection;
-			if(sele == 1){
-				cm.dispose();
-				cm.openNpc(9330003, 81);
-				return
-			}
-			
 			var ttext = "#r您確定要領取此禮包?\r\n";
 			var eqs = NPC_List[sele][1];
 			for(var i = 0; i < eqs.length;i++){

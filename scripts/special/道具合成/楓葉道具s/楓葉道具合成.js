@@ -4,14 +4,25 @@ var choice;
 var type;
 var get_type;
 var set_type;
-var items = Array(//(價格,type,ItemID,批量購買,是否顯示) type : -1 - 楓幣 0 - 贊助點 1 - Gash 2 - 楓點 3 - 道場點數
-		Array(1000,3,1132000,false,true),Array(3000,3,1132001,false,true),Array(6000,3,1132002,false,true),Array(10000,3,1132003,false,true),
-		Array(20000,3,1132004,false,true),Array(500000,3,1142064,false,true),Array(1000000,3,3010054,false,true),
-		Array(500000,3,2022530,true,true),Array(1800,3,2000004,true,true),
-		Array(150000,3,2340000,true,true),
-		Array(10000,3,4008000,true,true),Array(10000,3,4008001,true,true),Array(10000,3,4008002,true,true),Array(10000,3,4008003,true,true),
-		Array(750,3,5050000,true,true)
-		);
+var items = Array(//(價格,type,ItemID,批量購買,是否顯示) type : -1 - 楓幣 0 - 贊助點 1 - Gash 2 - 楓點 3 - 道場點數 其它 - 任意道具
+		Array(500, 4001126 ,1302030,false,true),Array(1000, 4001126 ,1302064,false,true),Array(5000, 4001126 ,1302142,false,true),//單手劍
+		Array(500, 4001126 ,2049300,false,false),Array(1000, 4001126 ,1312032,false,true),Array(5000, 4001126 ,1312056,false,true),//單手斧
+		Array(500, 4001126 ,2049300,false,false),Array(1000, 4001126 ,1322054,false,true),Array(5000, 4001126 ,1322084,false,true),//單手棍
+		Array(500, 4001126 ,1332025,false,true),Array(1000, 4001126 ,1332056,false,true),Array(5000, 4001126 ,1332114,false,true),//短刀
+		Array(500, 4001126 ,1342026,false,true),Array(1000, 4001126 ,1342027,false,true),Array(5000, 4001126 ,1342028,false,true),//雙刀
+		Array(500, 4001126 ,2049300,false,false),Array(1000, 4001126 ,1372034,false,true),Array(5000, 4001126 ,1372071,false,true),//短杖
+		Array(500, 4001126 ,1382012,false,true),Array(1000, 4001126 ,1382039,false,true),Array(5000, 4001126 ,1382093,false,true),//長杖
+		Array(500, 4001126 ,2049300,false,false),Array(1000, 4001126 ,1402039,false,true),Array(5000, 4001126 ,1402085,false,true),//雙手劍
+		Array(500, 4001126 ,1412011,false,true),Array(1000, 4001126 ,1412027,false,true),Array(5000, 4001126 ,1412055,false,true),//雙手斧
+		Array(500, 4001126 ,1422014,false,true),Array(1000, 4001126 ,1422029,false,true),Array(5000, 4001126 ,1422057,false,true),//雙手錘
+		Array(500, 4001126 ,1432012,false,true),Array(1000, 4001126 ,1432040,false,true),Array(5000, 4001126 ,1432075,false,true),//槍
+		Array(500, 4001126 ,1442024,false,true),Array(1000, 4001126 ,1442051,false,true),Array(5000, 4001126 ,1442104,false,true),//長矛
+		Array(500, 4001126 ,1452022,false,true),Array(1000, 4001126 ,1452045,false,true),Array(5000, 4001126 ,1452100,false,true),//弓
+		Array(500, 4001126 ,1462019,false,true),Array(1000, 4001126 ,1462040,false,true),Array(5000, 4001126 ,1462085,false,true),//弩
+		Array(500, 4001126 ,1472032,false,true),Array(1000, 4001126 ,1472055,false,true),Array(5000, 4001126 ,1472111,false,true),//拳套
+		Array(500, 4001126 ,1482021,false,true),Array(1000, 4001126 ,1482022,false,true),Array(5000, 4001126 ,1482073,false,true),//指虎
+		Array(500, 4001126 ,1492021,false,true),Array(1000, 4001126 ,1492022,false,true),Array(5000, 4001126 ,1492073,false,true)	//火槍
+	);
 
 function start() {
     status = -1;
@@ -43,7 +54,7 @@ function action(mode, type, selection) {
 							break;
 						case 0:
 							type = "贊助點";
-							get_type = cm.getRMB();
+							get_type = cm.getPlayer().getPoints();
 							break;
 						case 1:
 							type = "Gash";
@@ -58,8 +69,8 @@ function action(mode, type, selection) {
 							get_type = cm.getDojoPoints();
 							break;
 						default:
-							type = "#v" + items[i][2] + "##z" + items[i][2]+ "#";
-							get_type = cm.getItemQuantity(items[choice][1]);
+							type = "#v" + items[i][1] + "##z" + items[i][1]+ "#";
+							get_type = cm.getItemQuantity(items[i][1]);
 							break;
 					}
 					choices += "\r\n#b#L" + i + "##v" + items[i][2] + "##z" + items[i][2] + "#　#d需要#r" + items[i][0] + "#d" + type +"#k#l";
@@ -77,7 +88,7 @@ function action(mode, type, selection) {
 					break;
 				case 0:
 					type = "贊助點";
-					get_type = cm.getRMB();
+					get_type = cm.getPlayer().getPoints();
 					break;
 				case 1:
 					type = "Gash";
@@ -109,7 +120,7 @@ function action(mode, type, selection) {
 					break;
 				case 0:
 					type = "贊助點";
-					get_type = cm.getRMB();
+					get_type = cm.getPlayer().getPoints();
 					break;
 				case 1:
 					type = "Gash";
@@ -152,8 +163,8 @@ function action(mode, type, selection) {
 						get_type = cm.getMeso();
 						break;
 					case 0:
-						cm.setRMB((cm.getRMB()-money));
-						get_type = cm.getRMB();
+						cm.getPlayer().gainPoints((cm.getPlayer().getPoints()-money));
+						get_type = cm.getPlayer().getPoints();
 						break;
 					case 1:
 						cm.gainNX(1, -money);
@@ -164,7 +175,7 @@ function action(mode, type, selection) {
 						get_type = cm.getPlayer().getCSPoints(2);
 						break;
 					case 3:
-						cm.getPlayer().setDojo(cm.getDojoPoints() - money);
+						cm.setDojoRecord(false,false, -money);
 						get_type = cm.getDojoPoints();
 						break;
 					default:

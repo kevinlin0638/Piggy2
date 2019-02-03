@@ -21,11 +21,11 @@ function action(mode, type, selection) {
     } else if (status == 1) {
 	sel = selection;
 	if (sel == 1) {
-	    cm.sendYesNo("#b120個#k 魚餌需要 #b300000#k 楓幣。 您要購買嗎？");
+	    cm.sendYesNo("#b600個#k 魚餌需要 #b300000#k 楓幣。 您要購買嗎？");
 	} else if (sel == 3) {
-	    if (cm.canHold(2300001,120) && cm.haveItem(5350000,1)) {
-		if (!cm.haveItem(2300001)) {
-		    cm.gainItem(2300001, 120);
+	    if (cm.canHold(2300001,600) && cm.haveItem(5350000,1)) {
+		if (!cm.haveItem(2300001)){
+		    cm.gainItem(2300001, 600);
 		    cm.gainItem(5350000,-1);
 		    cm.sendNext("快樂釣魚去~");
 		} else {
@@ -38,10 +38,10 @@ function action(mode, type, selection) {
 	}
     } else if (status == 2) {
 	if (sel == 1) {
-	    if (cm.canHold(2300000,120) && cm.getMeso() >= 300000) {
+	    if (cm.canHold(2300000,600) && cm.getMeso() >= 300000) {
 		if (!cm.haveItem(2300000)) {
 		    cm.gainMeso(-300000);
-		    cm.gainItem(2300000, 120);
+		    cm.gainItem(2300000, 600);
 		    cm.sendNext("快樂釣魚去~");
 		} else {
 		    cm.sendNext("你已經有魚餌。");

@@ -262,6 +262,7 @@ public class DamageParse {
                         player.finishAchievement(68);
                     if(eachd > 99999999)
                         player.finishAchievement(69);
+
                     totDamageToOneMonster += eachd;
                     //force the miss even if they dont miss. popular wz edit
                     if ((eachd == 0 || monster.getId() == 9700021) && player.getPyramidSubway() != null) { //miss

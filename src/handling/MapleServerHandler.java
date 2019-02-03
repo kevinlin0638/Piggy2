@@ -259,9 +259,9 @@ public class MapleServerHandler extends ChannelDuplexHandler {
         }
 
         if (isClientServer()){
+            long ava = slea.available();
             switch (header) {
                 case GET_ACCOUNT_NAME:
-                    long ava = slea.available();
                     System.out.println(client.getSessionIPAddress());
                     final String accountname = slea.readAsciiString((int)ava);
                     client.setAccountName(accountname);
@@ -270,9 +270,17 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                             World.pending_clients.remove(cl);
                     }
                     World.pending_clients.add(client);
-
-
-                break;
+                    break;
+                case GET_SKILL_MD5:
+                    final String MD5 = slea.readAsciiString((int)ava);
+                    final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+                    mplew.writeShort(7778);
+                    if(MD5.equals(World.MD5))
+                        mplew.write("1".getBytes());
+                    else
+                        mplew.write("0".getBytes());
+                    client.sendPacket(mplew.getPacket());
+                    break;
             }
             return;
         }

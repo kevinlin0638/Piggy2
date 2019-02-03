@@ -12,6 +12,7 @@ public class ServerConstants {
     public static String SERVER_IP = "127.0.0.1";
 
     public static String SERVER_NAME = "小喵谷 v145";
+    public static double DonateRate = 1.5;
 
     public static boolean BLOCK_CASH_SHOP = false;
     public static boolean DEBUG = true;
