@@ -32,7 +32,7 @@ public class LoginWorker {
 
     public static void registerClient(final MapleClient client) {
         if (LoginServer.isAdminOnly() && !client.isGM() && !client.isLocalhost()) {
-            client.sendPacket(CWvsContext.getPopupMsg("當前伺服器只能管理員登入.\\r\\n我們目前正在測試一些問題\\r\\n請稍後在嘗試。"));
+            client.sendPacket(CWvsContext.getPopupMsg("當前伺服器只能管理員登入.\r\n我們目前正在內部維護中\r\n請稍後在嘗試。"));
             client.sendPacket(LoginPacket.getLoginFailed(7));
             return;
         }

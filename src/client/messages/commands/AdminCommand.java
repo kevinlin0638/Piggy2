@@ -336,6 +336,26 @@ public class AdminCommand {
         }
     }
 
+    public static class setAdminMode extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            if(ServerConstants.ADMIN_ONLY){
+                ServerConstants.ADMIN_ONLY = false;
+                c.getPlayer().dropMessage("管理員登入模式已關閉");
+            }else{
+                ServerConstants.ADMIN_ONLY = true;
+                c.getPlayer().dropMessage("管理員登入模式已啟用");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!Packet <封包資料> - 傳送封包";
+        }
+    }
+
     public static class Hide extends AbstractsCommandExecute {
 
         @Override
@@ -1426,6 +1446,11 @@ public class AdminCommand {
             mplew.write(real.getBytes());
             c.getClinetS().sendPacket(mplew.getPacket());
             return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!openBill <帳號> <金額>";
         }
     }
 

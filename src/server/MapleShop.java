@@ -138,7 +138,8 @@ public class MapleShop {
     }
 
     public void sendShop(MapleClient c) {
-        c.getPlayer().dropMessage("您現在對話的商店ID為 " + getId() + " NPC ID:" + getNpcId());
+        if(c.getPlayer().isAdmin())
+            c.getPlayer().dropMessage("您現在對話的商店ID為 " + getId() + " NPC ID:" + getNpcId());
         c.getPlayer().setShop(this);
         c.sendPacket(NPCTalkPacket.getNPCShop(getNpcId(), this, c));
     }

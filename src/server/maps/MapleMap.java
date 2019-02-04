@@ -105,7 +105,7 @@ public final class MapleMap {
     private float monsterRate, recoveryRate;
     private MapleMapEffect mapEffect;
     private int channel, world;
-    private short decHP = 0, createMobInterval = 9000, top = 0, bottom = 0, left = 0, right = 0;
+    private short decHP = 0, createMobInterval = 6000, top = 0, bottom = 0, left = 0, right = 0;
     private int consumeItemCoolTime = 0, protectItem = 0, decHPInterval = 10000, mapid, returnMapId, timeLimit,
             fieldLimit, maxRegularSpawn = 0, fixedMob, forcedReturnMap = 999999999, instanceid = -1,
             lvForceMove = 0, lvLimit = 0, permanentWeather = 0, partyBonusRate = 0;
@@ -3493,7 +3493,7 @@ public final class MapleMap {
             if (isFast)
                 numShouldSpawn  = (maxRegularSpawn * 3 > 50?maxRegularSpawn * 3: 50) - spawnedMonstersOnMap.get();
             else
-                numShouldSpawn  = maxRegularSpawn - spawnedMonstersOnMap.get();
+                numShouldSpawn  = maxRegularSpawn + 8 - spawnedMonstersOnMap.get();
 
             if (numShouldSpawn > 0) {
                 int spawned = 0;

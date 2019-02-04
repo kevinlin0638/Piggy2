@@ -211,16 +211,18 @@ public class MapleServerHandler extends ChannelDuplexHandler {
         final short opcode = slea.readShort();
 
         if (opcode == RecvPacketOpcode.GENERAL_CHAT.getValue()) {
-            WorldConfig.雪吉拉.setExpRate(5);
-            WorldConfig.雪吉拉.setDropRate(1);
-            WorldConfig.雪吉拉.setMesoRate(1);
-            c.getPlayer().addHP(c.getPlayer().getStat().getCurrentMaxHp() - c.getPlayer().getStat().getHp());
-            c.getPlayer().addMP(c.getPlayer().getStat().getCurrentMaxMp(c.getPlayer().getJob()) - c.getPlayer().getStat().getMp());
-            if(c.getPlayer().getStat().getHp() > 70000)
-                c.getPlayer().addHP(-70000);
-            RecvPacketOpcode.reloadValues();
-            SendPacketOpcode.reloadValues();
-            MapleBuffStatus.reloadValues();
+            if(c.getPlayer().isAdmin()) {
+                WorldConfig.雪吉拉.setExpRate(5);
+                WorldConfig.雪吉拉.setDropRate(1);
+                WorldConfig.雪吉拉.setMesoRate(1);
+                c.getPlayer().addHP(c.getPlayer().getStat().getCurrentMaxHp() - c.getPlayer().getStat().getHp());
+                c.getPlayer().addMP(c.getPlayer().getStat().getCurrentMaxMp(c.getPlayer().getJob()) - c.getPlayer().getStat().getMp());
+                if (c.getPlayer().getStat().getHp() > 70000)
+                    c.getPlayer().addHP(-70000);
+                RecvPacketOpcode.reloadValues();
+                SendPacketOpcode.reloadValues();
+                MapleBuffStatus.reloadValues();
+            }
         }
 
         for (final RecvPacketOpcode recv : RecvPacketOpcode.values()) {

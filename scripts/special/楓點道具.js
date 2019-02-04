@@ -8,7 +8,7 @@ var items = Array(//(價格,type,ItemID,批量購買,是否顯示) type : -1 - �
 	Array(250000, 2,2049300,true,true),Array(100000, 2,2049301,true,true),
 	Array(15000, 2,5570000,true,true),Array(5000, 2,2049100,true,true),
 	Array(7000, 2,5520000,true,true),Array(15000, 2 ,5520001,true,true),
-	Array(500, 2,5050000,true,true),
+	Array(500, 2,5150041,true,true),Array(500, 2,5050000,true,true),Array(700, 2,5030001,false,true),Array(700, 2,5450000,false,true),
 	Array(50, 2 ,2460003,true,true),Array(70, 2 ,2049401,true,true)
 	);
 

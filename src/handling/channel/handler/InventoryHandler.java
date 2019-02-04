@@ -3770,6 +3770,9 @@ public class InventoryHandler {
                         c.sendPacket(CWvsContext.enableActions());
                         chr.getMap().broadcastMessage(MTSCSPacket.changePetName(chr, nName, pet.getInventoryPosition()));
                         used = true;
+                    }else{
+                        chr.dropMessage(1, "寵物改名錯誤，名稱不可用.");
+                        break;
                     }
                     break;
                 }
@@ -3923,46 +3926,48 @@ public class InventoryHandler {
                 case 5390002: // Loveholic Messenger
                 case 5390005: // Cute Tiger Messenger
                 case 5390006: { // Tiger Roar's Messenger
-                    if (c.getPlayer().getLevel() < 10) {
-                        c.getPlayer().dropMessage(5, "Must be level 10 or higher.");
-                        break;
-                    }
-                    if (GameConstants.isJail(c.getPlayer().getMapId())) {
-                        c.getPlayer().dropMessage(5, "Cannot be used here.");
-                        break;
-                    }
-                    if (!c.getChannelServer().getMegaphoneMuteState()) {
-                        final List<String> lines = new LinkedList<>();
-                        for (int i = 0; i < 4; i++) {
-                            final String text = slea.readMapleAsciiString();
-                            if (text.length() > 55) {
-                                continue;
-                            }
-                            if (itemId == 5390009) {
-                                String textt = "I'm looking for friends! Send a Friend Request if you're interested!"; // should be GMS's notice anyways.
-                                String[] linez = {"", "", "", ""};
-                                linez[0] = textt.substring(0, 10);
-                                linez[1] = textt.substring(10, 20);
-                                linez[2] = textt.substring(20, 30);
-                                linez[3] = textt.substring(30);
-                                LinkedList list = new LinkedList();
-                                list.add(linez[0]);
-                                list.add(linez[1]);
-                                list.add(linez[2]);
-                                list.add(linez[3]);
-                                final boolean ear = slea.readByte() != 0;
-                                World.Broadcast.broadcastSmega(c.getWorld(), CWvsContext.getAvatarMega(c.getPlayer(), c.getChannel(), itemId, list, ear));
-                                used = true;
-                            } else {
-                                lines.add(text);
-                                final boolean ear = slea.readByte() != 0;
-                                World.Broadcast.broadcastSmega(c.getWorld(), CWvsContext.getAvatarMega(c.getPlayer(), c.getChannel(), itemId, lines, ear));
-                                used = true;
-                            }
-                        }
-                    } else {
-                        c.getPlayer().dropMessage(5, "The usage of Megaphone is currently disabled.");
-                    }
+                    c.getPlayer().dropMessage(5, "情境喇叭目前暫停使用.");
+
+//                    if (c.getPlayer().getLevel() < 10) {
+//                        c.getPlayer().dropMessage(5, "Must be level 10 or higher.");
+//                        break;
+//                    }
+//                    if (GameConstants.isJail(c.getPlayer().getMapId())) {
+//                        c.getPlayer().dropMessage(5, "Cannot be used here.");
+//                        break;
+//                    }
+//                    if (!c.getChannelServer().getMegaphoneMuteState()) {
+//                        final List<String> lines = new LinkedList<>();
+//                        for (int i = 0; i < 4; i++) {
+//                            final String text = slea.readMapleAsciiString();
+//                            if (text.length() > 55) {
+//                                continue;
+//                            }
+//                            if (itemId == 5390009) {
+//                                String textt = "I'm looking for friends! Send a Friend Request if you're interested!"; // should be GMS's notice anyways.
+//                                String[] linez = {"", "", "", ""};
+//                                linez[0] = textt.substring(0, 10);
+//                                linez[1] = textt.substring(10, 20);
+//                                linez[2] = textt.substring(20, 30);
+//                                linez[3] = textt.substring(30);
+//                                LinkedList list = new LinkedList();
+//                                list.add(linez[0]);
+//                                list.add(linez[1]);
+//                                list.add(linez[2]);
+//                                list.add(linez[3]);
+//                                final boolean ear = slea.readByte() != 0;
+//                                World.Broadcast.broadcastSmega(c.getWorld(), CWvsContext.getAvatarMega(c.getPlayer(), c.getChannel(), itemId, list, ear));
+//                                used = true;
+//                            } else {
+//                                lines.add(text);
+//                                final boolean ear = slea.readByte() != 0;
+//                                World.Broadcast.broadcastSmega(c.getWorld(), CWvsContext.getAvatarMega(c.getPlayer(), c.getChannel(), itemId, lines, ear));
+//                                used = true;
+//                            }
+//                        }
+//                    } else {
+//                        c.getPlayer().dropMessage(5, "The usage of Megaphone is currently disabled.");
+//                    }
                     break;
                 }
                 case 5452001:

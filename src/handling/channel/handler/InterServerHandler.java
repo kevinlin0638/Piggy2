@@ -52,6 +52,7 @@ import tools.packet.MTSCSPacket;
 import javax.xml.crypto.Data;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.List;
 
@@ -66,27 +67,22 @@ public class InterServerHandler {
             return;
         }
         if (ServerConstants.BLOCK_CASH_SHOP) {
-            chr.dropMessage(1, "The Cash Shop has been temporarily disabled due to the amount of bugged players.");
+            chr.dropMessage(1, "目前購物商城正在維修中.");
             c.sendPacket(CWvsContext.enableActions());
             return;
         }
         if (chr.inJQ()) {
-            chr.dropMessage(1, "You can't exit the AutoJQ unless you type @exit.");
-            c.sendPacket(CWvsContext.enableActions());
-            return;
-        }
-        if (chr.getMapId() == 502) {
-            chr.dropMessage(1, "You can't enter the Cash Shop while in Fiesta.");
+            chr.dropMessage(1, "請您先離開忍耐任務地圖.");
             c.sendPacket(CWvsContext.enableActions());
             return;
         }
         if (GameConstants.isJail(chr.getMapId())) {
-            chr.dropMessage(1, "You can't enter the Cash Shop while in Jail.");
+            chr.dropMessage(1, "您在監獄無法進入商城.");
             c.sendPacket(CWvsContext.enableActions());
             return;
         }
         if (World.getPendingCharacterSize() >= 10) {
-            chr.dropMessage(1, "The server is busy at the moment. Please try again in a minute or less.");
+            chr.dropMessage(1, "目前伺服器繁忙,請稍後再試.");
             c.sendPacket(CWvsContext.enableActions());
             return;
         }
@@ -208,13 +204,13 @@ public class InterServerHandler {
             while(rs.next()){
                 if(player.getClient().getAccountName().equalsIgnoreCase(rs.getString("account"))) {
                     player.dropMessage("帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * DonateRate) + " 點贊助點.");
-                    player.gainPoints((int) Math.floor(rs.getInt("money") * 1.5));
+                    player.gainPoints((int) Math.floor(rs.getInt("money") * DonateRate));
                     for(MapleClient cll : World.pending_clients){
                         if(cll.getAccountName().equalsIgnoreCase(rs.getString("account"))) {
                             final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
                             mplew.writeShort(666);
                             String sb = "帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * DonateRate) + " 點贊助點.";
-                            mplew.write(sb.getBytes());
+                            mplew.write(sb.getBytes(StandardCharsets.UTF_8));
                             cll.sendPacket(mplew.getPacket());
                         }
                     }

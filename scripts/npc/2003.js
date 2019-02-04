@@ -8,6 +8,9 @@ function start() {
 }
 
 function action(mode, type, selection) {
+	cm.sendOk("歡迎加入小喵谷#n.");
+	cm.dispose();
+	return;
     if (mode == 1)
 	status++;
     else

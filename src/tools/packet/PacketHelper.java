@@ -25,6 +25,8 @@ import client.MapleTrait.MapleTraitType;
 import client.inventory.*;
 import client.skill.Skill;
 import client.skill.SkillEntry;
+import constants.ServerConfig;
+import constants.ServerConstants;
 import server.status.IBuffStat;
 import server.status.MapleBuffStatus;
 import constants.GameConstants;
@@ -1606,8 +1608,10 @@ public class PacketHelper {
     }
 
     public static <E extends MapleBuffStatus, F extends Object> void writeBuffMask(MaplePacketLittleEndianWriter mplew, Map<E, F> statups) {
-        for (MapleBuffStatus statup : statups.keySet()) {
-            System.out.println(statup.name() + "at " + statup.getPosition());
+        if(ServerConstants.DEBUG) {
+            for (MapleBuffStatus statup : statups.keySet()) {
+                System.out.println(statup.name() + "at " + statup.getPosition());
+            }
         }
         int[] mask = new int[GameConstants.MAX_BUFFSTAT];
         for (MapleBuffStatus statup : statups.keySet()) {

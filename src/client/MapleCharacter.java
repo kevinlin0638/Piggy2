@@ -3918,7 +3918,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             this.job = (short) newJob;
             this.updateSingleStat(MapleStat.JOB, newJob);
 
-            if (!MapleJob.isBeginner(newJob) && newJob != MapleJob.隱忍.getId() && !MapleJob.is神之子(newJob) && !MapleJob.is幻獸師(newJob)) {
+            if (!MapleJob.isBeginner(newJob)) {
                 addJobSkills();
                 if (GameConstants.isSeparatedSp(newJob)) {
 //                    if (MapleJob.is幻影俠盜(job)) {
@@ -5702,11 +5702,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public byte getMasterLevel(final Skill skill) {
-        final SkillEntry ret = skills.get(skill);
-        if (ret == null) {
-            return 0;
-        }
-        return ret.masterlevel;
+//        final SkillEntry ret = skills.get(skill);
+//        if(skill.getId() == 22111001)
+//            return 20;
+//        if (ret == null) {
+//            return 0;
+//        }
+        return (byte) skill.getMasterLevel();
     }
 
     public void autoJob() {

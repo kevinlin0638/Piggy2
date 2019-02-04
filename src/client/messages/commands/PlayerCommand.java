@@ -28,6 +28,7 @@ import scripting.NPCScriptManager;
 import server.shops.IMaplePlayerShop;
 import server.shops.MapleMiniGame;
 import server.shops.MaplePlayerShopItem;
+import tools.FileoutputUtil;
 import tools.StringUtil;
 import tools.packet.CWvsContext;
 import tools.packet.PlayerShopPacket;
@@ -56,8 +57,26 @@ public class PlayerCommand {
             //c.sendPacket(tools.packet.CField.UIPacket.getDirectionInfo("Effect/Direction5.img/effect/mercedesInIce/merBalloon/2", 2000, 0, -100, 1, 0));
             NPCScriptManager.getInstance().dispose(c);
             c.sendPacket(CWvsContext.enableActions());
+            String s = "";
+            if(c.getPlayer().getLevel() < 250) {
+                s = c.getPlayer().getExp() + "(" + Math.round(Long.valueOf(c.getPlayer().getExp()).floatValue() / GameConstants.getExpNeededForLevel(c.getPlayer().getLevel()) * 100) + "%)";
+            }
+//            long time = System.currentTimeMillis() - c.getPlayer().getOnline_time();
+//            String ss = (time / (1000 * 60 * 60)) + " 小時 " +  ((time % (1000 * 60 * 60)) / (1000 * 60)) + " 分鐘 " + (((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000) + " 秒";
+
             c.getPlayer().dropMessage(5, "目前地圖 " + c.getPlayer().getMap().getId() + "座標 (" + String.valueOf(c.getPlayer().getPosition().x) + " , " + String.valueOf(c.getPlayer().getPosition().y) + ")");
             c.getPlayer().showInfo("指令", true, "解卡成功。");
+            c.getPlayer().dropMessage(5, "當前時間是" + FileoutputUtil.CurrentReadable_Time() + " GMT+8 ");
+            c.getPlayer().dropMessage(5, "角色資訊 物理攻擊 : " + c.getPlayer().getStat().getTotalWatk() + "||魔法攻擊 : " + c.getPlayer().getStat().getTotalMagic() + "||");
+            c.getPlayer().dropMessage(5, "力量 : " + c.getPlayer().getStat().getTotalStr() +
+                    "||敏捷 : " + c.getPlayer().getStat().getTotalDex() +"||智力 : " + c.getPlayer().getStat().getTotalInt() +"||幸運 : " + c.getPlayer().getStat().getTotalLuk());
+            c.getPlayer().dropMessage(5, "經驗倍率 " + (Math.round(c.getPlayer().getEXPMod()) * 100) * Math.round(c.getPlayer().getStat().expBuff / 100.0) +"%");
+            c.getPlayer().dropMessage(5, "掉寶倍率 " + (Math.round(c.getPlayer().getDropMod()) * 100) * Math.round(c.getPlayer().getStat().dropBuff / 100.0) + "%");
+            c.getPlayer().dropMessage(5, "楓幣倍率 " + Math.round(c.getPlayer().getStat().mesoBuff / 100.0) * 100 + "%");
+            c.getPlayer().dropMessage(5, "當前經驗 " + s);
+            c.getPlayer().dropMessage(5, "楓點 " + c.getPlayer().getCSPoints(2));
+            c.getPlayer().dropMessage(5, "當前延遲 " + c.getPlayer().getClient().getLatency() + " 毫秒");
+
             return true;
         }
 
@@ -555,7 +574,7 @@ public class PlayerCommand {
                     return true;
                 }
 
-                if (stat.name() == "MAXHP" || stat.name() == "MAXMP") {
+                if (stat.name() == "MAX_HP" || stat.name() == "MAX_MP") {
                     if(c.getPlayer().getHpApUsed() <= 0){
                         c.getPlayer().dropMessage(1, "您在HP與MP沒有投注過任何能力點.");
                         return true;
@@ -588,18 +607,18 @@ public class PlayerCommand {
                     return true;
                 }
             }else{
-                if (stat.name().equals("MAXHP")) {
+                if (stat.name().equals("MAX_HP")) {
                     if (getStat(c.getPlayer()) == 99999) {
                         c.getPlayer().dropMessage(1, "您的血已到達上限.");
                         return true;
                     }
-                }else if(stat.name().equals("MAXMP")){
+                }else if(stat.name().equals("MAX_MP")){
                     if (getStat(c.getPlayer()) == 99999) {
                         c.getPlayer().dropMessage(1, "您的魔已到達上限.");
                         return true;
                     }
                 }
-                if(stat.name() == "MAXHP" || stat.name() == "MAXMP"){
+                if(stat.name() == "MAX_HP" || stat.name() == "MAX_MP"){
                     changestate = 0;
                     for(int i  = 1; i <= Math.abs(change);i++) {
                         changestate += Randomizer.rand(50, 65);
@@ -610,7 +629,7 @@ public class PlayerCommand {
                 c.getPlayer().dropMessage(1, "您的能力點不足.");
                 return true;
             }
-            if (!(stat.name() == "MAXHP") && !(stat.name() == "MAXMP")) {
+            if (!(stat.name() == "MAX_HP") && !(stat.name() == "MAX_MP")) {
                 if (getStat(c.getPlayer()) + change > 99999) {
                     c.getPlayer().dropMessage(1, "所要分配後的能力總和不可大於 " + 99999 + " 點.");
                     return true;
@@ -619,7 +638,7 @@ public class PlayerCommand {
                 if(getStat(c.getPlayer()) + changestate <= 50)
                     changestate = getStat(c.getPlayer()) - 50;
             }
-            if(stat.name() == "MAXHP" || stat.name() == "MAXMP"){
+            if(stat.name() == "MAX_HP" || stat.name() == "MAX_MP"){
                 c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() + change));
             }
             setStat(c.getPlayer(), getStat(c.getPlayer()) + changestate);

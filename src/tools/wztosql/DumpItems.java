@@ -66,11 +66,14 @@ public class DumpItems {
         }
     }
 
-    public static void main(String[] args) {
-
+    private static void LoadProperties(){
         ServerProperties.load();
         ServerConstants.SERVER_IP = ServerConfig.WORLD_INTERFACE;
         LoginServer.PORT = ServerConfig.LOGIN_PORT;
+    }
+
+    public static void main(String[] args) {
+        LoadProperties();
         boolean hadError = false;
         boolean update = false;
         long startTime = System.currentTimeMillis();

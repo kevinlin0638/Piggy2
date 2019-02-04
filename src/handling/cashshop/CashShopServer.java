@@ -28,7 +28,7 @@ import server.maketshop.MTSStorage;
 
 public class CashShopServer {
 
-    private final static int PORT = 8585;
+    public  static int PORT = 8787;
     private static String ip;
     private static ServerConnection acceptor;
     private static PlayerStorage players, playersMTS;

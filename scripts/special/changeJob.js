@@ -63,7 +63,7 @@ function action(mode, type, selection) {
         if (cm.getPlayer().getSubcategory() == 1 && cm.getPlayer().getJob() == 400) { //Dual Blade
             cm.getPlayer().changeJob(430);
 			cm.gainItem(5620000, 1);//
-				cm.gainItem(5620001, 1);// Mastery Books before 4th job
+			cm.gainItem(5620001, 1);// Mastery Books before 4th job
 				cm.gainItem(5620002, 1);//
 				cm.gainItem(5620003, 1);//
             cm.dispose();
@@ -133,7 +133,6 @@ function action(mode, type, selection) {
             case 432: // Blade Specialist
             case 433: // Blade Lord
                 cm.getPlayer().changeJob(cm.getPlayer().getJob() + 1);
-                //cm.getPlayer().forceChangeChannel(cm.getPlayer().getClient().getChannel());
                 cm.dispose();
                 return;
             //1st Job
@@ -277,10 +276,10 @@ function jobSelection(index) {
 
 function getItem(jobid) {
 	var i = [
-	[[0],[1302000],[1362000],[1452000,1462000],[1332000,1472000],[1482000,1492000]],//冒險家
-	[[0],[1302000],[1362000],[1452000,1462000],[1332000,1472000],[1482000,1492000]],//皇家騎士團
+	[[0],[1302000],[1382000],[1452000,1462000],[1332000,1472000],[1482000,1492000]],//冒險家
+	[[0],[1302000],[1382000],[1452000,1462000],[1332000,1472000],[1482000,1492000]],//皇家騎士團
 	[[0],[1442000],[1372000],[1522000,1352000],[0],[0]],//精靈遊俠
-	[[0],[1322000],[1382000],[1462000],[0],[1492000]],//末日反抗軍
+	[[0],[1322006],[1382000],[1462000],[0],[1492000]],//末日反抗軍
 	[[0],[0],[0],[0],[1332000,1342000],[1532000]],//特殊職業
 	]; 
 	var s = parseInt(jobid/1000);//第幾列

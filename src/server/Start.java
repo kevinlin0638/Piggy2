@@ -63,10 +63,17 @@ public class Start {
         CloneTimer.getInstance().start();
     }
 
-    public void run() throws InterruptedException {
+    private void LoadProperties(){
         ServerProperties.load();
         ServerConstants.SERVER_IP = ServerConfig.WORLD_INTERFACE;
+        ServerConstants.DEBUG = ServerConfig.DEBUG_MODE;
+        ServerConstants.ADMIN_ONLY = ServerConfig.WORLD_ONLYADMIN;
         LoginServer.PORT = ServerConfig.LOGIN_PORT;
+        CashShopServer.PORT = ServerConfig.CASH_PORT;
+    }
+
+    public void run() throws InterruptedException {
+        LoadProperties();
         // 開始
         System.out.println("正在載入 " + ServerConstants.SERVER_NAME);
         System.out.println("主機位置: " + ServerConstants.SERVER_IP + ":" + LoginServer.PORT);

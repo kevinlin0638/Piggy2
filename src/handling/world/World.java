@@ -1598,6 +1598,7 @@ public class World {
             for (MapleCharacter chr : players.getAllCharacters()) {
                 if ((world == -1) || (chr.getWorld() == world)) {
                     chr.getClient().getChannelServer().broadcastSmega(message);
+                    break;
                 }
             }
         }
@@ -1606,6 +1607,7 @@ public class World {
             for (MapleCharacter chr : players.getAllCharacters()) {
                 if ((world == -1) || (chr.getWorld() == world)) {
                     chr.getClient().getChannelServer().broadcastGMPacket(message);
+                    break;
                 }
             }
         }

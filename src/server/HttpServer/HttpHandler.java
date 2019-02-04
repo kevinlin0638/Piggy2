@@ -78,14 +78,14 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> { 
 
                             for(MapleCharacter cl : World.getAllCharacters()){
                                 if(cl.getClient().getAccountName().equalsIgnoreCase(rs.getString("account"))) {
-                                    cl.dropMessage("帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * 1.5) + " 點贊助點.");
+                                    cl.dropMessage("帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * DonateRate) + " 點贊助點.");
                                     cl.gainPoints((int) Math.floor(rs.getInt("money") * DonateRate));
                                     for(MapleClient cll : World.pending_clients){
                                         if(cll.getAccountName().equalsIgnoreCase(rs.getString("account"))) {
                                             final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
                                             mplew.writeShort(666);
                                             String sb = "帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * DonateRate) + " 點贊助點.";
-                                            mplew.write(sb.getBytes());
+                                            mplew.write(sb.getBytes(StandardCharsets.UTF_8));
                                             cll.sendPacket(mplew.getPacket());
                                         }
                                     }

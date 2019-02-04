@@ -109,7 +109,7 @@ public class WorldConstants {
         WorldConfig.雪吉拉.setWorldSwitch(true);
         WorldConfig.三眼章魚.setWorldSwitch(false);
 
-        WorldConfig.雪吉拉.setMaxCharacters(15);
+        WorldConfig.雪吉拉.setMaxCharacters(ServerConfig.CHANNEL_RATE_EXP);
         WorldConfig.雪吉拉.setUserLimit(1500);
         WorldConfig.雪吉拉.setChnnaelCount(20);
 

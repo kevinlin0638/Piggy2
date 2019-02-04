@@ -88,6 +88,8 @@ public class DatabaseConnection {
         Connection conn = con.get();
         try {
             if(conn == null || conn.isClosed()){
+                if(conn != null)
+                    conn.close();
                 Properties props = new Properties();
                 String database = ServerConfig.DB_NAME;
                 String host = ServerConfig.DB_IP;

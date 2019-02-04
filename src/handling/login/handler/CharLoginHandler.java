@@ -135,7 +135,6 @@ public class CharLoginHandler {
                             errorInfo = "您的帳號長度太長了唷!\r\n請重新輸入.";
                         } else if(!AutoRegister.getAcceptAccountNum(macData)){
                             errorInfo = "一個電腦最多創建 2 個帳號.\r\n在同台電腦登入其他帳號也算數!";
-                            return;
                         }else {
                             AutoRegister.createAccount(account, password, c.getSessionIPAddress(), macData);
                             //if (AutoRegister.success && AutoRegister.macAllowed) {
