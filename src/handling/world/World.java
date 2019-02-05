@@ -1595,20 +1595,14 @@ public class World {
     public static class Broadcast {
 
         public static void broadcastSmega(int world, byte[] message) {
-            for (MapleCharacter chr : players.getAllCharacters()) {
-                if ((world == -1) || (chr.getWorld() == world)) {
-                    chr.getClient().getChannelServer().broadcastSmega(message);
-                    break;
-                }
+            for (ChannelServer cserv : ChannelServer.getAllInstance(world)) {
+                cserv.broadcastSmega(message);
             }
         }
 
         public static void broadcastGMMessage(int world, byte[] message) {
-            for (MapleCharacter chr : players.getAllCharacters()) {
-                if ((world == -1) || (chr.getWorld() == world)) {
-                    chr.getClient().getChannelServer().broadcastGMPacket(message);
-                    break;
-                }
+            for (ChannelServer cserv : ChannelServer.getAllInstance(world)) {
+                cserv.broadcastGMMessage(message);
             }
         }
 

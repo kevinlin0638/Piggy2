@@ -242,6 +242,12 @@ public class DamageParse {
                         return;
                     }
 
+                    if((attack.skill == 4331003 || attack.skill == 1221011 || attack.skill == 3221007) && player.getClient().getChannel() >= 11)
+                    {
+                        eachd = 0;
+                        player.dropMessage("您所在的位置渾沌立場環繞,無法秒殺怪物");
+                    }
+
                     if(eachd > 50000)
                         player.finishAchievement(60);
                     if(eachd > 99999)

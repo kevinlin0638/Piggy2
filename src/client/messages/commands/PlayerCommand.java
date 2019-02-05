@@ -311,9 +311,9 @@ public class PlayerCommand {
                 }else if(splitted.get(1).equals("消耗欄")){
                     innv = MapleInventoryType.getByType((byte) 2);
                 }else if(splitted.get(1).equals("裝飾欄")){
-                    innv = MapleInventoryType.getByType((byte) 4);
-                }else if(splitted.get(1).equals("其他欄")){
                     innv = MapleInventoryType.getByType((byte) 3);
+                }else if(splitted.get(1).equals("其他欄")){
+                    innv = MapleInventoryType.getByType((byte) 4);
                 }else if(splitted.get(1).equals("特殊欄")){
                     innv = MapleInventoryType.getByType((byte) 5);
                 }else

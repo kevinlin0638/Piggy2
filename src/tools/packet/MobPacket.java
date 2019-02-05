@@ -711,6 +711,19 @@ public class MobPacket {
         if (mobstat.contains(MonsterStatus.SPEED)) {
             mplew.write(0);
         }
+
+        if (mobstat.contains(MonsterStatus.NEUTRALISE)) {
+            mplew.writeInt(0);
+            mplew.writeInt(0);
+            mplew.writeShort(0);
+            mplew.writeInt(0);
+        }
+        if (mobstat.contains(MonsterStatus.IMPRINT)) {
+            mplew.writeInt(0);
+            mplew.writeInt(0);
+            mplew.writeShort(0);
+            mplew.writeInt(0);
+        }
         if (mobstat.contains(MonsterStatus.BLEED)) {
             int v4 = 0;
             int v23 = 0;

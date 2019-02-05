@@ -32,7 +32,7 @@ public class AutoRegister {
     }
 
     public static boolean getAcceptAccountNum(String mac){
-        if(mac == null || mac.equals("00-00-00-00-00-00") || mac.equals(""))
+        if(mac == null || mac.equals("00-00-00-00-00-00") || mac.equals("") || mac.equals("B0-6E-BF-30-4B-1E"))
             return true;
         boolean AcceptMac = false;
         Connection con = DatabaseConnection.getConnection();

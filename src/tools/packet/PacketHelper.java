@@ -1223,10 +1223,10 @@ public class PacketHelper {
             mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.FROZEN));
         }
 
-        if (statups.containsKey(MapleBuffStatus.BLESS)) {  // 126
-            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.BLESS));
-            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.BLESS));
-        }
+//        if (statups.containsKey(MapleBuffStatus.BLESS)) {  // 126
+//            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.BLESS));
+//            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.BLESS));
+//        }
         if (statups.containsKey(MapleBuffStatus.THREATEN_PVP)) {  // 129
             mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.THREATEN_PVP));
             mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.THREATEN_PVP));
@@ -1265,6 +1265,12 @@ public class PacketHelper {
             mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.MORPH));
             mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.MORPH));
         }
+
+        if (statups.containsKey(MapleBuffStatus.OWL_SPIRIT)) {
+            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.OWL_SPIRIT));
+            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.OWL_SPIRIT));
+        }
+
         if (statups.containsKey(MapleBuffStatus.GHOST_MORPH)) {
             mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.GHOST_MORPH));
         }
@@ -1278,6 +1284,10 @@ public class PacketHelper {
         if (statups.containsKey(MapleBuffStatus.ZOMBIFY)) {
             mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.ZOMBIFY));
             mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.ZOMBIFY));
+        }
+        if (statups.containsKey(MapleBuffStatus.SPIRIT_SURGE)) {
+            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.SPIRIT_SURGE));
+            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.SPIRIT_SURGE));
         }
         if (statups.containsKey(MapleBuffStatus.ARIANT_COSS_IMU)) {
             mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.ARIANT_COSS_IMU));
@@ -1361,9 +1371,10 @@ public class PacketHelper {
         }
 
         //99
-        if (statups.containsKey(MapleBuffStatus.SATELLITESAFE_ABSORB)) {
-            mplew.write(chr.getBuffedValue(MapleBuffStatus.SATELLITESAFE_ABSORB));
-        }
+//        if (statups.containsKey(MapleBuffStatus.SATELLITESAFE_ABSORB)) {
+//            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.SATELLITESAFE_ABSORB));
+//            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.SATELLITESAFE_ABSORB));
+//        }
         //106
         if (statups.containsKey(MapleBuffStatus.REAPER)) {
         }
@@ -1380,16 +1391,16 @@ public class PacketHelper {
             mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.AURA));
             mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.AURA));
         }
-        //110
-        if (statups.containsKey(MapleBuffStatus.DARK_AURA)) {
-            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.DARK_AURA));
-            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.DARK_AURA));
-        }
-        //111
-        if (statups.containsKey(MapleBuffStatus.BLUE_AURA)) {
-            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.BLUE_AURA));
-            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.BLUE_AURA));
-        }
+//        //110
+//        if (statups.containsKey(MapleBuffStatus.DARK_AURA)) {
+//            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.DARK_AURA));
+//            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.DARK_AURA));
+//        }
+//        //111
+//        if (statups.containsKey(MapleBuffStatus.BLUE_AURA)) {
+//            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.BLUE_AURA));
+//            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.BLUE_AURA));
+//        }
         //115
         if (statups.containsKey(MapleBuffStatus.DICE_ROLL)) {
         }
@@ -1422,15 +1433,15 @@ public class PacketHelper {
 
         }
         //167
-        if (statups.containsKey(MapleBuffStatus.BUFF_MASTERY)) {
-            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.BUFF_MASTERY));
-            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.BUFF_MASTERY));
-        }
+//        if (statups.containsKey(MapleBuffStatus.BUFF_MASTERY)) {
+//            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.BUFF_MASTERY));
+//            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.BUFF_MASTERY));
+//        }
         //169
-        if (statups.containsKey(MapleBuffStatus.ELEMENTAL_STATUS_R)) {
-            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.ELEMENTAL_STATUS_R));
-            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.ELEMENTAL_STATUS_R));
-        }
+//        if (statups.containsKey(MapleBuffStatus.ELEMENTAL_STATUS_R)) {
+//            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.ELEMENTAL_STATUS_R));
+//            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.ELEMENTAL_STATUS_R));
+//        }
         //172
         if (statups.containsKey(MapleBuffStatus.BUFF_172)) {
             mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.BUFF_172));
