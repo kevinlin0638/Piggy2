@@ -1729,7 +1729,7 @@ public class MapleItemInformationProvider {
             potLevel = 1;
         } else {
             potLevel = (eqLevel + 1) / 10;
-            potLevel++;
+//            potLevel++;
         }
         if (potId <= 0) {
             return "沒有潛能屬性";

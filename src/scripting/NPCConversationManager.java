@@ -1516,6 +1516,16 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return c.getChannelServer().getMapleSquad(type);
     }
 
+    public void setSquadEventCount(String type, String event) {
+        MapleSquad sq =  c.getChannelServer().getMapleSquad(type);
+        for (String mn : sq.getMembers()){
+            MapleCharacter mem = sq.getChar(mn);
+            if(mem != null){
+                mem.setEventCount(event);
+            }
+        }
+    }
+
     public int getSquadAvailability(String type) {
         final MapleSquad squad = c.getChannelServer().getMapleSquad(type);
         if (squad == null) {
@@ -2351,10 +2361,10 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         }
     }
 
-    public byte getEquipPotState(int itemid) {
-        if(itemid < 100)
+    public byte getEquipPotState(short slot) {
+        if(slot > 96)
             return 0;
-        Equip equip = (Equip) getPlayer().getInventory(MapleInventoryType.EQUIP).findById(itemid);
+        Equip equip = (Equip) getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(slot);
         return equip.getState();
     }
 
@@ -2365,8 +2375,8 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         c.getClinetS().sendPacket(mplew.getPacket());
     }
 
-    public int getPotID(int itemID, int Pot_position){
-        Equip equip = (Equip) getPlayer().getInventory(MapleInventoryType.EQUIP).findById(itemID);
+    public int getPotID(short slot, int Pot_position){
+        Equip equip = (Equip) getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(slot);
         return equip.getPotential(Pot_position);
     }
 

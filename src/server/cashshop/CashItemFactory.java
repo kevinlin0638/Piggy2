@@ -145,7 +145,12 @@ public class CashItemFactory {
     }
 
     public final Collection<CashItemInfo.CashModInfo> getAllModInfo() {
-        return itemMods.values();
+        Map<Integer, CashItemInfo.CashModInfo> cret = new HashMap<>();
+        for(CashItemInfo.CashModInfo ci : itemMods.values()){
+            if(ci.showUp)
+                cret.put(ci.sn, ci);
+        }
+        return cret.values();
     }
 
     public final Map<Integer, List<Integer>> getRandomItemInfo() {

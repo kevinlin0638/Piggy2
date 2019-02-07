@@ -2255,7 +2255,7 @@ public final class MapleMap {
             if (!onUserEnter.equals("")) {
                 MapScriptMethods.startScript_User(chr.getClient(), onUserEnter);
             }
-
+            chr.getClient().setPlayer(chr);
             sendObjectPlacement(chr);
             GameConstants.achievementRatio(chr.getClient());
             chr.getClient().sendPacket(packet);

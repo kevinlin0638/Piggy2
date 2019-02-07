@@ -8,6 +8,10 @@ var event_s = "HorntailBattle";
 var squal_s = "Horntail";
 var level_res = 80;
 var quest = 160100;
+var boss_times = 3;
+var boss_hard_times = 2;
+var event_t = "龍王次數"
+var event_ht = "渾沌龍王次數"
 
 
 
@@ -42,6 +46,19 @@ function start() {
     if (prop == null || prop.equals("0")) {
 	var squadAvailability = cm.getSquadAvailability(squal_s);
 	if (squadAvailability == -1) {
+		if(cm.getChannelNumber() <= 10){
+			if (cm.getEventCount(event_t) >= boss_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}else{
+			if (cm.getEventCount(event_ht) >= boss_hard_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_hard_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}
 	    status = 0;
 	    cm.sendYesNo("您想要成為遠征隊隊長嗎?");
 
@@ -139,14 +156,28 @@ function action(mode, type, selection) {
 		    cm.sendOk("發生未知錯誤.");
 		}
 	    } else if (selection == 1) { // join
-		var ba = cm.addMember(squal_s, true);
-		if (ba == 2) {
-		    cm.sendOk("遠征隊目前額滿,請稍後再試.");
-		} else if (ba == 1) {
-		    cm.sendOk("您成功加入遠征隊");
-		} else {
-		    cm.sendOk("您已經是遠征隊的一員.");
-		}
+		
+			if(cm.getChannelNumber() <= 10){
+				if (cm.getEventCount(event_t) >= boss_times) {
+					cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
+					cm.dispose();
+					return;
+				}
+			}else{
+				if (cm.getEventCount(event_ht) >= boss_hard_times) {
+					cm.sendNext("很抱歉每天只能打" + boss_hard_times + "次..");
+					cm.dispose();
+					return;
+				}
+			}
+			var ba = cm.addMember(squal_s, true);
+			if (ba == 2) {
+				cm.sendOk("遠征隊目前額滿,請稍後再試.");
+			} else if (ba == 1) {
+				cm.sendOk("您成功加入遠征隊");
+			} else {
+				cm.sendOk("您已經是遠征隊的一員.");
+			}
 	    } else {// withdraw
 		var baa = cm.addMember(squal_s, false);
 		if (baa == 1) {
@@ -177,9 +208,15 @@ function action(mode, type, selection) {
 			cm.dispose();
 		    }
 		} else if (selection == 3) { // get insode
-		    if (cm.getSquad(squal_s) != null) {
-			var dd = cm.getEventManager(event_s);
-			dd.startInstance(cm.getSquad(squal_s), cm.getMap(), 160100);
+			if (cm.getSquad(squal_s) != null) {
+				var dd = cm.getEventManager(event_s);
+				if(cm.getChannelNumber() <= 10){
+					cm.setSquadEventCount(squal_s, event_t);
+				}else{
+					cm.setSquadEventCount(squal_s, event_ht);
+				}
+				
+				dd.startInstance(cm.getSquad(squal_s), cm.getMap(), 160100);
 		    } else {
 			cm.sendOk("發生未知錯誤.");
 		    }

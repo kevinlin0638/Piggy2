@@ -14,6 +14,7 @@ import constants.GameConstants;
 import constants.MapConstants;
 import handling.channel.ChannelServer;
 import handling.world.MaplePartyCharacter;
+import handling.world.PlayerBuffValueHolder;
 import handling.world.World;
 import provider.MapleData;
 import provider.MapleDataTool;
@@ -243,7 +244,7 @@ public class MapleStatEffect implements Serializable {
             ret.duration *= 1000;
             ret.overTime = overTime || ret.isMorph() || ret.isPirateMorph() || ret.isFinalAttack() || ret.isAngel();
         } else {
-            ret.duration = Integer.MAX_VALUE; // items have their times stored in ms, of course
+            ret.duration *= 1000;
             ret.overTime = overTime || ret.isMorph() || ret.isPirateMorph() || ret.isFinalAttack() || ret.isAngel();
         }
         ret.statups = new EnumMap<>(MapleBuffStatus.class);
@@ -1497,6 +1498,17 @@ public class MapleStatEffect implements Serializable {
                 hpchange = stat.getHp() == 1 ? 0 : stat.getHp() - 1;
             }
         }
+        LinkedHashMap statups = new LinkedHashMap();
+
+        applyto.getAllBuffs().stream().forEach((PlayerBuffValueHolder pbvh) -> {
+            pbvh.statup.keySet().stream().forEach((bu) -> {
+                statups.put(bu, pbvh.statup.get(bu));
+            });
+        });
+        if(statups.containsKey(MapleBuffStatus.DARK_METAMORPHOSIS)){
+            mpchange = 0;
+            hpchange = 0;
+        }
         final Map<MapleStat, Integer> hpmpupdate = new EnumMap<>(MapleStat.class);
         if (hpchange != 0) {
             if (hpchange < 0 && (-hpchange) > stat.getHp() && !applyto.hasDisease(MapleBuffStatus.ZOMBIFY)) {
@@ -1792,7 +1804,8 @@ public class MapleStatEffect implements Serializable {
             }
         }
         if (overTime && !isEnergyCharge()) {
-            applyBuffEffect(applyfrom, applyto, primary, newDuration);
+            if(sourceid != 31121005 || !statups.containsKey(MapleBuffStatus.DARK_METAMORPHOSIS))
+                applyBuffEffect(applyfrom, applyto, primary, newDuration);
         }
         if (skill) {
             removeMonsterBuff(applyfrom);

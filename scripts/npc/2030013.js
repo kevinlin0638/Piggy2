@@ -4,6 +4,10 @@
 	Description: 		Zakum battle starter
 */
 var status = 0;
+var boss_times = 3;
+var boss_hard_times = 2;
+var event_t = "炎魔次數";
+var event_ht = "渾沌炎魔次數";
 
 function action(mode, type, selection) {
 	if (cm.getPlayer().getMapId() == 211042200) {
@@ -11,8 +15,18 @@ function action(mode, type, selection) {
 			cm.sendSimple("#r#L100#普通炎魔#l\r\n#L101#混沌炎魔#l");
 		} else {
 			if (selection == 100) {
+				if(cm.getChannelNumber() > 10){
+					cm.sendOk("渾沌需頻道10以內");
+					cm.dispose();
+					return;
+				}
 				cm.warp(211042300,0);
 			} else if (selection == 101) {
+				if(cm.getChannelNumber() <= 10){
+					cm.sendOk("渾沌需頻道11以後");
+					cm.dispose();
+					return;
+				}
 				cm.warp(211042301,0);
 			}
 			cm.dispose();
@@ -42,22 +56,35 @@ function action(mode, type, selection) {
 	    }
 	    var time = parseInt(data);
 	if (prop == null || prop.equals("0")) {
-	    var squadAvailability = cm.getSquadAvailability("ChaosZak");
-	    if (squadAvailability == -1) {
-		status = 1;
-	    if (time + (12 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isGM()) {
-		cm.sendOk("您已經挑戰過 Chaos Zakum 在十二小時內. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (12 * 3600000)));
-		cm.dispose();
-		return;
-	    }
+	    if(cm.getChannelNumber() <= 10){
+			if (cm.getEventCount(event_t) >= boss_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}else{
+			if (cm.getEventCount(event_ht) >= boss_hard_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_hard_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}
 		cm.sendYesNo("您想要成為遠征隊隊長嗎?");
 
 	    } else if (squadAvailability == 1) {
-	    if (time + (12 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isGM()) {
-		cm.sendOk("您已經挑戰過 Chaos Zakum 在十二小時內. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (12 * 3600000)));
-		cm.dispose();
-		return;
-	    }
+	    if(cm.getChannelNumber() <= 10){
+			if (cm.getEventCount(event_t) >= boss_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}else{
+			if (cm.getEventCount(event_ht) >= boss_hard_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_hard_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}
 		// -1 = Cancelled, 0 = not, 1 = true
 		var type = cm.isSquadLeader("ChaosZak");
 		if (type == -1) {
@@ -88,11 +115,6 @@ function action(mode, type, selection) {
 			if (eim == null) {
 				var squd = cm.getSquad("ChaosZak");
 				if (squd != null) {
-	    if (time + (12 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isGM()) {
-		cm.sendOk("您已經挑戰過 Chaos Zakum 在十二小時內. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (12 * 3600000)));
-		cm.dispose();
-		return;
-	    }
 					cm.sendYesNo("遠征隊對戰已經開始.\r\n" + squd.getNextPlayer());
 					status = 3;
 				} else {
@@ -104,27 +126,6 @@ function action(mode, type, selection) {
 				status = 2;
 			}
 	    }
-	} else {
-			var eim = cm.getDisconnected("ChaosZakum");
-			if (eim == null) {
-				var squd = cm.getSquad("ChaosZak");
-				if (squd != null) {
-	    if (time + (12 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isGM()) {
-		cm.sendOk("您已經挑戰過 Chaos Zakum 在十二小時內. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (12 * 3600000)));
-		cm.dispose();
-		return;
-	    }
-					cm.sendYesNo("遠征隊對戰已經開始.\r\n" + squd.getNextPlayer());
-					status = 3;
-				} else {
-					cm.sendOk("遠征隊對戰已經開始.");
-					cm.safeDispose();
-				}
-			} else {
-				cm.sendYesNo("歐,您回來了!您要繼續遠征隊對戰嗎?");
-				status = 2;
-			}
-	}
 	    break;
 	case 1:
 	    	if (mode == 1) {
@@ -163,6 +164,19 @@ function action(mode, type, selection) {
 		    cm.dispose();
 		}
 	    } else if (selection == 1) { // join
+			if(cm.getChannelNumber() <= 10){
+				if (cm.getEventCount(event_t) >= boss_times) {
+					cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
+					cm.dispose();
+					return;
+				}
+			}else{
+				if (cm.getEventCount(event_ht) >= boss_hard_times) {
+					cm.sendNext("很抱歉每天只能打" + boss_hard_times + "次..");
+					cm.dispose();
+					return;
+				}
+			}
 		var ba = cm.addMember("ChaosZak", true);
 		if (ba == 2) {
 		    cm.sendOk("遠征隊目前額滿,請稍後再試.");
@@ -208,6 +222,11 @@ function action(mode, type, selection) {
 	    } else if (selection == 3) { // get insode
 		if (cm.getSquad("ChaosZak") != null) {
 		    var dd = cm.getEventManager("ChaosZakum");
+			if(cm.getChannelNumber() <= 10){
+				cm.setSquadEventCount("ChaosZak", event_t);
+			}else{
+				cm.setSquadEventCount("ChaosZak", event_ht);
+			}
 		    dd.startInstance(cm.getSquad("ChaosZak"), cm.getMap(), 160102);
 		    cm.dispose();
 		} else {
@@ -254,19 +273,35 @@ function action(mode, type, selection) {
 	    var squadAvailability = cm.getSquadAvailability("ZAK");
 	    if (squadAvailability == -1) {
 		status = 1;
-	    if (time + (6 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isGM()) {
-		cm.sendOk("您已經挑戰過 Zakum 在六小時内. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (6 * 360000)));
-		cm.dispose();
-		return;
-	    }
+	    if(cm.getChannelNumber() <= 10){
+			if (cm.getEventCount(event_t) >= boss_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}else{
+			if (cm.getEventCount(event_ht) >= boss_hard_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_hard_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}
 		cm.sendYesNo("您想要成為遠征隊隊長嗎?");
 
 	    } else if (squadAvailability == 1) {
-	    if (time + (6 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isGM()) {
-		cm.sendOk("您已經挑戰過 Zakum 在六小時内. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (6 * 360000)));
-		cm.dispose();
-		return;
-	    }
+	    if(cm.getChannelNumber() <= 10){
+			if (cm.getEventCount(event_t) >= boss_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}else{
+			if (cm.getEventCount(event_ht) >= boss_hard_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_hard_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}
 		// -1 = Cancelled, 0 = not, 1 = true
 		var type = cm.isSquadLeader("ZAK");
 		if (type == -1) {
@@ -297,11 +332,6 @@ function action(mode, type, selection) {
 			if (eim == null) {
 				var squd = cm.getSquad("ZAK");
 				if (squd != null) {
-	    if (time + (6 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isGM()) {
-		cm.sendOk("您已經挑戰過 Zakum 在六小時内. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (6 * 360000)));
-		cm.dispose();
-		return;
-	    }
 					cm.sendYesNo("遠征隊對戰已經開始.\r\n" + squd.getNextPlayer());
 					status = 3;
 				} else {
@@ -318,11 +348,6 @@ function action(mode, type, selection) {
 			if (eim == null) {
 				var squd = cm.getSquad("ZAK");
 				if (squd != null) {
-	    if (time + (6 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isGM()) {
-		cm.sendOk("您已經挑戰過 Zakum 在六小時内. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (6 * 360000)));
-		cm.dispose();
-		return;
-	    }
 					cm.sendYesNo("遠征隊對戰已經開始.\r\n" + squd.getNextPlayer());
 					status = 3;
 				} else {
@@ -372,6 +397,19 @@ function action(mode, type, selection) {
 		    cm.dispose();
 		}
 	    } else if (selection == 1) { // join
+			if(cm.getChannelNumber() <= 10){
+				if (cm.getEventCount(event_t) >= boss_times) {
+					cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
+					cm.dispose();
+					return;
+				}
+			}else{
+				if (cm.getEventCount(event_ht) >= boss_hard_times) {
+					cm.sendNext("很抱歉每天只能打" + boss_hard_times + "次..");
+					cm.dispose();
+					return;
+				}
+			}
 		var ba = cm.addMember("ZAK", true);
 		if (ba == 2) {
 		    cm.sendOk("遠征隊目前額滿,請稍後再試.");
@@ -417,6 +455,12 @@ function action(mode, type, selection) {
 	    } else if (selection == 3) { // get insode
 		if (cm.getSquad("ZAK") != null) {
 		    var dd = cm.getEventManager("ZakumBattle");
+			
+			if(cm.getChannelNumber() <= 10){
+				cm.setSquadEventCount("ZAK", event_t);
+			}else{
+				cm.setSquadEventCount("ZAK", event_ht);
+			}
 		    dd.startInstance(cm.getSquad("ZAK"), cm.getMap(), 160101);
 		    cm.dispose();
 		} else {

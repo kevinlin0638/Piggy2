@@ -174,7 +174,7 @@ public class InterServerHandler {
 
         boolean is_p = false;
         for(MapleClient cl : World.pending_clients){
-            if(cl.getAccountName().equals(client.getAccountName()) && cl.getSessionIPAddress().equalsIgnoreCase(client.getSessionIPAddress())){
+            if(cl.getAccountName().equalsIgnoreCase(client.getAccountName()) && cl.getSessionIPAddress().equalsIgnoreCase(client.getSessionIPAddress())){
                 is_p = true;
                 client.setClinetS(cl);
                 final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();

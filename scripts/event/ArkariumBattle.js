@@ -35,8 +35,8 @@ function scheduledTimeout(eim) {
 }
 
 function changedMap(eim, player, mapid) {
-    if (mapid != 272020110 && mapid != 100000000) {
-	eim.unregisterPlayer(player);
+    if (mapid != 272020110 && mapid != 272030400) {
+		eim.unregisterPlayer(player);
 
 	if (eim.disposeIfPlayerBelow(0, 0)) {
 	    em.setProperty("state", "0");

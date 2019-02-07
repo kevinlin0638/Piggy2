@@ -6,7 +6,7 @@ var status = -1;
 
 function start(mode, type, selection) {
     if (mode == 0 && status == 1) {
-	qm.sendNext("You are not ready yet.");
+	qm.sendNext("你還沒準備好.");
 	qm.dispose();
 	return;
     } else if (mode == 0) {

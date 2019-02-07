@@ -11,6 +11,7 @@ import constants.GameConstants;
 import constants.ServerConstants.PlayerGMRank;
 import database.DatabaseConnection;
 import handling.channel.ChannelServer;
+import handling.channel.handler.NPCHandler;
 import server.MapleInventoryManipulator;
 import server.MapleItemInformationProvider;
 import server.Randomizer;
@@ -1112,4 +1113,17 @@ public class PlayerCommand {
         }
     }
 
+    public static class 掉寶查詢 extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            NPCScriptManager.getInstance().start(c, 9330003, "掉寶查詢");
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@掉寶查詢 - 掉寶查詢";
+        }
+    }
 }

@@ -2,6 +2,10 @@
 // Added support to Donators having a bypass to time limit
 
 var status = -1;
+var boss_times = 3;
+var boss_hard_times = 2;
+var event_t = "女皇次數";
+var event_ht = "渾沌女皇次數";
 
 function start() {
 	if (cm.getPlayer().getMapId() == 271040100) {
@@ -10,7 +14,7 @@ function start() {
 		return;
 	}
 		if (cm.getPlayer().getLevel() < 170) {
-			cm.sendOk("您需要到達170 等才可挑戰 Empress Cygnus.");
+			cm.sendOk("您需要到達170 等才可挑戰 女皇.");
 			cm.dispose();
 			return;
 		}
@@ -33,19 +37,35 @@ function start() {
     var squadAvailability = cm.getSquadAvailability("Cygnus");
     if (squadAvailability == -1) {
 	status = 0;
-	    if (time + (24 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isDonator()) {
-		cm.sendOk("您已經挑戰過 Cygnus 在24小時內. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (24 * 3600000)));
-		cm.dispose();
-		return;
-	    }
+	    if(cm.getChannelNumber() <= 10){
+			if (cm.getEventCount(event_t) >= boss_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}else{
+			if (cm.getEventCount(event_ht) >= boss_hard_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_hard_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}
 	cm.sendYesNo("您想要成為遠征隊隊長嗎?");
 
     } else if (squadAvailability == 1) {
-	    if (time + (24 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isDonator()) {
-		cm.sendOk("您已經挑戰過 Cygnus 在24小時內. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (24 * 3600000)));
-		cm.dispose();
-		return;
-	    }
+	    if(cm.getChannelNumber() <= 10){
+			if (cm.getEventCount(event_t) >= boss_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}else{
+			if (cm.getEventCount(event_ht) >= boss_hard_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_hard_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}
 	// -1 = Cancelled, 0 = not, 1 = true
 	var type = cm.isSquadLeader("Cygnus");
 	if (type == -1) {
@@ -97,11 +117,6 @@ function start() {
 			if (eim == null) {
 				var squd = cm.getSquad("Cygnus");
 				if (squd != null) {
-	    if (time + (24 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isDonator()) {
-		cm.sendOk("您已經挑戰過 Cygnus 在24小時內. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (24 * 3600000)));
-		cm.dispose();
-		return;
-	    }
 					cm.sendYesNo("遠征隊對戰已經開始.\r\n" + squd.getNextPlayer());
 					status = 3;
 				} else {
@@ -151,6 +166,19 @@ function action(mode, type, selection) {
 		break;
 	case 5:
 	    if (selection == 0) { // join
+	    if(cm.getChannelNumber() <= 10){
+			if (cm.getEventCount(event_t) >= boss_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}else{
+			if (cm.getEventCount(event_ht) >= boss_hard_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_hard_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}
 		var ba = cm.addMember("Cygnus", true);
 		if (ba == 2) {
 		    cm.sendOk("遠征隊目前額滿,請稍後再試.");
@@ -195,6 +223,11 @@ function action(mode, type, selection) {
 		} else if (selection == 3) { // get insode
 		    if (cm.getSquad("Cygnus") != null) {
 			var dd = cm.getEventManager("CygnusBattle");
+			if(cm.getChannelNumber() <= 10){
+				cm.setSquadEventCount("Cygnus", event_t);
+			}else{
+				cm.setSquadEventCount("Cygnus", event_ht);
+			}
 			dd.startInstance(cm.getSquad("Cygnus"), cm.getMap(), 160109);
 		    } else {
 			cm.sendOk("發生未知錯誤.");

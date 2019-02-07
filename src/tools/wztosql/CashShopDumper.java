@@ -19,6 +19,7 @@ import server.MapleItemInformationProvider;
 import server.ServerProperties;
 import server.cashshop.CashItemFactory;
 import server.cashshop.CashItemInfo;
+import server.life.MapleMonsterInformationProvider;
 
 import java.io.*;
 import java.sql.Connection;
@@ -59,6 +60,10 @@ public class CashShopDumper {
         ServerProperties.load();
         ServerConstants.SERVER_IP = ServerConfig.WORLD_INTERFACE;
         LoginServer.PORT = ServerConfig.LOGIN_PORT;
+
+        MapleItemInformationProvider.getInstance().runEtc();
+        MapleItemInformationProvider.getInstance().runItems();
+
         CashItemInfo.CashModInfo m = getModInfo(20000393);
         CashItemFactory.getInstance().initialize();
         Collection<CashItemInfo.CashModInfo> list = CashItemFactory.getInstance().getAllModInfo();
@@ -108,10 +113,19 @@ public class CashShopDumper {
                     System.out.println(MapleItemInformationProvider.getInstance().getName(itemId));
                     continue;
                 }
+
+                int isShow = 1;
+                for (int i : GameConstants.cashBlock) {
+                    if (itemId == i) {
+                        isShow = 0;
+                        break;
+                    }
+                }
+
                 PreparedStatement ps = con.prepareStatement("INSERT INTO cashshop_modified_items (serial, showup,itemid,priority,period,gender,count,meso,discount_price,mark, unk_1, unk_2, unk_3, name) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 ps.setInt(1, sn);
-                ps.setInt(2, 1);
-                ps.setInt(3, 0);
+                ps.setInt(2, isShow);
+                ps.setInt(3, itemId);
                 ps.setInt(4, 0);
                 ps.setInt(5, period);
                 ps.setInt(6, gender);

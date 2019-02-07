@@ -1,4 +1,8 @@
 var status = -1;
+var boss_times = 3;
+var boss_hard_times = 2;
+var event_t = "獅王次數";
+var event_ht = "渾沌獅王次數";
 
 function start() {
 	if (cm.getPlayer().getMapId() == 211070100 || cm.getPlayer().getMapId() == 211070101 || cm.getPlayer().getMapId() == 211070110) {
@@ -30,19 +34,36 @@ function start() {
     var squadAvailability = cm.getSquadAvailability("VonLeon");
     if (squadAvailability == -1) {
 	status = 0;
-	    if (time + (12 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isDonator()) {
-		cm.sendOk("您已經挑戰過 VonLeon 在十二小時內. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (12 * 3600000)));
-		cm.dispose();
-		return;
-	    }
+	    if(cm.getChannelNumber() <= 10){
+			if (cm.getEventCount(event_t) >= boss_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}else{
+			if (cm.getEventCount(event_ht) >= boss_hard_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_hard_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}
 	cm.sendYesNo("您想要成為遠征隊隊長嗎?");
 
     } else if (squadAvailability == 1) {
-	    if (time + (12 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isDonator()) {
-		cm.sendOk("您已經挑戰過 VonLeon 在十二小時內. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (12 * 3600000)));
-		cm.dispose();
-		return;
-	    }
+	    
+	    if(cm.getChannelNumber() <= 10){
+			if (cm.getEventCount(event_t) >= boss_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}else{
+			if (cm.getEventCount(event_ht) >= boss_hard_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_hard_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}
 	// -1 = Cancelled, 0 = not, 1 = true
 	var type = cm.isSquadLeader("VonLeon");
 	if (type == -1) {
@@ -73,11 +94,6 @@ function start() {
 			if (eim == null) {
 				var squd = cm.getSquad("VonLeon");
 				if (squd != null) {
-	    if (time + (12 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isDonator()) {
-		cm.sendOk("您已經挑戰過 VonLeon 在十二小時內. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (12 * 3600000)));
-		cm.dispose();
-		return;
-	    }
 					cm.sendYesNo("遠征隊對戰已經開始.\r\n" + squd.getNextPlayer());
 					status = 3;
 				} else {
@@ -94,11 +110,6 @@ function start() {
 			if (eim == null) {
 				var squd = cm.getSquad("VonLeon");
 				if (squd != null) {
-	    if (time + (12 * 3600000) >= cm.getCurrentTime() && !cm.getPlayer().isDonator()) {
-		cm.sendOk("您已經挑戰過 VonLeon 在十二小時內. 剩餘時間: " + cm.getReadableMillis(cm.getCurrentTime(), time + (12 * 3600000)));
-		cm.dispose();
-		return;
-	    }
 					cm.sendYesNo("遠征隊對戰已經開始.\r\n" + squd.getNextPlayer());
 					status = 3;
 				} else {
@@ -148,6 +159,19 @@ function action(mode, type, selection) {
 		break;
 	case 5:
 	    if (selection == 0) { // join
+	    if(cm.getChannelNumber() <= 10){
+			if (cm.getEventCount(event_t) >= boss_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}else{
+			if (cm.getEventCount(event_ht) >= boss_hard_times) {
+				cm.sendNext("很抱歉每天只能打" + boss_hard_times + "次..");
+				cm.dispose();
+				return;
+			}
+		}
 		var ba = cm.addMember("VonLeon", true);
 		if (ba == 2) {
 		    cm.sendOk("遠征隊目前額滿,請稍後再試.");
@@ -192,6 +216,11 @@ function action(mode, type, selection) {
 		} else if (selection == 3) { // get insode
 		    if (cm.getSquad("VonLeon") != null) {
 			var dd = cm.getEventManager("VonLeonBattle");
+			if(cm.getChannelNumber() <= 10){
+				cm.setSquadEventCount("VonLeon", event_t);
+			}else{
+				cm.setSquadEventCount("VonLeon", event_ht);
+			}
 			dd.startInstance(cm.getSquad("VonLeon"), cm.getMap(), 160107);
 		    } else {
 			cm.sendOk("發生未知錯誤.");

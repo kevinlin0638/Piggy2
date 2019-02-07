@@ -702,10 +702,8 @@ public class InventoryHandler {
         if (eqq.getState() == 1 ) {
             List<List<StructItemOption>> pots = new LinkedList<>(ii.getAllPotentialInfo().values());
             int new_state = Math.abs(eqq.getPotential1());
-            if (new_state < 17) { // incase overflow
+            if (new_state > 20 || new_state < 17) { // incase overflow
                 new_state = 17;
-            }else{
-                new_state = 20;
             }
 
             if(!chargeMeso(new_state, ii.getReqLevel(toReveal.getItemId()), c.getPlayer())){
@@ -915,6 +913,21 @@ public class InventoryHandler {
                 c.sendPacket(CWvsContext.enableActions());
                 return false;
             }
+            if(ii.getEnhanceFee(true, toScroll.getEnhance()) > chr.getCSPoints(2) || MapleItemInformationProvider.getInstance().getEnhanceFee(false, toScroll.getEnhance()) > chr.getMeso()){
+                chr.dropMessage(1, "楓幣或楓點不足，詳細費用請見小喵谷衝星說明");
+                c.sendPacket(CWvsContext.enableActions());
+                return false;
+            }
+            if(!ServerConstants.isEnhanceEnable){
+                chr.dropMessage(1, "裝備強化暫時關閉");
+                c.sendPacket(CWvsContext.enableActions());
+                return false;
+            }
+            if(!ii.canlevelEnhance(toScroll)){
+                chr.dropMessage(1, "裝備已達最高星等");
+                c.sendPacket(CWvsContext.enableActions());
+                return false;
+            }
         } else if (GameConstants.isPotentialScroll(scroll.getItemId())) {
             boolean isEpic = scroll.getItemId() / 100 == 20497;
             if ((!isEpic && toScroll.getState() >= 1) || (isEpic && toScroll.getState() >= 18) || (toScroll.getLevel() == 0 && toScroll.getUpgradeSlots() == 0 && toScroll.getItemId() / 10000 != 135 && !isEpic) || vegas > 0 || ii.isCash(toScroll.getItemId())) {
@@ -1015,6 +1028,8 @@ public class InventoryHandler {
                 return false;
             }
         }
+
+
 
         // Scroll Success/ Failure/ Curse
         Equip scrolled = (Equip) ii.scrollEquipWithId(toScroll, scroll, whiteScroll, chr, vegas, checkIfGM);

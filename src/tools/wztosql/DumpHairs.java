@@ -84,15 +84,21 @@ public class DumpHairs {
         data = MapleDataProviderFactory.getDataProvider("Character.wz/Face");
         root = data.getRoot();
         for (MapleDataFileEntry topDir : root.getFiles()) {
-            int id = Integer.parseInt(topDir.getName().substring(0, 8));
-            if (isMaleFace(id)) {
-                maleFace.add(id);
+            try {
+                int id = Integer.parseInt(topDir.getName().substring(0, 8));
+                if (isMaleFace(id)) {
+                    maleFace.add(id);
+                }
+            }catch (NumberFormatException ignored){
             }
         }
         for (MapleDataFileEntry topDir : root.getFiles()) {
+            try {
             int id = Integer.parseInt(topDir.getName().substring(0, 8));
-            if (isFemaleFace(id)) {
-                femaleFace.add(id);
+                if (isFemaleFace(id)) {
+                    femaleFace.add(id);
+                }
+            }catch (NumberFormatException ignored){
             }
         }
         if (maleHair1.isEmpty() || maleHair2.isEmpty() || maleHair3.isEmpty() || femaleHair1.isEmpty() || femaleHair2.isEmpty() || femaleHair3.isEmpty() || maleFace.isEmpty() || femaleFace.isEmpty()) {
@@ -102,7 +108,11 @@ public class DumpHairs {
         }
         List<Integer> faceList = new LinkedList();
         for (MapleDataFileEntry topDir : root.getFiles()) {
-            faceList.add(Integer.parseInt(topDir.getName().substring(0, 8)));
+            try {
+                Integer i = Integer.parseInt(topDir.getName().substring(0, 8));
+                faceList.add(i);
+            }catch (NumberFormatException ignored){
+            }
         }
         sb.append(createStyler(maleHair1, maleHair2, maleHair3, femaleHair1, femaleHair2, femaleHair3, maleFace, femaleFace, hairList, faceList));
         out.write(sb.toString().getBytes());

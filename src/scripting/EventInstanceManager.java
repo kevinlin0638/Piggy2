@@ -836,7 +836,7 @@ public class EventInstanceManager {
                 if (player.getParty() != null) {
                     PartySearch ps = World.Party.getSearch(player.getParty());
                     if (ps != null) {
-                        World.Party.removeSearch(ps, "The Party Listing has been removed because the Party Quest has started.");
+                        World.Party.removeSearch(ps, "組隊時間已結束,因遠征已開始.");
                     }
                 }
             }

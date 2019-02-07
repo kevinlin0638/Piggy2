@@ -118,7 +118,7 @@ function action(mode, type, selection) {
 						}
 						if (flag >= grade.length)
 							owner = grade[0];
-						switch (cm.getEquipPotState(selectedList[0][1])){
+						switch (cm.getEquipPotState(selectedList[0][0])){
 							case 17 :
 								text += "\t#b#e特殊";
 								break;
@@ -129,7 +129,7 @@ function action(mode, type, selection) {
 								text += "\t#r#e罕見";
 								break;
 							case 20 :
-								text += "\t#g#e史詩";
+								text += "\t#b史詩";
 								break;
 							default:
 								text += "\t#k#e普通";
@@ -141,7 +141,7 @@ function action(mode, type, selection) {
 						if (itemLevel != 0)
 							itemLevelStr = " (+" + itemLevel + ")";
 						text += "\t" + itemSeq + ": #r[" + owner + "]#n Lv." + cm.getReqLevel(item.getItemId()) + " #d#e" + cm.getItemName(item.getItemId()) + "#n" + itemLevelStr + "\r\n";
-						switch (cm.getEquipPotState(selectedList[0][1])){
+						switch (cm.getEquipPotState(selectedList[0][0])){
 							case 17 :
 								text += "#b#e";
 								break;
@@ -152,15 +152,15 @@ function action(mode, type, selection) {
 								text += "#r#e";
 								break;
 							case 20 :
-								text += "#g#e";
+								text += "#b";
 								break;
 							default:
 								text += "#k#e";
 								break;
 						}
-						text += "\t第一行潛能：" + ii.resolvePotentialId(item.getItemId(), cm.getPotID(item.getItemId(), 1)) + "\r\n";
-						text += "\t第二行潛能：" + ii.resolvePotentialId(item.getItemId(), cm.getPotID(item.getItemId(), 2)) + "\r\n";
-						text += "\t第三行潛能：" + ii.resolvePotentialId(item.getItemId(), cm.getPotID(item.getItemId(), 3)) + "\r\n#k#n";
+						text += "\t第一行潛能：" + ii.resolvePotentialId(item.getItemId(), cm.getPotID(item.getPosition(), 1)) + "\r\n";
+						text += "\t第二行潛能：" + ii.resolvePotentialId(item.getItemId(), cm.getPotID(item.getPosition(), 2)) + "\r\n";
+						text += "\t第三行潛能：" + ii.resolvePotentialId(item.getItemId(), cm.getPotID(item.getPosition(), 3)) + "\r\n#k#n";
 						
 					}else{
 						item = cm.getInventory(5).getItem(selectedList[key][0]);
@@ -217,7 +217,7 @@ function action(mode, type, selection) {
 						cm.gainItem(selectedList[1][1],-1);
 						text = "#r您可以直接點選 '潛能值' 繼續衝\r\n或者點選結束對話重新選擇!\r\n\r\n";
 						text += "#k\r\n#e┌\t\t     ─ 強化後的潛能信息 ─   \t\t┐#n\r\n\r\n";
-						switch (cm.getEquipPotState(masterItemId)){
+						switch (cm.getEquipPotState(masterItemPosition)){
 							case 17 :
 								text += "\t\t\t\t     #L100##b#e特殊";
 								break;
@@ -228,15 +228,15 @@ function action(mode, type, selection) {
 								text += "\t\t\t\t     #L100##r#e罕見";
 								break; 
 							case 20 :
-								text += "\t\t\t\t     #L100##g#e史詩";
+								text += "\t\t\t\t     #L100##b史詩";
 								break;
 							default:
 								text += "\t\t\t\t     #L100##k#e普通";
 								break;
 						}
-						text += "\r\n\r\n\t\t\t第一行潛能：" + ii.resolvePotentialId(masterItemId, cm.getPotID(masterItemId, 1)) + "\r\n";
-						text += "\t\t\t第二行潛能：" + ii.resolvePotentialId(masterItemId, cm.getPotID(masterItemId, 2)) + "\r\n";
-						text += "\t\t\t第三行潛能：" + ii.resolvePotentialId(masterItemId, cm.getPotID(masterItemId, 3)) + "\r\n#k#n#l\r\n";
+						text += "\r\n\r\n\t\t\t第一行潛能：" + ii.resolvePotentialId(masterItemId, cm.getPotID(masterItemPosition, 1)) + "\r\n";
+						text += "\t\t\t第二行潛能：" + ii.resolvePotentialId(masterItemId, cm.getPotID(masterItemPosition, 2)) + "\r\n";
+						text += "\t\t\t第三行潛能：" + ii.resolvePotentialId(masterItemId, cm.getPotID(masterItemPosition, 3)) + "\r\n#k#n#l\r\n";
 						text += "#e└\t\t\t\t\t\t\t\t\t\t\t┘#n";
 						
 						status = 0;
