@@ -59,6 +59,12 @@ public class MapleInventoryManipulator {
         }
         c.sendPacket(InventoryPacket.addInventorySlot(item));
         c.getPlayer().havePartyQuest(item.getItemId());
+        if(GameConstants.getInventoryType(item.getItemId()) == MapleInventoryType.CASH || MapleItemInformationProvider.getInstance().isCash(item.getItemId())) {
+            if(item.getUniqueId() <= 0) {
+                int uniqueid = getUniqueId(item.getItemId(), null);
+                item.setUniqueId(uniqueid);
+            }
+        }
         return newSlot;
     }
 
@@ -450,7 +456,7 @@ public class MapleInventoryManipulator {
                         nEquip.setExpiration(System.currentTimeMillis() + period);
                     }
                 }
-                if (nEquip.hasSetOnlyId()) {
+                if (!nEquip.hasSetOnlyId()) {
                     final int uid = MapleInventoryIdentifier.getInstance();
                     nEquip.setUniqueId(uid);
                 }
@@ -546,6 +552,12 @@ public class MapleInventoryManipulator {
                 if (enhance) {
                     item = checkEnhanced(item, c.getPlayer());
                 }
+
+                if (!item.hasSetOnlyId()) {
+                    final int uid = MapleInventoryIdentifier.getInstance();
+                    item.setUniqueId(uid);
+                }
+
                 final short newSlot = c.getPlayer().getInventory(type).addItem(item);
 
                 if (newSlot == -1) {

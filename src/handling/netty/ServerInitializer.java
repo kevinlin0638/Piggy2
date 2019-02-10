@@ -14,6 +14,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 
+import java.io.IOException;
+
 public class ServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private int world;
@@ -25,7 +27,7 @@ public class ServerInitializer extends ChannelInitializer<SocketChannel> {
     }
 
     @Override
-    protected void initChannel(SocketChannel channel) throws Exception {
+    protected void initChannel(SocketChannel channel) throws IOException {
         ChannelPipeline pipe = channel.pipeline();
         if(world == -2) {
             pipe.addLast("handler", new MapleServerHandler(world, channels));

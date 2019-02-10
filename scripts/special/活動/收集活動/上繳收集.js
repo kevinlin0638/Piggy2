@@ -5,6 +5,7 @@ var type;
 var get_type;
 var set_type;
 var event_item = 4000306;
+var event_name = '紅包活動';
 var items = Array(//(價格,type,ItemID,批量購買,是否顯示) type : -1 - 楓幣 0 - 贊助點 1 - Gash 2 - 楓點 3 - 道場點數 其它 - 任意道具
 		Array(300, event_item ,2028061,true,true),Array(400, event_item ,5062000,true,true),Array(600, event_item ,5062002,true,true)
 		,Array(800, event_item ,2028062,true,true),Array(2000, event_item ,2340000,true,true)
@@ -144,7 +145,7 @@ function action(mode, type, selection) {
 				cm.dispose();
             } else {
 				if(money > 30000){
-					cm.sendOk("消耗的雪球不能超過3萬");
+					cm.sendOk("消耗的#t" + event_item + "# 不能超過3萬");
 					cm.dispose();
 					return;
 				}
@@ -175,7 +176,7 @@ function action(mode, type, selection) {
 						break;
 				}
 				cm.gainItem(items[choice][2], fee);
-				cm.getPlayer().setEventCount('雪花活動', 1, money);
+				cm.getPlayer().setEventCount(event_name, 1, money);
 				cm.sendOk("#b恭喜，購買了#r " + fee + " #b個#r #v" + items[choice][2] + "#\r\n\r\n#r"+ type + " #b餘額為:#r " + get_type + " #b");
 				cm.dispose();
             }

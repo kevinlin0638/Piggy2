@@ -232,11 +232,11 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         }
     }
 
-    public final void damage(final MapleCharacter from, final int damage, final boolean updateAttackTime) {
+    public final void damage(final MapleCharacter from, final long damage, final boolean updateAttackTime) {
         damage(from, damage, updateAttackTime, 0);
     }
 
-    public final void damage(final MapleCharacter from, final int damage, final boolean updateAttackTime, final int lastSkill) {
+    public final void damage(final MapleCharacter from, final long damage, final boolean updateAttackTime, final int lastSkill) {
         if (from == null || damage <= 0 || !isAlive()) {
             return;
         }
@@ -258,7 +258,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         if (!replaced) {
             attackers.add(attacker);
         }
-        final int rDamage = (int) Math.max(0, Math.min(damage, hp));
+        final long rDamage = Math.max(0, Math.min(damage, hp));
         attacker.addDamage(from, rDamage, updateAttackTime);
         if (stats.getSelfD() != -1) {
             hp -= rDamage;
@@ -313,7 +313,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
                             map.broadcastMessage(MobPacket.showBossHP(this), this.getTruePosition());
                             break;
                         case 1:
-                            map.broadcastMessage(from, MobPacket.damageFriendlyMob(this, damage, true), false);
+                            map.broadcastMessage(from, MobPacket.damageFriendlyMob(this, (int) Math.min((long) Integer.MAX_VALUE, damage), true), false);
                             break;
                         case 2:
                             map.broadcastMessage(MobPacket.showMonsterHP(getObjectId(), getHPPercent()));
@@ -1426,7 +1426,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
 
         List<AttackingMapleCharacter> getAttackers();
 
-        public void addDamage(MapleCharacter from, int damage, boolean updateAttackTime);
+        public void addDamage(MapleCharacter from, long damage, boolean updateAttackTime);
 
         public long getDamage();
 
@@ -1478,10 +1478,10 @@ public class MapleMonster extends AbstractLoadedMapleLife {
     private static final class OnePartyAttacker {
 
         public MapleParty lastKnownParty;
-        public int damage;
+        public long damage;
         public long lastAttackTime;
 
-        public OnePartyAttacker(final MapleParty lastKnownParty, final int damage) {
+        public OnePartyAttacker(final MapleParty lastKnownParty, final long damage) {
             super();
             this.lastKnownParty = lastKnownParty;
             this.damage = damage;
@@ -1491,7 +1491,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
 
     private final class SingleAttackerEntry implements AttackerEntry {
 
-        private int damage = 0;
+        private long damage = 0;
         private int chrid;
         private long lastAttackTime;
 
@@ -1500,7 +1500,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         }
 
         @Override
-        public void addDamage(final MapleCharacter from, final int damage, final boolean updateAttackTime) {
+        public void addDamage(final MapleCharacter from, final long damage, final boolean updateAttackTime) {
             if (chrid == from.getId()) {
                 this.damage += damage;
                 if (updateAttackTime) {
@@ -1561,7 +1561,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
     private class PartyAttackerEntry implements AttackerEntry {
 
         private final Map<Integer, OnePartyAttacker> attackers = new HashMap<Integer, OnePartyAttacker>(6);
-        private int totDamage = 0;
+        private long totDamage = 0;
         private int partyid;
 
         public PartyAttackerEntry(final int partyid) {
@@ -1600,7 +1600,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
             return totDamage;
         }
 
-        public void addDamage(final MapleCharacter from, final int damage, final boolean updateAttackTime) {
+        public void addDamage(final MapleCharacter from, final long damage, final boolean updateAttackTime) {
             final OnePartyAttacker oldPartyAttacker = attackers.get(from.getId());
             if (oldPartyAttacker != null) {
                 oldPartyAttacker.damage += damage;

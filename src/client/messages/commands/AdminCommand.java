@@ -404,6 +404,19 @@ public class AdminCommand {
         }
     }
 
+    public static class ResetReactor extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            c.getPlayer().getMap().resetReactors();
+            return true;
+        }
+        @Override
+        public String getHelpMessage() {
+            return "!ResetReactor - 重新整理反應物";
+        }
+    }
+
     public static class SetHair extends AbstractsCommandExecute {
 
         @Override

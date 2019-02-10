@@ -6444,7 +6444,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     client.sendPacket(CField.spawnDragon(dragon));
                 }
                 if (android != null) {
-                    System.out.println(client.getPlayer().getName() + " is viewing " + this.getName() + "'s Android.");
+                    //System.out.println(client.getPlayer().getName() + " is viewing " + this.getName() + "'s Android.");
                     client.sendPacket(CField.spawnAndroid(this, android));
                 }
                 if (summonedFamiliar != null) {
@@ -8478,6 +8478,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             //giveCoolDowns(skillId, startTime, length);
             if (length / 1000 > 0) {
                 client.getSession().writeAndFlush(CField.skillCooldown(skillId, (int) Math.max(length / 1000, 0)));
+                coolDowns.put(skillId, new MapleCoolDownValueHolder(skillId, startTime, length));
             }
         }
     }

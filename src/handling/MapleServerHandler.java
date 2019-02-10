@@ -98,7 +98,6 @@ public class MapleServerHandler extends ChannelDuplexHandler {
             MapleClient client = ctx.channel().attr(MapleClient.CLIENT_KEY).get();
             client.sendPing();
         }
-        super.exceptionCaught(ctx, cause);
     }
 
     @Override
@@ -264,7 +263,7 @@ public class MapleServerHandler extends ChannelDuplexHandler {
             long ava = slea.available();
             switch (header) {
                 case GET_ACCOUNT_NAME:
-                    System.out.println(client.getSessionIPAddress());
+//                    System.out.println(client.getSessionIPAddress());
                     final String accountname = slea.readAsciiString((int)ava);
                     client.setAccountName(accountname);
                     for(MapleClient cl : World.pending_clients){

@@ -333,6 +333,16 @@ public class PetHandler {
                             if (Math.abs(petY - objectY) <= maxdist || Math.abs(objectY - petY) <= maxdist) {
                                 if (map_object instanceof MapleMapItem) {
                                     MapleMapItem mapitem = (MapleMapItem) map_object;
+                                    if (mapitem.getMeso() <= 0 || !meso) {
+                                        if(!MapleInventoryManipulator.checkSpace(chr.getClient(), mapitem.getItem().getItemId(), mapitem.getItem().getQuantity(), mapitem.getItem().getOwner()) || MapleItemInformationProvider.getInstance().isQuestItem(mapitem.getItemId())) {
+                                            continue;
+                                        }
+                                        if(!MapleItemInformationProvider.getInstance().itemExists(mapitem.getItem().getItemId())){
+                                            chr.getMap().removeMapObject(map_object);
+                                            mapitem.setPickedUp(true);
+                                            continue;
+                                        }
+                                    }
                                     synchronized (mapitem) {
                                         if (mapitem.isPickedUp() || mapitem.getOwner() != chr.getId()) {
                                             continue;

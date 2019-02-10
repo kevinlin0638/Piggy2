@@ -63,20 +63,21 @@ function action(mode, type, selection) {
 				text += "耐久度 		: " + all[sele_index].getDurability() + "\r\n";
 
 			
+			var ii = cm.getItemInfo();
 			if(all[sele_index].getPotential1() <= 0)
 				text += "潛能第一行		: 沒有潛能屬性\r\n";
 			else
-				text += "潛能第一行		: " + cm.getPotentialString(all[sele_index].getPotential1()) + "\r\n";
+				text += "潛能第一行		: " + ii.resolvePotentialId(all[sele_index].getItemId(), all[sele_index].getPotential1()) + "\r\n";
 			if(all[sele_index].getPotential2() <= 0)
 				text += "潛能第二行		: 沒有潛能屬性\r\n";
 			else
-				text += "潛能第二行		: " + cm.getPotentialString(all[sele_index].getPotential2()) + "\r\n";
+				text += "潛能第二行		: " + ii.resolvePotentialId(all[sele_index].getItemId(), all[sele_index].getPotential2()) + "\r\n";
 			if(all[sele_index].getPotential3() <= 0)
 				text += "潛能第三行		: 沒有潛能屬性\r\n";
 			else
-				text += "潛能第三行		: " + cm.getPotentialString(all[sele_index].getPotential3()) + "\r\n";
+				text += "潛能第三行		: " + ii.resolvePotentialId(all[sele_index].getItemId(), all[sele_index].getPotential3()) + "\r\n";
 
-            if(all[sele_index].getPotential4() <= 0)
+            /*if(all[sele_index].getPotential4() <= 0)
                 text += "潛能第行		: 沒有潛能屬性\r\n";
             else
                 text += "潛能第四四行		: " + cm.getPotentialString(all[sele_index].getPotential4()) + "\r\n";
@@ -84,7 +85,7 @@ function action(mode, type, selection) {
             if(all[sele_index].getPotential3() <= 0)
                 text += "潛能第五行		: 沒有潛能屬性\r\n";
             else
-                text += "潛能第五行		: " + cm.getPotentialString(all[sele_index].getPotential5()) + "\r\n";
+                text += "潛能第五行		: " + cm.getPotentialString(all[sele_index].getPotential5()) + "\r\n";*/
 			
 			if(all[sele_index].getOwner() == 0)
 				text += ""
@@ -103,6 +104,8 @@ function action(mode, type, selection) {
 		} else if (status == 2) {
 			var rq = (300000 + (all[sele_index].getEnhance() * 2000) * all[sele_index].getEnhance() + 9487);
 			if(cm.canHold(all[sele_index].getItemId()) && cm.getPlayer().getCSPoints(2) >= rq){
+				if(all[sele_index].getOwner() == null)
+					all[sele_index].setOwner("");
 				cm.gainEquipItem(all[sele_index], cm.getPlayer().getClient());
 				cm.DeleteBangEquip(all[sele_index].getGMLog());
 				cm.getPlayer().modifyCSPoints(2, - rq, true);

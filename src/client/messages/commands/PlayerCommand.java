@@ -64,9 +64,9 @@ public class PlayerCommand {
             }
 //            long time = System.currentTimeMillis() - c.getPlayer().getOnline_time();
 //            String ss = (time / (1000 * 60 * 60)) + " 小時 " +  ((time % (1000 * 60 * 60)) / (1000 * 60)) + " 分鐘 " + (((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000) + " 秒";
-
-            c.getPlayer().dropMessage(5, "目前地圖 " + c.getPlayer().getMap().getId() + "座標 (" + String.valueOf(c.getPlayer().getPosition().x) + " , " + String.valueOf(c.getPlayer().getPosition().y) + ")");
-            c.getPlayer().showInfo("指令", true, "解卡成功。");
+            if(c.getPlayer().isAdmin())
+                c.getPlayer().dropMessage(5, "目前地圖 " + c.getPlayer().getMap().getId() + "座標 (" + String.valueOf(c.getPlayer().getPosition().x) + " , " + String.valueOf(c.getPlayer().getPosition().y) + ")");
+//            c.getPlayer().showInfo("指令", true, "解卡成功。");
             c.getPlayer().dropMessage(5, "當前時間是" + FileoutputUtil.CurrentReadable_Time() + " GMT+8 ");
             c.getPlayer().dropMessage(5, "角色資訊 物理攻擊 : " + c.getPlayer().getStat().getTotalWatk() + "||魔法攻擊 : " + c.getPlayer().getStat().getTotalMagic() + "||");
             c.getPlayer().dropMessage(5, "力量 : " + c.getPlayer().getStat().getTotalStr() +

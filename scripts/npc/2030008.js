@@ -119,7 +119,7 @@ function action(mode, type, selection) {
                         cm.sendOk("我不能讓你進入這個未知的世界，因為管理員還沒有準備好開放。");
                     } else {
                         var prop = em.getProperty("started");
-                        if (prop.equals("false") || prop == null) {
+                        if (prop == null || prop.equals("false")) {
                             em.startInstance(cm.getParty(), cm.getMap());
                         } else {
                             cm.sendOk("另一個組隊已經開始了調查任務，請稍後再來。");

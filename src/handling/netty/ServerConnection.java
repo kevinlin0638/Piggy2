@@ -19,6 +19,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class ServerConnection {
@@ -41,7 +42,7 @@ public class ServerConnection {
         this.channels = channels;
     }
 
-    public void run() throws InterruptedException {
+    public void run() throws InterruptedException , IOException {
         boot = new ServerBootstrap().group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_BACKLOG, 2000)
@@ -49,7 +50,7 @@ public class ServerConnection {
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel ch) throws Exception {
+                    protected void initChannel(SocketChannel ch) throws Exception, IOException {
                         ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(10, 0, 0, TimeUnit.MINUTES));
                         ch.pipeline().addLast(new ServerInitializer(world, channels));
                     }

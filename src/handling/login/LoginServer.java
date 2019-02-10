@@ -28,6 +28,7 @@ import handling.netty.ServerConnection;
 import handling.world.World;
 import tools.types.Pair;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -95,7 +96,7 @@ public class LoginServer {
 
         try {
             acceptor.run();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | IOException e) {
             System.err.println("Binding to port " + PORT + " failed" + e);
             acceptor.close();
         }

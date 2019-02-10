@@ -756,7 +756,7 @@ public class MapleItemInformationProvider {
                             boolean isSucc = true;
                             Pair<Integer, Integer> chanc = (scrollId.getItemId() == 2049300 ? getEnhanceSucceRate(true, nEquip.getEnhance()) : getEnhanceSucceRate(false, nEquip.getEnhance()));
                             if(chr.getGMLevel() > 4)
-                                chanc = new Pair<Integer, Integer>(100, 0);
+                                chanc = new Pair<Integer, Integer>(0, 100);
                             if(!ServerConstants.isEnhanceEnable){
                                 chr.dropMessage(1, "裝備強化暫時關閉");
                                 break;

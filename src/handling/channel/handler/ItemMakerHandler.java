@@ -753,11 +753,14 @@ public class ItemMakerHandler {
             }
             chr.dropMessage(-5, s + " 經驗提升. (+" + expGain + ")");
             if (chr.addProfessionExp((craftID / 10000) * 10000, expGain)) {
-                chr.dropMessage(1, "您的專業技術 " + s + " 已可提升等級. 請找NPC進行等級提升.");
+                chr.dropMessage(1, "您的專業技術 " + s + " 已提升等級");
             }
         } else {
             expGain = 0;
         }
+        if(quantity == 0)
+            chr.dropMessage(1, "用力過猛,製作失敗");
+
         MapleQuest.getInstance(2550).forceStart(c.getPlayer(), 9031000, "1"); //removes tutorial stuff
         chr.setFatigue((byte) (chr.getFatigue() + fatigue));
         chr.getMap().broadcastMessage(CField.craftFinished(chr.getId(), craftID, cr.i, toGet, quantity, expGain));

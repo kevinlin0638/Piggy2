@@ -2703,11 +2703,11 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
                 eq.setDurability(rs.getInt("durability"));
 
                 eq.setEnhance(rs.getByte("enhance"));
-                eq.setPotential1(rs.getShort("potential1"));
-                eq.setPotential2(rs.getShort("potential2"));
-                eq.setPotential3(rs.getShort("potential3"));
-                eq.setPotential4(rs.getShort("potential4"));
-                eq.setPotential5(rs.getShort("potential5"));
+                eq.setPotential1(rs.getInt("potential1"));
+                eq.setPotential2(rs.getInt("potential2"));
+                eq.setPotential3(rs.getInt("potential3"));
+                eq.setPotential4(rs.getInt("potential4"));
+                eq.setPotential5(rs.getInt("potential5"));
 
 
                 eq.setOwner(rs.getString("owner"));

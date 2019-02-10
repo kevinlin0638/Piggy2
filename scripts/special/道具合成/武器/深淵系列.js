@@ -157,7 +157,7 @@ function action(mode, type, selection) {
 			-1, //是否限制時間, 時間
 			false, // 是否批量合成
 			-1, //等級限制
-			true),// 是否顯示
+			true)// 是否顯示
 	); 
 	
 	

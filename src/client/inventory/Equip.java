@@ -103,7 +103,10 @@ public class Equip extends Item implements Serializable {
         ret.addi_watk = addi_watk;
         ret.break_dmg = break_dmg;
         ret.setGiftFrom(getGiftFrom());
-        ret.setOwner(getOwner());
+        if(getOwner() == null)
+            ret.setOwner("");
+        else
+            ret.setOwner(getOwner());
         ret.setQuantity(getQuantity());
         ret.setExpiration(getExpiration());
         return ret;

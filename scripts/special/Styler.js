@@ -139,7 +139,7 @@ function action(mode, type, selection) {
 
 function sendStyle(array) {
    v17 = array;
-   cm.sendStyle("Pick one?", v17);
+   cm.askAvatar("選一個吧?", v17);
 }
 
 function hairExists(hair) {

@@ -5,6 +5,8 @@ import handling.MapleServerHandler;
 import handling.channel.PlayerStorage;
 import handling.netty.ServerConnection;
 
+import java.io.IOException;
+
 public class ClientServer {
 
     private final static int PORT = 5287;
@@ -22,7 +24,7 @@ public class ClientServer {
 
         try {
             acceptor.run();
-        } catch (final InterruptedException e) {
+        } catch (final InterruptedException | IOException e) {
             System.err.println("Binding to port " + PORT + " failed");
             acceptor.close();
         }

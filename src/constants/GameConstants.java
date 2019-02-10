@@ -164,21 +164,7 @@ public class GameConstants {
 
     // Monster Rider - [80001000], Double Jump - [3201003, 3101003, 13101004]
     public static final int[] blockedSkills = {
-            3201003,
-            3101003,
-            13101004,
-            2301001,
-            5001005,
-            5091005,
-            15001003,
-            4341003,
-            2221004,
-            2321003,
-            32121003,
-            5101004,
-            5111007,
-            5111010,
-            20020109
+            4341003
     };
     public static final int[] rankC = {
             70000000,

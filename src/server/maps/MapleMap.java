@@ -536,9 +536,11 @@ public final class MapleMap {
                 }
                 if (de.itemId == 0) { // meso
                     int mesos = Randomizer.nextInt(1 + Math.abs(de.Maximum - de.Minimum)) + de.Minimum;
-
+                    int mod = 1;
+                    if(channel >= 11)
+                        mod = 5;
                     if (mesos > 0) {
-                        spawnMobMesoDrop((int) (mesos * (chr.getStat().mesoBuff / 100.0) * chr.getDropMod() * cmServerrate), calcDropPos(pos, mob.getTruePosition()), mob, chr, false, droptype);
+                        spawnMobMesoDrop((int) (mesos * mod * (chr.getStat().mesoBuff / 100.0) * chr.getDropMod() * cmServerrate), calcDropPos(pos, mob.getTruePosition()), mob, chr, false, droptype);
                         mesoDropped = true;
                     }
                 } else {
@@ -1303,7 +1305,15 @@ public final class MapleMap {
         mapobjectlocks.get(MapleMapObjectType.REACTOR).readLock().lock();
         try {
             for (MapleMapObject obj : mapobjects.get(MapleMapObjectType.REACTOR).values()) {
-                ((MapleReactor) obj).setDelay(state);
+                if(((MapleReactor) obj).getReactorId() < 300000 && ((MapleReactor) obj).getState() == 4) {
+                    if (getId() == 910001005){
+                        ((MapleReactor) obj).setState((byte) 5);
+                        ((MapleReactor) obj).scheduleSetState((byte) 5, (byte) state, 10000L);
+                    }else {
+                        ((MapleReactor) obj).setState((byte) 5);
+                        ((MapleReactor) obj).scheduleSetState((byte) 5, (byte) state, 60000L);
+                    }
+                }
             }
         } finally {
             mapobjectlocks.get(MapleMapObjectType.REACTOR).readLock().unlock();

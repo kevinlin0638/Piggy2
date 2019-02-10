@@ -26,6 +26,8 @@ import handling.channel.PlayerStorage;
 import handling.netty.ServerConnection;
 import server.maketshop.MTSStorage;
 
+import java.io.IOException;
+
 public class CashShopServer {
 
     public  static int PORT = 8787;
@@ -43,7 +45,7 @@ public class CashShopServer {
 
         try {
             acceptor.run();
-        } catch (final InterruptedException e) {
+        } catch (final InterruptedException | IOException e) {
             System.err.println("Binding to port " + PORT + " failed");
             acceptor.close();
         }

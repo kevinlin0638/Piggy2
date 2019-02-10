@@ -370,12 +370,9 @@ public class PlayerHandler {
             damage = (damage - pDMG);
             if (damage > 0) {
                 final MapleStatEffect eff = SkillFactory.getSkill(1201007).getEffect(chr.getTotalSkillLevel(1201007));
-                int enemyDMG = (int) Math.min((damage * (eff.getY() / 100)), (attacker.getMobMaxHp() / 2));
+                long enemyDMG = Math.min((damage * (eff.getY() / 100)), (attacker.getMobMaxHp() / 2));
                 if (enemyDMG > pDMG) {
                     enemyDMG = pDMG; // ;)
-                }
-                if (enemyDMG > 1000) { // just a rough estimation, we cannot reflect > 1k
-                    enemyDMG = 1000; // too bad
                 }
                 attacker.damage(chr, enemyDMG, true, 1201007);
             } else {
@@ -663,14 +660,14 @@ public class PlayerHandler {
             c.sendPacket(CWvsContext.enableActions());
             return;
         }
-        if (effect.getCooldown(chr) > 0 && !chr.isGM()) {
+        if (effect.getCooldown(chr) > 0) {
             if (chr.skillisCooling(skillid) && false) {
                 c.sendPacket(CWvsContext.enableActions());
                 return;
             }
             if (skillid != 5221006 && skillid != 35111002) { // Battleship
                 c.sendPacket(CField.skillCooldown(skillid, effect.getCooldown(chr)));
-                chr.addCooldown(skillid, System.currentTimeMillis(), effect.getCooldown(chr) * 1000);
+                chr.giveCoolDowns(skillid, System.currentTimeMillis(), effect.getCooldown(chr) * 1000);
             }
         }
         //chr.checkFollow(); //not msea-like but ALEX'S WISHES

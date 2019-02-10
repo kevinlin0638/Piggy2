@@ -7,7 +7,8 @@ var set_type;
 var items = Array(//(價格,type,ItemID,批量購買,是否顯示) type : -1 - 楓幣 0 - 贊助點 1 - Gash 2 - 楓點 3 - 道場點數 其它 - 任意道具
 		Array(100,-1,2022794,true,true),Array(100,-1,2022795,true,true),Array(100,-1,2022796,true,true),Array(100,-1,2022797,true,true),Array(100,-1,2022798,true,true),Array(100,-1,2022799,true,true),
 		Array(100,-1,2049400,true,true),Array(500000,-1,2531000,true,true),
-		Array(100,-1,2460000,true,true),Array(100,-1,2460001,true,true),Array(100,-1,2460002,true,true),Array(100,-1,2460003,true,true),
+		Array(100,-1,2460000,true,true),
+		Array(500000,-1,2049600,true,true),Array(100,-1,2460001,true,true),Array(100,-1,2460002,true,true),Array(100,-1,2460003,true,true),
 		Array(200000,-1,5062000,true,true),
 		Array(100,-1,2450000,true,true)
 	);

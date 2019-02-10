@@ -560,6 +560,9 @@ public class MapleStatEffect implements Serializable {
                     ret.statups.put(MapleBuffStatus.ABNORMAL_STATUS_R, 30);
                     //          ret.statups.put(MapleBuffStatus., 30);
                     break;
+                case 22181000:
+                    ret.statups.put(MapleBuffStatus.ENHANCED_MATK, 10 + ret.x);
+                    break;
 
 //                case 51111004:
 //                    ret.statups.put(MapleBuffStatus.DEFENCE_BOOST_R, 100);
@@ -674,6 +677,7 @@ public class MapleStatEffect implements Serializable {
                 case 5311004:
                 case 5711011:
                 case 5320007:
+                    ret.duration = 90 * 1000;
                     ret.statups.put(MapleBuffStatus.DICE_ROLL, 0);
                     break;
                 case 5120011:
@@ -3082,9 +3086,9 @@ public class MapleStatEffect implements Serializable {
     }
 
     public final int getCooldown(final MapleCharacter chra) {
-        if (chra.isGM()) {
-            return Math.max(0, 0);
-        }
+//        if (chra.isGM()) {
+//            return Math.max(0, 0);
+//        }
         return Math.max(0, (cooldown - chra.getStat().reduceCooltime));
     }
 

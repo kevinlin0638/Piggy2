@@ -297,9 +297,6 @@ public class DamageParse {
                     }
                 }
 
-                if (totDamageToOneMonster > Integer.MAX_VALUE) {
-                    totDamageToOneMonster = Integer.MAX_VALUE;
-                }
                 if (totDamageToOneMonster > 0 || attack.skill == 1221011 || attack.skill == 21120006) {
                     if(attack.skill == 33121005){
                         if(monster.getBuff(MonsterStatus.SHOWDOWN) == null) {
@@ -314,9 +311,9 @@ public class DamageParse {
                         player.handleCardStack();
                     }
                     if (attack.skill != 1221011) {
-                        monster.damage(player, (int) totDamageToOneMonster, true, attack.skill);
+                        monster.damage(player, totDamageToOneMonster, true, attack.skill);
                     } else {
-                        monster.damage(player, (monster.getStats().isBoss() ? 500000 : (int) (monster.getHp() - 1)), true, attack.skill);
+                        monster.damage(player, (monster.getStats().isBoss() ? 500000L : (monster.getHp() - 1)), true, attack.skill);
                     }
 
                     //  if (monster.isBuffed(MonsterStatus.WEAPON_DAMAGE_REFLECT)) { //test
@@ -593,14 +590,14 @@ public class DamageParse {
                     return;
                 }
 
-                if (totDamageToOneMonster > Integer.MAX_VALUE) {
-                    totDamageToOneMonster = Integer.MAX_VALUE;
-                } else if (totDamage > Integer.MAX_VALUE) {
-                    totDamage = Integer.MAX_VALUE;
-                }
+//                if (totDamageToOneMonster > Integer.MAX_VALUE) {
+//                    totDamageToOneMonster = Integer.MAX_VALUE;
+//                } else if (totDamage > Integer.MAX_VALUE) {
+//                    totDamage = Integer.MAX_VALUE;
+//                }
 
                 if (totDamageToOneMonster > 0) {
-                    monster.damage(player, (int) totDamageToOneMonster, true, attack.skill);
+                    monster.damage(player, totDamageToOneMonster, true, attack.skill);
                     //  if (monster.isBuffed(MonsterStatus.MAGIC_DAMAGE_REFLECT)) { //test
                     //    player.addHP(-(7000 + Randomizer.nextInt(8000))); //this is what it seems to be?
                     // }
