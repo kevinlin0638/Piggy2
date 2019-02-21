@@ -1359,10 +1359,10 @@ public class PacketHelper {
             mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.HIDDEN_POTENTIAL));
         }
 
-        if (statups.containsKey(MapleBuffStatus.ONYX_WILL)) { // 124
-            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.ONYX_WILL));
-            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.ONYX_WILL));
-        }
+//        if (statups.containsKey(MapleBuffStatus.ONYX_WILL)) { // 124
+//            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.ONYX_WILL));
+//            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.ONYX_WILL));
+//        }
 
         if (statups.containsKey(MapleBuffStatus.BUFF_84)) {
             mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.BUFF_84));
@@ -1390,6 +1390,11 @@ public class PacketHelper {
 //            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.INFILTRATE));
 //            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.INFILTRATE));
 //        }
+
+        if (statups.containsKey(MapleBuffStatus.MECH_CHANGE)) {
+            mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.MECH_CHANGE));
+            mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.MECH_CHANGE));
+        }
 //        //109
         if (statups.containsKey(MapleBuffStatus.AURA)) {
             mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.AURA));

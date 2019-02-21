@@ -702,7 +702,9 @@ public class InventoryHandler {
         if (eqq.getState() == 1 ) {
             List<List<StructItemOption>> pots = new LinkedList<>(ii.getAllPotentialInfo().values());
             int new_state = Math.abs(eqq.getPotential1());
-            if (new_state > 20 || new_state < 17) { // incase overflow
+            if (new_state > 20) { // incase overflow
+                new_state = 20;
+            }else if(new_state < 17){
                 new_state = 17;
             }
 
@@ -801,7 +803,7 @@ public class InventoryHandler {
             FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
         }
     }
-    private static boolean chargeMeso(int new_state, int level, MapleCharacter chr){
+    public static boolean chargeMeso(int new_state, int level, MapleCharacter chr){
         int[] money;
         if(level <= 100){
             money = new int[]{1000, 5000, 10000, 15000};

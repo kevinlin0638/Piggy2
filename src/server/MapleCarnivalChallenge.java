@@ -39,223 +39,223 @@ public class MapleCarnivalChallenge {
 /*     */
             case 0:
 /*  44 */
-                return "Beginner";
+                return "初心者";
 /*     */
             case 1000:
 /*  46 */
-                return "Nobless";
+                return "貴族";
 /*     */
             case 2000:
 /*  48 */
-                return "Legend";
+                return "傳說";
 /*     */
             case 2001:
 /*  50 */
-                return "Evan";
+                return "龍魔導";
 /*     */
             case 3000:
 /*  52 */
-                return "Citizen";
+                return "市民";
 /*     */
             case 100:
 /*  54 */
-                return "Warrior";
+                return "戰士";
 /*     */
             case 110:
 /*  56 */
-                return "Fighter";
+                return "狂戰士";
 /*     */
             case 111:
 /*  58 */
-                return "Crusader";
+                return "十字軍";
 /*     */
             case 112:
 /*  60 */
-                return "Hero";
+                return "英雄";
 /*     */
             case 120:
 /*  62 */
-                return "Page";
+                return "見習騎士";
 /*     */
             case 121:
 /*  64 */
-                return "White Knight";
+                return "騎士";
 /*     */
             case 122:
 /*  66 */
-                return "Paladin";
+                return "聖騎士";
 /*     */
             case 130:
 /*  68 */
-                return "Spearman";
+                return "槍騎兵";
 /*     */
             case 131:
 /*  70 */
-                return "Dragon Knight";
+                return "龍騎士";
 /*     */
             case 132:
 /*  72 */
-                return "Dark Knight";
+                return "黑騎士";
 /*     */
             case 200:
 /*  74 */
-                return "Magician";
+                return "法師";
 /*     */
             case 210:
 /*  76 */
-                return "Wizard(Fire,Poison)";
+                return "術師(火,毒)";
 /*     */
             case 211:
 /*  78 */
-                return "Mage(Fire,Poison)";
+                return "魔導士(火,毒)";
 /*     */
             case 212:
 /*  80 */
-                return "Arch Mage(Fire,Poison)";
+                return "大魔導士(火,毒)";
 /*     */
             case 220:
 /*  82 */
-                return "Wizard(Ice,Lightning)";
+                return "術師(冰,雷)";
 /*     */
             case 221:
 /*  84 */
-                return "Mage(Ice,Lightning)";
+                return "魔導士(冰,雷)";
 /*     */
             case 222:
 /*  86 */
-                return "Arch Mage(Ice,Lightning)";
+                return "大魔導士(冰,雷)";
 /*     */
             case 230:
 /*  88 */
-                return "Cleric";
+                return "僧侶";
 /*     */
             case 231:
 /*  90 */
-                return "Priest";
+                return "祭司";
 /*     */
             case 232:
 /*  92 */
-                return "Bishop";
+                return "主教";
 /*     */
             case 300:
 /*  94 */
-                return "Archer";
+                return "弓箭手";
 /*     */
             case 310:
 /*  96 */
-                return "Hunter";
+                return "獵人";
 /*     */
             case 311:
 /*  98 */
-                return "Ranger";
+                return "遊俠";
 /*     */
             case 312:
 /* 100 */
-                return "Bowmaster";
+                return "箭神";
 /*     */
             case 320:
 /* 102 */
-                return "Crossbow man";
+                return "弩弓手";
 /*     */
             case 321:
 /* 104 */
-                return "Sniper";
+                return "狙擊手";
 /*     */
             case 322:
 /* 106 */
-                return "Crossbow Master";
+                return "神射手";
 /*     */
             case 400:
 /* 108 */
-                return "Rogue";
+                return "盜賊";
 /*     */
             case 410:
 /* 110 */
-                return "Assassin";
+                return "刺客";
 /*     */
             case 411:
 /* 112 */
-                return "Hermit";
+                return "暗殺者";
 /*     */
             case 412:
 /* 114 */
-                return "Night Lord";
+                return "夜使者";
 /*     */
             case 420:
 /* 116 */
-                return "Bandit";
+                return "俠盜";
 /*     */
             case 421:
 /* 118 */
-                return "Chief Bandit";
+                return "神偷";
 /*     */
             case 422:
 /* 120 */
-                return "Shadower";
+                return "暗影神偷";
 /*     */
             case 430:
 /* 122 */
-                return "Blade Recruit";
+                return "盜賊(影武)";
 /*     */
             case 431:
 /* 124 */
-                return "Blade Acolyte";
+                return "下忍";
 /*     */
             case 432:
 /* 126 */
-                return "Blade Specialist";
+                return "中忍";
 /*     */
             case 433:
 /* 128 */
-                return "Blade Lord";
+                return "上忍";
 /*     */
             case 434:
 /* 130 */
-                return "Blade Master";
+                return "影武者";
 /*     */
             case 500:
 /* 132 */
-                return "Pirate";
+                return "海盜";
 /*     */
             case 510:
 /* 134 */
-                return "Brawler";
+                return "打手";
 /*     */
             case 511:
 /* 136 */
-                return "Marauder";
+                return "格鬥手";
 /*     */
             case 512:
 /* 138 */
-                return "Buccaneer";
+                return "拳霸";
 /*     */
             case 520:
 /* 140 */
-                return "Gunslinger";
+                return "槍手";
 /*     */
             case 521:
 /* 142 */
-                return "Outlaw";
+                return "神射手";
 /*     */
             case 522:
 /* 144 */
-                return "Corsair";
+                return "槍神";
 /*     */
             case 501:
 /* 146 */
-                return "Pirate (Cannoneer)";
+                return "海盜 (重砲手)";
 /*     */
             case 530:
 /* 148 */
-                return "Cannoneer";
+                return "重砲手二轉";
 /*     */
             case 531:
 /* 150 */
-                return "Cannon Blaster";
+                return "重砲手三轉";
 /*     */
             case 532:
 /* 152 */
-                return "Cannon Master";
+                return "重砲手四轉";
 /*     */
             case 1100:
 /*     */
@@ -265,7 +265,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 1112:
 /* 157 */
-                return "Soul Master";
+                return "聖魂騎士r";
 /*     */
             case 1200:
 /*     */
@@ -275,7 +275,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 1212:
 /* 162 */
-                return "Flame Wizard";
+                return "烈焰巫師";
 /*     */
             case 1300:
 /*     */
@@ -285,7 +285,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 1312:
 /* 167 */
-                return "Wind Breaker";
+                return "破風使者";
 /*     */
             case 1400:
 /*     */
@@ -295,7 +295,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 1412:
 /* 172 */
-                return "Night Walker";
+                return "暗夜行者";
 /*     */
             case 1500:
 /*     */
@@ -305,7 +305,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 1512:
 /* 177 */
-                return "Striker";
+                return "閃雷悍將";
 /*     */
             case 2100:
 /*     */
@@ -315,7 +315,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 2112:
 /* 182 */
-                return "Aran";
+                return "狂狼勇士";
 /*     */
             case 2200:
 /*     */
@@ -337,7 +337,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 2218:
 /* 193 */
-                return "Evan";
+                return "龍魔導";
 /*     */
             case 2002:
 /*     */
@@ -349,7 +349,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 2312:
 /* 199 */
-                return "Mercedes";
+                return "精靈遊俠";
 /*     */
             case 3001:
 /*     */
@@ -361,7 +361,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 3112:
 /* 205 */
-                return "Demon Slayer";
+                return "惡魔殺手";
 /*     */
             case 3200:
 /*     */
@@ -371,7 +371,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 3212:
 /* 210 */
-                return "Battle Mage";
+                return "煉獄巫師";
 /*     */
             case 3300:
 /*     */
@@ -381,7 +381,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 3312:
 /* 215 */
-                return "Wild Hunter";
+                return "狂豹獵人";
 /*     */
             case 3500:
 /*     */
@@ -391,11 +391,11 @@ public class MapleCarnivalChallenge {
 /*     */
             case 3512:
 /* 220 */
-                return "Mechanic";
+                return "機甲戰神";
 /*     */
             case 2003:
 /* 222 */
-                return "Miser";
+                return "???";
 /*     */
             case 2400:
 /*     */
@@ -405,7 +405,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 2412:
 /* 227 */
-                return "Phantom";
+                return "幻影";
 /*     */
             case 508:
 /*     */
@@ -415,7 +415,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 572:
 /* 232 */
-                return "Jett";
+                return "傑特";
             case 5000:
 /*     */
             case 5100:
@@ -425,7 +425,7 @@ public class MapleCarnivalChallenge {
 /*     */
             case 5112:
 /* 232 */
-                return "Mihile";
+                return "米哈逸";
 /*     */
             case 900:
 /* 234 */

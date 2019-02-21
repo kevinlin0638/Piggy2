@@ -4,7 +4,7 @@
 	Description: 		Zakum battle starter
 */
 var status = 0;
-var boss_times = 3;
+var boss_times = 10;
 var boss_hard_times = 2;
 var event_t = "炎魔次數";
 var event_ht = "渾沌炎魔次數";

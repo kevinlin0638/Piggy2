@@ -2203,7 +2203,6 @@ public class CField {
 
     public static byte[] spawnReactor(MapleReactor reactor) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-
         mplew.writeShort(SendPacketOpcode.REACTOR_SPAWN.getValue());
         mplew.writeInt(reactor.getObjectId());
         mplew.writeInt(reactor.getReactorId());

@@ -329,6 +329,15 @@ public class World {
                 chr.getClient().sendPacket(CField.skillCooldown(skillId, 0));
             });
         }
+        if (System.currentTimeMillis() - chr.getOnline_time() > 30 * 60 * 1000)
+            chr.finishDailyQuest(1);
+        if (System.currentTimeMillis() - chr.getOnline_time() > 60 * 60 * 1000)
+            chr.finishDailyQuest(2);
+        if (System.currentTimeMillis() - chr.getOnline_time() > 90 * 60 * 1000)
+            chr.finishDailyQuest(3);
+        if (System.currentTimeMillis() - chr.getOnline_time() > 120 * 60 * 1000)
+            chr.finishDailyQuest(4);
+
         if (chr.isAlive()) {
             if (chr.getJob() == 131 || chr.getJob() == 132) {
                 if (chr.canBlood(now)) {

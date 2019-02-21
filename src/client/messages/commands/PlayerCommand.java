@@ -59,14 +59,16 @@ public class PlayerCommand {
             NPCScriptManager.getInstance().dispose(c);
             c.sendPacket(CWvsContext.enableActions());
             String s = "";
-            if(c.getPlayer().getLevel() < 250) {
-                s = c.getPlayer().getExp() + "(" + Math.round(Long.valueOf(c.getPlayer().getExp()).floatValue() / GameConstants.getExpNeededForLevel(c.getPlayer().getLevel()) * 100) + "%)";
+            if(c.getPlayer().getLevel() < 200) {
+                s = c.getPlayer().getExp() + "/" + GameConstants.getExpNeededForLevel(c.getPlayer().getLevel()) +  "(" + Math.floor(Long.valueOf(c.getPlayer().getExp()).doubleValue() / Integer.valueOf(GameConstants.getExpNeededForLevel(c.getPlayer().getLevel())).doubleValue() * 1000) / 10 + "%)";
+            }else{
+                s = c.getPlayer().getPrimexe() + "/" + GameConstants.getExpNeededForHighLevel(c.getPlayer().getLevel()) + "(" + Math.floor(Long.valueOf(c.getPlayer().getPrimexe()).doubleValue() / Long.valueOf(GameConstants.getExpNeededForHighLevel(c.getPlayer().getLevel())).doubleValue() * 1000) / 10 + "%)";
             }
-//            long time = System.currentTimeMillis() - c.getPlayer().getOnline_time();
-//            String ss = (time / (1000 * 60 * 60)) + " 小時 " +  ((time % (1000 * 60 * 60)) / (1000 * 60)) + " 分鐘 " + (((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000) + " 秒";
+            long time = System.currentTimeMillis() - c.getPlayer().getOnline_time();
+            String ss = (time / (1000 * 60 * 60)) + " 小時 " +  ((time % (1000 * 60 * 60)) / (1000 * 60)) + " 分鐘 " + (((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000) + " 秒";
             if(c.getPlayer().isAdmin())
                 c.getPlayer().dropMessage(5, "目前地圖 " + c.getPlayer().getMap().getId() + "座標 (" + String.valueOf(c.getPlayer().getPosition().x) + " , " + String.valueOf(c.getPlayer().getPosition().y) + ")");
-//            c.getPlayer().showInfo("指令", true, "解卡成功。");
+            c.getPlayer().showInfo("指令", true, "解卡成功。");
             c.getPlayer().dropMessage(5, "當前時間是" + FileoutputUtil.CurrentReadable_Time() + " GMT+8 ");
             c.getPlayer().dropMessage(5, "角色資訊 物理攻擊 : " + c.getPlayer().getStat().getTotalWatk() + "||魔法攻擊 : " + c.getPlayer().getStat().getTotalMagic() + "||");
             c.getPlayer().dropMessage(5, "力量 : " + c.getPlayer().getStat().getTotalStr() +
@@ -75,6 +77,7 @@ public class PlayerCommand {
             c.getPlayer().dropMessage(5, "掉寶倍率 " + (Math.round(c.getPlayer().getDropMod()) * 100) * Math.round(c.getPlayer().getStat().dropBuff / 100.0) + "%");
             c.getPlayer().dropMessage(5, "楓幣倍率 " + Math.round(c.getPlayer().getStat().mesoBuff / 100.0) * 100 + "%");
             c.getPlayer().dropMessage(5, "當前經驗 " + s);
+            c.getPlayer().dropMessage(5, "累積在線 " + ss);
             c.getPlayer().dropMessage(5, "楓點 " + c.getPlayer().getCSPoints(2));
             c.getPlayer().dropMessage(5, "當前延遲 " + c.getPlayer().getClient().getLatency() + " 毫秒");
 

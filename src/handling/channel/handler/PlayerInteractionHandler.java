@@ -59,11 +59,12 @@ public class PlayerInteractionHandler {
         byte a = slea.readByte();
         final Interaction action = Interaction.getByAction(a);
         if (chr == null || action == null) {
-            System.out.println("null interaction: " + a);
+            if(ServerConstants.DEBUG)
+                System.out.println("null interaction: " + a);
             return;
         }
         c.getPlayer().setScrolledPosition((short) 0);
-        System.out.println("action: " + a);
+//        System.out.println("action: " + a);
         switch (action) {
             case CREATE: {
                 if (chr.getPlayerShop() != null || c.getChannelServer().isShutdown() || chr.hasBlockedInventory()) {

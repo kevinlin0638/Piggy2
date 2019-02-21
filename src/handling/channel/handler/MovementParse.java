@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package handling.channel.handler;
 
+import constants.ServerConstants;
 import server.maps.AnimatedMapleMapObject;
 import server.movement.*;
 import tools.FileoutputUtil;
@@ -178,7 +179,8 @@ public class MovementParse {
                     break;
                 }
                 default:
-                    System.out.println("Kind movement: " + kind + ", Remaining : " + (numCommands - res.size()) + " New type of movement ID : " + command + ", packet : " + lea.toString(true));
+                    if(ServerConstants.DEBUG)
+                        System.out.println("Kind movement: " + kind + ", Remaining : " + (numCommands - res.size()) + " New type of movement ID : " + command + ", packet : " + lea.toString(true));
                     FileoutputUtil.log(FileoutputUtil.Movement_Log, "Kind movement: " + kind + ", Remaining : " + (numCommands - res.size()) + " New type of movement ID : " + command + ", packet : " + lea.toString(true));
                     return null;
             }

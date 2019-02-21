@@ -106,6 +106,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public transient MapleAndroid android;
     public EnumMap<MapleTraitType, MapleTrait> traits;
     private Timestamp createDate; //角色创建的时间
+
+    private long primexe;
     /*Start of Custom Feature*/
  /*All custom shit declare here*/
 
@@ -122,7 +124,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public int apprentice = 0; // apprentice ID for master
     public int pvpVictim = 0; // store victim id's for each character
     public long dojoStartTime;
-    public long dojoMapEndTime, last_vac = 0, dojo_time = 0;
+    public long dojoMapEndTime, last_vac = 0, dojo_time = 0, online_time;
     public int[] jqmaps = {
         //Official AutoJQ's:
         280020000, // zakum
@@ -502,6 +504,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.accountid = client.getAccID();
         ret.buddylist = new BuddyList(232);
         ret.exp = 0;
+        ret.primexe = 0;
         ret.stats.str = 4;
         ret.stats.dex = 4;
         ret.stats.int_ = 4;
@@ -547,6 +550,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.fame = ct.fame;
 
         ret.CRand = new PlayerRandomStream();
+        ret.online_time = ct.online_time;
 
         ret.stats.str = ct.str;
         ret.stats.dex = ct.dex;
@@ -560,6 +564,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.chalktext = ct.chalkboard;
         ret.gmLevel = ct.gmLevel;
         ret.exp = ct.exp;
+        ret.primexe = ct.primexe;
         ret.hpApUsed = ct.hpApUsed;
         ret.remainingSp = ct.remainingSp;
         ret.remainingAp = ct.remainingAp;
@@ -721,6 +726,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         final MapleCharacter ret = new MapleCharacter(channelServer);
         ret.client = client;
         ret.id = charId;
+        ret.online_time = System.currentTimeMillis();
 
         Connection con = DatabaseConnection.getConnection();
         PreparedStatement ps = null;
@@ -751,6 +757,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ret.job = rs.getShort("job");
             ret.gmLevel = rs.getByte("gm");
             ret.exp = rs.getInt("exp");
+            ret.primexe = rs.getLong("primexe");
             ret.hpApUsed = rs.getShort("hpApUsed");
             final String[] sp = rs.getString("sp").split(",");
             for (int i = 0; i < ret.remainingSp.length; i++) {
@@ -909,6 +916,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 rs = ps.executeQuery();
                 if (rs.next()) {
                     ret.getClient().setAccountName(rs.getString("name"));
+                    ret.getClient().setEmail(rs.getString("email"));
                     ret.nxcredit = rs.getInt("nxcredit");
                     ret.maplepoints = rs.getInt("mPoints");
                     ret.nxprepaid = rs.getInt("nxprepaid");
@@ -1559,7 +1567,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         try {
             con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
             con.setAutoCommit(false);
-            ps = con.prepareStatement("UPDATE characters SET level = ?, fame = ?, str = ?, dex = ?, luk = ?, `int` = ?, exp = ?, hp = ?, mp = ?, maxhp = ?, maxmp = ?, sp = ?, ap = ?, gm = ?, skincolor = ?, gender = ?, job = ?, hair = ?, face = ?, demonMarking = ?, map = ?, meso = ?, hpApUsed = ?, spawnpoint = ?, party = ?, buddyCapacity = ?, pets = ?, subcategory = ?, marriageId = ?, currentrep = ?, totalrep = ?, gachexp = ?, fatigue = ?, charm = ?, charisma = ?, craft = ?, insight = ?, sense = ?, will = ?, totalwins = ?, totallosses = ?, pvpExp = ?, pvpPoints = ?, reborns = ?, apstorage = ?, msipoints = ?, muted = ?, unmutetime = ?, dgm = ?, honourExp = ?, honourLevel = ?, gml = ?, noacc = ?, location = ?, birthday = ?, found = ?, todo = ?, occupationId = ?, occupationExp = ?, occupationLevel = ?, charToggle = ?, jqlevel = ?, jqexp = ?, pvpKills = ?, pvpDeaths = ?, fametoggle = ?, dps = ?, autoap = ?, autotoken = ?, elf = ?, name = ? WHERE id = ?", DatabaseConnection.RETURN_GENERATED_KEYS);
+            ps = con.prepareStatement("UPDATE characters SET level = ?, fame = ?, str = ?, dex = ?, luk = ?, `int` = ?, exp = ?, hp = ?, mp = ?, maxhp = ?, maxmp = ?, sp = ?, ap = ?, gm = ?, skincolor = ?, gender = ?, job = ?, hair = ?, face = ?, demonMarking = ?, map = ?, meso = ?, hpApUsed = ?, spawnpoint = ?, party = ?, buddyCapacity = ?, pets = ?, subcategory = ?, marriageId = ?, currentrep = ?, totalrep = ?, gachexp = ?, fatigue = ?, charm = ?, charisma = ?, craft = ?, insight = ?, sense = ?, will = ?, totalwins = ?, totallosses = ?, pvpExp = ?, pvpPoints = ?, reborns = ?, apstorage = ?, msipoints = ?, muted = ?, unmutetime = ?, dgm = ?, honourExp = ?, honourLevel = ?, gml = ?, noacc = ?, location = ?, birthday = ?, found = ?, todo = ?, occupationId = ?, occupationExp = ?, occupationLevel = ?, charToggle = ?, jqlevel = ?, jqexp = ?, pvpKills = ?, pvpDeaths = ?, fametoggle = ?, dps = ?, autoap = ?, autotoken = ?, elf = ?, name = ?, primexe = ? WHERE id = ?", DatabaseConnection.RETURN_GENERATED_KEYS);
             ps.setInt(1, level);
             ps.setInt(2, fame);
             ps.setShort(3, stats.getStr());
@@ -1663,12 +1671,24 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ps.setInt(69, autoToken ? 1 : 0); // delete
             ps.setInt(70, elf ? 1 : 0); // delete
             ps.setString(71, name);
-            ps.setInt(72, id);
+            ps.setLong(72, primexe);
+            ps.setInt(73, id);
             if (ps.executeUpdate() < 1) {
                 ps.close();
                 throw new DatabaseException("Character not in database (" + id + ")");
             }
             ps.close();
+        }catch (SQLException | DatabaseException e) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB Character Table 錯誤") + e);
+                try {
+                    con.rollback();
+                } catch (SQLException ex) {
+                    FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                    System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB Character Table 錯誤 開始回朔") + e);
+                }
+        }
+        try{
             if (changed_skillmacros) {
                 deleteWhereCharacterId(con, "DELETE FROM skillmacros WHERE characterid = ?");
                 for (int i = 0; i < 5; i++) {
@@ -1687,7 +1707,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     }
                 }
             }
-
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB skillmacros Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB skillmacros Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             if (innerskill_changed) {
                 deleteWhereCharacterId(con, "DELETE FROM inner_ability_skills WHERE player_id = ?");
                 for (int i = 0; i < 3; i++) {
@@ -1704,9 +1734,29 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     }
                 }
             }
-
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB inner_ability_skills Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB inner_ability_skills Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             saveInventory(con);
-
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB invs Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB invs Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             if (changed_questinfo) {
                 deleteWhereCharacterId(con, "DELETE FROM questinfo WHERE characterid = ?");
                 ps = con.prepareStatement("INSERT INTO questinfo (`characterid`, `quest`, `customData`) VALUES (?, ?, ?)");
@@ -1718,7 +1768,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
                 ps.close();
             }
-
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB questinfo Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB questinfo Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             deleteWhereCharacterId(con, "DELETE FROM queststatus WHERE characterid = ?");
             ps = con.prepareStatement("INSERT INTO queststatus (`queststatusid`, `characterid`, `quest`, `status`, `time`, `forfeited`, `customData`) VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)", DatabaseConnection.RETURN_GENERATED_KEYS);
             pse = con.prepareStatement("INSERT INTO queststatusmobs VALUES (DEFAULT, ?, ?, ?)");
@@ -1744,7 +1804,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
             ps.close();
             pse.close();
-
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB queststatus/queststatusmobs Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB queststatus/queststatusmobs Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             if (changed_skills) {
                 deleteWhereCharacterId(con, "DELETE FROM skills WHERE characterid = ?");
                 ps = con.prepareStatement("INSERT INTO skills (characterid, skillid, skilllevel, masterlevel, expiration) VALUES (?, ?, ?, ?, ?)");
@@ -1761,7 +1831,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
                 ps.close();
             }
-
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB skills Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB skills Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             if (innerskill_changed) {
                 deleteWhereCharacterId(con, "DELETE FROM inner_ability_skills WHERE player_id = ?");
                 for (int i = 0; i < 3; i++) {
@@ -1778,7 +1858,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     }
                 }
             }
-
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB inner_ability_skills Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB inner_ability_skills Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             List<MapleCoolDownValueHolder> cd = getCooldowns();
             if (dc && cd.size() > 0) {
                 ps = con.prepareStatement("INSERT INTO skills_cooldowns (charid, SkillID, StartTime, length) VALUES (?, ?, ?, ?)");
@@ -1791,7 +1881,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
                 ps.close();
             }
-
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB skills_cooldowns Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB skills_cooldowns Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             if (changed_savedlocations) {
                 deleteWhereCharacterId(con, "DELETE FROM savedlocations WHERE characterid = ?");
                 ps = con.prepareStatement("INSERT INTO savedlocations (characterid, `locationtype`, `map`) VALUES (?, ?, ?)");
@@ -1805,6 +1905,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
                 ps.close();
             }
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB savedlocations Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB savedlocations Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
 
             if (changed_reports) {
                 deleteWhereCharacterId(con, "DELETE FROM reports WHERE characterid = ?");
@@ -1817,7 +1928,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
                 ps.close();
             }
-
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB reports Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB reports Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             if (buddylist.isChanged()) {
                 deleteWhereCharacterId(con, "DELETE FROM buddies WHERE characterid = ?");
                 ps = con.prepareStatement("INSERT INTO buddies (characterid, `buddyid`, `pending`) VALUES (?, ?, ?)");
@@ -1830,28 +1951,71 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ps.close();
                 buddylist.setChanged(false);
             }
-
-            ps = con.prepareStatement("UPDATE accounts SET `nxcredit` = ?, `mPoints` = ?, `nxprepaid` = ?,  `points` = ?, `vpoints` = ?, `redeemhn` = ? WHERE id = ?");
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB buddies Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB buddies Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
+            ps = con.prepareStatement("UPDATE accounts SET `nxcredit` = ?, `mPoints` = ?, `nxprepaid` = ?,  `points` = ?, `vpoints` = ?, `redeemhn` = ?, `email` = ? WHERE id = ?");
             ps.setInt(1, nxcredit);
             ps.setInt(2, maplepoints);
             ps.setInt(3, nxprepaid);
             ps.setInt(4, points);
             ps.setInt(5, vpoints);
             ps.setInt(6, redeemhn);
-            ps.setInt(7, client.getAccID());
+            ps.setString(7, client.getEmail());
+            ps.setInt(8, client.getAccID());
             ps.executeUpdate();
             ps.close();
-
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB accounts Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB accounts Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             if (storage != null) {
                 storage.saveToDB();
             }
             if (cs != null) {
                 cs.save();
             }
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB storage/cs Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB storage/cs Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             PlayerNPC.updateByCharId(this);
             keylayout.saveKeys(con, id);
             mount.saveMount(con, id);
             monsterbook.saveCards(con, accountid);
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB mount/hotkey/cards/playernpc Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB mount/hotkey/cards/playernpc Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             deleteWhereCharacterId(con, "DELETE FROM familiars WHERE characterid = ?");
             ps = con.prepareStatement("INSERT INTO familiars (characterid, expiry, name, fatigue, vitality, familiar) VALUES (?, ?, ?, ?, ?, ?)");
             ps.setInt(1, id);
@@ -1864,6 +2028,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ps.executeUpdate();
             }
             ps.close();
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB familiars Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB familiars Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             deleteWhereCharacterId(con, "DELETE FROM imps WHERE characterid = ?");
             ps = con.prepareStatement("INSERT INTO imps (characterid, itemid, closeness, fullness, state, level) VALUES (?, ?, ?, ?, ?, ?)");
             ps.setInt(1, id);
@@ -1878,6 +2053,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 }
             }
             ps.close();
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB imps Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB imps Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             if (changed_wishlist) {
                 deleteWhereCharacterId(con, "DELETE FROM wishlist WHERE characterid = ?");
                 for (int i = 0; i < getWishlistSize(); i++) {
@@ -1888,6 +2074,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     ps.close();
                 }
             }
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB wishlist Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB wishlist Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             if (changed_trocklocations) {
                 deleteWhereCharacterId(con, "DELETE FROM trocklocations WHERE characterid = ?");
                 for (int rock : rocks) {
@@ -1900,7 +2097,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     }
                 }
             }
-
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB trocklocations Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB trocklocations Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             ps = con.prepareStatement("SELECT * FROM achievements WHERE accountid = ?");
             ps.setInt(1, accountid);
             rs = ps.executeQuery();
@@ -1924,7 +2131,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 ps.executeUpdate();
             }
             ps.close();
-
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB achievements Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB achievements Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             if (changed_regrocklocations) {
                 deleteWhereCharacterId(con, "DELETE FROM regrocklocations WHERE characterid = ?");
                 for (int regrock : regrocks) {
@@ -1937,6 +2154,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     }
                 }
             }
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB regrocklocations Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB regrocklocations Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             if (changed_hyperrocklocations) {
                 deleteWhereCharacterId(con, "DELETE FROM hyperrocklocations WHERE characterid = ?");
                 for (int hyperrock : hyperrocks) {
@@ -1949,6 +2177,17 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     }
                 }
             }
+        }catch (SQLException | DatabaseException e) {
+            FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB hyperrocklocations Table 錯誤") + e);
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB hyperrocklocations Table 錯誤 開始回朔") + e);
+            }
+        }
+        try{
             if (changed_extendedSlots) {
                 deleteWhereCharacterId(con, "DELETE FROM extendedslots WHERE characterid = ?");
                 for (int i : extendedSlots) {
@@ -1972,14 +2211,14 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             changed_skills = false;
             changed_reports = false;
             con.commit();
-        } catch (SQLException | DatabaseException e) {
+        }catch (SQLException | DatabaseException e) {
             FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
-            System.err.println(MapleClient.getLogMessage(this, "[charsave] Error saving character data") + e);
+            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB extendedslots Table 錯誤") + e);
             try {
                 con.rollback();
             } catch (SQLException ex) {
                 FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
-                System.err.println(MapleClient.getLogMessage(this, "[charsave] Error Rolling Back") + e);
+                System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB extendedslots Table 錯誤 開始回朔") + e);
             }
         } finally {
             try {
@@ -2251,6 +2490,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public final Map<MapleQuest, MapleQuestStatus> getQuest_Map() {
         return quests;
+    }
+
+    public long getOnline_time() {
+        return online_time;
     }
 
     public Integer getBuffedValue(MapleBuffStatus effect) {
@@ -3392,6 +3635,14 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         this.exp = amount;
     }
 
+    public long getPrimexe() {
+        return primexe;
+    }
+
+    public void setPrimexe(long primexe) {
+        this.primexe = primexe;
+    }
+
     public int getRemainingAp() {
         return remainingAp;
     }
@@ -3519,6 +3770,20 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 psu.setInt(4, type);
                 psu.executeUpdate();
                 psu.close();
+            }
+            if(eventId.equals("領獎帳號註冊")) {
+                ps = con.prepareStatement("SELECT * FROM giftsender WHERE account = ? AND GiftName = ?");
+                ps.setInt(1, getAccountID());
+                ps.setString(2, eventId);
+                rs = ps.executeQuery();
+                while(rs.next()){
+                    String fbn = rs.getString("FBName");
+                    if(fbn == null || fbn.equals("")){
+                        continue;
+                    }
+                    getClient().setEmail(fbn);
+                    break;
+                }
             }
             rs.close();
             ps.close();
@@ -4918,50 +5183,40 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void gainExp(int total, final boolean show, final boolean inChat, final boolean white) {
-        int[] codex_levels = {15, 30, 45, 60, 75, 90, 105};
-        for (int i : codex_levels) {
-            if (getLevel() == i) {
-                setLevel((short) (getLevel() + 3));
-            }
-        }
-        /*if (getLevel() == 15) {
-         setLevel((short) 18);
-         } else if (getLevel() == 30) {
-         setLevel((short) 33);
-         } else if (getLevel() == 45) {
-         setLevel((short) 48);
-         } else if (getLevel() == 60) {
-         setLevel((short) 63);
-         } else if (getLevel() == 75) {
-         setLevel((short) 78);
-         } else if (getLevel() == 90) {
-         setLevel((short) 93);
-         } else if (getLevel() == 105) {
-         setLevel((short) 108);
-         }
-         *
-         */
         boolean leveled = false;
         if (level < 255) {
-            if ((long) this.exp + (long) total > (long) Integer.MAX_VALUE) {
-                total = (int)((long) this.exp + (long) total - (long) Integer.MAX_VALUE);
-                levelUp();
-            }
-            if (show && total > 0) {
-                client.sendPacket(InfoPacket.GainEXP_Others(total, inChat, white));
-            }
-            exp += (total);
-            updateSingleStat(MapleStat.EXP, this.exp);
-            if (gmLevel > -1) {
-                while (exp >= GameConstants.getExpNeededForLevel(level)) {
-                    levelUp();
-                    leveled = true;
-                }
-                if (total > 0) {
-                    familyRep(getExp(), GameConstants.getExpNeededForLevel(level), leveled);
-                }
-            }
 
+            if (level >= 200) {
+                long needhigh = GameConstants.getExpNeededForHighLevel(level);
+                if (primexe + total >= needhigh) {
+                    if(!checkAchievement(level))
+                        return;
+                    primexe += total;
+                    levelUp();
+                } else {
+                    primexe += total;
+                    exp = 0;
+                }
+            } else {
+                if ((long) this.exp + (long) total > (long) Integer.MAX_VALUE) {
+                    total = (int) ((long) this.exp + (long) total - (long) Integer.MAX_VALUE);
+                    levelUp();
+                }
+                if (show && total > 0) {
+                    client.sendPacket(InfoPacket.GainEXP_Others(total, inChat, white));
+                }
+                exp += (total);
+                updateSingleStat(MapleStat.EXP, this.exp);
+                if (gmLevel > -1) {
+                    while (exp >= GameConstants.getExpNeededForLevel(level)) {
+                        levelUp();
+                        leveled = true;
+                    }
+                    if (total > 0) {
+                        familyRep(getExp(), GameConstants.getExpNeededForLevel(level), leveled);
+                    }
+                }
+            }
         }
     }
 
@@ -5001,33 +5256,42 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         //   stats.checkEquipLevels(this, total); //gms like
         // }
         int needed = getNeededExp();
-        if ((level >= 255 || (GameConstants.isKOC(job) && level >= 255))) {// && !isIntern()) {
+        long need_high = GameConstants.getExpNeededForHighLevel(level);
+        if (level >= 255 ) {
             setExp(0);
-            //if (exp + total > needed) {
-            //    setExp(needed);
-            //} else {
-            //    exp += total;
-            //}
         } else {
-            boolean leveled = false;
-            if ((long) this.exp + (long) total > (long) Integer.MAX_VALUE) {
-                int gainFirst = GameConstants.getExpNeededForLevel(level) - this.exp;
-                total -= gainFirst + 1;
-                this.gainExp(gainFirst + 1, false, true, white);
-            }
-            //   if (show && gain > 0) {
-            //     client.sendPacket(InfoPacket.GainEXP_Monster(gain, white, partyinc, Class_Bonus_EXP, Equipment_Bonus_EXP, Premium_Bonus_EXP));
-            // }
-            this.exp += total;
-            updateSingleStat(MapleStat.EXP, this.exp);
-            if (gmLevel > -1) {
-                while (exp >= GameConstants.getExpNeededForLevel(level)) {
+            if (level >= 200) {
+                if (primexe + total > need_high) {
+                    if(!checkAchievement(level))
+                        return;
+                    primexe += total;
                     levelUp();
-                    leveled = true;
+                    exp = 0;
+                } else {
+                    primexe += total;
+                    exp = 0;
                 }
-            }
-            if (total > 0) {
-                familyRep(prevexp, needed, leveled);
+            } else {
+                boolean leveled = false;
+                if ((long) this.exp + (long) total > (long) Integer.MAX_VALUE) {
+                    int gainFirst = GameConstants.getExpNeededForLevel(level) - this.exp;
+                    total -= gainFirst + 1;
+                    this.gainExp(gainFirst + 1, false, true, white);
+                }
+                //   if (show && gain > 0) {
+                //     client.sendPacket(InfoPacket.GainEXP_Monster(gain, white, partyinc, Class_Bonus_EXP, Equipment_Bonus_EXP, Premium_Bonus_EXP));
+                // }
+                this.exp += total;
+                updateSingleStat(MapleStat.EXP, this.exp);
+                if (gmLevel > -1) {
+                    while (exp >= GameConstants.getExpNeededForLevel(level)) {
+                        levelUp();
+                        leveled = true;
+                    }
+                }
+                if (total > 0) {
+                    familyRep(prevexp, needed, leveled);
+                }
             }
         }
         if (gain != 0) {
@@ -6092,9 +6356,14 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             maxmp += Randomizer.rand(50, 100);
         }
         //maxmp += stats.getTotalInt() / 10;
-        exp -= GameConstants.getExpNeededForLevel(level);
-        if (exp < 0) {
+        if (level < 200){
+            exp -= GameConstants.getExpNeededForLevel(level);
+            if (exp < 0) {
+                exp = 0;
+            }
+        }else{
             exp = 0;
+            primexe = 0;
         }
         level += 1;
         int level = getLevel();
@@ -8624,6 +8893,25 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public void silenClearAllDiseaseBuffs() {
         diseases.clear();
+    }
+
+    private boolean checkAchievement(int level) {
+        switch (level) {
+            case 250:
+                return this.finishedAchievements.size() >= 10;
+            case 251:
+                return this.finishedAchievements.size() >= 20;
+            case 252:
+                return this.finishedAchievements.size() >= 30;
+            case 253:
+                return this.finishedAchievements.size() >= 40;
+            case 254:
+                return this.finishedAchievements.size() >= 50;
+            case 255:
+                return false;
+            default:
+                return true;
+        }
     }
 
     public void sendNote(String to, String msg) {

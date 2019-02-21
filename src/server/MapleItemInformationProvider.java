@@ -755,8 +755,8 @@ public class MapleItemInformationProvider {
                         }else if (GameConstants.isEquipScroll(scrollId.getItemId())) {
                             boolean isSucc = true;
                             Pair<Integer, Integer> chanc = (scrollId.getItemId() == 2049300 ? getEnhanceSucceRate(true, nEquip.getEnhance()) : getEnhanceSucceRate(false, nEquip.getEnhance()));
-                            if(chr.getGMLevel() > 4)
-                                chanc = new Pair<Integer, Integer>(0, 100);
+//                            if(chr.getGMLevel() > 4)
+//                                chanc = new Pair<Integer, Integer>(0, 100);
                             if(!ServerConstants.isEnhanceEnable){
                                 chr.dropMessage(1, "裝備強化暫時關閉");
                                 break;
@@ -772,7 +772,7 @@ public class MapleItemInformationProvider {
                                 chr.modifyCSPoints(2, -1 * getEnhanceFee(true, nEquip.getEnhance()), true);
                                 chr.gainMeso(-1 * getEnhanceFee(false, nEquip.getEnhance()), false, true);
                             }
-                            if (Randomizer.nextInt(100) > chanc.getLeft()) {
+                            if (Randomizer.nextInt(1000000) > chanc.getLeft() * 10000) {
                                 if(Randomizer.nextInt(100) < chanc.getRight())
                                     return null; //destroyed, nib
                                 else

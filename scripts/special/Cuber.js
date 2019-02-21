@@ -140,7 +140,7 @@ function action(mode, type, selection) {
 						var itemLevelStr = "";
 						if (itemLevel != 0)
 							itemLevelStr = " (+" + itemLevel + ")";
-						text += "\t" + itemSeq + ": #r[" + owner + "]#n Lv." + cm.getReqLevel(item.getItemId()) + " #d#e" + cm.getItemName(item.getItemId()) + "#n" + itemLevelStr + "\r\n";
+						text += "\t" + itemSeq + ": #r#n Lv." + cm.getReqLevel(item.getItemId()) + " #d#e" + cm.getItemName(item.getItemId()) + "#n" + itemLevelStr + "\r\n";
 						switch (cm.getEquipPotState(selectedList[0][0])){
 							case 17 :
 								text += "#b#e";
@@ -241,6 +241,7 @@ function action(mode, type, selection) {
 						
 						status = 0;
 						cm.sendSimple(text);
+						//cm.getPlayer().dropMessage(1, "衝到神裝");
                 }
             } else {
                 //選擇裝備过程
@@ -393,7 +394,7 @@ function getCost() {
 	// var state_rate = (cm.getEquipPotState(selectedList[0][1]) <= 16)?1:(cm.getEquipPotState(selectedList[0][1]) - 16)
     // var baseCost = (itemTotalReqLevel) + cm.getReqLevel(selectedList[0][1]) * state_rate * 2;
     // return baseCost*5;
-    return 5000;
+    return cm.getCubeCharge(selectedList[0][1], cm.getEquipPotState(selectedList[0][0]));
 }
 //獲取裝備品级
 function getGrade(equipPosition) {

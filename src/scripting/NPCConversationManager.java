@@ -2293,6 +2293,9 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     public final List<Integer> getAllPotentialInfo() {
         List<Integer> list = new ArrayList<>(MapleItemInformationProvider.getInstance().getAllPotentialInfo().keySet());
         Collections.sort(list);
+        for(Integer i : list){
+            System.out.println("ID: " + i + " 能力: " + MapleItemInformationProvider.getInstance().resolvePotentialId(1302333, i));
+        }
         return list;
     }
 
@@ -2317,9 +2320,24 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
     }
 
+    public int getCubeCharge(int itemid, int stage){
+        int[] money;
+        int level = MapleItemInformationProvider.getInstance().getReqLevel(itemid);
+        if(level <= 100){
+            money = new int[]{1000, 5000, 10000, 15000};
+        } else if (level <= 120) {
+            money = new int[]{5000, 10000, 30000, 50000};
+        } else if (level <= 130) {
+            money = new int[]{50000, 100000, 150000, 200000};
+        } else{
+            money = new int[]{50000, 200000, 420000, 550000};
+        }
+        return money[stage - 17];
+    }
+
     public void doCube(int itemid, byte dst,int CubeID){
         byte src = (byte) 127;
-        boolean insight = src == 127;
+        boolean insight = true;
         Item magnify = getPlayer().getInventory(MapleInventoryType.USE).getItem(src);
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         Equip equip = (Equip) getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(dst);
@@ -2330,27 +2348,12 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         c.getSession().writeAndFlush(CWvsContext.InventoryPacket.scrolledItem(cube, MapleInventoryType.EQUIP, equip, false, true, false));
         c.getPlayer().forceReAddItem_NoUpdate(equip, MapleInventoryType.EQUIP);
 
-        int reqLevel = ii.getReqLevel(equip.getItemId()) / 10;
-        final int n3 = (reqLevel >= 20) ? 19 : reqLevel;
         if ((equip.getState() < 17 && equip.getState() > 0) || (equip.getState() < 17 && equip.getState() > 0)) {
-            final boolean isPotAdd = equip.getState() < 17 && equip.getState() > 0;
-            if (insight) {
-                final int meso = 5000;
-                if (getPlayer().getMeso() < meso) {
-                    getPlayer().dropMessage(5, "您沒有足夠的金幣。");
-                    getClient().sendPacket(CWvsContext.enableActions());
-                    return;
-                }
-                getPlayer().gainMeso(-meso, false);
-            }
             final Equip nEquip = InventoryHandler.UseMagnify((byte) equip.getPosition(), c);
             if(nEquip == null)
                 return;
-            getPlayer().getTrait(MapleTrait.MapleTraitType.insight).addExp((insight ? 10 : ((magnify.getItemId() + 2) - 2460000)) * 2, getPlayer());
+            getPlayer().getTrait(MapleTrait.MapleTraitType.insight).addExp(10 * 2, getPlayer());
             getPlayer().getMap().broadcastMessage(CField.showMagnifyingEffect(getPlayer().getId(), equip.getPosition()));
-            if (!insight) {
-                MapleInventoryManipulator.removeFromSlot(getClient(), MapleInventoryType.USE, magnify.getPosition(), (short) 1, false);
-            }
             getPlayer().forceUpdateItem(equip, true);
             if (dst < 0) { //当 dst 小于 就是鉴定装备中的装备 需要重新计算角色的属性
                 getPlayer().equipChanged();
@@ -2712,7 +2715,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
                 eq.setOwner(rs.getString("owner"));
                 eq.setGMLog(String.valueOf(rs.getInt("equipgraveid")));
-                eq.setFlag(rs.getByte("flag"));
+                eq.setFlag(rs.getShort("flag"));
                 eq.setExpiration(rs.getLong("expiredate"));
                 eq.setGiftFrom(rs.getString("sender"));
 
@@ -2834,7 +2837,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
     public boolean isEnhanceItem(short slot){
         Equip equip = (Equip) getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(slot);
-        return equip.getUpgradeSlots() == 0;
+        return equip.getUpgradeSlots() == 0 && ((Equip) MapleItemInformationProvider.getInstance().getEquipById(equip.getItemId())).getUpgradeSlots() != 0;
 
     }
 

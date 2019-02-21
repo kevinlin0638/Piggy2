@@ -13,7 +13,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import io.netty.util.AsciiString;
 import io.netty.util.CharsetUtil;
-import net.sf.json.JSONObject;
+import org.json.*;
 import tools.data.MaplePacketLittleEndianWriter;
 
 import java.io.*;
@@ -118,6 +118,42 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> { 
             } catch (NumberFormatException e) {
                 return;
             }
+        }
+        else if(msg.method() == HttpMethod.POST && msg.uri().substring(1).equalsIgnoreCase("likeparse")) {
+
+
+            String jsonPayload = msg.content().toString(CharsetUtil.UTF_8);
+            JSONObject obj = new JSONObject(msg.content().toString(CharsetUtil.UTF_8));
+//            System.out.println(jsonPayload);
+
+            JSONArray jr = obj.getJSONArray("Data");
+            for(Object jo : jr){
+                JSONObject data = (JSONObject) jo;
+                String FBName = data.getString("fbname");
+                String event = data.getString("title");
+                for(MapleCharacter cl : World.getAllCharacters()){
+                    if(cl.getClient().getEmail().equals(FBName)){
+                        if(cl.getEventCount(event, 1) <= 0){
+                            cl.setEventCount(event, 1);
+                            cl.modifyCSPoints(2, 1000000, true);
+                            cl.dropMessage(1, "獲得FB楓點補助 100 萬");
+                        }
+                    }
+                }
+            }
+
+
+            FullHttpResponse rs = new DefaultFullHttpResponse(HTTP_1_1,
+                    OK,
+                    Unpooled.wrappedBuffer("無此紀錄".getBytes())); // 2
+
+            HttpHeaders heads = rs.headers();
+            //heads.add(HttpHeaderNames.CONTENT_TYPE, contentType + "; charset=UTF-8");
+            heads.add(CONTENT_LENGTH, rs.content().readableBytes()); // 3
+            heads.add(CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+
+            ctx.write(rs);
+            return;
         }
         Connection con = DatabaseConnection.getConnection();
         FullHttpResponse response = null;

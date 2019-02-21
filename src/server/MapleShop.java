@@ -40,8 +40,7 @@ public class MapleShop {
         rechargeableItems.add(2070011);
         rechargeableItems.add(2070012);
         rechargeableItems.add(2070013);
-        rechargeableItems.add(2070016);
-        rechargeableItems.add(2070018);
+        rechargeableItems.add(2070019);
         rechargeableItems.add(2070023);
         rechargeableItems.add(2070024);
         rechargeableItems.add(2330000);
@@ -91,23 +90,23 @@ public class MapleShop {
             ps = con.prepareStatement("SELECT * FROM shopitems WHERE shopid = ? ORDER BY position ASC");
             ps.setInt(1, shopId);
             rs = ps.executeQuery();
-            List<Integer> recharges = new ArrayList<>();
+            Set<Integer> recharges = rechargeableItems;
             while (rs.next()) {
-                if (!ii.itemExists(rs.getInt("itemid"))) {
+                if (!ii.itemExists(rs.getInt("itemid")) || ii.getName(rs.getInt("itemid")).equalsIgnoreCase("")) {
                     continue;
                 }
                 if (GameConstants.isThrowingStar(rs.getInt("itemid")) || GameConstants.isBullet(rs.getInt("itemid"))) {
                     MapleShopItem starItem = new MapleShopItem(rs.getInt("itemid"), rs.getInt("price"), rs.getInt("reqitem"), rs.getInt("reqitemq"), rs.getByte("pointtype"), rs.getInt("category"), rs.getInt("minLevel"), rs.getInt("period"));
                     ret.addItem(starItem);
-                    if (rechargeableItems.contains(starItem.getItemId())) {
-                        recharges.remove(Integer.valueOf(starItem.getItemId()));
+                    if (recharges.contains(starItem.getItemId())) {
+                        recharges.remove(starItem.getItemId());
                     }
                 } else {
                     ret.addItem(new MapleShopItem(rs.getInt("itemid"), rs.getInt("price"), rs.getInt("reqitem"), rs.getInt("reqitemq"), rs.getByte("pointtype"), rs.getInt("category"), rs.getInt("minLevel"), rs.getInt("period")));
                 }
             }
             for (Integer recharge : recharges) {
-                ret.addItem(new MapleShopItem(recharge.intValue(), 0, 0, 0, (byte) 0, 0, 0, 0));
+                ret.addItem(new MapleShopItem(recharge, 0, 0, 0, (byte) 0, 0, 0, 0));
             }
             rs.close();
             ps.close();

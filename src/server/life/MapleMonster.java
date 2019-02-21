@@ -258,7 +258,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         if (!replaced) {
             attackers.add(attacker);
         }
-        final long rDamage = Math.max(0, Math.min(damage, hp));
+        long rDamage = Math.max(0, Math.min(damage, hp));
         attacker.addDamage(from, rDamage, updateAttackTime);
         if (stats.getSelfD() != -1) {
             hp -= rDamage;

@@ -71,6 +71,7 @@ public class MapleClient implements Serializable {
     private transient Channel session;
     private MapleCharacter player;
     private MapleClient ClinetS;
+    private String email = "";
 
     public long lastsmegaa;
     public long lastsmegacomparee;
@@ -399,6 +400,14 @@ public class MapleClient implements Serializable {
             System.err.println("Error while unbanning" + e);
             return -2;
         }
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void sendPacket(byte[] packet) {
@@ -845,7 +854,7 @@ public class MapleClient implements Serializable {
             }
         }
 
-        if(!is_p && (!account.equalsIgnoreCase("kappa") && !account.equalsIgnoreCase("kappa2")))
+        if(!is_p && (!ServerConstants.DEBUG))
             return LoginResponse.SYSTEM_ERROR;
 
         int loginState = getLoginState();

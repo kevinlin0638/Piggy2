@@ -317,7 +317,7 @@ public enum MapleBuffStatus implements WritableLongValueHolder, IBuffStat {
     VIRTUE_EFFECT(176),
     BUFF_176(176),
     BUFF_177(177),
-    BUFF_178(178),
+    CRITICAL_RATE(178),
     NO_SLIP(179),
     FAMILIAR_SHADOW(180),
     BUFF_184(184),

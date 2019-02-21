@@ -178,6 +178,26 @@ public class AdminCommand {
         }
     }
 
+    public static class LevelUp extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            if (c.getPlayer().getLevel() >= 200){
+                c.getPlayer().setPrimexe(GameConstants.getExpNeededForHighLevel(c.getPlayer().getLevel()) - 1);
+                c.getPlayer().setExp(0);
+            }else {
+                c.getPlayer().setExp(GameConstants.getExpNeededForLevel(c.getPlayer().getLevel()) - 1);
+                c.getPlayer().setPrimexe(0);
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!LevelUp - 獲得經驗";
+        }
+    }
+
     public static class EnableEnhance extends AbstractsCommandExecute {
 
         @Override
@@ -775,8 +795,8 @@ public class AdminCommand {
                 } else {
                     item = new client.inventory.Item(itemId, (byte) 0, quantity, (byte) 0);
                 }
-                item.setOwner(c.getPlayer().getName());
                 item.setGMLog(c.getPlayer().getName());
+                c.getPlayer().dropMessage(5, ii.getName(itemId) + "-" + itemId);
 
                 MapleInventoryManipulator.addbyItem(c, item);
             }

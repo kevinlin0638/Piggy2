@@ -97,6 +97,8 @@ public class ReactorActionManager extends AbstractPlayerInteraction {
                 mesoDrop = Randomizer.nextInt(range) + minMeso * getClient().getWorldServer().getMesoRate();
                 reactor.getMap().spawnMesoDrop(mesoDrop, dropPos, reactor, getPlayer(), false, (byte) 0);
             } else {
+                if(!MapleItemInformationProvider.getInstance().itemExists(d.itemId))
+                    continue;
                 Item drop;
                 if (GameConstants.getInventoryType(d.itemId) != MapleInventoryType.EQUIP) {
                     drop = new Item(d.itemId, (byte) 0, (short) 1, (byte) 0);

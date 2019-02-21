@@ -82,6 +82,8 @@ function action(mode, type, selection) {
                     cm.sendNext("冶煉好了。 看到左邊的門了嗎？它就是通往殘暴炎魔祭台的門。 不過你需要 #b#t4001017##k 才能進入裡面。讓我看看有多少人能進入到那個恐怖的地方？");
                     cm.completeQuest(100201);
                     cm.completeQuest(100200);
+					cm.forceCompleteQuest(7000);
+					cm.completeQuest(100203);
                 } else {
                     cm.sendNext("嗯？你確定你有足夠的背包空間嗎？請再檢查一下。");
                 }
@@ -191,6 +193,8 @@ function action(mode, type, selection) {
                         cm.sendNext("冶煉好了。 看到左邊的門了嗎？它就是通往殘暴炎魔祭台的門。 不過你需要 #b#t4001017##k 才能進入裡面。讓我看看有多少人能進入到那個恐怖的地方？");
                         cm.completeQuest(100201);
                         cm.completeQuest(100200);
+						cm.forceCompleteQuest(7000);
+						cm.completeQuest(100203);
                     } else {
                         cm.sendNext("你好像沒有足夠的背包空間，請檢查一下再來。");
                     }

@@ -59,7 +59,7 @@ public class CharacterTransfer implements Externalizable {
             familyid, seniorid, junior1, junior2, currentrep, totalrep, battleshipHP, gachexp, guildContribution, totalWins, totalLosses, buddysize, remainingAp;
     public byte channel, gender, gmLevel, guildrank, alliancerank,
             fairyExp, world, initialSpawnPoint, skinColor, mount_level, mount_Fatigue, subcategory;
-    public long dps, lastfametime, TranferTime, dojo_time;
+    public long dps, lastfametime, TranferTime, dojo_time, online_time;
     public String name, accountname, BlessOfFairy, BlessOfEmpress, chalkboard, tempIP;
     public short level, str, dex, int_, luk, hpApUsed, job, fatigue;
     public Object inventorys, skillmacro, storage, cs;
@@ -75,6 +75,7 @@ public class CharacterTransfer implements Externalizable {
     public List<Item> rebuy = null;
     public Map<Integer, String> InfoQuest;
     public int cardStack;
+    public long primexe;
     /*All custom shit declare here*/
     public int reborns, apstorage, MSIPoints, clanId;
     public boolean muted, autoToken, elf;
@@ -105,6 +106,7 @@ public class CharacterTransfer implements Externalizable {
         this.accountname = chr.getClient().getAccountName();
         this.channel = (byte) chr.getClient().getChannel();
         this.nxcredit = chr.getCSPoints(1);
+        this.online_time = chr.getOnline_time();
         this.MaplePoints = chr.getCSPoints(2);
         this.nxprepaid = chr.getCSPoints(4);
         this.dojo_time = chr.getDojo_time();
@@ -124,6 +126,7 @@ public class CharacterTransfer implements Externalizable {
         this.maxhp = chr.getStat().getMaxHp();
         this.maxmp = chr.getStat().getMaxMp();
         this.exp = chr.getExp();
+        this.primexe = chr.getPrimexe();
         this.hpApUsed = chr.getHpApUsed();
         this.remainingAp = chr.getRemainingAp();
         this.remainingSp = chr.getRemainingSps();

@@ -26,7 +26,7 @@ public class WorldConstants {
             + "HorntailBattle,LudiPQ,KerningPQ,ZakumBattle,MV,MVBattle,DollHouse,Amoria,CWKPQ,BossBalrog_EASY,BossBalrog_NORMAL,PinkBeanBattle,ZakumPQ,ProtectTylus,ChaosHorntail,"
             + "ChaosZakum,Ravana_EASY,Ravana_HARD,Ravana_MED,GuildQuest";
 
-    public static int GLOBAL_EXP_RATE = 5;
+    public static int GLOBAL_EXP_RATE = 10;
     public static int GLOBAL_MESO_RATE = 1;
     public static int GLOBAL_DROP_RATE = 1; // Default: 2
 

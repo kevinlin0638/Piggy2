@@ -18,8 +18,8 @@ function action(mode, type, selection) {
 
     switch (status) {
         case 0: 
-			cm.displayGuildRanks();
-			cm.dispose();
+	    cm.sendOk("第一次");
+            cm.dispose();
             break;
         case 1: //
             cm.dispose();//这是结束脚本，請按照实际情况使用

@@ -647,7 +647,8 @@ public class CharLoginHandler {
         if (complete) {
             /* 243 */
             if ((((Byte) info.getLeft()).byteValue() <= 0) || (((Long) info.getRight()).longValue() <= -2)) {
-                System.out.println("7");
+                if(ServerConstants.DEBUG)
+                    System.out.println("7");
                 /* 244 */
                 c.sendPacket(LoginPacket.partTimeJobRequest(charId, 3, 0, 0, false, false));
                 /* 245 */

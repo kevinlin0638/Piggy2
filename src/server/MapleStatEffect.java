@@ -491,6 +491,9 @@ public class MapleStatEffect implements Serializable {
                 ret.statups.put(MapleBuffStatus.STANCE, 100); //100% :D:D:D
             }
         }
+
+        if(ret.cooldown == 30 || ret.cooldown == 20)
+            ret.cooldown = 0;
         if (ret.skill) { // hack because we can't get from the datafile...
             switch (sourceid) {
                 case 80001079:

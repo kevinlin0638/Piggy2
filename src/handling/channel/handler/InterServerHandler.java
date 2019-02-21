@@ -184,7 +184,7 @@ public class InterServerHandler {
             }
         }
 
-        if(!is_p && (!client.getAccountName().equals("kappa") && !client.getAccountName().equals("kappa2"))) {
+        if(!is_p && (!ServerConstants.DEBUG)) {
             client.getSession().close();
             return;
         }

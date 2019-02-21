@@ -218,7 +218,7 @@ public class DamageParse {
                     } else {
                         if (monsterstats.getOnlyNoramlAttack()) {
                             eachd = attack.skill != 0 ? 0 : Math.min(eachd, (int) maxDamagePerHit);  // Convert to server calculated damage
-                        } else if (!player.isGM()) {
+                        } /*else if (!player.isGM()) {
                             if (Tempest) { // Monster buffed with Tempest
                                 if (eachd > monster.getMobMaxHp()) {
                                     eachd = (int) Math.min(monster.getMobMaxHp(), Integer.MAX_VALUE);
@@ -236,7 +236,7 @@ public class DamageParse {
                                     eachd = (int) (maxDamagePerHit);
                                 }
                             }
-                        }
+                        }*/
                     }
                     if (player == null) { // o_O
                         return;

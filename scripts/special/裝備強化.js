@@ -85,8 +85,6 @@ function action(mode, type, selection) {
                     selectedList[selectedPosition] = Array(selection, newItemList[selection]);
                 //重置标记
                 step = 0;
-                //计算费用
-                cost = getCost();
             }
             var text = "#e┌" + itemIcon + "強化裝備   ┐\t┌  " + cubeIcon + "裝備強化卷   ┐#n\r\n\r\n";
             for (var i = 0; i < 2; i++) {
@@ -130,7 +128,7 @@ function action(mode, type, selection) {
 						
 					}else{
 						item = cm.getInventory(2).getItem(selectedList[key][0]);
-						text += "\r\n\t\t\t\t\t"+ downIcon + "\r\n\r\n\t#k使用卷軸 : #v" + item.getItemId() + "# #b#z" + item.getItemId() + "##k( 剩下 #r" + cm.getItemQuantity(item.getItemId()) + " #k顆 )";
+						text += "\r\n\t\t\t\t\t"+ downIcon + "\r\n\r\n\t#k使用卷軸 : #v" + item.getItemId() + "# #b#z" + item.getItemId() + "##k( 剩下 #r" + cm.getItemQuantity(item.getItemId()) + " #k張 )";
 						var rate = ii.getEnhanceSucceRate(item.getItemId() == 2049300 ?true:false , cm.getInventory(1).getItem(selectedList[0][0]).getEnhance());
 						text += "\r\n#b\t" + startIcon + " 成功率：#r" + rate.left + "%#b 失敗爆裝率：#r" + rate.right + "%";
 						
@@ -200,7 +198,12 @@ function action(mode, type, selection) {
 						var max_star;
 						if(key == 0){
 							item = cm.getInventory(1).getItem(selectedList[key][0]);
-
+							if(item == null)
+							{
+								cm.sendOk("您的裝備已經損毀,請至裝備墳墓回復!");
+								cm.dispose();
+								return;
+							}
 							var itemSeq = "#k#n裝備";
 							var itemLevel = item.getEnhance();
 							var itemLevelStr = "";
@@ -219,8 +222,13 @@ function action(mode, type, selection) {
 							}
 							
 						}else{
-							item = cm.getInventory(2).getItem(selectedList[key][0]);
-							text += "\r\n\t\t\t\t\t"+ downIcon + "\r\n\r\n\t#k使用卷軸 : #v" + item.getItemId() + "# #b#z" + item.getItemId() + "##k( 剩下 #r" + cm.getItemQuantity(item.getItemId()) + " #k顆 )";
+							item = cm.getInventory(2).getItem(selectedList[1][0]);
+							if(item == null)
+							{
+								cm.dispose();
+								return;
+							}
+							text += "\r\n\t\t\t\t\t"+ downIcon + "\r\n\r\n\t#k使用卷軸 : #v" + item.getItemId() + "# #b#z" + item.getItemId() + "##k( 剩下 #r" + cm.getItemQuantity(item.getItemId()) + " #k張 )";
 							var rate = ii.getEnhanceSucceRate(item.getItemId() == 2049300 ?true:false , cm.getInventory(1).getItem(selectedList[0][0]).getEnhance());
 							text += "\r\n#b\t" + startIcon + " 成功率：#r" + rate.left + "%#b 失敗爆裝率：#r" + rate.right + "%";
 							
@@ -375,19 +383,6 @@ function getItemType(itemid) {
             }
             return -1;
     }
-}
-//计算费用
-function getCost() {
-    //裝備的数量*主裝備等级*品级+1
-    var itemTotalReqLevel = 0;
-    for (var i in selectedList) {
-        //java.lang.System.out.println("xx:"+selectedList[i][1]);
-        itemTotalReqLevel += cm.getReqLevel(selectedList[i][1]) * 1;
-    }
-	var eq = cm.getEquip(selectedList[0][1]);
-	var state_rate = (cm.getEquipPotState(selectedList[0][1]) <= 16)?1:(cm.getEquipPotState(selectedList[0][1]) - 16)
-    var baseCost = (itemTotalReqLevel) + cm.getReqLevel(selectedList[0][1]) * state_rate * 2;
-    return baseCost*5;
 }
 //獲取裝備品级
 function getGrade(equipPosition) {

@@ -1306,12 +1306,12 @@ public final class MapleMap {
         try {
             for (MapleMapObject obj : mapobjects.get(MapleMapObjectType.REACTOR).values()) {
                 if(((MapleReactor) obj).getReactorId() < 300000 && ((MapleReactor) obj).getState() == 4) {
-                    if (getId() == 910001005){
-                        ((MapleReactor) obj).setState((byte) 5);
-                        ((MapleReactor) obj).scheduleSetState((byte) 5, (byte) state, 10000L);
+                    if (getId() == 910001003 || getId() == 910001004 || getId() == 910001005 || getId() == 910001006 || getId() == 910001007 || getId() == 910001008){
+                        ((MapleReactor) obj).setState((byte) 3);
+                        ((MapleReactor) obj).scheduleSetState((byte) 3, (byte) state, 10000L);
                     }else {
-                        ((MapleReactor) obj).setState((byte) 5);
-                        ((MapleReactor) obj).scheduleSetState((byte) 5, (byte) state, 60000L);
+                        ((MapleReactor) obj).setState((byte) 3);
+                        ((MapleReactor) obj).scheduleSetState((byte) 3, (byte) state, 60000L);
                     }
                 }
             }
@@ -1708,12 +1708,22 @@ public final class MapleMap {
 
     private void changelevel(MapleMonster monster) {
         if(channel > 10 && (monster.getStats().getLevel() > 10 || monster.getStats().isBoss())){
-            int level = monster.getStats().getLevel();
-            if (level >= 200)
-                level = 250;
-            else
-                level = (short) ((level * 150 / 200) + 100);
-            monster.HellChangeLevel(level, 512, 90);
+            if(!monster.getStats().isBoss()) {
+                int level = monster.getStats().getLevel();
+                if (level >= 200)
+                    level = 250;
+                else
+                    level = (short) ((level * 150 / 200) + 100);
+                monster.HellChangeLevel(level, 512, 90);
+            }else{
+
+                int level = monster.getStats().getLevel();
+                if (level >= 200)
+                    level = 250;
+                else
+                    level = (short) ((level * 150 / 200) + 100);
+                monster.HellChangeLevel(level, 200, 90);
+            }
         }
     }
 

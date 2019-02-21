@@ -2005,7 +2005,7 @@ public class CWvsContext {
             mplew.writeShort(SendPacketOpcode.MODIFY_INVENTORY_ITEM.getValue());
             mplew.write(fromDrop ? 1 : 0);
             mplew.write(1);
-            mplew.write(0);
+            mplew.write(3);
             mplew.write(slot > 100 && type == MapleInventoryType.ETC ? ModifyInventory.Types.REMOVE_IN_BAG : ModifyInventory.Types.REMOVE); //bag
             mplew.write(type.getType());
             mplew.writeShort(slot);
@@ -2462,7 +2462,7 @@ public class CWvsContext {
                 mplew.write(0);
             }
 
-            mplew.writeZeroBytes(50);
+            mplew.writeZeroBytes(100);
             return mplew.getPacket();
         }
 
@@ -3278,7 +3278,7 @@ public class CWvsContext {
             }
             mplew.write(notice == null ? 0 : 1);
             if (notice != null) { //has a notice
-                addThread(mplew, notice);
+                addThread(mplew, notice, true);
             }
             if (threadCount < start) { //seek to the thread before where we start
                 start = 0; //uh, we're trying to start at a place past possible
@@ -3287,16 +3287,19 @@ public class CWvsContext {
             final int pages = Math.min(10, threadCount - start);
             mplew.writeInt(pages);
             for (int i = 0; i < pages; i++) {
-                addThread(mplew, bbs.get(start + i)); //because 0 = notice
+                addThread(mplew, bbs.get(start + i), false); //because 0 = notice
             }
 
             return mplew.getPacket();
         }
 
-        private static void addThread(MaplePacketLittleEndianWriter mplew, MapleBBSThread rs) {
+        private static void addThread(MaplePacketLittleEndianWriter mplew, MapleBBSThread rs, boolean isTop) {
             mplew.writeInt(rs.localthreadID);
             mplew.writeInt(rs.ownerID);
-            mplew.writeMapleAsciiString(rs.name);
+            if(isTop)
+                mplew.writeMapleAsciiString("[置頂文] " + rs.name);
+            else
+                mplew.writeMapleAsciiString(rs.name);
             mplew.writeLong(PacketHelper.getKoreanTimestamp(rs.timestamp));
             mplew.writeInt(rs.icon);
             mplew.writeInt(rs.getReplyCount());

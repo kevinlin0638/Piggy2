@@ -9,6 +9,7 @@ import client.inventory.MapleInventoryIdentifier;
 import client.inventory.MapleInventoryType;
 import client.inventory.MapleRing;
 import constants.GameConstants;
+import constants.ServerConstants;
 import handling.cashshop.CashShopServer;
 import handling.channel.ChannelServer;
 import handling.login.LoginServer;
@@ -157,7 +158,8 @@ public class CashShopHandler {
         } else if (action == 3) {
             final int toCharge = slea.readByte()+1;
             final int sn = slea.readInt();
-            System.out.println(sn);
+            if(ServerConstants.DEBUG)
+                System.out.println(sn);
             final CashItemInfo item = CashItemFactory.getInstance().getItem(sn);
 
             if (item != null && chr.getCSPoints(toCharge) >= item.getPrice()) {
@@ -483,7 +485,8 @@ public class CashShopHandler {
         } else if(action == 46){
             //Unknow TODO
         } else {
-            System.out.println("New Action: " + action + " Remaining: " + slea.toString());
+            if(ServerConstants.DEBUG)
+                System.out.println("New Action: " + action + " Remaining: " + slea.toString());
             c.sendPacket(MTSCSPacket.sendCSFail(0));
         }
         doCSPackets(c);

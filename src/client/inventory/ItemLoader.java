@@ -250,7 +250,10 @@ public enum ItemLoader {
             if (mit.equals(MapleInventoryType.EQUIP) || mit.equals(MapleInventoryType.EQUIPPED)) {
                 Equip equip = (Equip) item;
                 pse.setLong(1, iid);
-                pse.setInt(2, equip.getUpgradeSlots());
+                int s = (int) equip.getUpgradeSlots();
+//                if(equip.getUpgradeSlots() == -1)
+//
+                pse.setInt(2, s);
                 pse.setInt(3, equip.getLevel());
                 pse.setInt(4, equip.getStr());
                 pse.setInt(5, equip.getDex());

@@ -85,8 +85,6 @@ function action(mode, type, selection) {
                     selectedList[selectedPosition] = Array(selection, newItemList[selection]);
                 //重置标记
                 step = 0;
-                //计算费用
-                cost = getCost();
             }
             var text = "#e┌" + itemIcon + "強化裝備   ┐\t┌  " + cubeIcon + "破攻道具   ┐#n\r\n\r\n";
             for (var i = 0; i < 2; i++) {
@@ -334,19 +332,7 @@ function getItemType(itemid) {
             return -1;
     }
 }
-//计算费用
-function getCost() {
-    //裝備的数量*主裝備等级*品级+1
-    var itemTotalReqLevel = 0;
-    for (var i in selectedList) {
-        //java.lang.System.out.println("xx:"+selectedList[i][1]);
-        itemTotalReqLevel += cm.getReqLevel(selectedList[i][1]) * 1;
-    }
-	var eq = cm.getEquip(selectedList[0][1]);
-	var state_rate = (cm.getEquipPotState(selectedList[0][1]) <= 16)?1:(cm.getEquipPotState(selectedList[0][1]) - 16)
-    var baseCost = (itemTotalReqLevel) + cm.getReqLevel(selectedList[0][1]) * state_rate * 2;
-    return baseCost*5;
-}
+
 //獲取裝備品级
 function getGrade(equipPosition) {
     if (equipPosition != null) {

@@ -98,6 +98,10 @@ function action(mode, type, selection) {
 			
 			cm.gainItem(1342000, 1); // 雙刀
 			
+			cm.gainItem(1522000, 1); // 雙弩
+			cm.gainItem(1532000, 1); // 重砲
+			cm.gainItem(1352004, 1); // 魔法箭
+			
 			cm.sendNext("Done.");
 			cm.dispose();
 		}else if(selection == 6 && cm.getPlayer().getGMLevel() > 3){

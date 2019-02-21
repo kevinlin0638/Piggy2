@@ -7105,6 +7105,14 @@ public class GameConstants {
             2102330434,
             2147483622
     };
+    private static final long[] high_exp = { 2147483647L,
+            2554692156L, 2945468455L, 3454681746L, 4012134815L, 4734846348L, 5513484654L, 6431584336L, 7431546846L, 8546543545L, 9764645135L, // 210
+            12554692156L, 12945468455L, 13454681746L, 14012134815L, 14734846348L, 15513484654L, 16431584336L, 17431546846L, 18546543545L, 19764645135L, // 220
+            22554692156L, 22945468455L, 23454681746L, 24012134815L, 24734846348L, 25513484654L, 26431584336L, 27431546846L, 28546543545L, 29764645135L, // 230
+            32554692156L, 32945468455L, 33454681746L, 34012134815L, 34734846348L, 35513484654L, 36431584336L, 37431546846L, 38546543545L, 39764645135L, // 240
+            42554692156L, 42945468455L, 43454681746L, 44012134815L, 44734846348L, 61513484654L, 72431584336L, 81431546846L, 90546543545L,  // 250
+            20100764645135L,40100764645135L,60100764645135L,60100764645135L,100100764645135L,
+    };
     private static int[] closeness = {
             0,
             1,
@@ -7535,6 +7543,11 @@ public class GameConstants {
                 return 10;
         }
         return 0;
+    }
+    public static long getExpNeededForHighLevel(final int level) {
+        if(level < 200 || level-200 >= high_exp.length)
+            return Long.MAX_VALUE;
+        return high_exp[level - 200];
     }
 
     public static int getExpNeededForLevel(int level) {
@@ -9539,7 +9552,7 @@ public class GameConstants {
             case 1016:
             case 1017:
             case 1027:
-                return 1932007;
+                return 1932235;
             case 1018:
                 return 1932003;
             case 1019:
