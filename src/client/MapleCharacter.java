@@ -1806,12 +1806,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             pse.close();
         }catch (SQLException | DatabaseException e) {
             FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
-            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB queststatus/queststatusmobs Table 錯誤") + e);
+            //System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB queststatus/queststatusmobs Table 錯誤") + e);
             try {
                 con.rollback();
             } catch (SQLException ex) {
                 FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, ex);
                 System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB queststatus/queststatusmobs Table 錯誤 開始回朔") + e);
+                e.printStackTrace();
             }
         }
         try{
@@ -2133,7 +2134,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ps.close();
         }catch (SQLException | DatabaseException e) {
             FileoutputUtil.outputFileError(FileoutputUtil.PacketEx_Log, e);
-            System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB achievements Table 錯誤") + e);
+            //System.err.println(MapleClient.getLogMessage(this, "[儲存角色錯誤] DB achievements Table 錯誤") + e);
             try {
                 con.rollback();
             } catch (SQLException ex) {
@@ -10540,7 +10541,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void setFatigue(int j) {
-        this.fatigue = (short) Math.max(0, j);
+        this.fatigue = (short) Math.min(200, j);
         updateSingleStat(MapleStat.FATIGUE, this.fatigue);
     }
 

@@ -1187,41 +1187,40 @@ public class PlayerHandler {
         int projectile = 0, visProjectile = 0;
         if (!AOE && chr.getBuffedValue(MapleBuffStatus.SOULARROW) == null && !noBullet) {
             Item ipp = chr.getInventory(MapleInventoryType.USE).getItem(attack.slot);
-            if (ipp == null) {
-                return;
-            }
-            projectile = ipp.getItemId();
+            if (ipp != null) {
+                projectile = ipp.getItemId();
 
-            if (attack.csstar > 0) {
-                if (chr.getInventory(MapleInventoryType.CASH).getItem(attack.csstar) == null) {
-                    return;
+                if (attack.csstar > 0) {
+                    if (chr.getInventory(MapleInventoryType.CASH).getItem(attack.csstar) == null) {
+                        return;
+                    }
+                    visProjectile = chr.getInventory(MapleInventoryType.CASH).getItem(attack.csstar).getItemId();
+                } else {
+                    visProjectile = projectile;
                 }
-                visProjectile = chr.getInventory(MapleInventoryType.CASH).getItem(attack.csstar).getItemId();
-            } else {
-                visProjectile = projectile;
-            }
-            // Handle bulletcount
-            if (chr.getBuffedValue(MapleBuffStatus.SPIRIT_CLAW) == null) {
-                int bulletConsume = bulletCount;
-                if (effect != null && effect.getBulletConsume() != 0) {
-                    bulletConsume = effect.getBulletConsume() * (ShadowPartner != null ? 2 : 1);
-                }
-                if (chr.getJob() == 412 && bulletConsume > 0 && ipp.getQuantity() < MapleItemInformationProvider.getInstance().getSlotMax(projectile)) {
-                    final Skill expert = SkillFactory.getSkill(4120010);
-                    if (chr.getTotalSkillLevel(expert) > 0) {
-                        final MapleStatEffect eff = expert.getEffect(chr.getTotalSkillLevel(expert));
-                        if (eff.makeChanceResult()) {
-                            ipp.setQuantity((short) (ipp.getQuantity() + 1));
-                            c.getSession().writeAndFlush(InventoryPacket.updateInventorySlot(ipp, false));
-                            bulletConsume = 0;
-                            c.getSession().writeAndFlush(InventoryPacket.updateInventoryFull());
+                // Handle bulletcount
+                if (chr.getBuffedValue(MapleBuffStatus.SPIRIT_CLAW) == null) {
+                    int bulletConsume = bulletCount;
+                    if (effect != null && effect.getBulletConsume() != 0) {
+                        bulletConsume = effect.getBulletConsume() * (ShadowPartner != null ? 2 : 1);
+                    }
+                    if (chr.getJob() == 412 && bulletConsume > 0 && ipp.getQuantity() < MapleItemInformationProvider.getInstance().getSlotMax(projectile)) {
+                        final Skill expert = SkillFactory.getSkill(4120010);
+                        if (chr.getTotalSkillLevel(expert) > 0) {
+                            final MapleStatEffect eff = expert.getEffect(chr.getTotalSkillLevel(expert));
+                            if (eff.makeChanceResult()) {
+                                ipp.setQuantity((short) (ipp.getQuantity() + 1));
+                                c.getSession().writeAndFlush(InventoryPacket.updateInventorySlot(ipp, false));
+                                bulletConsume = 0;
+                                c.getSession().writeAndFlush(InventoryPacket.updateInventoryFull());
+                            }
                         }
                     }
-                }
-                if (bulletConsume > 0) {
-                    if (!MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, projectile, bulletConsume, false, true)) {
-                        chr.dropMessage(5, "You do not have enough arrows/bullets/stars.");
-                        return;
+                    if (bulletConsume > 0) {
+                        if (!MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, projectile, bulletConsume, false, true)) {
+                            chr.dropMessage(5, "You do not have enough arrows/bullets/stars.");
+                            return;
+                        }
                     }
                 }
             }

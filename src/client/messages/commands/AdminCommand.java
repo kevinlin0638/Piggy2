@@ -471,6 +471,29 @@ public class AdminCommand {
         }
     }
 
+    public static class LoadWebScript extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            String exe = "python";
+            String command = "C:\\chromedriver\\__main__.py";
+            String num1 = "1";
+            String num2 = "2";
+            String[] cmdArr = new String[] {exe, command, num1, num2};
+            try {
+                Process process = Runtime.getRuntime().exec(cmdArr);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!LoadWebScript - 重載爬蟲";
+        }
+    }
+
     public static class SetSkin extends AbstractsCommandExecute {
 
         @Override
@@ -1291,18 +1314,19 @@ public class AdminCommand {
                         return false;
                     }
 
-                    ps = con.prepareStatement("INSERT INTO giftsender (id , GiftName, isSent, charid, account, SentTime, url) VALUES (DEFAULT , ? , ?, ?, ?, CURRENT_TIMESTAMP, ?)");
+                    ps = con.prepareStatement("INSERT INTO giftsender (id, FBName , GiftName, isSent, charid, account, SentTime, url) VALUES (DEFAULT, ? , ? , ?, ?, ?, CURRENT_TIMESTAMP, ?)");
                     ps.setString(1, splitted.get(2));
-                    ps.setInt(2, 0);
-                    ps.setInt(3, chrID);
-                    ps.setString(4, rs.getString("name"));
-                    ps.setString(4, rs.getString("name"));
+                    ps.setString(2, splitted.get(3));
+                    ps.setInt(3, 0);
+                    ps.setInt(4, chrID);
+                    ps.setString(5, rs.getString("name"));
+                    ps.setString(6, rs.getString("name"));
 
                     ps.executeUpdate();
                     ps.close();
                     rs.close();
 
-                    c.getPlayer().dropMessage("添加成功 腳色id : " + chrID + " 禮物名 : " + splitted.get(2));
+                    c.getPlayer().dropMessage("添加成功 腳色id : " + chrID + " 禮物名 : " + splitted.get(3));
                 }else{
                     ps = con.prepareStatement("SELECT * FROM characters WHERE name = ?");
                     ps.setString(1, ChrName);
@@ -1314,18 +1338,19 @@ public class AdminCommand {
                         return false;
                     }
 
-                    ps = con.prepareStatement("INSERT INTO giftsender (id , GiftName, isSent, charid, account, SentTime, url) VALUES (DEFAULT , ? , ?, ?, ?, CURRENT_TIMESTAMP, ?)");
+                    ps = con.prepareStatement("INSERT INTO giftsender (id, FBName , GiftName, isSent, charid, account, SentTime, url) VALUES (DEFAULT, ? , ? , ?, ?, ?, CURRENT_TIMESTAMP, ?)");
                     ps.setString(1, splitted.get(2));
-                    ps.setInt(2, 0);
-                    ps.setInt(3, rs.getInt("id"));
-                    ps.setInt(4, rs.getInt("accountid"));
-                    ps.setString(5, "管理員新增");
+                    ps.setString(2, splitted.get(3));
+                    ps.setInt(3, 0);
+                    ps.setInt(4, rs.getInt("id"));
+                    ps.setInt(5, rs.getInt("accountid"));
+                    ps.setString(6, "管理員新增");
 
                     ps.executeUpdate();
                     ps.close();
                     rs.close();
 
-                    c.getPlayer().dropMessage("添加成功 腳色 : " + ChrName + " 禮物名 : " + splitted.get(2));
+                    c.getPlayer().dropMessage("添加成功 腳色 : " + ChrName + " 禮物名 : " + splitted.get(3));
 
                 }
             } catch (SQLException se) {

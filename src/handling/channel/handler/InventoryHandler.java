@@ -29,6 +29,7 @@ import client.skill.Skill;
 import client.skill.SkillEntry;
 import client.skill.SkillFactory;
 import io.netty.util.internal.ThreadLocalRandom;
+import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import server.status.MapleBuffStatus;
 import constants.GameConstants;
 import constants.ServerConstants;
@@ -1301,8 +1302,17 @@ public class InventoryHandler {
                 }
                 case 2430215:{
                     if(!chr.canHold(4030003)){
-                        chr.dropMessage(-1, "您必須空出背包空間");
+                        chr.dropMessage(1, "您必須空出背包空間");
                         break;
+                    }
+                    if(toUse.getGiftFrom().equals("")){
+                        String s = toUse.getOwner().split(" ")[0];
+                        try {
+                            long i = (long) Integer.parseInt(s) *  24 * 60 * 60 * 1000;
+                            toUse.setGiftFrom(Long.toString(i));
+                        }catch (ValueException e){
+                            break;
+                        }
                     }
                     long time = Long.parseLong(toUse.getGiftFrom());
                     MapleInventoryManipulator.addById(c, 4030003, (short) 1, null, null,  time,null);
@@ -1311,8 +1321,17 @@ public class InventoryHandler {
                 }
                 case 2430216:{
                     if(!chr.canHold(4030002)){
-                        chr.dropMessage(-1, "您必須空出背包空間");
+                        chr.dropMessage(1, "您必須空出背包空間");
                         break;
+                    }
+                    if(toUse.getGiftFrom().equals("")){
+                        String s = toUse.getOwner().split(" ")[0];
+                        try {
+                            long i = (long) Integer.parseInt(s) *  24 * 60 * 60 * 1000;
+                            toUse.setGiftFrom(Long.toString(i));
+                        }catch (ValueException e){
+                            break;
+                        }
                     }
                     long time = Long.parseLong(toUse.getGiftFrom());
                     MapleInventoryManipulator.addById(c, 4030002, (short) 1, null, null,  time,null);
@@ -1321,8 +1340,17 @@ public class InventoryHandler {
                 }
                 case 2430217:{
                     if(!chr.canHold(4030004)){
-                        chr.dropMessage(-1, "您必須空出背包空間");
+                        chr.dropMessage(1, "您必須空出背包空間");
                         break;
+                    }
+                    if(toUse.getGiftFrom().equals("")){
+                        String s = toUse.getOwner().split(" ")[0];
+                        try {
+                            long i = (long) Integer.parseInt(s) *  24 * 60 * 60 * 1000;
+                            toUse.setGiftFrom(Long.toString(i));
+                        }catch (ValueException e){
+                            break;
+                        }
                     }
                     long time = Long.parseLong(toUse.getGiftFrom());
                     MapleInventoryManipulator.addById(c, 4030004, (short) 1, null, null,  time,null);
@@ -1379,19 +1407,19 @@ public class InventoryHandler {
                             if (MapleInventoryManipulator.checkSpace(c, 2049400, 1, "") && MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, toUse.getItemId(), 25, true, false)) {
                                 MapleInventoryManipulator.addById(c, 2049400, (short) 1, "Scripted item: " + toUse.getItemId() + " on " + FileoutputUtil.CurrentReadable_Date());
                             } else {
-                                c.getPlayer().dropMessage(5, "Please make some space.");
+                                c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                             }
                         } else if (c.getPlayer().getInventory(MapleInventoryType.USE).countById(2430112) >= 10) {
                             if (MapleInventoryManipulator.checkSpace(c, 2049400, 1, "") && MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, toUse.getItemId(), 10, true, false)) {
                                 MapleInventoryManipulator.addById(c, 2049401, (short) 1, "Scripted item: " + toUse.getItemId() + " on " + FileoutputUtil.CurrentReadable_Date());
                             } else {
-                                c.getPlayer().dropMessage(5, "Please make some space.");
+                                c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                             }
                         } else {
                             c.getPlayer().dropMessage(5, "There needs to be 10 Fragments for a Potential Scroll, 25 for Advanced Potential Scroll.");
                         }
                     } else {
-                        c.getPlayer().dropMessage(5, "Please make some space.");
+                        c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                     }
                     break;
                 case 2430481: //super miracle cube fragment
@@ -1400,19 +1428,19 @@ public class InventoryHandler {
                             if (MapleInventoryManipulator.checkSpace(c, 2049701, 1, "") && MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, toUse.getItemId(), 30, true, false)) {
                                 MapleInventoryManipulator.addById(c, 2049701, (short) 1, "Scripted item: " + toUse.getItemId() + " on " + FileoutputUtil.CurrentReadable_Date());
                             } else {
-                                c.getPlayer().dropMessage(5, "Please make some space.");
+                                c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                             }
                         } else if (c.getPlayer().getInventory(MapleInventoryType.USE).countById(2430481) >= 20) {
                             if (MapleInventoryManipulator.checkSpace(c, 2049300, 1, "") && MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, toUse.getItemId(), 20, true, false)) {
                                 MapleInventoryManipulator.addById(c, 2049300, (short) 1, "Scripted item: " + toUse.getItemId() + " on " + FileoutputUtil.CurrentReadable_Date());
                             } else {
-                                c.getPlayer().dropMessage(5, "Please make some space.");
+                                c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                             }
                         } else {
                             c.getPlayer().dropMessage(5, "There needs to be 20 Fragments for a Advanced Equip Enhancement Scroll, 30 for Epic Potential Scroll 80%.");
                         }
                     } else {
-                        c.getPlayer().dropMessage(5, "Please make some space.");
+                        c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                     }
                     break;
                 case 2430691: // nebulite diffuser fragment
@@ -1421,13 +1449,13 @@ public class InventoryHandler {
                             if (MapleInventoryManipulator.checkSpace(c, 5750001, 1, "") && MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, toUse.getItemId(), 10, true, false)) {
                                 MapleInventoryManipulator.addById(c, 5750001, (short) 1, "Scripted item: " + toUse.getItemId() + " on " + FileoutputUtil.CurrentReadable_Date());
                             } else {
-                                c.getPlayer().dropMessage(5, "Please make some space.");
+                                c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                             }
                         } else {
                             c.getPlayer().dropMessage(5, "There needs to be 10 Fragments for a Nebulite Diffuser.");
                         }
                     } else {
-                        c.getPlayer().dropMessage(5, "Please make some space.");
+                        c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                     }
                     break;
                 case 2430748: // premium fusion ticket
@@ -1436,13 +1464,13 @@ public class InventoryHandler {
                             if (MapleInventoryManipulator.checkSpace(c, 4420000, 1, "") && MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, toUse.getItemId(), 20, true, false)) {
                                 MapleInventoryManipulator.addById(c, 4420000, (short) 1, "Scripted item: " + toUse.getItemId() + " on " + FileoutputUtil.CurrentReadable_Date());
                             } else {
-                                c.getPlayer().dropMessage(5, "Please make some space.");
+                                c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                             }
                         } else {
                             c.getPlayer().dropMessage(5, "There needs to be 20 Fragments for a Premium Fusion Ticket.");
                         }
                     } else {
-                        c.getPlayer().dropMessage(5, "Please make some space.");
+                        c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                     }
                     break;
                 case 2430692: // nebulite box
@@ -1462,13 +1490,13 @@ public class InventoryHandler {
                                 MapleInventoryManipulator.addById(c, newId, (short) 1, "Scripted item: " + toUse.getItemId() + " on " + FileoutputUtil.CurrentReadable_Date());
                                 c.sendPacket(InfoPacket.getShowItemGain(newId, (short) 1, true));
                             } else {
-                                c.getPlayer().dropMessage(5, "Please make some space.");
+                                c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                             }
                         } else {
                             c.getPlayer().dropMessage(5, "You do not have a Nebulite Box.");
                         }
                     } else {
-                        c.getPlayer().dropMessage(5, "Please make some space.");
+                        c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                     }
                     break;
                 case 5680019: {//starling hair
@@ -1493,6 +1521,12 @@ public class InventoryHandler {
                     c.getPlayer().dropMessage(5, "Please bring this item to the NPC.");
                     break;
                 case 2430212: //energy drink
+                    if(c.getPlayer().getEventCount("能量飲料" + 2430212) >= 3)
+                    {
+                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過三次，會增肥。");
+                        break;
+                    }
+                    c.getPlayer().setEventCount("能量飲料" + 2430212);
                     MapleQuestStatus marr = c.getPlayer().getQuestNAdd(MapleQuest.getInstance(GameConstants.ENERGY_DRINK));
                     if (marr.getCustomData() == null) {
                         marr.setCustomData("0");
@@ -1506,6 +1540,12 @@ public class InventoryHandler {
                     }
                     break;
                 case 2430213: //energy drink
+                    if(c.getPlayer().getEventCount("能量飲料" + 2430213) >= 3)
+                    {
+                        c.getPlayer().dropMessage(1, "您一天不可喝此種飲料超過三次，會增肥。");
+                        break;
+                    }
+                    c.getPlayer().setEventCount("能量飲料" + 2430213);
                     marr = c.getPlayer().getQuestNAdd(MapleQuest.getInstance(GameConstants.ENERGY_DRINK));
                     if (marr.getCustomData() == null) {
                         marr.setCustomData("0");
@@ -1519,19 +1559,48 @@ public class InventoryHandler {
                     }
                     break;
                 case 2430220: //energy drink
+                    if(c.getPlayer().getEventCount("能量飲料" + 2430220) >= 3)
+                    {
+                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過三次，會增肥。");
+                        break;
+                    }
+                    c.getPlayer().setEventCount("能量飲料" + 2430220);
+                    if (c.getPlayer().getFatigue() > 0) {
+                        MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (byte) 1, false);
+                        c.getPlayer().setFatigue(c.getPlayer().getFatigue() - 30);
+                    }
+                    break;
                 case 2430214: //energy drink
+                    if(c.getPlayer().getEventCount("能量飲料" + 2430214) >= 3)
+                    {
+                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過三次，會增肥。");
+                        break;
+                    }
+                    c.getPlayer().setEventCount("能量飲料" + 2430214);
                     if (c.getPlayer().getFatigue() > 0) {
                         MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (byte) 1, false);
                         c.getPlayer().setFatigue(c.getPlayer().getFatigue() - 30);
                     }
                     break;
                 case 2430227: //energy drink
+                    if(c.getPlayer().getEventCount("能量飲料" + 2430227) >= 3)
+                    {
+                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過三次，會增肥。");
+                        break;
+                    }
+                    c.getPlayer().setEventCount("能量飲料" + 2430227);
                     if (c.getPlayer().getFatigue() > 0) {
                         MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (byte) 1, false);
                         c.getPlayer().setFatigue(c.getPlayer().getFatigue() - 50);
                     }
                     break;
                 case 2430231: //energy drink
+                    if(c.getPlayer().getEventCount("能量飲料" + 2430231) >= 3)
+                    {
+                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過三次，會增肥。");
+                        break;
+                    }
+                    c.getPlayer().setEventCount("能量飲料" + 2430231);
                     marr = c.getPlayer().getQuestNAdd(MapleQuest.getInstance(GameConstants.ENERGY_DRINK));
                     if (marr.getCustomData() == null) {
                         marr.setCustomData("0");
@@ -1563,19 +1632,19 @@ public class InventoryHandler {
                             if (MapleInventoryManipulator.checkSpace(c, 4310010, 1, "") && MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, toUse.getItemId(), 1, true, false)) {
                                 MapleInventoryManipulator.addById(c, 4310010, (short) 1, "Scripted item: " + toUse.getItemId() + " on " + FileoutputUtil.CurrentReadable_Date());
                             } else {
-                                c.getPlayer().dropMessage(5, "Please make some space.");
+                                c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                             }
                         } else if (c.getPlayer().getInventory(MapleInventoryType.ETC).countById(4000630) >= 50) {
                             if (MapleInventoryManipulator.checkSpace(c, 4310009, 1, "") && MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, toUse.getItemId(), 1, true, false)) {
                                 MapleInventoryManipulator.addById(c, 4310009, (short) 1, "Scripted item: " + toUse.getItemId() + " on " + FileoutputUtil.CurrentReadable_Date());
                             } else {
-                                c.getPlayer().dropMessage(5, "Please make some space.");
+                                c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                             }
                         } else {
-                            c.getPlayer().dropMessage(5, "There needs to be 50 Purification Totems for a Noble Lion King Medal, 100 for Royal Lion King Medal.");
+                            c.getPlayer().dropMessage(5, "需要有 50 淨化的圖騰 來換 獅子王的貴族獎牌 , 100 來換 獅子王的皇家獎牌.");
                         }
                     } else {
-                        c.getPlayer().dropMessage(5, "Please make some space.");
+                        c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                     }
                     break;
                 case 2430159:
@@ -1584,20 +1653,20 @@ public class InventoryHandler {
                     break;
                 case 2430200: //thunder stone
                     if (c.getPlayer().getQuestStatus(31152) != 2) {
-                        c.getPlayer().dropMessage(5, "You have no idea how to use it.");
+                        c.getPlayer().dropMessage(5, "您無法使用此道具.");
                     } else {
                         if (c.getPlayer().getInventory(MapleInventoryType.ETC).getNumFreeSlot() >= 1) {
                             if (c.getPlayer().getInventory(MapleInventoryType.ETC).countById(4000660) >= 1 && c.getPlayer().getInventory(MapleInventoryType.ETC).countById(4000661) >= 1 && c.getPlayer().getInventory(MapleInventoryType.ETC).countById(4000662) >= 1 && c.getPlayer().getInventory(MapleInventoryType.ETC).countById(4000663) >= 1) {
                                 if (MapleInventoryManipulator.checkSpace(c, 4032923, 1, "") && MapleInventoryManipulator.removeById(c, MapleInventoryType.USE, toUse.getItemId(), 1, true, false) && MapleInventoryManipulator.removeById(c, MapleInventoryType.ETC, 4000660, 1, true, false) && MapleInventoryManipulator.removeById(c, MapleInventoryType.ETC, 4000661, 1, true, false) && MapleInventoryManipulator.removeById(c, MapleInventoryType.ETC, 4000662, 1, true, false) && MapleInventoryManipulator.removeById(c, MapleInventoryType.ETC, 4000663, 1, true, false)) {
                                     MapleInventoryManipulator.addById(c, 4032923, (short) 1, "Scripted item: " + toUse.getItemId() + " on " + FileoutputUtil.CurrentReadable_Date());
                                 } else {
-                                    c.getPlayer().dropMessage(5, "Please make some space.");
+                                    c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                                 }
                             } else {
                                 c.getPlayer().dropMessage(5, "There needs to be 1 of each Stone for a Dream Key.");
                             }
                         } else {
-                            c.getPlayer().dropMessage(5, "Please make some space.");
+                            c.getPlayer().dropMessage(5, "請確認您的背包有足夠空間.");
                         }
                     }
                     break;
@@ -1607,7 +1676,7 @@ public class InventoryHandler {
                         MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (byte) 1, false);
                         c.getPlayer().gainExp(20000 + (c.getPlayer().getLevel() * 50 * c.getWorldServer().getExpRate()), true, true, false);
                     } else {
-                        c.getPlayer().dropMessage(5, "You may not use this item.");
+                        c.getPlayer().dropMessage(5, "您無法使用此道具.");
                     }
                     break;
                 case 2430132:
@@ -1625,10 +1694,10 @@ public class InventoryHandler {
                             MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (byte) 1, false);
                             MapleInventoryManipulator.addById(c, 1492080, (short) 1, "Scripted item: " + itemId + " on " + FileoutputUtil.CurrentReadable_Date());
                         } else {
-                            c.getPlayer().dropMessage(5, "You may not use this item.");
+                            c.getPlayer().dropMessage(5, "您無法使用此道具.");
                         }
                     } else {
-                        c.getPlayer().dropMessage(5, "Make some space.");
+                        c.getPlayer().dropMessage(5, "請確認您的背包有足夠的空間.");
                     }
                     break;
                 case 2430036: //croco 1 day
@@ -2996,7 +3065,7 @@ public class InventoryHandler {
                     break;
                 }
                 case 5067000: {
-                    c.getPlayer().dropMessage(1, "You may not use this item.");
+                    c.getPlayer().dropMessage(1, "您無法使用此道具.");
                     c.getPlayer().getClient().sendPacket(CWvsContext.enableActions());
                     break;
                 }
@@ -4080,8 +4149,8 @@ public class InventoryHandler {
                     } else if (itemId / 10000 == 553) {
                         UseRewardItem(slot, itemId, c, c.getPlayer());// this too*/
                     } else if (itemId / 10000 != 519) {
-                        System.out.println("Unhandled CS item : " + itemId);
-                        System.out.println(slea.toString(true));
+                        //System.out.println("Unhandled CS item : " + itemId);
+                        //System.out.println(slea.toString(true));
                     }
                     break;
             }

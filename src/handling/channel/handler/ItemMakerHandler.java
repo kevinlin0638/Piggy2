@@ -593,6 +593,9 @@ public class ItemMakerHandler {
             } else if (reqLevel <= 120) {
                 toGet = 4021015;
             }
+            if(reqLevel >= 105 && Randomizer.nextInt(1000000) <= 100){
+                toGet = 4021021;
+            }
             if (quantity <= 5) {
                 cr = CraftRanking.SOSO;
             }
@@ -602,6 +605,10 @@ public class ItemMakerHandler {
                 cr = CraftRanking.COOL;
             }
             fatigue = 3;
+            if(fatigue + chr.getFatigue() > 200){
+                chr.dropMessage(1, "您的疲勞值過高");
+                return;
+            }
             MapleInventoryManipulator.addById(c, toGet, quantity, "Made by disassemble " + itemId + " on " + FileoutputUtil.CurrentReadable_Date());
             MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.EQUIP, item.getPosition(), (byte) 1, false);
         } else if (craftID == 92049001) { //fusing.
@@ -673,7 +680,7 @@ public class ItemMakerHandler {
             for (Map.Entry<Integer, Integer> e : ce.reqItems.entrySet()) {
                 MapleInventoryManipulator.removeById(c, GameConstants.getInventoryType(e.getKey()), e.getKey(), e.getValue(), false, false);
             }
-            if (Randomizer.nextInt(100) < (100 - (ce.reqSkillLevel - theLevl) * 20) || (craftID / 10000 <= 9201)) {
+            if (Randomizer.nextInt(100) < (100 - (ce.reqSkillLevel - theLevl) * 20) || (craftID / 10000 <= 9201) || chr.isAdmin()) {
                 final Map<Skill, SkillEntry> sa = new HashMap<>();
                 while (true) {
                     boolean passed = false;
@@ -682,6 +689,11 @@ public class ItemMakerHandler {
                             toGet = i.left;
                             quantity = i.mid.shortValue();
                             Item receive;
+                            fatigue = ce.incFatigability;
+                            if(fatigue + chr.getFatigue() > 200){
+                                chr.dropMessage(1, "您的疲勞值過高");
+                                return;
+                            }
                             if (GameConstants.getInventoryType(toGet) == MapleInventoryType.EQUIP) {
                                 Equip first = (Equip) ii.getEquipById(toGet);
                                 if (Randomizer.nextInt(100) < (theLevl * 2)) {
@@ -711,7 +723,7 @@ public class ItemMakerHandler {
                                     sa.put(ce, new SkillEntry(Integer.MAX_VALUE, (byte) (chr.getMasterLevel(craftID) - 1), SkillFactory.getDefaultSExpiry(ce)));
                                 }
                             }
-                            fatigue = ce.incFatigability;
+
                             expGain = ce.incSkillProficiency == 0 ? (((fatigue * 20) - (ce.reqSkillLevel - theLevl) * 2) * 2) : ce.incSkillProficiency;
                             chr.getTrait(MapleTraitType.craft).addExp(cr.craft, chr);
                             passed = true;
@@ -762,7 +774,7 @@ public class ItemMakerHandler {
             chr.dropMessage(1, "用力過猛,製作失敗");
 
         MapleQuest.getInstance(2550).forceStart(c.getPlayer(), 9031000, "1"); //removes tutorial stuff
-        chr.setFatigue((byte) (chr.getFatigue() + fatigue));
+        chr.setFatigue((chr.getFatigue() + fatigue));
         chr.getMap().broadcastMessage(CField.craftFinished(chr.getId(), craftID, cr.i, toGet, quantity, expGain));
     }
 

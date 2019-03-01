@@ -103,6 +103,7 @@ public class GameConstants {
             case 2049121:
             case 2049122:
             case 2049123:
+            case 2340000:
                 return true;
             default:
                 return false;
@@ -1409,7 +1410,23 @@ public class GameConstants {
     public static String[] RESERVED = {
             "Rental",
             "Donor",
-            "MapleNews"
+            "MapleNews",
+            "幹",
+            "你娘",
+            "機掰",
+            "雞掰",
+            "基掰",
+            "淦",
+            "贛",
+            "趕羚羊",
+            "媽的",
+            "操",
+            "糙",
+            "肏",
+            "襙",
+            "GM",
+            "管理員",
+            "贊助"
     };
     public static String[] stats = {
             "tuc",

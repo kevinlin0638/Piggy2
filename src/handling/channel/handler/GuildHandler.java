@@ -216,7 +216,7 @@ public class GuildHandler {
                 }
 
                 if (c.getPlayer().getMeso() < 1500000) {
-                    c.getPlayer().dropMessage(1, "You do not have enough mesos to create an emblem.");
+                    c.getPlayer().dropMessage(1, "你沒有足夠的楓幣變更.");
                     return;
                 }
                 final short bg = slea.readShort();

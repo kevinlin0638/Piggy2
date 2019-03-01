@@ -3323,11 +3323,16 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     }
 
     public boolean ExistItem(final int item){
-
-        if (!MapleItemInformationProvider.getInstance().itemExists(item))
+        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        if (!ii.itemExists(item))
             return false;
-        else
-            return true;
+        else {
+            if(ii.isCash(item)) {
+                Map<String, Integer> mp =ii.getEquipStats(item);
+                return mp.get("STR") == null && mp.get("DEX") == null && mp.get("INT") == null && mp.get("LUK") == null && mp.get("PAD") == null && mp.get("MAD") == null;
+            }
+        }
+        return false;
     }
 
     public double getRealDonate(final int don){

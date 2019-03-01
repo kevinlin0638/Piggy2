@@ -265,7 +265,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> { 
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        //if(null != cause) cause.printStackTrace();
+//        if(null != cause) cause.printStackTrace();
         if(null != ctx) ctx.close();
     }
     private static void parseQuery(String query, Map<String,

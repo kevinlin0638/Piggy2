@@ -167,29 +167,20 @@ function action(mode, type, selection) {
 					
 					text = "\t\t\t#r點選確定繼續衝或結束對話離開\r\n"
 					text += "#k\r\n#e┌\t\t     ─ 強化後的裝備信息 ─   \t\t┐#n\r\n\r\n";
-                    for (var key in selectedList) {
-						var item;
-						var max_star;
-						if(key == 0){
-							item = cm.getInventory(1).getItem(selectedList[key][0]);
+                    var item;
+					item = cm.getInventory(1).getItem(selectedList[0][0]);
 
-							var itemSeq = "#k#n裝備";
-							var itemLevelStr = "";
-							itemLevelStr = " (+" + breakstr(item.getBreak_dmg()) + "頂傷)\r\n#b";
+					var itemSeq = "#k#n裝備";
+					var itemLevelStr = "";
+					itemLevelStr = " (+" + breakstr(item.getBreak_dmg()) + "頂傷)\r\n#b";
 
-							text += "\t" + itemSeq + ": #r#n Lv." + cm.getReqLevel(item.getItemId()) + " #d#e" + cm.getItemName(item.getItemId()) + "#n#r" + itemLevelStr + "\r\n";
-
-							
-						}else{
-							item = cm.getInventory(4).getItem(selectedList[key][0]);
-							text += "\t成功後 #r破攻 " + (item.getItemId() == 4030006? "100萬" : item.getItemId() == 4030007? "1000萬" : "1億");
-							text += "\r\n\t\t\t\t\t"+ downIcon + "\r\n\r\n\t#k使用道具 : #v" + item.getItemId() + "# #b#z" + item.getItemId() + "##k( 剩下 #r" + cm.getItemQuantity(item.getItemId()) + " #k顆 )";
-
-						}
-					}
+					text += "\t" + itemSeq + ": #r#n Lv." + cm.getReqLevel(item.getItemId()) + " #d#e" + cm.getItemName(item.getItemId()) + "#n#r" + itemLevelStr + "\r\n";
+					
+					text += "\t成功後 #r破攻 " + (selectedList[1][1] == 4030006? "100萬" : selectedList[1][1] == 4030007? "1000萬" : "1億");
+					text += "\r\n\t\t\t\t\t"+ downIcon + "\r\n\r\n\t#k使用道具 : #v" + selectedList[1][1] + "# #b#z" + selectedList[1][1] + "##k( 剩下 #r" + cm.getItemQuantity(selectedList[1][1]) + " #k顆 )";
 					text += "#e\r\n└\t\t\t\t\t\t\t\t\t\t\t┘#n";
 
-            text += "#k\r\n\t\t\t\t#L999##d#e" + btnOk + "#l\r\n\r\n";
+					text += "#k\r\n\t\t\t\t#L999##d#e" + btnOk + "#l\r\n\r\n";
 					status = 0;
 					cm.sendSimple(text);
                 }

@@ -358,35 +358,36 @@ var itemListNormal = Array(
 );
 function doCheck(){
 	temp = [];
-	for(var i in itemListAdvanced){
-		if(cm.ExistItem(itemListAdvanced[i][0]))
-			temp.push(itemListAdvanced[i])
+	for(var i = 1702801;i <= 1702853;i++){
+		if(cm.ExistItem(i))
+			temp.push(Array(i, 1, 0));
 	}
 	itemListAdvanced = temp;
 	
 	temp = [];
-	for(var i in itemListGold){
-		if(cm.ExistItem(itemListGold[i][0]))
-			temp.push(itemListGold[i])
+	for(var i = 1702601;i <= 1702800;i++){
+		if(cm.ExistItem(i))
+			temp.push(Array(i, 1, 0));
 	}
 	itemListGold = temp;
 	
 	temp = [];
-	for(var i in itemListSilver){
-		if(cm.ExistItem(itemListSilver[i][0]))
-			temp.push(itemListSilver[i])
+	for(var i = 1702401;i <= 1702600;i++){
+		if(cm.ExistItem(i))
+			temp.push(Array(i, 1, 0));
 	}
 	itemListSilver = temp;
 	
 	temp = [];
-	for(var i in itemListNormal){
-		if(cm.ExistItem(itemListNormal[i][0]))
-			temp.push(itemListNormal[i])
+	for(var i = 1702000;i <= 1702400;i++){
+		if(cm.ExistItem(i))
+			temp.push(Array(i, 1, 0));
 	}
 	itemListNormal = temp;
 }
 	
 function action(mode, type, selection) {
+	doCheck();
 	var InsertData = false;
     if (mode == 1) {
         status++;

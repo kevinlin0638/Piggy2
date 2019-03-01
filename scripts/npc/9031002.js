@@ -11,22 +11,22 @@ function action(mode, type, selection) {
 	status--;
     }
     if (status == 0) {
-	cm.sendSimple("#b#L0#Learn/Unlearn Mining#l\r\n#L1#Trade Ore Fragments#l");
+	cm.sendSimple("#b#L0#學習/放棄 採礦#l\r\n");
     } else if (status == 1) {
 	sel = selection;
 	if (sel == 0) {
 	    if (cm.getPlayer().getProfessionLevel(92020000) > 0 || cm.getPlayer().getProfessionLevel(92030000) > 0 || cm.getPlayer().getProfessionLevel(92040000) > 0) {
-		cm.sendOk("Please unlearn Smithing/Accessory Crafting/Alchemy first.");
+		cm.sendOk("請先放棄 裝備製作/飾品製作/鍊金術.");
 		cm.dispose();
 		return;
 	    }
 	    if (cm.getPlayer().getProfessionLevel(92010000) > 0) {
-		cm.sendYesNo("Are you sure you wish to unlearn Mining? You will lose all your EXP/levels in Mining.");
+		cm.sendYesNo("您確定要放棄 採礦嗎? 您將會失去所有 採礦 的經驗與等級.");
 	    } else if (cm.getPlayer().getProfessionLevel(92000000) > 0) {
-		cm.sendOk("You cannot learn or unlearn Mining because you already have Herbalism.");
+		cm.sendOk("您不能學習 採礦 因為您已經有 採集 技能.");
 		cm.dispose();
 	    } else {
-		cm.sendYesNo("Would you like to learn Mining?");
+		cm.sendYesNo("您確定要學習 採礦?");
 	    }
 	} else if (sel == 1) {
 	    if (!cm.haveItem(4011010, 100)) {
@@ -43,10 +43,10 @@ function action(mode, type, selection) {
     } else if (status == 2) {
 	if (sel == 0) {
 	    if (cm.getPlayer().getProfessionLevel(92010000) > 0) {
-		cm.sendOk("You have unlearned Mining.");
+		cm.sendOk("您放棄了 採礦.");
 		cm.teachSkill(92010000, 0, 0);
 	    } else {
-		cm.sendOk("You have learned Mining.");
+		cm.sendOk("您學習了 採礦.");
 		cm.teachSkill(92010000, 0x1000000, 0); //00 00 00 01
 		if (cm.canHold(1512000,1)) {
 			cm.gainItem(1512000,1);

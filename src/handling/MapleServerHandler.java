@@ -218,6 +218,7 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                 RecvPacketOpcode.reloadValues();
                 SendPacketOpcode.reloadValues();
                 MapleBuffStatus.reloadValues();
+                c.getPlayer().setFatigue(0);
             }
         }
 
@@ -1039,7 +1040,7 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                 PlayerHandler.absorbingDF(slea, client, client.getPlayer());
                 break;
             default:
-                System.out.printf("[Warning] Opcode: %s not found.", header.toString());
+                //System.out.printf("[Warning] Opcode: %s not found.", header.toString());
                 client.getPlayer().dropMessage(6, "[UNHANDLED] Recv [" + header.toString() + "] found");
                 break;
         }

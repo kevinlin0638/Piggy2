@@ -39,8 +39,11 @@ import tools.types.Pair;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -53,7 +56,7 @@ public class World {
     public static int eventMap = 0;
     public static boolean eventOn = false;
     public static int AutoJQ_Channel = -1; // for checks in commands
-    public static String MD5 = "ACBE231C852E774DC26A745F0C2E375E";
+    public static String MD5 = "3A1C77EE3BF10D79A9152D91BE5C4061";
     // Monster Rush
     public static boolean MonsterRush = false;
     public static boolean Monster_Rush_Enabled = false;
@@ -372,6 +375,35 @@ public class World {
         if (numTimes % 7 == 0 && chr.getMount() != null && chr.getMount().canTire(now)) {
             chr.getMount().increaseFatigue();
         }
+
+        if (numTimes % 50 == 0) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            Connection con = DatabaseConnection.getConnection();
+            ArrayList<Integer> ids = new ArrayList<>();
+            ResultSet rs = null;
+            try {
+                PreparedStatement ps = null;
+                ps = con.prepareStatement("SELECT * FROM giftsender WHERE charid = ? AND GiftName = ? AND isSent = 0");
+                ps.setInt(1, chr.getId());
+                ps.setString(2, "案讚發布");
+                rs = ps.executeQuery();
+                while (rs.next()){
+                    chr.dropMessage(1, "獲得 100 萬楓點");
+                    chr.modifyCSPoints(2, 1000000);
+                    ids.add(rs.getInt("id"));
+                }
+                ps.close();
+                rs.close();
+                for(Integer i : ids){
+                    ps = con.prepareStatement("UPDATE giftsender SET isSent = 1 WHERE id = ?");
+                    ps.setInt(1, i);
+                    ps.executeUpdate();
+                    ps.close();
+                }
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
         if (numTimes % 50 == 0) { //we're parsing through the characters anyway (:
             for (MaplePet pet : chr.getSummonedPets()) {
                 if (pet.getPetItemId() == 5000054 && pet.getSecondsLeft() > 0) {
@@ -584,7 +616,7 @@ public class World {
                 }
 
             }
-        }, 3600000, 0);
+        }, 1800000, 0);
     }
 
     public static class AutoJQ {

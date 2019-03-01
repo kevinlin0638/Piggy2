@@ -694,7 +694,7 @@ public class MapleGuild implements java.io.Serializable {
         } finally {
             lock.writeLock().unlock();
         }
-        gainGP(500, true, mgc.getId());
+        //gainGP(500, true, mgc.getId());
         broadcast(GuildPacket.newGuildMember(mgc));
         if (allianceid > 0) {
             World.Alliance.sendGuild(allianceid);
@@ -874,10 +874,10 @@ public class MapleGuild implements java.io.Serializable {
                 int old_job = member.getJobId();
                 member.setJobId(mgc.getJobId());
                 member.setLevel((short) mgc.getLevel());
-                if (mgc.getLevel() > old_level) {
-                    gainGP((mgc.getLevel() - old_level) * mgc.getLevel(), false, mgc.getId());
-                    //aftershock: formula changes (below 100 = 40, above 100 = 80) (12000 max) but i prefer level (21100 max), add guildContribution, do setGuildAndRank or just get the MapleCharacter object
-                }
+//                if (mgc.getLevel() > old_level) {
+//                    gainGP((mgc.getLevel() - old_level) * mgc.getLevel(), false, mgc.getId());
+//                    //aftershock: formula changes (below 100 = 40, above 100 = 80) (12000 max) but i prefer level (21100 max), add guildContribution, do setGuildAndRank or just get the MapleCharacter object
+//                }
                 if (old_level != mgc.getLevel()) {
                     this.broadcast(CWvsContext.sendLevelup(false, mgc.getLevel(), mgc.getName()), mgc.getId());
                 }
@@ -1042,7 +1042,7 @@ public class MapleGuild implements java.io.Serializable {
             ourSkill.timestamp = System.currentTimeMillis() + (skillid.getPeriod() * 60000L);
         }
         changed_skills = true;
-        gainGP(1000, true, cid);
+        gainGP(100, true, cid);
         broadcast(GuildPacket.guildSkillPurchased(id, skill, ourSkill.level, ourSkill.timestamp, name, name));
         return true;
     }

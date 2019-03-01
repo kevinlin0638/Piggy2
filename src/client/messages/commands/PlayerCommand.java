@@ -48,7 +48,7 @@ public class PlayerCommand {
         @Override
         public boolean execute(MapleClient c, List<String> args) {
             String pet = tools.StringUtil.joinStringFrom(args.toArray(new String[0]), 1) + " 01 85 A3 07 00 00 00 00 00 00 04 00 00 00 34 00 00 00 07 00 00 00 00 00 00 00 00 00 00 00";
-//110
+//110f
            // c.getSession().write(tools.packet.CField.getPacketFromHexString("E2 00 01 B6 A3 07 00 01 04 00 00 00 07 00 00 00 00"));
 //0A 01 02 00 00 00 00 01 00 40 4B 4C 00 0B 00 42 72 6F 77 6E 20 4B 69 74 74 79 35 00 00 00 00 00 00 00 34 02 06 01 00 68 00 00 00
 //0A 01 02 00 00 00 00 00 00 00 01 00 40 4B 4C 00 0B 00 42 72 6F 77 6E 20 4B 69 74 74 79 10 00 00 00 00 00 00 00 BA 02 12 01 00 61 00 FF FF FF FF 64 00 00 00
@@ -347,7 +347,7 @@ public class PlayerCommand {
                 int qua = item.getQuantity();
                 int price = new Double(MapleItemInformationProvider.getInstance().getPrice(item.getItemId())).intValue();
                 if(price > 0 && !MapleItemInformationProvider.getInstance().isCash(item.getItemId())){
-                    count += price;
+                    count += (price * qua);
                 }
 
 
@@ -362,7 +362,7 @@ public class PlayerCommand {
 
         @Override
         public String getHelpMessage() {
-            return "@sell 欄位(1~5) 開始格數(1~96) 結束格數(1~96) <賣東西(若誤賣 恕不補償)>";
+            return "@sell 欄位(1~5) 開始格數(1~96) 結束格數(1~96) \r\n<賣東西(若誤賣 恕不補償)>";
         }
     }
     public static class fm extends AbstractsCommandExecute {

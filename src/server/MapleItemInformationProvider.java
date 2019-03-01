@@ -913,7 +913,7 @@ public class MapleItemInformationProvider {
                 break;
             case 1:
                 if (isW) {
-                    setStats(equip, (byte) 4, 15, curse);
+                    setStats(equip, (byte) 4, 5, curse);
                 } else {
                     setStats(equip, (byte) 4, 7, curse);
                 }
@@ -934,7 +934,7 @@ public class MapleItemInformationProvider {
                 break;
             case 4:
                 if (isW) {
-                    setStats(equip, (byte) 4, 15, curse);
+                    setStats(equip, (byte) 4, 5, curse);
                 } else {
                     setStats(equip, (byte) 4, 7, curse);
                 }
@@ -1979,6 +1979,8 @@ public class MapleItemInformationProvider {
         if (GameConstants.getInventoryType(itemId) == MapleInventoryType.UNDEFINED) {
             return false;
         }
+        if(itemId == 1012616 || itemId == 1022194 || itemId == 1022183 || itemId == 1022184)
+            return false;
         return getItemInformation(itemId) != null;
     }
 

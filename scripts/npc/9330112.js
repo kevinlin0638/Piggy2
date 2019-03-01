@@ -428,30 +428,46 @@ function action(mode, type, selection) {
 
 function doCheck(){
 	temp = [];
-	for(var i in itemListAdvanced){
-		if(cm.ExistItem(itemListAdvanced[i][0]))
-			temp.push(itemListAdvanced[i])
+	for(var i = 1061801;i <= 1062501;i++){
+		if(cm.ExistItem(i))
+			temp.push(Array(i, 1, 0));
+	}
+	for(var i = 1041801;i <= 1042385;i++){
+		if(cm.ExistItem(i))
+			temp.push(Array(i, 1, 0));
 	}
 	itemListAdvanced = temp;
 	
 	temp = [];
-	for(var i in itemListGold){
-		if(cm.ExistItem(itemListGold[i][0]))
-			temp.push(itemListGold[i])
+	for(var i = 1061201;i <= 1061800;i++){
+		if(cm.ExistItem(i))
+			temp.push(Array(i, 1, 0));
+	}
+	for(var i = 1041201;i <= 1041800;i++){
+		if(cm.ExistItem(i))
+			temp.push(Array(i, 1, 0));
 	}
 	itemListGold = temp;
 	
 	temp = [];
-	for(var i in itemListSilver){
-		if(cm.ExistItem(itemListSilver[i][0]))
-			temp.push(itemListSilver[i])
+	for(var i = 1060601;i <= 1061200;i++){
+		if(cm.ExistItem(i))
+			temp.push(Array(i, 1, 0));
+	}
+	for(var i = 1040601;i <= 1041200;i++){
+		if(cm.ExistItem(i))
+			temp.push(Array(i, 1, 0));
 	}
 	itemListSilver = temp;
 	
 	temp = [];
-	for(var i in itemListNormal){
-		if(cm.ExistItem(itemListNormal[i][0]))
-			temp.push(itemListNormal[i])
+	for(var i = 1060000;i <= 1060600;i++){
+		if(cm.ExistItem(i))
+			temp.push(Array(i, 1, 0));
+	}
+	for(var i = 1040000;i <= 1040600;i++){
+		if(cm.ExistItem(i))
+			temp.push(Array(i, 1, 0));
 	}
 	itemListNormal = temp;
 }

@@ -213,7 +213,6 @@ function action(mode, type, selection) {
                         var masterItemReqLevel = cm.getReqLevel(masterItemId);
                         //扣除费用
 						cm.doCube(masterItemId, masterItemPosition, selectedList[1][1]);
-                        cm.gainMeso(-cost);
 						cm.gainItem(selectedList[1][1],-1);
 						text = "#r您可以直接點選 '潛能值' 繼續衝\r\n或者點選結束對話重新選擇!\r\n\r\n";
 						text += "#k\r\n#e┌\t\t     ─ 強化後的潛能信息 ─   \t\t┐#n\r\n\r\n";

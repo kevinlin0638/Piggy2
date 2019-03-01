@@ -493,7 +493,7 @@ public class MapleStatEffect implements Serializable {
         }
 
         if(ret.cooldown == 30 || ret.cooldown == 20)
-            ret.cooldown = 0;
+            ret.cooldown = 10;
         if (ret.skill) { // hack because we can't get from the datafile...
             switch (sourceid) {
                 case 80001079:
@@ -1220,7 +1220,7 @@ public class MapleStatEffect implements Serializable {
                     break;
                 case 35121013:
                 case 35111004: //siege
-                    ret.duration = 5000;
+                    ret.duration = 2100000000;
                     ret.statups.put(MapleBuffStatus.MECH_CHANGE, (int) level); //ya wtf
                     break;
                 case 35121005: //missile
@@ -1450,7 +1450,7 @@ public class MapleStatEffect implements Serializable {
         } else if (sourceid == 33101008 && (applyfrom.getBuffedValue(MapleBuffStatus.RAINING_MINES) == null || applyfrom.getBuffedValue(MapleBuffStatus.SUMMON) != null || !applyfrom.canSummon())) {
             applyfrom.getClient().sendPacket(CWvsContext.enableActions());
             return false;
-        } else if (isShadow() && applyfrom.getJob() != 412 && applyfrom.getJob() != 422 && applyfrom.getJob() != 1411 && applyfrom.getJob() != 1412) { //pirate/shadow = dc
+        } else if (isShadow() && applyfrom.getJob() != 411 && applyfrom.getJob() != 421 && applyfrom.getJob() != 412 && applyfrom.getJob() != 422 && applyfrom.getJob() != 1411 && applyfrom.getJob() != 1412) { //pirate/shadow = dc
             applyfrom.getClient().sendPacket(CWvsContext.enableActions());
             return false;
         } else if (isMI() && (applyfrom.getJob() != 434 && applyfrom.getJob() != 433)) { //pirate/shadow = dc

@@ -314,7 +314,7 @@ public class PlayerInteractionHandler {
                 if (shop != null && shop.isOwner(chr) && shop.getShopType() < 3 && !shop.isAvailable()) {
                     if (chr.getMap().allowPersonalShop()) {
                         if (c.getChannelServer().isShutdown()) {
-                            chr.dropMessage(1, "The server is about to shut down.");
+                            chr.dropMessage(1, "伺服器即將關閉.");
                             c.sendPacket(CWvsContext.enableActions());
                             shop.closeShop(shop.getShopType() == 1, false);
                             return;
@@ -326,6 +326,11 @@ public class PlayerInteractionHandler {
                             merchant.setAvailable(true);
                             chr.getMap().broadcastMessage(PlayerShopPacket.spawnHiredMerchant(merchant));
                             chr.setPlayerShop(null);
+                            if(chr.getEventCount("每日開店獎勵") <= 0){
+                                chr.setEventCount("每日開店獎勵");
+                                chr.gainMeso(100000000, true);
+                                chr.dropMessage(1, "獲得每日開店獎勵1億楓幣");
+                            }
                         } else if (shop.getShopType() == 2) {
                             shop.setOpen(true);
                             shop.setAvailable(true);
