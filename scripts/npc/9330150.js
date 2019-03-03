@@ -37,7 +37,7 @@ function action(mode, type, selection) {
 			cm.sendOk("All players must be in map and above level 120.");
 		    }
 		} else {
-		    cm.sendOk("You are not the leader of the party, please ask your leader to talk to me.");
+		    cm.sendOk("你不是隊長, please ask your leader to talk to me.");
 		}
 		} else {
 		    cm.sendOk("Please form a party first.");
@@ -71,7 +71,7 @@ function action(mode, type, selection) {
 			cm.sendOk("All players must be in map and above level 140.");
 		    }
 		    } else {
-			cm.sendOk("You are not the leader of the party, please ask your leader to talk to me.");
+			cm.sendOk("你不是隊長, please ask your leader to talk to me.");
 		    }
 		} else {
 		    cm.sendOk("Please form a party first.");
@@ -105,7 +105,7 @@ function action(mode, type, selection) {
 			cm.sendOk("All players must be in map and above level 160.");
 		    }
 		    } else {
-			cm.sendOk("You are not the leader of the party, please ask your leader to talk to me.");
+			cm.sendOk("你不是隊長, please ask your leader to talk to me.");
 		    }
 		} else {
 		    cm.sendOk("Please form a party first.");
@@ -139,7 +139,7 @@ function action(mode, type, selection) {
 			cm.sendOk("All players must be in map and above level 190.");
 		    }
 		    } else {
-			cm.sendOk("You are not the leader of the party, please ask your leader to talk to me.");
+			cm.sendOk("你不是隊長, please ask your leader to talk to me.");
 		    }
 		} else {
 		    cm.sendOk("Please form a party first.");

@@ -440,6 +440,15 @@ public class MapleServerHandler extends ChannelDuplexHandler {
             case LEAVE_AZWAN:
                 PlayersHandler.LeaveAzwan(slea, client);
                 break;
+            case LIE_DETECTOR: //玩家使用道具进行测谎
+                PlayersHandler.LieDetector(slea, client, client.getPlayer(), true);
+                break;
+            case LIE_DETECTOR_SKILL: //管理员使用技能进行测谎
+                PlayersHandler.LieDetector(slea, client, client.getPlayer(), false);
+                break;
+            case LIE_DETECTOR_RESPONSE: //确定输入的验证码
+                PlayersHandler.LieDetectorResponse(slea, client);
+                break;
             case ENTER_CASH_SHOP:
 //                client.getPlayer().dropMessage(1, "購物商城 暫不開放");
 //                client.sendPacket(CWvsContext.enableActions());

@@ -22,11 +22,13 @@ package handling.channel.handler;
 
 import client.MapleCharacter;
 import client.PlayerStats;
+import client.anticheat.CheatingOffense;
 import client.inventory.Item;
 import client.inventory.MapleInventoryType;
 import client.skill.Skill;
 import client.skill.SkillFactory;
 import constants.GameConstants;
+import constants.SkillConstants;
 import handling.RecvPacketOpcode;
 import handling.login.LoginServer;
 import handling.world.World;
@@ -58,6 +60,10 @@ public class DamageParse {
     public static void applyAttack(final AttackInfo attack, final Skill theSkill, final MapleCharacter player, int attackCount, final double maxDamagePerMonster, final MapleStatEffect effect, final AttackType attack_type) {
         if (!player.isAlive()) {
             return;
+        }
+
+        if (attack.real) { //大于100的就检测攻击时间
+            player.getCheatTracker().checkAttack(attack.skill, attack.lastAttackTickCount);
         }
         if (attack.skill == 5221007) {
             player.cancelAllBuffs2();
@@ -247,7 +253,8 @@ public class DamageParse {
                         eachd = 0;
                         player.dropMessage("您所在的位置渾沌立場環繞,無法秒殺怪物");
                     }
-
+                    if(eachd > 0)
+                        player.getCheatTracker().registerOffense(CheatingOffense.攻擊超過自身角色破攻, "[傷害: " + eachd + ", 腳色頂傷: " + maxDamagePerHit + ", 怪物ID: " + monster.getId() + "] [职业: " + player.getJob() + ", 等級: " + player.getLevel() + ", 技能: " + attack.skill + "]");
                     if(eachd > 50000)
                         player.finishAchievement(60);
                     if(eachd > 99999)

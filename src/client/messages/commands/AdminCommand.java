@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
@@ -1012,7 +1013,7 @@ public class AdminCommand {
                 return false;
             }
             minutesLeft = Integer.parseInt(splitted.get(1));
-            c.getPlayer().dropMessage(6, "伺服器將在" + minutesLeft + " 分鐘后關閉");
+            c.getPlayer().dropMessage(6, "伺服器將在 " + minutesLeft + " 分鐘后關閉");
             if (ts == null && (t == null || !t.isAlive())) {
                 t = new Thread(ShutdownServer.getInstance());
                 ts = Timer.EventTimer.getInstance().register(new Runnable() {
@@ -1024,7 +1025,7 @@ public class AdminCommand {
                             ts.cancel(false);
                             return;
                         }
-                        World.Broadcast.broadcastMessage(c.getWorld(), CWvsContext.broadcastMsg(6,"伺服器將在" + minutesLeft + " 分鐘后進行停機維護, 請及時安全的下線, 以免造成不必要的損失。"));
+                        World.Broadcast.broadcastMessage(c.getWorld(), CWvsContext.broadcastMsg(6,"伺服器將在 " + minutesLeft + " 分鐘后進行停機維護, 請及時安全的下線, 以免造成不必要的損失。"));
                         minutesLeft--;
                     }
                 }, 60000);
@@ -1509,6 +1510,202 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "!openBill <帳號> <金額>";
+        }
+    }
+
+    public static class 封號 extends AbstractsCommandExecute {
+
+        protected boolean hellban = false, ipBan = false;
+
+        private String getCommand() {
+            if (hellban) {
+                return "匿名封號";
+            } else if (ipBan) {
+                return "封IP";
+            } else {
+                return "封號";
+            }
+        }
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 3) {
+                c.getPlayer().dropMessage(5, splitted.get(0) + " <玩家名稱> <理由>");
+//                c.getPlayer().dropMessage(5, "If you want to consider this ban as an autoban, set the reason \"AutoBan\"");
+                return false;
+            }
+            StringBuilder sb = new StringBuilder();
+            if (hellban) {
+                sb.append(splitted.get(1)).append("被封號: ").append(StringUtil.joinStringFrom((String[]) splitted.toArray(), 2));
+            } else {
+                sb.append(c.getPlayer().getName()).append(" 對 ").append(splitted.get(1)).append(" 進行封號處理: ").append(StringUtil.joinStringFrom((String[]) splitted.toArray(), 2));
+            }
+            MapleCharacter target = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted.get(1));
+            if (target != null) {
+                if ((c.getPlayer().getGMLevel() > target.getGMLevel() || c.getPlayer().isAdmin()) && !target.getClient().isGM() && !target.isAdmin()) {
+                    //sb.append(" (IP: ").append(target.getClient().getSessionIPAddress()).append(")");
+                    if (target.ban(sb.toString(), hellban || ipBan, false, hellban)) {
+                        c.getPlayer().dropMessage(6, "[" + getCommand() + "] " + splitted.get(1) + " 已經被封號");
+                        return true;
+                    } else {
+                        c.getPlayer().dropMessage(6, "[" + getCommand() + "] 封號失敗");
+                        return false;
+                    }
+                } else {
+                    c.getPlayer().dropMessage(6, "[" + getCommand() + "] 無法封GM...");
+                    return true;
+                }
+            } else {
+                if (MapleCharacter.Ban.ban(splitted.get(1), sb.toString(), false)) {
+                    c.getPlayer().dropMessage(6, "[" + getCommand() + "] " + splitted.get(1) + " 已經被離線封號");
+                    return true;
+                } else {
+                    c.getPlayer().dropMessage(6, "[" + getCommand() + "] " + splitted.get(1) + "封號失敗");
+                    return false;
+                }
+            }
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!封號 <玩家名稱> <理由>";
+        }
+    }
+
+    public static class dc extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 2) {
+                c.getPlayer().dropMessage(6, splitted.get(0) + " <玩家名稱> ([玩家名稱] [玩家名稱]...)");
+                return false;
+            }
+            MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted.get(1));
+            if (victim != null && c.getPlayer().getGMLevel() >= victim.getGMLevel()) {
+                victim.getClient().getSession().close();
+                victim.getClient().disconnect(true, false);
+                return true;
+            } else {
+                c.getPlayer().dropMessage(6, "受害者不存在或不在線上。");
+                return false;
+            }
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!dc <玩家名稱> ([玩家名稱] [玩家名稱]...)";
+        }
+    }
+
+    public static class 殺 extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            MapleCharacter player = c.getPlayer();
+            if (splitted.size() < 2) {
+                c.getPlayer().dropMessage(6, splitted.get(0) + " <玩家名稱> ([玩家名稱] [玩家名稱]...)");
+                return false;
+            }
+            MapleCharacter victim = null;
+            for (int i = 1; i < splitted.size(); i++) {
+                try {
+                    victim = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted.get(i));
+                } catch (Exception e) {
+                    c.getPlayer().dropMessage(6, "沒找到受害者 " + splitted.get(i));
+                }
+                if (player.allowedToTarget(victim) && player.getGMLevel() >= victim.getGMLevel()) {
+                    victim.getStat().setHp((short) 0, victim);
+                    victim.getStat().setMp((short) 0, victim);
+                    victim.updateSingleStat(MapleStat.HP, victim.getStat().getHp());
+                    victim.updateSingleStat(MapleStat.MP, victim.getStat().getMp());
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!殺 <玩家名稱> ([玩家名稱] [玩家名稱]...)";
+        }
+    }
+
+    public static class 臨時封號 extends AbstractsCommandExecute {
+
+        protected boolean ipBan = false;
+        private final String[] types = {"外掛", "BOT", "AD", "HARASS", "CURSE", "SCAM", "MISCONDUCT", "SELL", "ICASH", "TEMP", "GM", "IPROGRAM", "MEGAPHONE"};
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 4) {
+                c.getPlayer().dropMessage(5, splitted.get(0) + " <玩家名稱> <理由> <時間(小時)>");
+                StringBuilder s = new StringBuilder("臨時封號理由: ");
+                for (int i = 0; i < types.length; i++) {
+                    s.append(i + 1).append(" - ").append(types[i]).append(", ");
+                }
+                c.getPlayer().dropMessage(6, s.toString());
+                return false;
+            }
+            final MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted.get(1));
+            final int reason = Integer.parseInt(splitted.get(2));
+            final int numHour = Integer.parseInt(splitted.get(3));
+
+            final Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.HOUR, numHour);
+            final DateFormat df = DateFormat.getInstance();
+
+            if (victim == null || reason < 0 || reason >= types.length) {
+                c.getPlayer().dropMessage(5, "無法找到玩家或者理由是無效的, 輸入" + splitted.get(0) + "查看可用理由");
+                return false;
+            }
+            victim.tempban("因 " + types[reason] + " 被 " + c.getPlayer().getName() + " 臨時封號", cal, reason, ipBan);
+            c.getPlayer().dropMessage(5, "玩家 " + splitted.get(1) + " 被臨時封號到 " + df.format(cal.getTime()));
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!臨時封號 <玩家名稱> <理由> <時間(小時)>";
+        }
+    }
+
+    public static class 臨時封IP extends 臨時封號 {
+
+        public 臨時封IP() {
+            ipBan = true;
+        }
+    }
+
+    public static class 封IP extends 封號 {
+
+        public 封IP() {
+            ipBan = true;
+        }
+    }
+
+    public static class 監禁 extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 3) {
+                c.getPlayer().dropMessage(6, splitted.get(0) + " <玩家名稱> <時間(分鐘,0為永久)>");
+                return false;
+            }
+            MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted.get(1));
+            final int minutes = Math.max(0, Integer.parseInt(splitted.get(2)));
+            if (victim != null && c.getPlayer().getGMLevel() >= victim.getGMLevel()) {
+                MapleMap target = ChannelServer.getInstance(c.getWorld(), c.getChannel()).getMapFactory().getMap(GameConstants.JAIL);
+                victim.getQuestNAdd(MapleQuest.getInstance(GameConstants.JAIL_QUEST)).setCustomData(String.valueOf(minutes * 60));
+                victim.changeMap(target, target.getPortal(0));
+            } else {
+                c.getPlayer().dropMessage(6, "請到此玩家所在的頻道");
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!監禁 <玩家名稱> <時間(分鐘,0為永久)>";
         }
     }
 

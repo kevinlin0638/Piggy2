@@ -106,6 +106,12 @@ public class CharLoginHandler {
             String errorInfo = null;
 
             switch (loginResponse) {
+                case ACCOUNT_BLOCKED:
+                    String reason = c.bannedReason;
+                    if(reason == null)
+                        c.bannedReason = "";
+                    errorInfo = "您的帳號已被系統封鎖\r\n" + c.bannedReason;
+                    break;
                 case LOGIN_SUCCESS:
                     if (!c.isSetSecondPassword()) {
                         c.sendPacket(LoginPacket.getGenderNeeded(c));

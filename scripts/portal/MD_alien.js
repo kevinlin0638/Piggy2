@@ -11,7 +11,7 @@ try {
 					return;
 				}
 			} else {
-				pi.playerMessage(5, "You are not the leader of the party.");
+				pi.playerMessage(5, "你不是隊長.");
 			}
 		} else {
 			if (pi.getPlayerCount(dungeonid) == 0) {

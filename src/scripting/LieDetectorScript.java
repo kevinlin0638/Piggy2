@@ -34,33 +34,18 @@ public class LieDetectorScript {
     private static final String CAPTCHA_SERVER = "http://localhost/captcha/captcha.php?verify=" + CAPTCHA_VERIFIER;
 
     public static final Pair<String, String> getImageBytes() {
+        final File directory = new File(IMG_DIRECTORY);
+        if (!directory.exists()) {
+            System.err.println("lieDetector folder does not exist!");
+            return null;
+        }
+        final String filename[] = directory.list();
+        String answer = filename[Randomizer.nextInt(filename.length)];
+        answer = answer.substring(0, answer.length() - 4); // .jpg
         try {
-            final URL url = new URL(CAPTCHA_SERVER);
-            ByteArrayOutputStream output;
-            try (InputStream inputStream = url.openStream()) {
-                output = new ByteArrayOutputStream();
-                byte[] buffer = new byte[1024];
-                int n = 0;
-                while (-1 != (n = inputStream.read(buffer))) {
-                    output.write(buffer, 0, n);
-                }
-            }
-            final String imgByte = HexTool.toString(output.toByteArray());
-            return new Pair<>(imgByte.substring(39, imgByte.length()), output.toString().split("CAPTCHA")[0]);
-        } catch (IOException ex) {
-            final File directory = new File(IMG_DIRECTORY);
-            if (!directory.exists()) {
-                System.err.println("lieDetector folder does not exist!");
-                return null;
-            }
-            final String filename[] = directory.list();
-            String answer = filename[Randomizer.nextInt(filename.length)];
-            answer = answer.substring(0, answer.length() - 4); // .jpg 
-            try {
-                return new Pair<>(HexTool.toString(getBytesFromFile(new File(IMG_DIRECTORY + "/" + answer + ".jpg"))), answer);
-            } catch (IOException e) {
-                return null;
-            }
+            return new Pair<>(HexTool.toString(getBytesFromFile(new File(IMG_DIRECTORY + "/" + answer + ".jpg"))), answer);
+        } catch (IOException e) {
+            return null;
         }
     }
 

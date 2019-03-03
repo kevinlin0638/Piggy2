@@ -171,9 +171,9 @@ public class PlayersHandler {
         if (answer.equals(ld.getAnswer())) {
             final MapleCharacter search_chr = c.getPlayer().getMap().getCharacterByName(ld.getTester());
             if (search_chr != null && search_chr.getId() != c.getPlayer().getId()) {
-                search_chr.dropMessage(5, "The user have passed the Lie Detector Test.");
+                search_chr.dropMessage(5, "玩家已經通過測謊.");
             }
-            c.sendPacket(CWvsContext.LieDetectorResponse((byte) 9, (byte) 1));
+            c.sendPacket(CWvsContext.LieDetectorResponse((byte) 0x0A, (byte) 1));
             c.getPlayer().gainMeso(5000, true);
             ld.end();
         } else if (ld.getAttempt() < 2) { // redo again 
@@ -181,13 +181,14 @@ public class PlayersHandler {
         } else {
             final MapleCharacter search_chr = c.getPlayer().getMap().getCharacterByName(ld.getTester());
             if (search_chr != null && search_chr.getId() != c.getPlayer().getId()) {
-                search_chr.dropMessage(5, "The user has failed the Lie Detector Test. You'll be rewarded 7000 mesos from the user.");
+                search_chr.dropMessage(5, "被測試之玩家沒通過測試,您獲得7000楓幣.");
                 search_chr.gainMeso(7000, true);
             }
             ld.end();
-            c.getPlayer().getClient().sendPacket(CWvsContext.LieDetectorResponse((byte) 7, (byte) 4));
+            c.getPlayer().getClient().sendPacket(CWvsContext.LieDetectorResponse((byte) 0x08, (byte) 4));
             final MapleMap to = c.getPlayer().getMap().getReturnMap();
             c.getPlayer().changeMap(to, to.getPortal(0));
+            ld.reset();
         }
     }
 

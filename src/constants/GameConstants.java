@@ -165,6 +165,22 @@ public class GameConstants {
 
     // Monster Rider - [80001000], Double Jump - [3201003, 3101003, 13101004]
     public static final int[] blockedSkills = {
+            1009,
+            1010,
+            1011,
+            1013,
+            1014,
+            1015,
+            1075,
+            1076,
+            1077,
+            1078,
+            1079,
+            1196,
+            1197,
+            1198,
+            1199,
+            1200,
             4341003
     };
     public static final int[] rankC = {
@@ -1406,7 +1422,7 @@ public class GameConstants {
             9102911,
             9102912
     };
-    public static int JAIL = 30, MAX_BUFFSTAT = 8;
+    public static int JAIL = 180000004, MAX_BUFFSTAT = 8;
     public static String[] RESERVED = {
             "Rental",
             "Donor",
@@ -3878,6 +3894,7 @@ public class GameConstants {
             280030001,
             240060201,
             950101100,
+            180000004,
             950101010
     };
     //If you can think of more maps that could be exploitable via npc,block nao pliz!
@@ -8834,11 +8851,11 @@ public class GameConstants {
             case 2049117:
             case 2049118:
             case 2049122:
-                return 20;
+                return 15;
             case 2049120:
             case 2049119:
             case 2049123:
-                return 40;
+                return 20;
             default:
                 return 0;
         }

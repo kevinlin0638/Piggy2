@@ -1595,7 +1595,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ps.setInt(19, face);
             ps.setInt(20, demonMarking);
             if (!fromCS && map != null) {
-                if (map.getForcedReturnId() != 999999999 && map.getForcedReturnMap() != null) {
+                if (map.getForcedReturnId() != 999999999 && map.getForcedReturnMap() != null && map.getId() != GameConstants.JAIL) {
                     ps.setInt(21, map.getForcedReturnId());
                 } else {
                     ps.setInt(21, stats.getHp() < 1 ? map.getReturnMapId() : map.getId());
@@ -3508,7 +3508,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (lastmonthfameids == null) {
             throw new RuntimeException("Trying to ban a non-loaded character (testhack)");
         }
-        client.sendPacket(CWvsContext.GMPoliceMessage(true));
+        //client.sendPacket(CWvsContext.GMPoliceMessage(true));
         try {
             Connection con = DatabaseConnection.getConnection();
             PreparedStatement ps = con.prepareStatement("UPDATE accounts SET banned = ?, banreason = ? WHERE id = ?");
@@ -5450,6 +5450,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
 
     public final MapleLieDetector getAntiMacro() {
         return antiMacro;
+    }
+
+    public final void setAntiMacro(MapleLieDetector lieDetector) {
+        antiMacro = lieDetector;
     }
 
     public boolean isSuperGM() {

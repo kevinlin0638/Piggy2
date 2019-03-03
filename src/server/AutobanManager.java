@@ -29,11 +29,11 @@ public class AutobanManager implements Runnable {
             return;
         }
         if (c.getPlayer().isGM()) {
-            c.getPlayer().dropMessage(5, "[警告] A/b 触发: " + reason);
-        } else if (ServerConfig.WORLD_AUTOBAN) {
+            c.getPlayer().dropMessage(5, "[警告] A/b 觸發: " + reason);
+        } else if (true) {
             addPoints(c, AUTOBAN_POINTS, 0, reason);
         } else {
-            World.Broadcast.broadcastMessage(c.getWorld(), CWvsContext.broadcastMsg(6, "[GM消息] 玩家: " + c.getPlayer().getName() + " ID: " + c.getPlayer().getId() + " (等级 " + c.getPlayer().getLevel() + ") 游戏操作异常. (原因: " + reason + ")"));
+            World.Broadcast.broadcastGMMessage(c.getWorld(), CWvsContext.broadcastMsg(6, "[GM消息] 玩家: " + c.getPlayer().getName() + " ID: " + c.getPlayer().getId() + " (等级 " + c.getPlayer().getLevel() + ") 遊戲操作異常. (原因: " + reason + ")"));
         }
     }
 
@@ -61,7 +61,7 @@ public class AutobanManager implements Runnable {
             if (this.points.get(acc) >= AUTOBAN_POINTS) { // See if it's sufficient to auto ban
                 //System.out.println("[作弊] 玩家 " + c.getPlayer().getName() + " A/b 触发 " + reason);
                 if (c.getPlayer().isGM()) {
-                    c.getPlayer().dropMessage(5, "[警告] A/b 触发 : " + reason);
+                    c.getPlayer().dropMessage(5, "[警告] A/b 觸發 : " + reason);
                     return;
                 }
                 StringBuilder sb = new StringBuilder("A/b ");
@@ -73,7 +73,7 @@ public class AutobanManager implements Runnable {
                     sb.append(s);
                     sb.append(", ");
                 }
-                World.Broadcast.broadcastMessage(c.getWorld(), CWvsContext.broadcastMsg(0, " <" + c.getPlayer().getName() + "> 被系统封号 (原因: " + reason + ")"));
+                World.Broadcast.broadcastMessage(c.getWorld(), CWvsContext.broadcastMsg(0, " <" + c.getPlayer().getName() + "> 被系統封鎖 (原因: " + reason + ")"));
                 c.getPlayer().ban(sb.toString(), false, true, false);
             } else {
                 if (expiration > 0) {

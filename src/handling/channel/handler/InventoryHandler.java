@@ -4659,7 +4659,7 @@ public class InventoryHandler {
         slea.readInt(); // time
         final MapleMap target = c.getChannelServer().getMapFactory().getMap(slea.readInt());
         if (c.getPlayer().getEventInstance() == null) { //Makes sure this map doesn't have a forced return map
-            if(target.getId() == 280030000 || target.getId() == 211042400) {
+            if(target.getId() == 22008001 || target.getId() == 271040100 || target.getId() == 280030000 || target.getId() == 211042400 || target.getId() == 211042300) {
                 c.getPlayer().dropMessage(1, "無法傳送至此地區");
                 c.sendPacket(CWvsContext.enableActions());
                 return;

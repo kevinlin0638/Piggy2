@@ -13,6 +13,7 @@ public enum CheatingOffense {
     HIGH_DAMAGE_MAGIC_2((byte) 10, 180000),
     HIGH_DAMAGE((byte) 5, 30000),
     HIGH_DAMAGE_2((byte) 10, 180000),
+    攻擊超過自身角色破攻((byte) 10, 180000, 1,  (byte) 1),
     EXCEED_DAMAGE_CAP((byte) 5, 60000, 800, (byte) 0),
     ATTACK_FARAWAY_MONSTER((byte) 5, 180000), // NEEDS A SPECIAL FORMULAR!
     ATTACK_FARAWAY_MONSTER_SUMMON((byte) 5, 180000, 200, (byte) 2),

@@ -56,6 +56,10 @@ function action(mode, type, selection) {
 	    }
 	    var time = parseInt(data);
 	if (prop == null || prop.equals("0")) {
+		
+	    var squadAvailability = cm.getSquadAvailability("chaoszak");
+		if (squadAvailability == -1) {
+		status = 1;
 	    if(cm.getChannelNumber() <= 10){
 			if (cm.getEventCount(event_t) >= boss_times) {
 				cm.sendNext("很抱歉每天只能打" + boss_times + "次..");
@@ -111,6 +115,22 @@ function action(mode, type, selection) {
 		// TODO viewing!
 		}
 	    } else {
+			var eim = cm.getDisconnected("ChaosZakum");
+			if (eim == null) {
+				var squd = cm.getSquad("ChaosZak");
+				if (squd != null) {
+					cm.sendYesNo("遠征隊對戰已經開始.\r\n" + squd.getNextPlayer());
+					status = 3;
+				} else {
+					cm.sendOk("遠征隊對戰已經開始.");
+					cm.safeDispose();
+				}
+			} else {
+				cm.sendYesNo("歐,您回來了!您要繼續遠征隊對戰嗎?");
+				status = 2;
+			}
+	    }
+		} else {
 			var eim = cm.getDisconnected("ChaosZakum");
 			if (eim == null) {
 				var squd = cm.getSquad("ChaosZak");

@@ -797,7 +797,7 @@ public class PlayerHandler {
             return;
         }
         if (chr.hasBlockedInventory() || chr.getMap() == null) {
-            chr.dropMessage(5, "現在還不能進行攻擊。");
+            chr.dropMessage(5, "現在還不能進行攻擊，若非正在交易等，請輸入@ea。");
             c.getSession().writeAndFlush(CWvsContext.enableActions());
             return;
         }
@@ -841,7 +841,7 @@ public class PlayerHandler {
             return;
         }
         if (chr.hasBlockedInventory() || chr.getMap() == null) {
-            chr.dropMessage(5, "現在還不能進行攻擊。");
+            chr.dropMessage(5, "現在還不能進行攻擊，若非正在交易等，請輸入@ea。");
             c.getSession().writeAndFlush(CWvsContext.enableActions());
             return;
         }

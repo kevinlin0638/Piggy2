@@ -91,20 +91,20 @@ public class CheatTracker {
         //System.out.println("开始检测 - checkAttack - " + inMapIimeCount);
         lastAttackTime = System.currentTimeMillis();
         MapleCharacter player = getPlayer();
-        if (player != null && lastAttackTime - player.getChangeTime() > 600000) { //角色在地图攻击怪物10分钟 判断角色正在攻击
+        if (player != null && lastAttackTime - player.getChangeTime() > 600000) { //角色在地圖攻击怪物10分钟 判断角色正在攻击
             player.setChangeTime(false);
-            //System.out.println("开始检测 - 是否检测: " + !player.isInTownMap() + " 是否有怪物: " + player.getMap().getMobsSize() + " 是否在活动地图: " + (player.getEventInstance() != null));
+            //System.out.println("开始检测 - 是否检测: " + !player.isInTownMap() + " 是否有怪物: " + player.getMap().getMobsSize() + " 是否在活动地圖: " + (player.getEventInstance() != null));
             if (!player.isInTownMap() && player.getEventInstance() == null && player.getMap().getMobsSize() >= 2) {
                 inMapIimeCount++;
                 if (inMapIimeCount >= 6) {
-                    World.Broadcast.broadcastGMMessage(player.getWorld(), CWvsContext.broadcastMsg(6, "[GM消息] " + player.getName() + " ID: " + player.getId() + " (等级 " + player.getLevel() + ") 在地图: " + player.getMapId() + " 打怪时间超过1小时，该玩家可能是在挂机打怪。"));
+                    World.Broadcast.broadcastGMMessage(player.getWorld(), CWvsContext.broadcastMsg(6, "[GM消息] " + player.getName() + " ID: " + player.getId() + " (等級 " + player.getLevel() + ") 在地圖: " + player.getMapId() + " 打怪時間超過1小时，該玩家可能是在掛機打怪。"));
                 }
                 if (inMapIimeCount >= 8) {
                     inMapIimeCount = 0;
-//                    player.startLieDetector(false);
+                    player.getAntiMacro().startLieDetector("系統測試", false, false);
                     //System.out.println("开始检测 - 启动测谎仪.");
-//                    //System.out.println("[作弊] " + player.getName() + " (等级 " + player.getLevel() + ") 在地图: " + player.getMapId() + " 打怪时间超过 80 分钟，系统启动测谎仪系统。");
-//                    WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverNotice(6, "[GM消息] " + player.getName() + " ID: " + player.getId() + " (等级 " + player.getLevel() + ") 在地图: " + player.getMapId() + " 打怪时间超过 80 分钟，系统启动测谎仪系统。"));
+//                    //System.out.println("[作弊] " + player.getName() + " (等級 " + player.getLevel() + ") 在地圖: " + player.getMapId() + " 打怪時間超過 80 分钟，系统启动测谎仪系统。");
+//                    WorldBroadcastService.getInstance().broadcastGMMessage(MaplePacketCreator.serverNotice(6, "[GM消息] " + player.getName() + " ID: " + player.getId() + " (等級 " + player.getLevel() + ") 在地圖: " + player.getMapId() + " 打怪時間超過 80 分钟，系统启动测谎仪系统。"));
                 }
             }
         }
@@ -129,14 +129,14 @@ public class CheatTracker {
     }
 
     /*
-     * 重置角色在地图的时间检测次数
+     * 重置角色在地圖的时间检测次数
      */
     public void resetInMapIimeCount() {
         inMapIimeCount = 0;
     }
 
     /**
-     * 检测玩家在PVP地图中的攻击 unfortunately PVP does not give a tick count
+     * 检测玩家在PVP地圖中的攻击 unfortunately PVP does not give a tick count
      */
     public void checkPVPAttack(int skillId) {
         int AtkDelay = GameConstants.getAttackDelay(skillId, skillId == 0 ? null : SkillFactory.getSkill(skillId));
@@ -198,7 +198,7 @@ public class CheatTracker {
         if (dmg > 2000 && lastDamage == dmg && player != null && (player.getLevel() < 190 || dmg > expected * 2)) {
             numSameDamage++;
             if (numSameDamage > 5) {
-                registerOffense(CheatingOffense.SAME_DAMAGE, numSameDamage + " times, 攻击伤害 " + dmg + ", 预期伤害 " + expected + " [等级: " + player.getLevel() + ", 职业: " + player.getJob() + "]");
+                registerOffense(CheatingOffense.SAME_DAMAGE, numSameDamage + " times, 攻击伤害 " + dmg + ", 预期伤害 " + expected + " [等級: " + player.getLevel() + ", 职业: " + player.getJob() + "]");
                 numSameDamage = 0;
             }
         } else {
@@ -213,9 +213,9 @@ public class CheatTracker {
     public void checkHighDamage(int eachd, double maxDamagePerHit, int mobId, int skillId) {
         MapleCharacter player = getPlayer();
         if (eachd > maxDamagePerHit && maxDamagePerHit > 2000 && player != null) {
-            registerOffense(CheatingOffense.HIGH_DAMAGE, "[伤害: " + eachd + ", 预计伤害: " + maxDamagePerHit + ", 怪物ID: " + mobId + "] [职业: " + player.getJob() + ", 等级: " + player.getLevel() + ", 技能: " + skillId + "]");
+            registerOffense(CheatingOffense.HIGH_DAMAGE, "[伤害: " + eachd + ", 预计伤害: " + maxDamagePerHit + ", 怪物ID: " + mobId + "] [职业: " + player.getJob() + ", 等級: " + player.getLevel() + ", 技能: " + skillId + "]");
             if (eachd > maxDamagePerHit * 2) {
-                registerOffense(CheatingOffense.HIGH_DAMAGE_2, "[伤害: " + eachd + ", 预计伤害: " + maxDamagePerHit + ", 怪物ID: " + mobId + "] [职业: " + player.getJob() + ", 等级: " + player.getLevel() + ", 技能: " + skillId + "]");
+                registerOffense(CheatingOffense.HIGH_DAMAGE_2, "[伤害: " + eachd + ", 预计伤害: " + maxDamagePerHit + ", 怪物ID: " + mobId + "] [职业: " + player.getJob() + ", 等級: " + player.getLevel() + ", 技能: " + skillId + "]");
             }
         }
     }
@@ -275,7 +275,7 @@ public class CheatTracker {
             lastPickupkCount++;
             MapleCharacter player = getPlayer();
             if (lastPickupkCount >= count && player != null && !player.isGM()) {
-                //System.out.println("[作弊] " + player.getName() + " (等级 " + player.getLevel() + ") " + (pet ? "宠物" : "角色") + "捡取 checkPickup 次数: " + lastPickupkCount + " 服务器断开他的连接。");
+                //System.out.println("[作弊] " + player.getName() + " (等級 " + player.getLevel() + ") " + (pet ? "宠物" : "角色") + "捡取 checkPickup 次数: " + lastPickupkCount + " 服务器断开他的连接。");
 //                player.getClient().disconnect(true, false);
 //                if (player.getClient() != null && player.getClient().getSession().isActive()) {
 //                    player.getClient().getSession().close();
@@ -307,7 +307,7 @@ public class CheatTracker {
 //                    if (player.getClient().getSession().isActive()) {
 //                        player.getClient().getSession().close();
 //                    }
-                    System.out.println("[作弊] " + player.getName() + " (等级 " + player.getLevel() + ") checkDrop 次数: " + dropsPerSecond + " 服务器断开他的连接。");
+                    System.out.println("[作弊] " + player.getName() + " (等級 " + player.getLevel() + ") checkDrop 次数: " + dropsPerSecond + " 服务器断开他的连接。");
                 } else {
                     player.getClient().setMonitored(true);
                 }
@@ -330,7 +330,7 @@ public class CheatTracker {
 //                if (player.getClient().getSession().isActive()) {
 //                    player.getClient().getSession().close();
 //                }
-                System.out.println("[作弊] " + player.getName() + " (等级 " + player.getLevel() + ") checkMsg 次数: " + msgsPerSecond + " 服务器断开他的连接。");
+                System.out.println("[作弊] " + player.getName() + " (等級 " + player.getLevel() + ") checkMsg 次数: " + msgsPerSecond + " 服务器断开他的连接。");
             }
         } else {
             msgsPerSecond = 0;
@@ -356,7 +356,7 @@ public class CheatTracker {
 
     public void registerOffense(CheatingOffense offense, String param) {
         MapleCharacter chrhardref = getPlayer();
-        if (chrhardref == null || !offense.isEnabled() || chrhardref.isGM()) {
+        if (chrhardref == null || !offense.isEnabled() /*|| chrhardref.isGM()*/) {
             return;
         }
         CheatingOffenseEntry entry = null;
@@ -387,7 +387,7 @@ public class CheatTracker {
 //                if (chrhardref.getClient().getSession().isActive()) {
 //                    chrhardref.getClient().getSession().close();
 //                }
-                System.out.println("[作弊] " + chrhardref.getName() + " (等级:" + chrhardref.getLevel() + " 职业:" + chrhardref.getJob() + ") 服务器断开他的连接. 原因: " + StringUtil.makeEnumHumanReadable(offense.name()) + (param == null ? "" : (" - " + param)));
+                System.out.println("[作弊] " + chrhardref.getName() + " (等級:" + chrhardref.getLevel() + " 职业:" + chrhardref.getJob() + ") 服务器断开他的连接. 原因: " + StringUtil.makeEnumHumanReadable(offense.name()) + (param == null ? "" : (" - " + param)));
             }
             gm_message = 0;
             return;
@@ -408,8 +408,8 @@ public class CheatTracker {
             case SAME_DAMAGE:
                 gm_message++;
                 if (gm_message % 100 == 0) {
-                    //System.out.println("[作弊] " + MapleCharacterUtil.makeMapleReadable(chrhardref.getName()) + " ID: " + chrhardref.getId() + " (等级 " + chrhardref.getLevel() + ") 使用非法程序! " + StringUtil.makeEnumHumanReadable(offense.name()) + (param == null ? "" : (" - " + param)));
-                    World.Broadcast.broadcastGMMessage(chrhardref.getWorld(), CWvsContext.broadcastMsg(6, "[GM消息] " + MapleCharacterUtil.makeMapleReadable(chrhardref.getName()) + " ID: " + chrhardref.getId() + " (等级 " + chrhardref.getLevel() + ") 使用非法程序! " + StringUtil.makeEnumHumanReadable(offense.name()) + (param == null ? "" : (" - " + param))));
+                    //System.out.println("[作弊] " + MapleCharacterUtil.makeMapleReadable(chrhardref.getName()) + " ID: " + chrhardref.getId() + " (等級 " + chrhardref.getLevel() + ") 使用非法程序! " + StringUtil.makeEnumHumanReadable(offense.name()) + (param == null ? "" : (" - " + param)));
+                    World.Broadcast.broadcastGMMessage(chrhardref.getWorld(), CWvsContext.broadcastMsg(6, "[GM消息] " + MapleCharacterUtil.makeMapleReadable(chrhardref.getName()) + " ID: " + chrhardref.getId() + " (等級 " + chrhardref.getLevel() + ") 使用非法程序! " + StringUtil.makeEnumHumanReadable(offense.name()) + (param == null ? "" : (" - " + param))));
                 }
                 if (gm_message >= 20 && chrhardref.getLevel() < (offense == CheatingOffense.SAME_DAMAGE ? 180 : 190)) {
                     Timestamp chrCreated = chrhardref.getChrCreated();
@@ -421,8 +421,8 @@ public class CheatTracker {
                         AutobanManager.getInstance().autoban(chrhardref.getClient(), StringUtil.makeEnumHumanReadable(offense.name()) + " over 500 times " + (param == null ? "" : (" - " + param)));
                     } else {
                         gm_message = 0;
-                        World.Broadcast.broadcastGMMessage(chrhardref.getWorld(), CWvsContext.broadcastMsg(6, "[GM消息] " + MapleCharacterUtil.makeMapleReadable(chrhardref.getName()) + " ID: " + chrhardref.getId() + " (等级 " + chrhardref.getLevel() + ") 使用非法程序! " + StringUtil.makeEnumHumanReadable(offense.name()) + (param == null ? "" : (" - " + param))));
-                        System.out.println("[GM消息] " + MapleCharacterUtil.makeMapleReadable(chrhardref.getName()) + " ID: " + chrhardref.getId() + " (等级 " + chrhardref.getLevel() + ") 使用非法程序! " + StringUtil.makeEnumHumanReadable(offense.name()) + (param == null ? "" : (" - " + param)));
+                        World.Broadcast.broadcastGMMessage(chrhardref.getWorld(), CWvsContext.broadcastMsg(6, "[GM消息] " + MapleCharacterUtil.makeMapleReadable(chrhardref.getName()) + " ID: " + chrhardref.getId() + " (等級 " + chrhardref.getLevel() + ") 使用非法程序! " + StringUtil.makeEnumHumanReadable(offense.name()) + (param == null ? "" : (" - " + param))));
+                        System.out.println("[GM消息] " + MapleCharacterUtil.makeMapleReadable(chrhardref.getName()) + " ID: " + chrhardref.getId() + " (等級 " + chrhardref.getLevel() + ") 使用非法程序! " + StringUtil.makeEnumHumanReadable(offense.name()) + (param == null ? "" : (" - " + param)));
                     }
                 }
                 break;
@@ -438,7 +438,7 @@ public class CheatTracker {
 //                if (player.getClient().getSession().isActive()) {
 //                    player.getClient().getSession().close();
 //                }
-                System.out.println("[作弊] " + player.getName() + " (等级 " + player.getLevel() + ") updateTick 次数: " + tickSame + " 服务器断开他的连接。");
+                System.out.println("[作弊] " + player.getName() + " (等級 " + player.getLevel() + ") updateTick 次数: " + tickSame + " 服务器断开他的连接。");
             } else {
                 tickSame++;
             }

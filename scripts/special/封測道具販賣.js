@@ -9,7 +9,7 @@ var items = Array(//(價格,type,ItemID,批量購買,是否顯示) type : -1 - �
 		Array(100,-1,2049400,true,true),Array(500000,-1,2531000,true,true),
 		Array(100,-1,2460000,true,true),
 		Array(500000,-1,2049600,true,true),Array(100,-1,2460001,true,true),Array(100,-1,2460002,true,true),Array(100,-1,2460003,true,true),
-		Array(200000,-1,5062000,true,true),
+		Array(200000,-1,5062000,true,true),Array(1000000,-1,4021030,true,true),Array(2000000,-1,4021029,true,true),
 		Array(100,-1,2450000,true,true)
 	);
 

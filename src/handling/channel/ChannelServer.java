@@ -116,7 +116,6 @@ public class ChannelServer {
         if (finishedShutdown) {
             return;
         }
-        broadcastPacket(CWvsContext.broadcastMsg(0, "This channel will now shut down."));
         shutdown = true;
         System.out.println("Channel " + channel + ", Saving characters...");
         players.disconnectAll();

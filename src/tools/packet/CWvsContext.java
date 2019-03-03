@@ -632,7 +632,7 @@ public class CWvsContext {
     }
 
     // correct structure, but invalid pointer..
-    public static byte[] sendLieDetector(final byte[] captcha) {
+    public static byte[] sendLieDetector(final byte[] captcha, int attenpt) {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
         mplew.writeShort(SendPacketOpcode.LIE_DETECTOR.getValue());
         mplew.write(7); // 1 = not attacking, 2 = tested, 3 = going through
