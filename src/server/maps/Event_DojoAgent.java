@@ -304,6 +304,7 @@ public class Event_DojoAgent {
                     if (chr_mem != null) {
                         chr_mem.finishAchievement(77);
                         chr_mem.finishDailyQuest(12);
+                        chr_mem.getGuild().gainGP(10, true);
                         chr_mem.dropMessage(6, "[道場公告]您通過的時間為 "+ minutes+ " 分 "+ secondd + " 秒。");
                     }
                 }
@@ -315,11 +316,12 @@ public class Event_DojoAgent {
                         chr_mem.finishAchievement(78);
                         chr_mem.finishDailyQuest(22);
                         chr_mem.dropMessage(6, "[道場公告]您通過的時間為 "+ minutes+ " 分 "+ secondd + " 秒。");
+                        chr_mem.getGuild().gainGP(20, true);
                     }
                     if (chr.getParty().getMembers().size() == 1) {
                         long dojoEndTime = System.currentTimeMillis();
                         int timeDifference = (int) ((dojoEndTime / 1000) - (chr.getDojo_time() / 1000));
-                        chr.dropMessage(-1, "恭喜完成武陵地域-單挑.");
+                        chr.dropMessage(-1, "恭喜完成武陵夢魘-單挑.");
                         try {
                             PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM dojo_ranks WHERE name = ?");
                             ps.setString(1, chr.getName());

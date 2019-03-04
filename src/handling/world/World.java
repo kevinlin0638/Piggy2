@@ -5,6 +5,7 @@ import client.buddy.BuddyList;
 import client.buddy.BuddyList.BuddyAddResult;
 import client.buddy.BuddyList.BuddyOperation;
 import client.buddy.BuddyListEntry;
+import handling.channel.MapleGuildRanking;
 import server.status.MapleBuffStatus;
 import client.MapleCharacter;
 import client.inventory.MapleInventoryType;
@@ -56,7 +57,7 @@ public class World {
     public static int eventMap = 0;
     public static boolean eventOn = false;
     public static int AutoJQ_Channel = -1; // for checks in commands
-    public static String MD5 = "3A1C77EE3BF10D79A9152D91BE5C4061";
+    public static String MD5 = "B19FA27742A7824720F6126B35C0A136";
     // Monster Rush
     public static boolean MonsterRush = false;
     public static boolean Monster_Rush_Enabled = false;
@@ -604,6 +605,7 @@ public class World {
         EventTimer.getInstance().register(new Runnable() {
             @Override
             public void run() {
+                MapleGuildRanking.reload();
                 String exe = "python";
                 String command = "C:\\chromedriver\\__main__.py";
                 String num1 = "1";
@@ -1602,10 +1604,10 @@ public class World {
 
         public static void changeEmblem(int gid, int affectedPlayers, MapleGuild mgs) {
             Broadcast.sendGuildPacket(affectedPlayers, GuildPacket.guildEmblemChange(gid, (short) mgs.getLogoBG(), (byte) mgs.getLogoBGColor(), (short) mgs.getLogo(), (byte) mgs.getLogoColor()), -1, gid);
-            setGuildAndRank(affectedPlayers, -1, -1, -1, -1);    //respawn player
+            setGuildAndRank(affectedPlayers, -1, -1, -1, -1, 0);    //respawn player
         }
 
-        public static void setGuildAndRank(int cid, int guildid, int rank, int contribution, int alliancerank) {
+        public static void setGuildAndRank(int cid, int guildid, int rank, int contribution, int alliancerank, int gpcon) {
             int ch = Find.findChannel(cid);
             int wl = Find.findWorld(cid);
             if (ch == -1) {
@@ -1625,6 +1627,7 @@ public class World {
                 mc.setGuildRank((byte) rank);
                 mc.setGuildContribution(contribution);
                 mc.setAllianceRank((byte) alliancerank);
+                mc.setGpcon(gpcon);
                 mc.saveGuildStatus();
             }
             if (bDifferentGuild && ch > 0) {

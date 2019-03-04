@@ -189,7 +189,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     private int accountid, id, meso, hair, face, demonMarking, mapid, fame, pvpPoints, totalWins, totalLosses,
             guildid = 0, fallcounter, maplepoints, nxprepaid, nxcredit, chair, itemEffect, points, vpoints,
             rank = 1, rankMove = 0, jobRank = 1, jobRankMove = 0, marriageId, marriageItemId, dotHP, pvpKills = 1, pvpDeaths = 1,
-            currentrep, totalrep, coconutteam, followid, battleshipHP, gachexp, challenge, guildContribution = 0, remainingAp, redeemhn;
+            currentrep, totalrep, coconutteam, followid, battleshipHP, gachexp, challenge, guildContribution = 0, gpcon = 0, remainingAp, redeemhn;
     private Point old;
     private int exp = 0;
     private MonsterFamiliar summonedFamiliar;
@@ -585,6 +585,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         ret.dojo_time = ct.dojo_time;
         ret.guildid = ct.guildid;
         ret.guildrank = ct.guildrank;
+        ret.gpcon = ct.gpcon;
         ret.guildContribution = ct.guildContribution;
         ret.allianceRank = ct.alliancerank;
         ret.points = ct.points;
@@ -780,6 +781,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ret.guildrank = rs.getByte("guildrank");
             ret.allianceRank = rs.getByte("allianceRank");
             ret.guildContribution = rs.getInt("guildContribution");
+            ret.gpcon = rs.getInt("gpcon");
             ret.totalWins = rs.getInt("totalWins");
             ret.totalLosses = rs.getInt("totalLosses");
             ret.currentrep = rs.getInt("currentrep");
@@ -7331,6 +7333,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         } else {
             mgc = null;
             guildContribution = 0;
+            gpcon = 0;
         }
     }
 
@@ -7343,6 +7346,25 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (mgc != null) {
             mgc.setGuildRank(_rank);
         }
+    }
+
+    public int getGpcon() {
+        return gpcon;
+    }
+
+    public void setGpcon(int gpcon) {
+        this.gpcon = gpcon;
+        if (mgc != null) {
+            mgc.setGpcon(gpcon);
+        }
+    }
+
+    public void gaingpcon(int gpcon){
+        MapleGuildCharacter mgc = getGuild().getMGC(id);
+        if(mgc.getGpcon() + gpcon < 0)
+            gpcon = -mgc.getGpcon();
+        mgc.setGpcon(mgc.getGpcon() + gpcon);
+        this.gpcon += gpcon;
     }
 
     public int getGuildContribution() {
@@ -7754,7 +7776,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void saveGuildStatus() {
-        MapleGuild.setOfflineGuildStatus(guildid, guildrank, guildContribution, allianceRank, id);
+        MapleGuild.setOfflineGuildStatus(guildid, guildrank, guildContribution, allianceRank, id, gpcon);
     }
 
     public void familyUpdate() {
@@ -11612,6 +11634,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         //ret.dispelSummons();
         ret.guildrank = guildrank;
         ret.guildContribution = guildContribution;
+        ret.gpcon = gpcon;
         ret.allianceRank = allianceRank;
         ret.setPosition(getTruePosition());
         for (Item equip : getInventory(MapleInventoryType.EQUIPPED).newList()) {

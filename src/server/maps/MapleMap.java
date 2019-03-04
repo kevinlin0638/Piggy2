@@ -698,6 +698,7 @@ public final class MapleMap {
             for (MapleCharacter c : getCharactersThreadsafe()) {
                 c.finishAchievement(16);
                 c.finishDailyQuest(17);
+                c.getGuild().gainGP(150, false, c.getId());
             }
             if (speedRunStart > 0) {
                 type = ExpeditionType.Horntail;
@@ -711,6 +712,7 @@ public final class MapleMap {
                 for (MapleCharacter c : characters) {
                      c.finishAchievement(24);
                     c.finishDailyQuest(24);
+                    c.getGuild().gainGP(300, false, c.getId());
                 }
             } finally {
                 charactersLock.readLock().unlock();
@@ -744,16 +746,28 @@ public final class MapleMap {
                 if (mobid == 9420549) {
                     for (MapleCharacter c : getCharactersThreadsafe()) {
                         c.finishAchievement(15);
+                        int rate = 1;
+                        if(channel >= 11)
+                            rate = 2;
+                        c.getGuild().gainGP(130 * rate, false, c.getId());
                     }
                 } else {
                     for (MapleCharacter c : getCharactersThreadsafe()) {
                         c.finishAchievement(16);
+                        int rate = 1;
+                        if(channel >= 11)
+                            rate = 2;
+                        c.getGuild().gainGP(130 * rate, false, c.getId());
                     }
                 }
             }
         } else if (mobid == 8820001 && mapid == 270050100) {
             for (MapleCharacter c : getCharactersThreadsafe()) {
                 c.finishAchievement(17);
+                int rate = 1;
+                if(channel >= 11)
+                    rate = 2;
+                c.getGuild().gainGP(180 * rate, false, c.getId());
             }
             World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] Pink bean was killed by : " + chr.getName()));
             World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "經過帶領的隊伍經過無數次的挑戰，終於擊破了時間的寵兒－皮卡丘的遠征隊！你們才是時間神殿的真正英雄~"));
@@ -771,20 +785,44 @@ public final class MapleMap {
             doShrine(true);
         } else if (mobid == 8850011 && mapid == 271040100) {
             World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] Empress was killed by : " + chr.getName()));
-            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "您是我們的英雄!!"));
+            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "您是我們的英雄!!擊敗了 西格諾斯"));
             if (speedRunStart > 0) {
                 type = ExpeditionType.Cygnus;
+            }
+            for (MapleCharacter c : getCharactersThreadsafe()) {
+                int rate = 1;
+                if(channel >= 11)
+                    rate = 2;
+                c.getGuild().gainGP(230 * rate, false, c.getId());
+            }
+            doShrine(true);
+        } else if (mobid == 8860000 && mapid == 272030400) {
+            World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] 阿卡 was killed by : " + chr.getName()));
+            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "您是我們的英雄!!擊敗了 阿卡伊濃"));
+
+            for (MapleCharacter c : getCharactersThreadsafe()) {
+                int rate = 1;
+                if(channel >= 11)
+                    rate = 2;
+                c.getGuild().gainGP(200 * rate, false, c.getId());
             }
             doShrine(true);
         } else if (mobid == 8840000 && mapid == 211070100) {
             if (speedRunStart > 0) {
                 type = ExpeditionType.Von_Leon;
             }
+            for (MapleCharacter c : getCharactersThreadsafe()) {
+                int rate = 1;
+                if(channel >= 11)
+                    rate = 2;
+                c.getGuild().gainGP(180 * rate, false, c.getId());
+            }
             doShrine(true);
         } else if (mobid == 8800002 && mapid == 280030000) {
             for (MapleCharacter c : getCharactersThreadsafe()) {
                 c.finishAchievement(15);
                 c.finishDailyQuest(13);
+                c.getGuild().gainGP(100, false, c.getId());
             }
 //            FileoutputUtil.log(FileoutputUtil.Zakum_Log, MapDebug_Log());
             if (speedRunStart > 0) {
@@ -795,6 +833,7 @@ public final class MapleMap {
             for (MapleCharacter c : getCharactersThreadsafe()) {
                 c.finishAchievement(23);
                 c.finishDailyQuest(23);
+                c.getGuild().gainGP(200, false, c.getId());
             }
             //FileoutputUtil.log(FileoutputUtil.Zakum_Log, MapDebug_Log());
             if (speedRunStart > 0) {

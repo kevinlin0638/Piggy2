@@ -30,6 +30,7 @@ public class MapleGuildCharacter implements java.io.Serializable { // alias for 
     private int id, jobid, guildid, guildContribution;
     private boolean online;
     private String name;
+    private int gpcon = 0;
 
     // either read from active character...
     // if it's online
@@ -44,10 +45,11 @@ public class MapleGuildCharacter implements java.io.Serializable { // alias for 
         guildContribution = c.getGuildContribution();
         allianceRank = c.getAllianceRank();
         online = true;
+        gpcon = c.getGpcon();
     }
 
     // or we could just read from the database
-    public MapleGuildCharacter(final int id, final short lv, final String name, final byte channel, final int job, final byte rank, final int guildContribution, final byte allianceRank, final int gid, final boolean on) {
+    public MapleGuildCharacter(final int id, final short lv, final String name, final byte channel, final int job, final byte rank, final int guildContribution, final byte allianceRank, final int gid, final boolean on, final int gpcon) {
         this.level = lv;
         this.id = id;
         this.name = name;
@@ -60,6 +62,15 @@ public class MapleGuildCharacter implements java.io.Serializable { // alias for 
         this.allianceRank = allianceRank;
         this.guildContribution = guildContribution;
         this.guildid = gid;
+        this.gpcon = gpcon;
+    }
+
+    public int getGpcon() {
+        return gpcon;
+    }
+
+    public void setGpcon(int gpcon) {
+        this.gpcon = gpcon;
     }
 
     public int getLevel() {

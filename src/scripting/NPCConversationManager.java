@@ -1684,6 +1684,15 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         c.sendPacket(GuildPacket.showGuildRanks(id, MapleGuildRanking.getInstance().getRank()));
     }
 
+    public int getGuildRank() {
+        int rk = 0;
+        for(MapleGuildRanking.GuildRankingInfo info : MapleGuildRanking.getInstance().getRank()){
+            if(info.getName().equals(c.getPlayer().getGuild().getName()))
+                rk = MapleGuildRanking.getInstance().getRank().indexOf(info) + 1;
+        }
+        return rk;
+    }
+
     public boolean removePlayerFromInstance() {
         if (c.getPlayer().getEventInstance() != null) {
             c.getPlayer().getEventInstance().removePlayer(c.getPlayer());

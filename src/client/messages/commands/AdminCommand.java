@@ -18,7 +18,9 @@ import ecpay.payment.integration.PaymentAIO;
 import handling.RecvPacketOpcode;
 import handling.SendPacketOpcode;
 import handling.channel.ChannelServer;
+import handling.channel.MapleGuildRanking;
 import handling.world.World;
+import handling.world.guild.MapleBBSThread;
 import provider.MapleData;
 import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
@@ -1708,5 +1710,78 @@ public class AdminCommand {
             return "!監禁 <玩家名稱> <時間(分鐘,0為永久)>";
         }
     }
+
+    private static void updateGuildRK(){
+        try {
+            Connection con = DatabaseConnection.getConnection();
+            List<MapleGuildRanking.GuildRankingInfo> grs = MapleGuildRanking.getInstance().getRankall();
+            for (MapleGuildRanking.GuildRankingInfo gf : grs) {
+                PreparedStatement ps = con.prepareStatement("UPDATE guilds SET rankinglastmonth = ? WHERE name = ?");
+                ps.setInt(1, (grs.indexOf(gf) + 1));
+                ps.setString(2, gf.getName());
+                ps.executeUpdate();
+                ps.close();
+                Objects.requireNonNull(World.Guild.getGuildByName(gf.getName())).setLastMrk((grs.indexOf(gf) + 1));
+            }
+        }catch (SQLException se) {
+            System.err.println("Error saving guild to SQL");
+        }
+    }
+
+    public static class LoadGR extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            updateGuildRK();
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!LoadGR - 重載上月公會排名)";
+        }
+    }
+
+    public static class ResetGR extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            updateGuildRK();
+            try {
+                Connection con = DatabaseConnection.getConnection();
+                PreparedStatement ps = con.prepareStatement("UPDATE guilds SET guildtotalpoints = GP + guildtotalpoints");
+                ps.executeUpdate();
+                ps.close();
+
+                List<MapleGuildRanking.GuildRankingInfo> grs = MapleGuildRanking.getInstance().getRankall();
+                for (MapleGuildRanking.GuildRankingInfo gf : grs) {
+                    World.Guild.getGuildByName(gf.getName()).gainGP(-gf.getGP(), false);
+                }
+            }catch (SQLException se) {
+                System.err.println("Error saving guild to SQL");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!ResetGR - 重載上月公會排名並將公會貢獻歸零)";
+        }
+    }
+
+    public static class gainGP extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            c.getPlayer().getGuild().gainGP(100000, true, c.getPlayer().getId());
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!gainGP - 增加公會貢獻 100000)";
+        }
+    }
+
 
 }

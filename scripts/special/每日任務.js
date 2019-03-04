@@ -101,6 +101,7 @@ function action(mode, type, selection) {
 					cm.gainItem(4000001, -200);
 				}
 				cm.getPlayer().setDailyQuestRewarded(selection)
+				cm.getPlayer().getGuild().gainGP(50, true, cm.getPlayer().getId());
 				cm.gainItem(4310014, 1);
 				cm.dispose();
 				cm.openNpc(9330003, "每日任務");

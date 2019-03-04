@@ -61,9 +61,9 @@ public class RankingWorker {
     }
 
     private static void updateRanking(Connection con) throws Exception {
-        StringBuilder sb = new StringBuilder("SELECT c.id, c.job, c.name, c.jobRank, c.rank, c.reborns");
+        StringBuilder sb = new StringBuilder("SELECT c.id, c.job, c.name, c.jobRank, c.rank, c.level");
         sb.append(" FROM characters AS c LEFT JOIN accounts AS a ON c.accountid = a.id WHERE c.gm <= 3 AND a.banned = 0");
-        sb.append(" ORDER BY c.reborns DESC, c.rank ASC");
+        sb.append(" ORDER BY c.level DESC, c.rank ASC");
         PreparedStatement ps;
         try (PreparedStatement charSelect = con.prepareStatement(sb.toString());
              ResultSet rs = charSelect.executeQuery()) {
@@ -82,8 +82,8 @@ public class RankingWorker {
                 int jobRank = rankMap.get(job / 100) + 1;
                 rankMap.put(job / 100, jobRank);
                 rank++;
-                rankings.get(-1).add(new RankingInformation(rs.getString("name"), job, rs.getInt("reborns")));
-                rankings.get(job / 100).add(new RankingInformation(rs.getString("name"), job, rs.getInt("reborns")));
+                rankings.get(-1).add(new RankingInformation(rs.getString("name"), job, rs.getInt("level")));
+                rankings.get(job / 100).add(new RankingInformation(rs.getString("name"), job, rs.getInt("level")));
                 ps.setInt(1, jobRank);
                 ps.setInt(2, rs.getInt("jobRank") - jobRank);
                 ps.setInt(3, rank);
@@ -135,7 +135,7 @@ public class RankingWorker {
             builder.append(rank);
             builder.append(" : ");
             builder.append(name);
-            builder.append(" - Rebirths ");
+            builder.append(" - level ");
             builder.append(reborns);
             builder.append(" ");
             builder.append(MapleCarnivalChallenge.getJobNameById(job));

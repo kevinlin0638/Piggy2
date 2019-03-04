@@ -1144,8 +1144,12 @@ public class InventoryHandler {
             c.sendPacket(InventoryPacket.scrolledItem(scroll, MapleInventoryType.EQUIP, scrolled, false, false, false));
         }
         if (scrollSuccess == Equip.ScrollResult.SUCCESS && GameConstants.isInnocence(scroll.getItemId())) {
+            if(toScroll.getPosition() < 0) {
+                chr.getInventory(MapleInventoryType.EQUIPPED).removeItem(toScroll.getPosition());
+            }else {
+                chr.getInventory(MapleInventoryType.EQUIP).removeItem(toScroll.getPosition());
+            }
             c.sendPacket(InventoryPacket.scrolledItem(scroll, MapleInventoryType.EQUIP, toScroll, true, false, false));
-            chr.getInventory(MapleInventoryType.EQUIPPED).removeItem(toScroll.getPosition());
         }
         if(!c.getPlayer().hasBlockedInventory())
             chr.getMap().broadcastMessage(chr, CField.getScrollEffect(c.getPlayer().getId(), scrollSuccess, legendarySpirit, whiteScroll, scroll.getItemId(), toScroll.getItemId()), vegas == 0);
@@ -3224,8 +3228,8 @@ public class InventoryHandler {
                         if (GameConstants.canHammer(item.getItemId()) && MapleItemInformationProvider.getInstance().getSlots(item.getItemId()) > 0 && item.getViciousHammer() < 2) {
                             item.setViciousHammer((byte) (item.getViciousHammer() + 1));
                             item.setUpgradeSlots((byte) (item.getUpgradeSlots() + 1));
-                            c.getPlayer().forceReAddItem(item, MapleInventoryType.EQUIP);
-                            c.sendPacket(MTSCSPacket.ViciousHammer(true, (byte) item.getViciousHammer()));
+//                            c.getPlayer().forceReAddItem(item, MapleInventoryType.EQUIP);
+//                            c.sendPacket(MTSCSPacket.ViciousHammer(true, (byte) item.getViciousHammer()));
                             used = true;
                             // cc = true;
                         } else {
@@ -3233,6 +3237,7 @@ public class InventoryHandler {
                             //  cc = true;
                             c.sendPacket(MTSCSPacket.ViciousHammer(true, (byte) 0));
                         }
+                        c.getPlayer().saveToDB(false, false);
                         c.getPlayer().fakeRelog();
                     }
 

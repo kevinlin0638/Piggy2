@@ -149,6 +149,7 @@ function action(mode, type, selection) {
                 cm.gainItem(rewardlist[i][0], rewardlist[i][1]);
             }
         }
+		cm.getPlayer().getGuild().gainGP(100, true, cm.getPlayer().getId());
         cm.setEventCount("累積" + event_name +"禮包" + sel, 1);
         cm.playerMessage(1, "領取成功");
         cm.dispose();

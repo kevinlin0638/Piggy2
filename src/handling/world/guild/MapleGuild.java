@@ -52,7 +52,9 @@ public class MapleGuild implements java.io.Serializable {
     private int id, gp, logo, logoColor, leader, capacity, logoBG, logoBGColor, signature, level;
     private boolean bDirty = true, proper = true;
     private int allianceid = 0, invitedid = 0;
+    private int allgp = 0;
     private boolean init = false, changed = false, changed_skills = false;
+    private int lastMrk = 0;
 
     public MapleGuild(final int guildid) {
         this(guildid, null);
@@ -90,6 +92,8 @@ public class MapleGuild implements java.io.Serializable {
             notice = rs.getString("notice");
             signature = rs.getInt("signature");
             allianceid = rs.getInt("alliance");
+            allgp = rs.getInt("guildtotalpoints");
+            lastMrk = rs.getInt("rankinglastmonth");
             rs.close();
             ps.close();
 
@@ -98,7 +102,7 @@ public class MapleGuild implements java.io.Serializable {
                 allianceid = 0;
             }
 
-            ps = con.prepareStatement("SELECT id, name, level, job, guildrank, guildContribution, alliancerank FROM characters WHERE guildid = ? ORDER BY guildrank ASC, name ASC", ResultSet.CONCUR_UPDATABLE);
+            ps = con.prepareStatement("SELECT id, name, level, job, guildrank, guildContribution, alliancerank,gpcon FROM characters WHERE guildid = ? ORDER BY guildrank ASC, name ASC", ResultSet.CONCUR_UPDATABLE);
             ps.setInt(1, guildid);
             rs = ps.executeQuery();
 
@@ -141,7 +145,7 @@ public class MapleGuild implements java.io.Serializable {
                         aFix = 3;
                     }
                 }
-                members.add(new MapleGuildCharacter(cid, rs.getShort("level"), rs.getString("name"), (byte) -1, rs.getInt("job"), gRank, rs.getInt("guildContribution"), aRank, guildid, false));
+                members.add(new MapleGuildCharacter(cid, rs.getShort("level"), rs.getString("name"), (byte) -1, rs.getInt("job"), gRank, rs.getInt("guildContribution"), aRank, guildid, false, rs.getInt("gpcon")));
             } while (rs.next());
             rs.close();
             ps.close();
@@ -359,6 +363,23 @@ public class MapleGuild implements java.io.Serializable {
         }
     }
 
+    public static void setOfflineGuildStatus(int guildid, byte guildrank, int contribution, byte alliancerank, int cid, int gpcon) {
+        try {
+            java.sql.Connection con = DatabaseConnection.getConnection();
+            java.sql.PreparedStatement ps = con.prepareStatement("UPDATE characters SET guildid = ?, guildrank = ?, guildContribution = ?, alliancerank = ?, gpcon = ? WHERE id = ?");
+            ps.setInt(1, guildid);
+            ps.setInt(2, guildrank);
+            ps.setInt(3, contribution);
+            ps.setInt(4, alliancerank);
+            ps.setInt(5, gpcon);
+            ps.setInt(6, cid);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException se) {
+            System.out.println("SQLException: " + se.getLocalizedMessage());
+        }
+    }
+
     public boolean isProper() {
         return proper;
     }
@@ -555,6 +576,11 @@ public class MapleGuild implements java.io.Serializable {
         return signature;
     }
 
+
+    public int getAllgp() {
+        return allgp;
+    }
+
     public final void broadcast(final byte[] packet) {
         broadcast(packet, -1, BCOp.NONE);
     }
@@ -577,9 +603,9 @@ public class MapleGuild implements java.io.Serializable {
             for (MapleGuildCharacter mgc : members) {
                 if (bcop == BCOp.DISBAND) {
                     if (mgc.isOnline()) {
-                        World.Guild.setGuildAndRank(mgc.getId(), 0, 5, 0, 5);
+                        World.Guild.setGuildAndRank(mgc.getId(), 0, 5, 0, 5, 0);
                     } else {
-                        setOfflineGuildStatus(0, (byte) 5, 0, (byte) 5, mgc.getId());
+                        setOfflineGuildStatus(0, (byte) 5, 0, (byte) 5, mgc.getId(), 0);
                     }
                 } else if (mgc.isOnline() && mgc.getId() != exceptionId) {
                     if (bcop == BCOp.EMBELMCHANGE) {
@@ -715,9 +741,9 @@ public class MapleGuild implements java.io.Serializable {
                     gainGP(mgcc.getGuildContribution() > 0 ? -mgcc.getGuildContribution() : -50);
                     members.remove(mgcc);
                     if (mgc.isOnline()) {
-                        World.Guild.setGuildAndRank(mgcc.getId(), 0, 5, 0, 5);
+                        World.Guild.setGuildAndRank(mgcc.getId(), 0, 5, 0, 5, 0);
                     } else {
-                        setOfflineGuildStatus((short) 0, (byte) 5, 0, (byte) 5, mgcc.getId());
+                        setOfflineGuildStatus((short) 0, (byte) 5, 0, (byte) 5, mgcc.getId(), 0);
                     }
                     break;
                 }
@@ -745,10 +771,10 @@ public class MapleGuild implements java.io.Serializable {
 
                     gainGP(mgc.getGuildContribution() > 0 ? -mgc.getGuildContribution() : -50);
                     if (mgc.isOnline()) {
-                        World.Guild.setGuildAndRank(cid, 0, 5, 0, 5);
+                        World.Guild.setGuildAndRank(cid, 0, 5, 0, 5, 0);
                     } else {
                         MapleCharacterUtil.sendNote(mgc.getName(), initiator.getName(), "You have been expelled from the guild.", 0);
-                        setOfflineGuildStatus((short) 0, (byte) 5, 0, (byte) 5, cid);
+                        setOfflineGuildStatus((short) 0, (byte) 5, 0, (byte) 5, cid, 0);
                     }
                     members.remove(mgc);
                     break;
@@ -776,7 +802,7 @@ public class MapleGuild implements java.io.Serializable {
                 newRank = (byte) (leader ? 1 : 2);
             }
             if (mgc.isOnline()) {
-                World.Guild.setGuildAndRank(mgc.getId(), this.id, mgc.getGuildRank(), mgc.getGuildContribution(), newRank);
+                World.Guild.setGuildAndRank(mgc.getId(), this.id, mgc.getGuildRank(), mgc.getGuildContribution(), newRank, mgc.getGpcon());
             } else {
                 setOfflineGuildStatus(this.id, (byte) mgc.getGuildRank(), mgc.getGuildContribution(), (byte) newRank, mgc.getId());
             }
@@ -791,7 +817,7 @@ public class MapleGuild implements java.io.Serializable {
         }
         for (final MapleGuildCharacter mgc : members) {
             if (mgc.isOnline()) {
-                World.Guild.setGuildAndRank(mgc.getId(), this.id, mgc.getGuildRank(), mgc.getGuildContribution(), newRank);
+                World.Guild.setGuildAndRank(mgc.getId(), this.id, mgc.getGuildRank(), mgc.getGuildContribution(), newRank, mgc.getGpcon());
             } else {
                 setOfflineGuildStatus(this.id, (byte) mgc.getGuildRank(), mgc.getGuildContribution(), (byte) newRank, mgc.getId());
             }
@@ -807,7 +833,7 @@ public class MapleGuild implements java.io.Serializable {
         for (final MapleGuildCharacter mgc : members) {
             if (cid == mgc.getId()) {
                 if (mgc.isOnline()) {
-                    World.Guild.setGuildAndRank(cid, this.id, mgc.getGuildRank(), mgc.getGuildContribution(), newRank);
+                    World.Guild.setGuildAndRank(cid, this.id, mgc.getGuildRank(), mgc.getGuildContribution(), newRank, mgc.getGpcon());
                 } else {
                     setOfflineGuildStatus(this.id, (byte) mgc.getGuildRank(), mgc.getGuildContribution(), (byte) newRank, cid);
                 }
@@ -817,6 +843,14 @@ public class MapleGuild implements java.io.Serializable {
             }
         }
         return false;
+    }
+
+    public int getLastMrk() {
+        return lastMrk;
+    }
+
+    public void setLastMrk(int lastMrk) {
+        this.lastMrk = lastMrk;
     }
 
     public final void changeGuildLeader(int cid) {
@@ -849,7 +883,7 @@ public class MapleGuild implements java.io.Serializable {
         for (final MapleGuildCharacter mgc : members) {
             if (cid == mgc.getId()) {
                 if (mgc.isOnline()) {
-                    World.Guild.setGuildAndRank(cid, this.id, newRank, mgc.getGuildContribution(), mgc.getAllianceRank());
+                    World.Guild.setGuildAndRank(cid, this.id, newRank, mgc.getGuildContribution(), mgc.getAllianceRank(), mgc.getGpcon());
                 } else {
                     setOfflineGuildStatus(this.id, (byte) newRank, mgc.getGuildContribution(), (byte) mgc.getAllianceRank(), cid);
                 }
@@ -979,10 +1013,11 @@ public class MapleGuild implements java.io.Serializable {
             final MapleGuildCharacter mg = getMGC(cid);
             if (mg != null) {
                 mg.setGuildContribution(mg.getGuildContribution() + amount);
+                mg.setGpcon(mg.getGpcon() + amount);
                 if (mg.isOnline()) {
-                    World.Guild.setGuildAndRank(cid, this.id, mg.getGuildRank(), mg.getGuildContribution(), mg.getAllianceRank());
+                    World.Guild.setGuildAndRank(cid, this.id, mg.getGuildRank(), mg.getGuildContribution(), mg.getAllianceRank(), mg.getGpcon());
                 } else {
-                    setOfflineGuildStatus(this.id, (byte) mg.getGuildRank(), mg.getGuildContribution(), (byte) mg.getAllianceRank(), cid);
+                    setOfflineGuildStatus(this.id, (byte) mg.getGuildRank(), mg.getGuildContribution(), (byte) mg.getAllianceRank(), cid, mg.getGpcon());
                 }
                 broadcast(GuildPacket.guildContribution(id, cid, mg.getGuildContribution()));
             }
@@ -1042,7 +1077,7 @@ public class MapleGuild implements java.io.Serializable {
             ourSkill.timestamp = System.currentTimeMillis() + (skillid.getPeriod() * 60000L);
         }
         changed_skills = true;
-        gainGP(100, true, cid);
+        gainGP(30, true);
         broadcast(GuildPacket.guildSkillPurchased(id, skill, ourSkill.level, ourSkill.timestamp, name, name));
         return true;
     }
@@ -1053,7 +1088,7 @@ public class MapleGuild implements java.io.Serializable {
 
     public final int calculateLevel() {
         for (int i = 1; i < 10; i++) {
-            if (gp < GameConstants.getGuildExpNeededForLevel(i)) {
+            if ((getAllgp() + gp) < GameConstants.getGuildExpNeededForLevel(i)) {
                 return i;
             }
         }
@@ -1073,8 +1108,8 @@ public class MapleGuild implements java.io.Serializable {
             mplew.writeInt(mgc.getGuildRank());
             mplew.writeInt(mgc.isOnline() ? 1 : 0);
             mplew.writeInt(signature);
-            mplew.writeInt(mgc.getAllianceRank());
-            //mplew.writeInt(mgc.getGuildContribution());
+//            mplew.writeInt(mgc.getAllianceRank());
+            mplew.writeInt(mgc.getGuildContribution());
         }
     }
 

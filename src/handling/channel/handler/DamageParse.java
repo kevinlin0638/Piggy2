@@ -253,7 +253,7 @@ public class DamageParse {
                         eachd = 0;
                         player.dropMessage("您所在的位置渾沌立場環繞,無法秒殺怪物");
                     }
-                    if(eachd > 0)
+                    if(eachd > (1999999 + player.getStat().getBkd()))
                         player.getCheatTracker().registerOffense(CheatingOffense.攻擊超過自身角色破攻, "[傷害: " + eachd + ", 腳色頂傷: " + maxDamagePerHit + ", 怪物ID: " + monster.getId() + "] [职业: " + player.getJob() + ", 等級: " + player.getLevel() + ", 技能: " + attack.skill + "]");
                     if(eachd > 50000)
                         player.finishAchievement(60);

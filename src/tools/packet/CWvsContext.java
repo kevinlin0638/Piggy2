@@ -24,6 +24,7 @@ import client.inventory.*;
 import client.inventory.MapleImp.ImpFlag;
 import client.skill.Skill;
 import client.skill.SkillEntry;
+import handling.channel.MapleGuildRanking;
 import server.status.MapleBuffStatus;
 import constants.GameConstants;
 import constants.ServerConstants;
@@ -2976,7 +2977,12 @@ public class CWvsContext {
             mplew.writeInt(guild.getGP());
             mplew.writeInt(guild.getAllianceId() > 0 ? guild.getAllianceId() : 0);
             mplew.write(guild.getLevel());
-            mplew.writeShort(0); // guild rank
+            int rk = 0;
+            for(GuildRankingInfo info : MapleGuildRanking.getInstance().getRank()){
+                if(info.getName().equals(guild.getName()))
+                    rk = MapleGuildRanking.getInstance().getRank().indexOf(info) + 1;
+            }
+            mplew.writeShort((short) rk); // guild rank
             mplew.writeShort(guild.getSkills().size());
             for (MapleGuildSkill i : guild.getSkills()) {
                 mplew.writeInt(i.skillID);

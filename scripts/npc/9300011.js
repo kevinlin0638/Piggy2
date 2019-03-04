@@ -18,11 +18,17 @@ function action(mode, type, selection) {
 
     switch (status) {
         case 0: 
-			cm.displayGuildRanks();
-			cm.dispose();
+			cm.sendSimple("請問您想要做什麼?\r\n#L0#觀看公會排名#l\r\n#L1#公會系統#l");
             break;
         case 1: //
-            cm.dispose();//这是结束脚本，請按照实际情况使用
+			if(selection == 0){
+				cm.displayGuildRanks();
+				cm.dispose();
+			}else if(selection == 1){
+				cm.dispose();
+				cm.openNpc(9300011, "活動/公會系統/公會系統主選單");
+			}else
+				cm.dispose();
             break;
         case 2:
         case 3:

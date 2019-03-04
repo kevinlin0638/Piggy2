@@ -32,7 +32,8 @@ import java.util.List;
 public class MapleGuildRanking {
 
     private static MapleGuildRanking instance = new MapleGuildRanking();
-    private List<GuildRankingInfo> ranks = new LinkedList<>();
+    private static List<GuildRankingInfo> ranks = new LinkedList<>();
+    private List<GuildRankingInfo> rankall = new LinkedList<>();
 
     public static MapleGuildRanking getInstance() {
         return instance;
@@ -48,7 +49,37 @@ public class MapleGuildRanking {
         return ranks;
     }
 
-    private void reload() {
+    public List<GuildRankingInfo> getRankall() {
+        reloadall();
+        return rankall;
+    }
+
+    private void reloadall() {
+        rankall.clear();
+        try {
+            Connection con = DatabaseConnection.getConnection();
+            ResultSet rs;
+            try (PreparedStatement ps = con.prepareStatement("SELECT * FROM guilds ORDER BY `GP` DESC")){
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    final GuildRankingInfo rank = new GuildRankingInfo(
+                            rs.getString("name"),
+                            rs.getInt("GP"),
+                            rs.getInt("logo"),
+                            rs.getInt("logoColor"),
+                            rs.getInt("logoBG"),
+                            rs.getInt("logoBGColor"));
+
+                    rankall.add(rank);
+                }
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.err.println("Error handling guildRanking");
+        }
+    }
+
+    public static void reload() {
         ranks.clear();
         try {
             Connection con = DatabaseConnection.getConnection();

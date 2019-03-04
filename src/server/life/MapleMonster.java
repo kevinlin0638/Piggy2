@@ -970,6 +970,8 @@ public class MapleMonster extends AbstractLoadedMapleLife {
             int dam = Integer.valueOf((int) (aniTime / 1000 * status.getX() / 2));
             status.setPoisonSchedule(dam, from);
             if (dam > 0) {
+                if(dam > 999999)
+                    dam = 999999;
                 if (dam >= hp) {
                     dam = (int) (hp - 1);
                 }
@@ -986,6 +988,8 @@ public class MapleMonster extends AbstractLoadedMapleLife {
             int dam = Integer.valueOf((int) (aniTime / 1000 * status.getX() / 2));
             status.setPoisonSchedule(dam, from);
             if (dam > 0) {
+                if(dam > 999999)
+                    dam = 999999;
                 if (dam >= hp) {
                     dam = (int) (hp - 1);
                 }
