@@ -20,7 +20,7 @@ var debug = false;
 
 
 /*以下為要修改的*/
-var rates = [10000,60000,430000,500000];//總共100萬 最好->最差
+var rates = [1000,69000,430000,500000];//總共100萬 最好->最差
 
 //物品代碼 數量 時間期限(沒有就0)  只有Advanced會廣播
 var itemListAdvanced = Array(

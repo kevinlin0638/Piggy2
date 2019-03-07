@@ -1,6 +1,6 @@
 var status;
-var event_name = '紅包活動';
-var event_tiem = 4000306;
+var event_name = '收集活動3月';
+var event_tiem = 4032056;
 function start() {
     status = -1;
     action(1, 0, 0);

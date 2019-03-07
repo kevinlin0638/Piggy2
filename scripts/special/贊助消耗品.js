@@ -5,9 +5,9 @@ var type;
 var get_type;
 var set_type;
 var items = Array(//(價格,type,ItemID,批量購買,是否顯示) type : -1 - 楓幣 0 - 贊助點 1 - Gash 2 - 楓點 3 - 道場點數 其它 - 任意道具
-		Array(3,0,2340000,true,true), Array(2,0,2022179,true,true), Array(2,0,2022108,true,true),
-		Array(5,0,2022530,true,true), Array(10,0,2022531,true,true), 
-		Array(3,0,2450022,true,true),Array(20,0,4030006 ,true,true)
+		Array(2,0,2340000,true,true, 1), Array(2,0,2022179,true,true, 5), Array(2,0,2022108,true,true, 5),
+		Array(4,0,2022530,true,true, 2), Array(6,0,2022531,true,true, 2), 
+		Array(2,0,2450022,true,true, 2),Array(15,0,4030006 ,true,true, 1)
 	);
 
 function start() {
@@ -59,7 +59,7 @@ function action(mode, type, selection) {
 							get_type = cm.getItemQuantity(items[choice][1]);
 							break;
 					}
-					choices += "\r\n#b#L" + i + "##v" + items[i][2] + "##z" + items[i][2] + "#　#d需要#r" + items[i][0] + "#d" + type +"#k#l";
+					choices += "\r\n#b#L" + i + "##v" + items[i][2] + "##z" + items[i][2] + "# #rx" + items[i][5]+"　#d需要#r" + items[i][0] + "#d" + type +"#k#l";
 				}
 			}
 			text += "#r您目前有 " + get_type + " " + type + "#b";
@@ -93,9 +93,12 @@ function action(mode, type, selection) {
 					get_type = cm.getItemQuantity(items[choice][1]);
 					break;
 			}
-			if(items[choice][3])
-				cm.sendGetNumber("你選擇的商品為#b#v" + items[choice][2] + "#售價為：" + items[choice][0] + type +"/個(張)\r\n請輸入您要購買的數量",1,1,(get_type/items[choice][0]));
-			else{
+			if(items[choice][3]){
+				if(items[choice][5] > 1)
+					cm.sendGetNumber("你選擇的商品為#b#v" + items[choice][2] + "#售價為：" + items[choice][0] + type +"/" + items[choice][5] +"個(張)\r\n請輸入您要購買的組數",1,1,(get_type/items[choice][0]));
+				else
+					cm.sendGetNumber("你選擇的商品為#b#v" + items[choice][2] + "#售價為：" + items[choice][0] + type +"/個(張)\r\n請輸入您要購買的組數",1,1,(get_type/items[choice][0]));
+			}else{
 				cm.sendYesNo("你選擇的商品為 #b#v" + items[choice][2] + "# #b售價為：#r" + items[choice][0]  +"#b " + type +"#r\r\n\r\n請問您確定要購買?");
 			}
         } else if (status == 2) {
@@ -131,7 +134,7 @@ function action(mode, type, selection) {
 				fee = 1;
             money = fee*items[choice][0];
 			
-			if(!cm.canHold(items[choice][2],fee)){
+			if(!cm.canHold(items[choice][2],fee * items[choice][5])){
 				cm.sendOk("您的背包沒有足夠空間!");
 				cm.dispose();
 				return;
@@ -169,8 +172,8 @@ function action(mode, type, selection) {
 						get_type = cm.getItemQuantity(items[choice][1]);
 						break;
 				}
-				cm.gainItem(items[choice][2], fee);
-				cm.sendOk("#b恭喜，購買了#r " + fee + " #b個#r #v" + items[choice][2] + "#\r\n\r\n#r"+ type + " #b餘額為:#r " + get_type + " #b");
+				cm.gainItem(items[choice][2], fee * items[choice][5]);
+				cm.sendOk("#b恭喜，購買了#r " + (fee* items[choice][5]) + " #b個#r #v" + items[choice][2] + "#\r\n\r\n#r"+ type + " #b餘額為:#r " + get_type + " #b");
 				cm.dispose();
             }
         }

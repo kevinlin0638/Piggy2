@@ -2,7 +2,7 @@
 // Added support to Donators having a bypass to time limit
 
 var status = -1;
-var boss_times = 10;
+var boss_times = 4;
 var boss_hard_times = 2;
 var event_t = "女皇次數";
 var event_ht = "渾沌女皇次數";

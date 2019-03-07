@@ -384,15 +384,33 @@ public class World {
             ResultSet rs = null;
             try {
                 PreparedStatement ps = null;
-                ps = con.prepareStatement("SELECT * FROM giftsender WHERE charid = ? AND GiftName = ? AND isSent = 0");
-                ps.setInt(1, chr.getId());
+                ps = con.prepareStatement("SELECT * FROM giftsender WHERE account = ? AND GiftName = ? AND isSent = 0");
+                ps.setInt(1, chr.getAccountID());
                 ps.setString(2, "案讚發布");
                 rs = ps.executeQuery();
+                int all = 0;
                 while (rs.next()){
-                    chr.dropMessage(1, "獲得 100 萬楓點");
-                    chr.modifyCSPoints(2, 1000000);
+                    all += 30;
+                    chr.modifyCSPoints(2, 300000);
                     ids.add(rs.getInt("id"));
                 }
+                if(all > 0)
+                    chr.dropMessage(1, "獲得 " + all + " 萬楓點 案讚貼文");
+                ps.close();
+                rs.close();
+
+                all = 0;
+                ps = con.prepareStatement("SELECT * FROM giftsender WHERE account = ? AND GiftName = ? AND isSent = 0");
+                ps.setInt(1, chr.getAccountID());
+                ps.setString(2, "推文獎勵");
+                rs = ps.executeQuery();
+                while (rs.next()){
+                    all += 30;
+                    chr.modifyCSPoints(2, 300000);
+                    ids.add(rs.getInt("id"));
+                }
+                if(all > 0)
+                    chr.dropMessage(1, "獲得 " + all + " 萬楓點 推文獎勵");
                 ps.close();
                 rs.close();
                 for(Integer i : ids){

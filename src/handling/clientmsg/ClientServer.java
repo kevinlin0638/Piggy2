@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class ClientServer {
 
-    private final static int PORT = 5287;
+    private final static int PORT = 25070;
     private static String ip;
     private static ServerConnection acceptor;
     private static PlayerStorage players, playersMTS;

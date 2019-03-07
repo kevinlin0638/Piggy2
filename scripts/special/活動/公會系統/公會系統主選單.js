@@ -1,6 +1,6 @@
 var status;
-var event_name = '紅包活動';
-var event_tiem = 4000306;
+var event_name = '收集活動3月';
+var event_tiem = 4032056;
 var ye = "#fUI/Basic.img/icon/arrow#";
 var lu = "#fEffect/CharacterEff/1032053/0/0#";
 function start() {

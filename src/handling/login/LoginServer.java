@@ -37,7 +37,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class LoginServer {
 
-    public static int PORT = 8686;
+    public static int PORT = 25090;
     private static final ReentrantLock loginLock = new ReentrantLock();
     private static List<World> worlds = new ArrayList<>();
     private static LoginServer instance = null;

@@ -5,6 +5,8 @@ var type;
 var get_type;
 var set_type;
 var items = Array(//(價格,type,ItemID,批量購買,是否顯示) type : -1 - 楓幣 0 - 贊助點 1 - Gash 2 - 楓點 3 - 道場點數 其它 - 任意道具
+		Array(1000, 4001126 ,1522068,false,true),Array(5000, 4001126 ,1522071,false,true),//雙弩
+		Array(1000, 4001126 ,1532073,false,true),Array(5000, 4001126 ,1532074,false,true),//重砲
 		Array(500, 4001126 ,1302030,false,true),Array(1000, 4001126 ,1302064,false,true),Array(5000, 4001126 ,1302142,false,true),//單手劍
 		Array(500, 4001126 ,2049300,false,false),Array(1000, 4001126 ,1312032,false,true),Array(5000, 4001126 ,1312056,false,true),//單手斧
 		Array(500, 4001126 ,2049300,false,false),Array(1000, 4001126 ,1322054,false,true),Array(5000, 4001126 ,1322084,false,true),//單手棍

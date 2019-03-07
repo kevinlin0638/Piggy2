@@ -53,7 +53,7 @@ public class ChannelServer {
     private final ReentrantReadWriteLock merchLock = new ReentrantReadWriteLock(); //merchant
     private final Map<MapleEventType, MapleEvent> events = new EnumMap<>(MapleEventType.class);
     public int eventMap = 0;
-    private int port = 7575;
+    private int port = 25001;
     private int world, channel, running_MerchantID = 0;
     private String serverMessage, ip;
     private EventScriptManager eventSM;
@@ -96,7 +96,7 @@ public class ChannelServer {
     public final void init() {
         serverMessage = ServerConstants.SERVER_MESSAGE;
         eventSM = new EventScriptManager(this, WorldConstants.Events.split(","));
-        port = 7575 + this.channel - 1;
+        port = 25001 + this.channel - 1;
         port += (world * 100);
         ip = ServerConstants.SERVER_IP + ":" + port;
         acceptor = new ServerConnection(port, world, channel);

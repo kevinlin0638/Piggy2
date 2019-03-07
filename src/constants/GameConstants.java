@@ -10212,6 +10212,7 @@ public class GameConstants {
             case 2002023:
             case 2000005:
             case 4000306:
+            case 4032056:
             case 2028061:
             case 2028062:
                     return 1000;

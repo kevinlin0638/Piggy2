@@ -1,6 +1,6 @@
 var tt = ""; //饼干兔子
-var event_name = '紅包活動'
-var event_tiem = 4000306;
+var event_name = '收集活動3月'
+var event_tiem = 4032056;
 // 每個阶段禮包所需的贊助数
 var condition = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 // 禮包内容

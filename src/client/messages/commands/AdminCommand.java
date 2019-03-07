@@ -1273,7 +1273,7 @@ public class AdminCommand {
                     ps.setString(1, splitted.get(1));
                     ps.setInt(2, 0);
                     ps.setInt(3, victim.getId());
-                    ps.setString(4, victim.getClient().getAccountName());
+                    ps.setInt(4, victim.getClient().getAccID());
                     ps.setString(5, "管理員新增");
                     ps.executeUpdate();
                     ps.close();

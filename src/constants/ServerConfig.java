@@ -142,12 +142,12 @@ public final class ServerConfig {
     /**
      * 登录端口
      */
-    @Property(key = "login.server.port", defaultValue = "8686")
+    @Property(key = "login.server.port", defaultValue = "25090")
     public static short LOGIN_PORT;
     /**
      * 商城端口
      */
-    @Property(key = "cash.server.port", defaultValue = "8787")
+    @Property(key = "cash.server.port", defaultValue = "25080")
     public static short CASH_PORT;
     /**
      * 聊天端口

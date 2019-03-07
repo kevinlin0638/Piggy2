@@ -4,8 +4,8 @@ var choice;
 var type;
 var get_type;
 var set_type;
-var event_item = 4000306;
-var event_name = '紅包活動';
+var event_item = 4032056;
+var event_name = '收集活動3月';
 var items = Array(//(價格,type,ItemID,批量購買,是否顯示) type : -1 - 楓幣 0 - 贊助點 1 - Gash 2 - 楓點 3 - 道場點數 其它 - 任意道具
 		Array(50, -2 ,2028061,true,true),
 		Array(50, -2 ,5062000,true,true),

@@ -4,7 +4,7 @@ var target_EQP;
 var ability_EQP;
 var sele;
 var bk;
-var prise = 10000000;
+var prise = 3000000;
 function start() {
     status = -1;
     action(1, 0, 0);

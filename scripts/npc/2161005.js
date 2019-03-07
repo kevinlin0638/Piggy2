@@ -1,5 +1,5 @@
 var status = -1;
-var boss_times = 10;
+var boss_times = 4;
 var boss_hard_times = 2;
 var event_t = "獅王次數";
 var event_ht = "渾沌獅王次數";
