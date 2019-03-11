@@ -1632,6 +1632,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ps.setInt(30, currentrep);
             ps.setInt(31, totalrep);
             ps.setInt(32, gachexp);
+            if(fatigue < 0)
+                fatigue = 0;
+            else if(fatigue >= 200)
+                fatigue = 200;
             ps.setShort(33, fatigue);
             ps.setInt(34, traits.get(MapleTraitType.charm).getTotalExp());
             ps.setInt(35, traits.get(MapleTraitType.charisma).getTotalExp());
@@ -4010,6 +4014,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public void addFame(int famechange) {
         this.fame += famechange;
         getTrait(MapleTraitType.charm).addLocalExp(famechange);
+
+        finishDailyQuest(5);
+
         if (this.fame >= 50) {
             finishAchievement(7);
         }
@@ -6961,19 +6968,19 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                         unequipSpawnPet(pet, true, false);
                     } else {
                         int leadid = 8;
-                        if (GameConstants.isKOC(getJob())) {
-                            leadid = 10000018;
-                        } else if (GameConstants.isAran(getJob())) {
-                            leadid = 20000024;
-                        } else if (GameConstants.isEvan(getJob())) {
-                            leadid = 20011024;
-                        } else if (GameConstants.isMercedes(getJob())) {
-                            leadid = 20021024;
-                        } else if (GameConstants.isDemon(getJob())) {
-                            leadid = 30011024;
-                        } else if (GameConstants.isResist(getJob())) {
-                            leadid = 30001024;
-                        }
+//                        if (GameConstants.isKOC(getJob())) {
+//                            leadid = 10000018;
+//                        } else if (GameConstants.isAran(getJob())) {
+//                            leadid = 20000024;
+//                        } else if (GameConstants.isEvan(getJob())) {
+//                            leadid = 20011024;
+//                        } else if (GameConstants.isMercedes(getJob())) {
+//                            leadid = 20021024;
+//                        } else if (GameConstants.isDemon(getJob())) {
+//                            leadid = 30011024;
+//                        } else if (GameConstants.isResist(getJob())) {
+//                            leadid = 30001024;
+//                        }
                         if ((getSkillLevel(SkillFactory.getSkill(leadid)) == 0 || getNoPets() == 3) && getSpawnPet(0) != null) {
                             unequipSpawnPet(getSpawnPet(0), false, false);
                         } else if (lead && getSkillLevel(SkillFactory.getSkill(leadid)) > 0) { // Follow the Lead

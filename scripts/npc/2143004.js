@@ -13,7 +13,7 @@ function start() {
 		status = 1;
 		return;
 	}
-		if (cm.getPlayer().getLevel() < 170) {
+		if (cm.getPlayer().getLevel() < 100) {
 			cm.sendOk("您需要到達170 等才可挑戰 女皇.");
 			cm.dispose();
 			return;

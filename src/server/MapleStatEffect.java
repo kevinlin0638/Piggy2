@@ -1273,12 +1273,12 @@ public class MapleStatEffect implements Serializable {
                     case 1005: // Echo of Hero
                         ret.statups.put(MapleBuffStatus.ECHO_OF_HERO, ret.x);
                         break;
-                    case 1011: // Berserk fury
-                        ret.statups.put(MapleBuffStatus.BERSERK_FURY, ret.x);
-                        break;
-                    case 1010:
-                        ret.statups.put(MapleBuffStatus.DIVINE_BODY, 1);
-                        break;
+//                    case 1011: // Berserk fury
+//                        ret.statups.put(MapleBuffStatus.BERSERK_FURY, ret.x);
+//                        break;
+//                    case 1010:
+//                        ret.statups.put(MapleBuffStatus.DIVINE_BODY, 1);
+//                        break;
                     case 1001:
                         if (sourceid / 10000 == 3001 || sourceid / 10000 == 3000) { //resistance is diff
                             ret.statups.put(MapleBuffStatus.INFILTRATE, ret.x);
@@ -1746,7 +1746,7 @@ public class MapleStatEffect implements Serializable {
                 }
             }
             final MapleSummon tosummon = new MapleSummon(applyfrom, summId, getLevel(), new Point(pos == null ? applyfrom.getTruePosition() : pos), summonMovementType);
-            applyfrom.cancelEffect(this, true, -1, statups);
+            applyfrom.cancelEffect(this, true, -1, this.statups);
             applyfrom.getMap().spawnSummon(tosummon);
             applyfrom.addSummon(tosummon);
             tosummon.addHP((short) x);

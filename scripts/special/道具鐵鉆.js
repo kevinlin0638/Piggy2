@@ -24,7 +24,7 @@ function action(mode, type, selection) {
     switch (status) {
         case 0: 
 			text = "#b#h ##k 您好，使用此功能可以將您一個裝備\r\n#r複製外型至其他裝備#k\r\n";
-			text += "#b您目前剩餘 #r" +cm.getNX(2)+ " 點#k #b楓點#k 。\r\n#d以下為價位:\r\n#r1000 萬楓點";
+			text += "#b您目前剩餘 #r" +cm.getNX(2)+ " 點#k #b楓點#k 。\r\n#d以下為價位:\r\n#r300 萬楓點";
 			text += "\r\n#k請將#r提供外型道具 放在#r裝備欄第一格\r\n\r\n";
 			text += "\r\n#k請將#r提供能力的道具 放在#r裝備欄第二格\r\n#e(注意此道具使用完畢會消失)#n。\r\n\r\n#k然後按下一步";
 			cm.sendNext(text);

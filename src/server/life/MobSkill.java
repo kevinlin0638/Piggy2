@@ -254,23 +254,22 @@ public class MobSkill {
                     player.dispel();
                 }
                 break;
-
             case 129: // Banish
-                if (monster != null && monster.getMap().getSquadByMap() == null) { //not pb/vonleon map
-                    if (monster.getEventInstance() != null && monster.getEventInstance().getName().contains("BossQuest")) {
-                        break;
-                    }
-                    final BanishInfo info = monster.getStats().getBanishInfo();
-                    if (info != null) {
-                        if (lt != null && rb != null && skill && player != null) {
-                            getPlayersInRange(monster, player).stream().filter(chr -> !chr.hasBlockedInventory()).forEach(chr -> {
-                                chr.changeMapBanish(info.getMap(), info.getPortal(), info.getMsg());
-                            });
-                        } else if (player != null && !player.hasBlockedInventory()) {
-                            player.changeMapBanish(info.getMap(), info.getPortal(), info.getMsg());
-                        }
-                    }
-                }
+//                if (monster != null && monster.getMap().getSquadByMap() == null) { //not pb/vonleon map
+//                    if (monster.getEventInstance() != null && monster.getEventInstance().getName().contains("BossQuest")) {
+//                        break;
+//                    }
+//                    final BanishInfo info = monster.getStats().getBanishInfo();
+//                    if (info != null) {
+//                        if (lt != null && rb != null && skill && player != null) {
+//                            getPlayersInRange(monster, player).stream().filter(chr -> !chr.hasBlockedInventory()).forEach(chr -> {
+//                                chr.changeMapBanish(info.getMap(), info.getPortal(), info.getMsg());
+//                            });
+//                        } else if (player != null && !player.hasBlockedInventory()) {
+//                            player.changeMapBanish(info.getMap(), info.getPortal(), info.getMsg());
+//                        }
+//                    }
+//                }
                 break;
             case 131: // Mist
                 if (monster != null) {

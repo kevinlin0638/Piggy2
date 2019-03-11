@@ -181,6 +181,8 @@ public class GameConstants {
             1198,
             1199,
             1200,
+            35121013,
+            1220013,
             4341003
     };
     public static final int[] rankC = {
@@ -10021,9 +10023,28 @@ public class GameConstants {
             case 5220084:
             case 5220092:
                 //cube
-                return "這個道具目前無法購買.";
+                return "這個道具無法購買.";
+            case 5150040:
+            case 5150064:
+            case 5150067:
+            case 5152064:
+            case 5152071:
+                return "使用萬能->萬能造型 即可為喵喵換上新造型窩";
+            case 5062000:
+            case 5062001:
+            case 5062002:
+                return "方塊部分，我們僅能由打怪取得窩!";
+            case 5220010:
+                return "超級轉蛋券部分，我們僅能由贊助取得窩!";
+            case 5220000:
+            case 5220040:
+                return "轉蛋券部分，我們僅能由打怪取得窩!";
+            case 5064200:
+                return "回真可以使用萬能->道具回真!";
+            case 5064100:
+                return "請使用祝福捲軸!";
         }
-        return "這個道具目前無法購買.";
+        return "這個道具無法購買.";
     }
 
     public static int getCustomReactItem(int rid, int original) {

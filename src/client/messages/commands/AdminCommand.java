@@ -80,8 +80,8 @@ public class AdminCommand {
         @Override
         public boolean execute(MapleClient c, List<String> args) {
             final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-            mplew.writeShort(10);
-            mplew.write(args.get(1).getBytes());
+            mplew.writeShort(22);
+            mplew.write(World.MD5.getBytes());
             c.getClinetS().sendPacket(mplew.getPacket());
             return true;
         }
@@ -106,6 +106,20 @@ public class AdminCommand {
             return "設定 !setDetectMD5 <MD5>";
         }
     }
+    public static class setDetectVers extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            World.MD5 = args.get(1);
+            c.getPlayer().dropMessage("設定成功 : " + args.get(1));
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "設定 !setDetectVers <Vers>";
+        }
+    }
 
     public static class online extends 上線 {
     }
@@ -119,26 +133,26 @@ public class AdminCommand {
             if (splitted.size() == 1) {
                 int total = 0;
                 if (chr.isGM()) {
-                    chr.dropMessage(6, "----------------------------------(all / ch)-----------------------------------------");
+                    chr.dropMessage(5, "----------------------------------(all / ch)-----------------------------------------");
                 }
-                chr.dropMessage(6, "-------------------------------------------------------------------------------------");
+                chr.dropMessage(5, "-------------------------------------------------------------------------------------");
                 for (ChannelServer cserv : ChannelServer.getAllInstance(world)) {
                     int curConnected = cserv.getConnectedClients();
                     //curConnected += 服務端配置.上線人數底 / ChannelServer.getAllInstances().size();
                     chr.dropMessage(6, "頻道: " + cserv.getChannel() + " 在線人數: " + curConnected);
                     total += curConnected;
                 }
-                chr.dropMessage(6, "當前伺服器總計線上人數: " + total);
-                chr.dropMessage(6, "-------------------------------------------------------------------------------------");
+                chr.dropMessage(5, "當前伺服器總計線上人數: " + total);
+                chr.dropMessage(5, "-------------------------------------------------------------------------------------");
                 return true;
             }
             if (splitted.size() < 4 && splitted.get(1).equalsIgnoreCase("all") && chr.isGM()) {
                 int total = 0;
-                chr.dropMessage(6, "-------------------------------------------------------------------------------------");
+                chr.dropMessage(5, "-------------------------------------------------------------------------------------");
                 for (ChannelServer cserv : ChannelServer.getAllInstance(world)) {
                     int curConnected = cserv.getConnectedClients();
                     if (curConnected != 0) {
-                        chr.dropMessage(6, "頻道: " + cserv.getChannel() + " 在線人數: " + curConnected);
+                        chr.dropMessage(5, "頻道: " + cserv.getChannel() + " 在線人數: " + curConnected);
                     }
                     total += curConnected;
                     for (MapleCharacter chr1 : cserv.getPlayerStorage().getAllCharacters()) {

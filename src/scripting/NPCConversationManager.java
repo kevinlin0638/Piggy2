@@ -2098,6 +2098,40 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return replaceItem(slot, invType, statsSel, upgradeSlots, "Slots");
     }
 
+    public boolean replaceItem(Object statsSel){
+        if(statsSel instanceof Equip) {
+            Equip temp = (Equip) ((Equip) statsSel).copy();
+            Equip eq = (Equip) MapleItemInformationProvider.getInstance().getEquipById(temp.getItemId());
+
+            eq.setUpgradeSlots((byte) (eq.getUpgradeSlots() + temp.getExtraScroll()));
+            eq.setExtraScroll(temp.getExtraScroll());
+            eq.setExpiration(temp.getExpiration());
+            eq.setPotential1(temp.getPotential1());
+            eq.setPotential2(temp.getPotential2());
+            eq.setPotential3(temp.getPotential3());
+
+            eq.setStr((short) (eq.getStr() + temp.getAddi_str()));
+            eq.setDex((short) (eq.getDex() + temp.getAddi_dex()));
+            eq.setInt((short) (eq.getInt() + temp.getAddi_int()));
+            eq.setLuk((short) (eq.getLuk() + temp.getAddi_luk()));
+            eq.setWatk((short) (eq.getWatk() + temp.getAddi_watk()));
+            eq.setMatk((short) (eq.getMatk() + temp.getAddi_matk()));
+            eq.setUpgradeSlots((byte)(eq.getUpgradeSlots() + temp.getExtraScroll()));
+
+            eq.setAddi_str(temp.getAddi_str());
+            eq.setAddi_dex(temp.getAddi_dex());
+            eq.setAddi_int(temp.getAddi_int());
+            eq.setAddi_luk(temp.getAddi_luk());
+            eq.setAddi_watk(temp.getAddi_watk());
+            eq.setAddi_matk(temp.getAddi_matk());
+            eq.setExtraScroll(temp.getExtraScroll());
+
+            MapleInventoryManipulator.removeFromSlot(getClient(), MapleInventoryType.EQUIP, (short) 1, (short) 1, false);
+            return MapleInventoryManipulator.addFromDrop(getClient(), eq, false);
+        }else
+            return false;
+    }
+
 
     public boolean replaceItem(Object statsSel, Object OppSel){
         if(statsSel instanceof Equip && OppSel instanceof Equip && (((Equip) statsSel).getItemId() /10000 ==  ((Equip) OppSel).getItemId() / 10000)) {

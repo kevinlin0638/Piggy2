@@ -326,10 +326,12 @@ public class PlayerInteractionHandler {
                             merchant.setAvailable(true);
                             chr.getMap().broadcastMessage(PlayerShopPacket.spawnHiredMerchant(merchant));
                             chr.setPlayerShop(null);
-                            if(chr.getEventCount("每日開店獎勵") <= 0){
-                                chr.setEventCount("每日開店獎勵");
-                                chr.getGuild().gainGP(50, false, chr.getId());
-                                chr.dropMessage(1, "獲得每日開店獎勵 50 公會貢獻");
+                            if(chr.getGuild() != null) {
+                                if (chr.getEventCount("每日開店獎勵") <= 0) {
+                                    chr.setEventCount("每日開店獎勵");
+                                    chr.getGuild().gainGP(50, false, chr.getId());
+                                    chr.dropMessage(1, "獲得每日開店獎勵 50 公會貢獻");
+                                }
                             }
                         } else if (shop.getShopType() == 2) {
                             shop.setOpen(true);

@@ -304,7 +304,8 @@ public class Event_DojoAgent {
                     if (chr_mem != null) {
                         chr_mem.finishAchievement(77);
                         chr_mem.finishDailyQuest(12);
-                        chr_mem.getGuild().gainGP(10, true);
+                        if(chr_mem.getGuild() != null)
+                            chr_mem.getGuild().gainGP(10, true);
                         chr_mem.dropMessage(6, "[道場公告]您通過的時間為 "+ minutes+ " 分 "+ secondd + " 秒。");
                     }
                 }
@@ -316,7 +317,9 @@ public class Event_DojoAgent {
                         chr_mem.finishAchievement(78);
                         chr_mem.finishDailyQuest(22);
                         chr_mem.dropMessage(6, "[道場公告]您通過的時間為 "+ minutes+ " 分 "+ secondd + " 秒。");
-                        chr_mem.getGuild().gainGP(20, true);
+
+                        if(chr_mem.getGuild() != null)
+                            chr_mem.getGuild().gainGP(20, true);
                     }
                     if (chr.getParty().getMembers().size() == 1) {
                         long dojoEndTime = System.currentTimeMillis();

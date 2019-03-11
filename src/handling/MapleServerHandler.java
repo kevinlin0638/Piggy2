@@ -259,6 +259,7 @@ public class MapleServerHandler extends ChannelDuplexHandler {
 
         if (isClientServer()){
             long ava = slea.available();
+            final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
             switch (header) {
                 case GET_ACCOUNT_NAME:
 //                    System.out.println(client.getSessionIPAddress());
@@ -272,9 +273,17 @@ public class MapleServerHandler extends ChannelDuplexHandler {
                     break;
                 case GET_SKILL_MD5:
                     final String MD5 = slea.readAsciiString((int)ava);
-                    final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
                     mplew.writeShort(7778);
-                    if(MD5.equals(World.MD5))
+                    if(MD5.equals(World.MD5 + "#" + World.Vers))
+                        mplew.write("1".getBytes());
+                    else
+                        mplew.write("0".getBytes());
+                    client.sendPacket(mplew.getPacket());
+                    break;
+                case GET_CLIENT_VERSION:
+                    final String version = slea.readAsciiString((int)ava);
+                    mplew.writeShort(7779);
+                    if(version.equals(World.Vers))
                         mplew.write("1".getBytes());
                     else
                         mplew.write("0".getBytes());

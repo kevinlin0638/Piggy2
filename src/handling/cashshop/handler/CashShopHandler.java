@@ -174,7 +174,7 @@ public class CashShopHandler {
                 }
                 for (int i : GameConstants.cashBlock) {
                     if (item.getId() == i) {
-                        c.getPlayer().dropMessage(1, GameConstants.getCashBlockedMsg(0));
+                        c.getPlayer().dropMessage(1, GameConstants.getCashBlockedMsg(i));
                         doCSPackets(c);
                         return;
                     }

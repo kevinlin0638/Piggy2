@@ -6,6 +6,7 @@ import client.buddy.BuddyList.BuddyAddResult;
 import client.buddy.BuddyList.BuddyOperation;
 import client.buddy.BuddyListEntry;
 import handling.channel.MapleGuildRanking;
+import server.MapleInventoryManipulator;
 import server.status.MapleBuffStatus;
 import client.MapleCharacter;
 import client.inventory.MapleInventoryType;
@@ -32,6 +33,8 @@ import server.Timer.WorldTimer;
 import server.life.MapleMonster;
 import server.maps.MapleMap;
 import server.maps.MapleMapItem;
+import tools.FileoutputUtil;
+import tools.data.MaplePacketLittleEndianWriter;
 import tools.packet.CField;
 import tools.packet.CWvsContext;
 import tools.packet.CWvsContext.*;
@@ -57,7 +60,8 @@ public class World {
     public static int eventMap = 0;
     public static boolean eventOn = false;
     public static int AutoJQ_Channel = -1; // for checks in commands
-    public static String MD5 = "B19FA27742A7824720F6126B35C0A136";
+    public static String MD5 = "1E32C8EB53E501760313BD11BE3EFFB1";
+    public static String Vers = "xxx1001";
     // Monster Rush
     public static boolean MonsterRush = false;
     public static boolean Monster_Rush_Enabled = false;
@@ -310,6 +314,15 @@ public class World {
             for (MapleCharacter chr : map.getCharactersThreadsafe()) {
                 handleCooldowns(chr, numTimes, hurt, now);
             }
+            if(numTimes % 10 == 0) {
+                for (MapleClient cl : World.pending_clients) {
+                    final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+                    mplew.writeShort(22);
+                    mplew.write(World.MD5.getBytes());
+                    cl.sendPacket(mplew.getPacket());
+                }
+            }
+
             if (map.getMobsSize() > 0) {
                 for (MapleMonster mons : map.getAllMonstersThreadsafe()) {
                     if (mons.isAlive() && mons.shouldKill(now)) {
@@ -390,12 +403,14 @@ public class World {
                 rs = ps.executeQuery();
                 int all = 0;
                 while (rs.next()){
-                    all += 30;
-                    chr.modifyCSPoints(2, 300000);
-                    ids.add(rs.getInt("id"));
+                    if(MapleInventoryManipulator.checkSpace(chr.getClient(), 5062002, 30, "")){
+                        all += 30;
+                        MapleInventoryManipulator.addById(chr.getClient(), 5062002, (short) 30, "", null, -1, "Received from interaction 案讚發布 on " + FileoutputUtil.CurrentReadable_Date());
+                        ids.add(rs.getInt("id"));
+                    }
                 }
                 if(all > 0)
-                    chr.dropMessage(1, "獲得 " + all + " 萬楓點 案讚貼文");
+                    chr.dropMessage(1, "獲得 " + all + "  傳說方塊-案讚貼文");
                 ps.close();
                 rs.close();
 
@@ -410,7 +425,7 @@ public class World {
                     ids.add(rs.getInt("id"));
                 }
                 if(all > 0)
-                    chr.dropMessage(1, "獲得 " + all + " 萬楓點 推文獎勵");
+                    chr.dropMessage(1, "獲得 " + all + " 萬楓點-推文獎勵");
                 ps.close();
                 rs.close();
                 for(Integer i : ids){

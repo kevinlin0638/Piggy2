@@ -253,8 +253,20 @@ public class DamageParse {
                         eachd = 0;
                         player.dropMessage("您所在的位置渾沌立場環繞,無法秒殺怪物");
                     }
-                    if(eachd > (1999999 + player.getStat().getBkd()))
-                        player.getCheatTracker().registerOffense(CheatingOffense.攻擊超過自身角色破攻, "[傷害: " + eachd + ", 腳色頂傷: " + maxDamagePerHit + ", 怪物ID: " + monster.getId() + "] [职业: " + player.getJob() + ", 等級: " + player.getLevel() + ", 技能: " + attack.skill + "]");
+
+                    if (GameConstants.isBeginnerJob(attack.skill / 10000)) {
+                        switch (attack.skill % 10000) {
+                            case 1009:
+                                eachd = 0;
+                                break;
+                        }
+                    }
+                    if(eachd > (1999999 + player.getStat().getBkd())) {
+                        if(attack.skill == 3221001)
+                            eachd = 1999999 + player.getStat().getBkd();
+                        else
+                            player.getCheatTracker().registerOffense(CheatingOffense.攻擊超過自身角色破攻, "[傷害: " + eachd + ", 腳色頂傷: " + maxDamagePerHit + ", 怪物ID: " + monster.getId() + "] [职业: " + player.getJob() + ", 等級: " + player.getLevel() + ", 技能: " + attack.skill + "]");
+                    }
                     if(eachd > 50000)
                         player.finishAchievement(60);
                     if(eachd > 99999)
@@ -696,7 +708,7 @@ public class DamageParse {
                     elemMaxDamagePerMob = 1;
                     break;
                 case 1009:
-                    elemMaxDamagePerMob = (monster.getStats().isBoss() ? monster.getMobMaxHp() / 30 * 100 : monster.getMobMaxHp());
+                    elemMaxDamagePerMob = 0;
                     break;
             }
         }
@@ -776,7 +788,7 @@ public class DamageParse {
                         defined = true;
                         break;
                     case 1009:
-                        maximumDamageToMonster = (monster.getStats().isBoss() ? monster.getMobMaxHp() / 30 * 100 : monster.getMobMaxHp());
+                        maximumDamageToMonster = 0;
                         defined = true;
                         break;
                 }
@@ -1183,6 +1195,12 @@ public class DamageParse {
             lea.skip(1);
         }else if(ret.skill == 21101003){
             lea.skip(1);
+        }
+        final Skill skill = SkillFactory.getSkill(ret.skill);
+        if (skill != null) {
+            if (skill.isChargeSkill()) {
+                lea.skip(4);
+            }
         }
 
         for (int i = 0; i < ret.targets; i++) {

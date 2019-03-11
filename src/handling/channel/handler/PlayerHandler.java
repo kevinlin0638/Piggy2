@@ -1140,7 +1140,6 @@ public class PlayerHandler {
                 case 21110011:
                 case 21100007:
                 case 21000004:
-                case 3221001:
                 case 5121002:
                 case 4121003:
                 case 4221003:
@@ -1159,6 +1158,9 @@ public class PlayerHandler {
                 case 35121013:
                     AOE = true;
                     bulletCount = 6;
+                    break;
+                case 3221001:
+                    bulletCount = 4;
                     break;
                 case 14111002:
                     bulletCount = 3;

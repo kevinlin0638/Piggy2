@@ -510,7 +510,7 @@ public final class MapleMap {
             dropEntry.add(new MonsterDropEntry(4260008, 2500, 1 ,1, 0));
 
         if(mob.getMobLevel() >= 140)
-            dropEntry.add(new MonsterDropEntry(4021020, 100, 1 ,1, 0));
+            dropEntry.add(new MonsterDropEntry(4021020, 1000, 1 ,1, 0));
 
         Collections.shuffle(dropEntry);
 
@@ -698,7 +698,8 @@ public final class MapleMap {
             for (MapleCharacter c : getCharactersThreadsafe()) {
                 c.finishAchievement(16);
                 c.finishDailyQuest(17);
-                c.getGuild().gainGP(150, false, c.getId());
+                if(c.getGuild() != null)
+                    c.getGuild().gainGP(150, false, c.getId());
             }
             if (speedRunStart > 0) {
                 type = ExpeditionType.Horntail;
@@ -712,7 +713,8 @@ public final class MapleMap {
                 for (MapleCharacter c : characters) {
                      c.finishAchievement(24);
                     c.finishDailyQuest(24);
-                    c.getGuild().gainGP(300, false, c.getId());
+                    if(c.getGuild() != null)
+                        c.getGuild().gainGP(300, false, c.getId());
                 }
             } finally {
                 charactersLock.readLock().unlock();
@@ -749,7 +751,8 @@ public final class MapleMap {
                         int rate = 1;
                         if(channel >= 11)
                             rate = 2;
-                        c.getGuild().gainGP(130 * rate, false, c.getId());
+                        if(c.getGuild() != null)
+                            c.getGuild().gainGP(130 * rate, false, c.getId());
                     }
                 } else {
                     for (MapleCharacter c : getCharactersThreadsafe()) {
@@ -757,7 +760,8 @@ public final class MapleMap {
                         int rate = 1;
                         if(channel >= 11)
                             rate = 2;
-                        c.getGuild().gainGP(130 * rate, false, c.getId());
+                        if(c.getGuild() != null)
+                            c.getGuild().gainGP(130 * rate, false, c.getId());
                     }
                 }
             }
@@ -767,7 +771,8 @@ public final class MapleMap {
                 int rate = 1;
                 if(channel >= 11)
                     rate = 2;
-                c.getGuild().gainGP(180 * rate, false, c.getId());
+                if(c.getGuild() != null)
+                    c.getGuild().gainGP(180 * rate, false, c.getId());
             }
             World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] Pink bean was killed by : " + chr.getName()));
             World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "經過帶領的隊伍經過無數次的挑戰，終於擊破了時間的寵兒－皮卡丘的遠征隊！你們才是時間神殿的真正英雄~"));
@@ -793,7 +798,8 @@ public final class MapleMap {
                 int rate = 1;
                 if(channel >= 11)
                     rate = 2;
-                c.getGuild().gainGP(230 * rate, false, c.getId());
+                if(c.getGuild() != null)
+                    c.getGuild().gainGP(230 * rate, false, c.getId());
             }
             doShrine(true);
         } else if (mobid == 8860000 && mapid == 272030400) {
@@ -804,7 +810,8 @@ public final class MapleMap {
                 int rate = 1;
                 if(channel >= 11)
                     rate = 2;
-                c.getGuild().gainGP(200 * rate, false, c.getId());
+                if(c.getGuild() != null)
+                    c.getGuild().gainGP(200 * rate, false, c.getId());
             }
             doShrine(true);
         } else if (mobid == 8840000 && mapid == 211070100) {
@@ -815,14 +822,16 @@ public final class MapleMap {
                 int rate = 1;
                 if(channel >= 11)
                     rate = 2;
-                c.getGuild().gainGP(180 * rate, false, c.getId());
+                if(c.getGuild() != null)
+                    c.getGuild().gainGP(180 * rate, false, c.getId());
             }
             doShrine(true);
         } else if (mobid == 8800002 && mapid == 280030000) {
             for (MapleCharacter c : getCharactersThreadsafe()) {
                 c.finishAchievement(15);
                 c.finishDailyQuest(13);
-                c.getGuild().gainGP(100, false, c.getId());
+                if(c.getGuild() != null)
+                    c.getGuild().gainGP(100, false, c.getId());
             }
 //            FileoutputUtil.log(FileoutputUtil.Zakum_Log, MapDebug_Log());
             if (speedRunStart > 0) {
@@ -833,7 +842,8 @@ public final class MapleMap {
             for (MapleCharacter c : getCharactersThreadsafe()) {
                 c.finishAchievement(23);
                 c.finishDailyQuest(23);
-                c.getGuild().gainGP(200, false, c.getId());
+                if(c.getGuild() != null)
+                    c.getGuild().gainGP(200, false, c.getId());
             }
             //FileoutputUtil.log(FileoutputUtil.Zakum_Log, MapDebug_Log());
             if (speedRunStart > 0) {

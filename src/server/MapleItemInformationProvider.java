@@ -807,15 +807,9 @@ public class MapleItemInformationProvider {
                         } else if (GameConstants.isPotentialScroll(scrollId.getItemId())) {
                             if (nEquip.getState() <= 17 && (scrollId.getItemId() / 100 == 20497)) {
                                 int chanc = (scrollId.getItemId() == 2049700 ? 100 : 80) + added; // 2049701
-                                if (Randomizer.nextInt(100) > chanc) {
-                                    return null; //destroyed, nib
-                                }
                                 nEquip.renewPotential(2);
                             } else if (nEquip.getState() == 0) {
                                 int chanc = (scrollId.getItemId() == 5534000 || scrollId.getItemId() == 2049402 || scrollId.getItemId() == 2049406 ? 100 : (scrollId.getItemId() == 2049400 ? 90 : 70)) + added;
-                                if (Randomizer.nextInt(100) > chanc) {
-                                    return null; //destroyed, nib
-                                }
                                 nEquip.resetPotential();
                             }
                             break;
