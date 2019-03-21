@@ -36,6 +36,7 @@ import server.Randomizer;
 import server.maps.MapleMapObject;
 import server.maps.MapleMapObjectType;
 import server.shops.*;
+import tools.FileoutputUtil;
 import tools.data.LittleEndianAccessor;
 import tools.packet.CWvsContext;
 import tools.packet.PlayerShopPacket;
@@ -331,6 +332,14 @@ public class PlayerInteractionHandler {
                                     chr.setEventCount("每日開店獎勵");
                                     chr.getGuild().gainGP(50, false, chr.getId());
                                     chr.dropMessage(1, "獲得每日開店獎勵 50 公會貢獻");
+                                }
+                            }
+                            if (chr.getEventCount("每日開店獎勵方塊") <= 0) {
+                                if(MapleInventoryManipulator.checkSpace(chr.getClient(), 5062000, 30, "")){
+                                    MapleInventoryManipulator.addById(chr.getClient(), 5062000, (short) 30, "", null, -1, "Received from interaction 每日開店 on " + FileoutputUtil.CurrentReadable_Date());
+                                    chr.setEventCount("每日開店獎勵方塊");
+                                }else{
+                                    chr.dropMessage(1, "您的背包沒有足夠空間放置每日開店獎勵");
                                 }
                             }
                         } else if (shop.getShopType() == 2) {

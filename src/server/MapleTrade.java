@@ -154,6 +154,7 @@ public class MapleTrade {
 
 
         chr.get().getClient().sendPacket(InteractionPacket.TradeMessage(tradingslot, (byte) 0x07));
+        chr.get().dropMessage(1, "交易成功");
     }
 
     public final void cancel(final MapleClient c, final MapleCharacter chr) {
@@ -175,6 +176,7 @@ public class MapleTrade {
 
 
         c.sendPacket(InteractionPacket.getTradeCancel(tradingslot, unsuccessful));
+        chr.dropMessage(1, "交易取消");
     }
 
     public final boolean isLocked() {

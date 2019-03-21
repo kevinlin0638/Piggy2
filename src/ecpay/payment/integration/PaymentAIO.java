@@ -36,7 +36,7 @@ public class PaymentAIO {
 		
 		//以上資料不完全，僅供參考如何放入資料
 		
-		aio.setReturnURL("http://daaep.com/getbill");
+		aio.setReturnURL("http://35.220.252.54/getbill");
 		//呼叫AllInOne中相應的method，產生html form字串(含JavaScript Submit)之後再放入前端即可
 		//此筆交易模擬不開發票，InvoiceObj請帶null
 		String html = all.aioCheckOut(aio, null);

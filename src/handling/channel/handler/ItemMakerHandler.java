@@ -593,22 +593,21 @@ public class ItemMakerHandler {
             } else if (reqLevel <= 120) {
                 toGet = 4021015;
             }
-            if(reqLevel >= 105 && Randomizer.nextInt(1000000) <= 100){
-                toGet = 4021021;
-            }
             if (quantity <= 5) {
                 cr = CraftRanking.SOSO;
             }
-            if (Randomizer.nextInt(5) == 0 && toGet != 4031016) {
+
+            if(reqLevel >= 105 && Randomizer.nextInt(1000000) <= 1000){
+                toGet = 4021021;
+                quantity = 1;
+            }
+
+            if (Randomizer.nextInt(5) == 0 && toGet != 4021021) {
                 toGet++;
                 quantity = 1;
                 cr = CraftRanking.COOL;
             }
-            fatigue = 3;
-            if(fatigue + chr.getFatigue() > 200){
-                chr.dropMessage(1, "您的疲勞值過高");
-                return;
-            }
+
             MapleInventoryManipulator.addById(c, toGet, quantity, "Made by disassemble " + itemId + " on " + FileoutputUtil.CurrentReadable_Date());
             MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.EQUIP, item.getPosition(), (byte) 1, false);
         } else if (craftID == 92049001) { //fusing.

@@ -620,6 +620,13 @@ public class PlayerHandler {
             c.sendPacket(CWvsContext.enableActions());
             return;
         }
+        for (int i : GameConstants.blockedSkills) { // after the maxing we go..
+            if (i == skillid) {
+                c.getPlayer().dropMessage(1, "此技能無法使用");
+                c.sendPacket(CWvsContext.enableActions());
+                return;
+            }
+        }
         if (chr.getTotalSkillLevel(GameConstants.getLinkedAranSkill(skillid)) <= 0 || chr.getTotalSkillLevel(GameConstants.getLinkedAranSkill(skillid)) != skillLevel) {
             if (!GameConstants.isMulungSkill(skillid) && !GameConstants.isPyramidSkill(skillid) && chr.getTotalSkillLevel(GameConstants.getLinkedAranSkill(skillid)) <= 0) {
                 c.getSession().close();
@@ -1062,7 +1069,7 @@ public class PlayerHandler {
             packet = CField.closeRangeAttack(chr, skillLevel, 0, attack);
         }
 
-        if (!chr.isHidden()) {
+        if (!chr.isHidden() && attack.skill != 31121005) {
             chr.getMap().broadcastMessage(chr, packet, chr.getTruePosition());
         } else {
             chr.getMap().broadcastGMMessage(chr, packet, false);

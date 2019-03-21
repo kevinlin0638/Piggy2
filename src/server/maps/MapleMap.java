@@ -507,7 +507,7 @@ public final class MapleMap {
         else if(mob.getMobLevel() >= 171 && mob.getMobLevel() <= 190)
             dropEntry.add(new MonsterDropEntry(4260007, 10000, 1 ,1, 0));
         else if(mob.getMobLevel() >= 191)
-            dropEntry.add(new MonsterDropEntry(4260008, 2500, 1 ,1, 0));
+            dropEntry.add(new MonsterDropEntry(4260008, 5000, 1 ,1, 0));
 
         if(mob.getMobLevel() >= 140)
             dropEntry.add(new MonsterDropEntry(4021020, 1000, 1 ,1, 0));
@@ -742,27 +742,27 @@ public final class MapleMap {
             if (speedRunStart > 0) {
                 type = ExpeditionType.Normal_Balrog;
             }
-        } else if ((mobid == 9420544 || mobid == 9420549) && mapid == 551030200 && monster.getEventInstance() != null && monster.getEventInstance().getName().contains(getEMByMap().getName())) {
+        } else if ((mobid == 9420544 || mobid == 9420549) && mapid == 551030200) {
             doShrine(getAllReactor().isEmpty());
-            if (speedRunStart > 0) {
-                if (mobid == 9420549) {
-                    for (MapleCharacter c : getCharactersThreadsafe()) {
-                        c.finishAchievement(15);
-                        int rate = 1;
-                        if(channel >= 11)
-                            rate = 2;
-                        if(c.getGuild() != null)
-                            c.getGuild().gainGP(130 * rate, false, c.getId());
-                    }
-                } else {
-                    for (MapleCharacter c : getCharactersThreadsafe()) {
-                        c.finishAchievement(16);
-                        int rate = 1;
-                        if(channel >= 11)
-                            rate = 2;
-                        if(c.getGuild() != null)
-                            c.getGuild().gainGP(130 * rate, false, c.getId());
-                    }
+            if (mobid == 9420549) {
+                for (MapleCharacter c : getCharactersThreadsafe()) {
+                    c.finishAchievement(15);
+                    c.finishDailyQuest(15);
+                    int rate = 1;
+                    if(channel >= 11)
+                        rate = 2;
+                    if(c.getGuild() != null)
+                        c.getGuild().gainGP(130 * rate, false, c.getId());
+                }
+            } else {
+                for (MapleCharacter c : getCharactersThreadsafe()) {
+                    c.finishAchievement(16);
+                    c.finishDailyQuest(16);
+                    int rate = 1;
+                    if(channel >= 11)
+                        rate = 2;
+                    if(c.getGuild() != null)
+                        c.getGuild().gainGP(130 * rate, false, c.getId());
                 }
             }
         } else if (mobid == 8820001 && mapid == 270050100) {

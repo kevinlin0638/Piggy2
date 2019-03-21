@@ -352,7 +352,7 @@ public class MapleInventoryManipulator {
             return null;
         }
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        if ((c.getPlayer().haveItem(itemId, 1, true, false)) || (!ii.itemExists(itemId))) {
+        if (!ii.itemExists(itemId)) {
             c.sendPacket(InventoryPacket.getInventoryFull());
             c.sendPacket(InventoryPacket.showItemUnavailable());
             return null;
@@ -953,7 +953,7 @@ public class MapleInventoryManipulator {
                         c.sendPacket(InventoryPacket.getShowInventoryFull());
                         return;
                     }
-                } else if (weapon != null && GameConstants.isTwoHanded(weapon.getItemId())) {
+                } else if (weapon != null && GameConstants.isTwoHanded(weapon.getItemId())  && GameConstants.getWeaponType(weapon.getItemId()) != MapleWeaponType.雙弩槍) {
                     if (chr.getInventory(MapleInventoryType.EQUIP).isFull()) {
                         c.sendPacket(InventoryPacket.getInventoryFull());
                         c.sendPacket(InventoryPacket.getShowInventoryFull());
@@ -965,7 +965,7 @@ public class MapleInventoryManipulator {
             }
             case -11: { // Weapon
                 Item shield = chr.getInventory(MapleInventoryType.EQUIPPED).getItem((byte) -10);
-                if (shield != null && GameConstants.isTwoHanded(source.getItemId())) {
+                if (shield != null && GameConstants.isTwoHanded(source.getItemId()) && GameConstants.getWeaponType(shield.getItemId()) != MapleWeaponType.MAGIC_ARROW) {
                     if (chr.getInventory(MapleInventoryType.EQUIP).isFull()) {
                         c.sendPacket(InventoryPacket.getInventoryFull());
                         c.sendPacket(InventoryPacket.getShowInventoryFull());

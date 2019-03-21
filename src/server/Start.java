@@ -131,7 +131,7 @@ public class Start {
 
         LoginServer.setOn();
         ClientServer.setOpen();
-        World.startAddGift();
+        //World.startAddGift();
         System.out.printf("Server is Opened - %ds \r\n", (System.currentTimeMillis() - startTime) / 1000);
     }
 }

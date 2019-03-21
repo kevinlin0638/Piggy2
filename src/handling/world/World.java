@@ -60,8 +60,8 @@ public class World {
     public static int eventMap = 0;
     public static boolean eventOn = false;
     public static int AutoJQ_Channel = -1; // for checks in commands
-    public static String MD5 = "1E32C8EB53E501760313BD11BE3EFFB1";
-    public static String Vers = "xxx1001";
+    public static String MD5 = "1D8D465BF1E20D25B62B1D4D2E6AF449";
+    public static String Vers = "ccc1002";
     // Monster Rush
     public static boolean MonsterRush = false;
     public static boolean Monster_Rush_Enabled = false;
@@ -346,14 +346,14 @@ public class World {
                 chr.getClient().sendPacket(CField.skillCooldown(skillId, 0));
             });
         }
-        if (System.currentTimeMillis() - chr.getOnline_time() > 30 * 60 * 1000)
-            chr.finishDailyQuest(1);
-        if (System.currentTimeMillis() - chr.getOnline_time() > 60 * 60 * 1000)
-            chr.finishDailyQuest(2);
-        if (System.currentTimeMillis() - chr.getOnline_time() > 90 * 60 * 1000)
-            chr.finishDailyQuest(3);
-        if (System.currentTimeMillis() - chr.getOnline_time() > 120 * 60 * 1000)
+        if (System.currentTimeMillis() - chr.getOnline_time() > 120 * 60 * 1000 && !chr.isDailyFinished(4))
             chr.finishDailyQuest(4);
+        else if (System.currentTimeMillis() - chr.getOnline_time() > 90 * 60 * 1000 && !chr.isDailyFinished(3))
+            chr.finishDailyQuest(3);
+        else if (System.currentTimeMillis() - chr.getOnline_time() > 60 * 60 * 1000 && !chr.isDailyFinished(2))
+            chr.finishDailyQuest(2);
+        else if (System.currentTimeMillis() - chr.getOnline_time() > 30 * 60 * 1000 && !chr.isDailyFinished(1))
+            chr.finishDailyQuest(1);
 
         if (chr.isAlive()) {
             if (chr.getJob() == 131 || chr.getJob() == 132) {

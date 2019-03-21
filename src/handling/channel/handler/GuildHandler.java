@@ -116,7 +116,6 @@ public class GuildHandler {
                 World.Guild.setGuildMemberOnline(c.getPlayer().getMGC(), true, c.getChannel());
                 //c.sendPacket(GuildPacket.showGuildInfo(c.getPlayer()));
                 c.sendPacket(GuildPacket.newGuildInfo(c.getPlayer()));
-                World.Guild.gainGP(c.getPlayer().getGuildId(), 500, c.getPlayer().getId());
                 MapleGuildRanking.getInstance().load();
                 //c.getPlayer().dropMessage(1, "You have successfully created a Guild.");
                 respawnPlayer(c.getPlayer());

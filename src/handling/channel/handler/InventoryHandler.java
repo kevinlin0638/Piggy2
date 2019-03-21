@@ -981,7 +981,7 @@ public class InventoryHandler {
             }
         }
 
-        if (GameConstants.isTablet(scroll.getItemId()) || GameConstants.isGeneralScroll(scroll.getItemId())) {
+        if (GameConstants.isTablet(scroll.getItemId()) || (GameConstants.isGeneralScroll(scroll.getItemId()) && toScroll.getItemId() /  100000 != 16)) {
             switch (scroll.getItemId() % 1000 / 100) {
                 case 0: //1h
                     if (GameConstants.isTwoHanded(toScroll.getItemId()) || !GameConstants.isWeapon(toScroll.getItemId())) {
@@ -1008,7 +1008,7 @@ public class InventoryHandler {
                     }
                     break;
             }
-        } else if (!GameConstants.isAccessoryScroll(scroll.getItemId()) && !GameConstants.isChaosScroll(scroll.getItemId()) && !GameConstants.isCleanSlate(scroll.getItemId()) && !GameConstants.isEquipScroll(scroll.getItemId()) && !GameConstants.isPotentialScroll(scroll.getItemId()) && !GameConstants.isSpecialScroll(scroll.getItemId()) && !GameConstants.isInnocence(scroll.getItemId())) {
+        } else if (!GameConstants.isAccessoryScroll(scroll.getItemId()) && toScroll.getItemId() /  100000 != 16 && !GameConstants.isChaosScroll(scroll.getItemId()) && !GameConstants.isCleanSlate(scroll.getItemId()) && !GameConstants.isEquipScroll(scroll.getItemId()) && !GameConstants.isPotentialScroll(scroll.getItemId()) && !GameConstants.isSpecialScroll(scroll.getItemId()) && !GameConstants.isInnocence(scroll.getItemId())) {
             if (!ii.canScroll(scroll.getItemId(), toScroll.getItemId())) {
                 c.sendPacket(CWvsContext.enableActions());
                 return false;
@@ -1525,12 +1525,12 @@ public class InventoryHandler {
                     c.getPlayer().dropMessage(5, "Please bring this item to the NPC.");
                     break;
                 case 2430212: //energy drink
-                    if(c.getPlayer().getEventCount("能量飲料" + 2430212) >= 3)
+                    if(c.getPlayer().getBossLog("能量飲料" + 2430212) >= 6)
                     {
-                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過三次，會增肥。");
+                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過六次，會增肥。");
                         break;
                     }
-                    c.getPlayer().setEventCount("能量飲料" + 2430212);
+                    c.getPlayer().setBossLog("能量飲料" + 2430212);
                     MapleQuestStatus marr = c.getPlayer().getQuestNAdd(MapleQuest.getInstance(GameConstants.ENERGY_DRINK));
                     if (marr.getCustomData() == null) {
                         marr.setCustomData("0");
@@ -1544,12 +1544,12 @@ public class InventoryHandler {
                     }
                     break;
                 case 2430213: //energy drink
-                    if(c.getPlayer().getEventCount("能量飲料" + 2430213) >= 3)
+                    if(c.getPlayer().getBossLog("能量飲料" + 2430213) >= 6)
                     {
-                        c.getPlayer().dropMessage(1, "您一天不可喝此種飲料超過三次，會增肥。");
+                        c.getPlayer().dropMessage(1, "您一天不可喝此種飲料超過六次，會增肥。");
                         break;
                     }
-                    c.getPlayer().setEventCount("能量飲料" + 2430213);
+                    c.getPlayer().setBossLog("能量飲料" + 2430213);
                     marr = c.getPlayer().getQuestNAdd(MapleQuest.getInstance(GameConstants.ENERGY_DRINK));
                     if (marr.getCustomData() == null) {
                         marr.setCustomData("0");
@@ -1563,48 +1563,48 @@ public class InventoryHandler {
                     }
                     break;
                 case 2430220: //energy drink
-                    if(c.getPlayer().getEventCount("能量飲料" + 2430220) >= 3)
+                    if(c.getPlayer().getBossLog("能量飲料" + 2430220) >= 6)
                     {
-                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過三次，會增肥。");
+                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過六次，會增肥。");
                         break;
                     }
-                    c.getPlayer().setEventCount("能量飲料" + 2430220);
+                    c.getPlayer().setBossLog("能量飲料" + 2430220);
                     if (c.getPlayer().getFatigue() > 0) {
                         MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (byte) 1, false);
                         c.getPlayer().setFatigue(c.getPlayer().getFatigue() - 30);
                     }
                     break;
                 case 2430214: //energy drink
-                    if(c.getPlayer().getEventCount("能量飲料" + 2430214) >= 3)
+                    if(c.getPlayer().getBossLog("能量飲料" + 2430214) >= 6)
                     {
-                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過三次，會增肥。");
+                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過六次，會增肥。");
                         break;
                     }
-                    c.getPlayer().setEventCount("能量飲料" + 2430214);
+                    c.getPlayer().setBossLog("能量飲料" + 2430214);
                     if (c.getPlayer().getFatigue() > 0) {
                         MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (byte) 1, false);
                         c.getPlayer().setFatigue(c.getPlayer().getFatigue() - 30);
                     }
                     break;
                 case 2430227: //energy drink
-                    if(c.getPlayer().getEventCount("能量飲料" + 2430227) >= 3)
+                    if(c.getPlayer().getBossLog("能量飲料" + 2430227) >= 6)
                     {
-                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過三次，會增肥。");
+                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過六次，會增肥。");
                         break;
                     }
-                    c.getPlayer().setEventCount("能量飲料" + 2430227);
+                    c.getPlayer().setBossLog("能量飲料" + 2430227);
                     if (c.getPlayer().getFatigue() > 0) {
                         MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (byte) 1, false);
                         c.getPlayer().setFatigue(c.getPlayer().getFatigue() - 50);
                     }
                     break;
                 case 2430231: //energy drink
-                    if(c.getPlayer().getEventCount("能量飲料" + 2430231) >= 3)
+                    if(c.getPlayer().getBossLog("能量飲料" + 2430231) >= 6)
                     {
-                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過三次，會增肥。");
+                        c.getPlayer().dropMessage(1, "您一個帳號一天不可喝此種飲料超過六次，會增肥。");
                         break;
                     }
-                    c.getPlayer().setEventCount("能量飲料" + 2430231);
+                    c.getPlayer().setBossLog("能量飲料" + 2430231);
                     marr = c.getPlayer().getQuestNAdd(MapleQuest.getInstance(GameConstants.ENERGY_DRINK));
                     if (marr.getCustomData() == null) {
                         marr.setCustomData("0");

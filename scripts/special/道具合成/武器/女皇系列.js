@@ -109,7 +109,7 @@ function action(mode, type, selection) {
 			false, // 是否批量合成
 			-1, //等級限制
 			true),// 是否顯示
-		Array(1372219, // 欲合成之道具 ID
+		Array(1382104, // 欲合成之道具 ID
 			[[4310000, 15],[4008002, 50],[4260004, 20],[4260005, 20],[0,20000000]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
 			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
 			-1, //是否限制時間, 時間

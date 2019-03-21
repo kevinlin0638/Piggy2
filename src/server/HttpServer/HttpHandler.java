@@ -44,65 +44,67 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> { 
                 String query = br.readLine();
                 parseQuery(query, parameters);
 
-                try{
-                    PreparedStatement ps = con.prepareStatement("SELECT * FROM paybill_bills WHERE TradeNo = ? AND accountID = ? AND money = ?", Statement.RETURN_GENERATED_KEYS);
-                    ps.setString(1, (String) parameters.get("MerchantTradeNo"));
-                    ps.setString(2, (String) parameters.get("CustomField1"));
-                    int fuck = Integer.valueOf((String) parameters.get("TradeAmt"));
-                    ps.setInt(3, fuck);
-                    ResultSet rs = ps.executeQuery();
-                    //ps.close();
-                    if (rs.next()) {
-                        boolean isSent = false;
-                        if(rs.getInt("isSent") == 1){
-                            isSent = true;
-                        }
 
-                        ps = con.prepareStatement("UPDATE paybill_bills SET isSent = ? WHERE BillID = ? AND isSent != 1");
-                        ps.setInt(1, 0);
-                        ps.setInt(2, rs.getInt("BillID"));
-                        ps.executeUpdate();
+                if(Integer.valueOf((String) parameters.get("RtnCode"))== 1) {
+                    try {
+                        PreparedStatement ps = con.prepareStatement("SELECT * FROM paybill_bills WHERE TradeNo = ? AND accountID = ? AND money = ?", Statement.RETURN_GENERATED_KEYS);
+                        ps.setString(1, (String) parameters.get("MerchantTradeNo"));
+                        ps.setString(2, (String) parameters.get("CustomField1"));
+                        int fuck = Integer.valueOf((String) parameters.get("TradeAmt"));
+                        ps.setInt(3, fuck);
+                        ResultSet rs = ps.executeQuery();
                         //ps.close();
+                        if (rs.next()) {
+                            boolean isSent = false;
+                            if (rs.getInt("isSent") == 1) {
+                                isSent = true;
+                            }
 
-                        if(!isSent) {
-                            ps = con.prepareStatement("INSERT INTO paybill_paylog (id, account, money, dps, paytime) VALUES (DEFAULT,?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-                            ps.setString(1, rs.getString("accountID"));
-                            ps.setInt(2, rs.getInt("money"));
-                            ps.setInt(3, (int) Math.floor(rs.getInt("money") * DonateRate));
-                            ps.setDate(4, rs.getDate("Date"));
+                            ps = con.prepareStatement("UPDATE paybill_bills SET isSent = ? WHERE BillID = ? AND isSent != 1");
+                            ps.setInt(1, 0);
+                            ps.setInt(2, rs.getInt("BillID"));
                             ps.executeUpdate();
-                            System.out.println("帳號 : " + rs.getString("account") + "斗內金額 : " + rs.getInt("money") + "\r\n自" + rs.getDate("Date").toString() + " 已付款 並存入帳號");
-                            ps.close();
+                            //ps.close();
+
+                            if (!isSent) {
+                                ps = con.prepareStatement("INSERT INTO paybill_paylog (id, account, money, dps, paytime) VALUES (DEFAULT,?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                                ps.setString(1, rs.getString("accountID"));
+                                ps.setInt(2, rs.getInt("money"));
+                                ps.setInt(3, (int) Math.floor(rs.getInt("money") * DonateRate));
+                                ps.setDate(4, rs.getDate("Date"));
+                                ps.executeUpdate();
+                                System.out.println("帳號 : " + rs.getString("account") + "斗內金額 : " + rs.getInt("money") + "\r\n自" + rs.getDate("Date").toString() + " 已付款 並存入帳號");
+                                ps.close();
 
 
-
-                            for(MapleCharacter cl : World.getAllCharacters()){
-                                if(cl.getClient().getAccountName().equalsIgnoreCase(rs.getString("account"))) {
-                                    cl.dropMessage("帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * DonateRate) + " 點贊助點.");
-                                    cl.gainPoints((int) Math.floor(rs.getInt("money") * DonateRate));
-                                    for(MapleClient cll : World.pending_clients){
-                                        if(cll.getAccountName().equalsIgnoreCase(rs.getString("account"))) {
-                                            final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-                                            mplew.writeShort(666);
-                                            String sb = "帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * DonateRate) + " 點贊助點.";
-                                            mplew.write(sb.getBytes(StandardCharsets.UTF_8));
-                                            cll.sendPacket(mplew.getPacket());
+                                for (MapleCharacter cl : World.getAllCharacters()) {
+                                    if (cl.getClient().getAccountName().equalsIgnoreCase(rs.getString("account"))) {
+                                        cl.dropMessage("帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * DonateRate) + " 點贊助點.");
+                                        cl.gainPoints((int) Math.floor(rs.getInt("money") * DonateRate));
+                                        for (MapleClient cll : World.pending_clients) {
+                                            if (cll.getAccountName().equalsIgnoreCase(rs.getString("account"))) {
+                                                final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+                                                mplew.writeShort(666);
+                                                String sb = "帳號 : " + rs.getString("account") + " 成功獲得 " + (int) Math.floor(rs.getInt("money") * DonateRate) + " 點贊助點.";
+                                                mplew.write(sb.getBytes(StandardCharsets.UTF_8));
+                                                cll.sendPacket(mplew.getPacket());
+                                            }
                                         }
+                                        ps = con.prepareStatement("UPDATE paybill_bills SET isSent = ? WHERE BillID = ? AND isSent != 1");
+                                        ps.setInt(1, 1);
+                                        ps.setInt(2, rs.getInt("BillID"));
+                                        ps.executeUpdate();
+                                        ps.close();
                                     }
-                                    ps = con.prepareStatement("UPDATE paybill_bills SET isSent = ? WHERE BillID = ? AND isSent != 1");
-                                    ps.setInt(1, 1);
-                                    ps.setInt(2, rs.getInt("BillID"));
-                                    ps.executeUpdate();
-                                    ps.close();
                                 }
                             }
                         }
+                        rs.close();
+
+
+                    } catch (SQLException ex) {//130.211.243.179
+                        ex.printStackTrace();
                     }
-                    rs.close();
-
-
-                } catch (SQLException ex) {//130.211.243.179
-                    ex.printStackTrace();
                 }
 
 

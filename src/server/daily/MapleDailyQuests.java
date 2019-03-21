@@ -45,13 +45,9 @@ public class MapleDailyQuests {
          daily_quest.put(12, new MapleDaily("通過武陵道場 地獄"));//
          daily_quest.put(22, new MapleDaily("通過武陵道場 夢魘"));//
          daily_quest.put(13, new MapleDaily("擊敗 殘暴炎魔"));//
-         daily_quest.put(14, new MapleDaily("擊敗 天狗"));//
          daily_quest.put(15, new MapleDaily("擊敗 獅王"));//
          daily_quest.put(16, new MapleDaily("擊敗 熊王"));//
          daily_quest.put(17, new MapleDaily("擊敗 暗黑龍王"));//
-         daily_quest.put(18, new MapleDaily("擊敗 天皇"));//
-         daily_quest.put(19, new MapleDaily("擊敗 六手邪神"));//
-         daily_quest.put(20, new MapleDaily("擊敗 拉圖斯"));//
          daily_quest.put(21, new MapleDaily("贏得一場小遊戲"));//
          daily_quest.put(23, new MapleDaily("擊敗 渾沌殘暴炎魔"));//
          daily_quest.put(24, new MapleDaily("擊敗 渾沌暗黑龍王"));

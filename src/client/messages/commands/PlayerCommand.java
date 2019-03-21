@@ -73,9 +73,9 @@ public class PlayerCommand {
             c.getPlayer().dropMessage(5, "角色資訊 物理攻擊 : " + c.getPlayer().getStat().getTotalWatk() + "||魔法攻擊 : " + c.getPlayer().getStat().getTotalMagic() + "||");
             c.getPlayer().dropMessage(5, "力量 : " + c.getPlayer().getStat().getTotalStr() +
                     "||敏捷 : " + c.getPlayer().getStat().getTotalDex() +"||智力 : " + c.getPlayer().getStat().getTotalInt() +"||幸運 : " + c.getPlayer().getStat().getTotalLuk());
-            c.getPlayer().dropMessage(5, "經驗倍率 " + (Math.round(c.getPlayer().getEXPMod()) * 100) * Math.round(c.getPlayer().getStat().expBuff / 100.0) +"%");
-            c.getPlayer().dropMessage(5, "掉寶倍率 " + (Math.round(c.getPlayer().getDropMod()) * 100) * Math.round(c.getPlayer().getStat().dropBuff / 100.0) + "%");
-            c.getPlayer().dropMessage(5, "楓幣倍率 " + Math.round(c.getPlayer().getStat().mesoBuff / 100.0) * 100 + "%");
+            c.getPlayer().dropMessage(5, "經驗倍率 " + (Math.round(c.getPlayer().getEXPMod())) * Math.round(c.getPlayer().getStat().expBuff) +"%");
+            c.getPlayer().dropMessage(5, "掉寶倍率 " + (Math.round(c.getPlayer().getDropMod())) * Math.round(c.getPlayer().getStat().dropBuff) + "%");
+            c.getPlayer().dropMessage(5, "楓幣倍率 " + Math.round(c.getPlayer().getStat().mesoBuff) + "%");
             c.getPlayer().dropMessage(5, "當前經驗 " + s);
             c.getPlayer().dropMessage(5, "累積在線 " + ss);
             c.getPlayer().dropMessage(5, "楓點 " + c.getPlayer().getCSPoints(2));
@@ -110,24 +110,12 @@ public class PlayerCommand {
 
         @Override
         public boolean execute(MapleClient c, List<String> splitted) {
-            ArrayList<ArrayList<MapleCharacter>> onl = new ArrayList<>();
-            for (ChannelServer cserv : ChannelServer.getAllInstance(0)) {
-                ArrayList<MapleCharacter> arr = new ArrayList<>();
-                for (MapleCharacter chrr : cserv.getPlayerStorage().getAllCharacters()){
-                    if(!chrr.isGM()){
-                        arr.add(chrr);
-                    }
-                }
-                onl.add(arr);
-            }
-
-            int cha = 1;
             int total = 0;
             if(splitted.size() < 2){
-                for (ArrayList<MapleCharacter> ar : onl){
-                    c.getPlayer().dropMessage(5, "頻道 " + cha + " : " + ar.size() + " 人在線");
-                    cha++;
-                    total += ar.size();
+                for(int cha = 1; cha <= 20; cha++) {
+                    int online = ChannelServer.getInstance(0, cha).getPlayerStorage().getAllCharacters().size();
+                    c.getPlayer().dropMessage(5, "頻道 " + cha + " : " + online + " 人在線");
+                    total += online;
                 }
                 c.getPlayer().dropMessage(5, "總上線人數 : " + total + " 人在線");
             }else {
@@ -138,8 +126,8 @@ public class PlayerCommand {
                     c.getPlayer().dropMessage(5, "錯誤 : 輸入的數字無效 .");
                     return false;
                 }
-                if (ch > 0 && ch <= 10) {
-                    ArrayList<MapleCharacter> ar = onl.get(ch - 1);
+                if (ch > 0 && ch <= 20) {
+                    ArrayList<MapleCharacter> ar = new ArrayList<>(ChannelServer.getInstance(0, ch).getPlayerStorage().getAllCharacters());
                     c.getPlayer().dropMessage(5, "頻道 " + ch + " : " + ar.size() + " 人在線");
                     c.getPlayer().dropMessage(5, "在線ID:");
                     StringBuilder sb = new StringBuilder();

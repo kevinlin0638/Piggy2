@@ -317,7 +317,8 @@ public class PetHandler {
                 item = false;
             }
 
-
+            if(player.getTrade() != null)
+                return;
             if (((boots || bino) || meso || item) && (System.currentTimeMillis() - chr.getLast_vac() > 7000)) {
                 List<MapleMapObject> objects = player.getMap().getMapObjectsInRange(player.getPosition(), GameConstants.maxViewRangeSq(), Arrays.asList(MapleMapObjectType.ITEM));
                 chr.setLast_vac(System.currentTimeMillis());

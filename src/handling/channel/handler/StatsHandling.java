@@ -144,9 +144,17 @@ public class StatsHandling {
             isBeginnerSkill = true;
         } else if (GameConstants.isBeginnerJob(skillid / 10000)) {
             return;
-        } else {
+        }else {
             remainingSp = chr.getRemainingSp(GameConstants.getSkillBookForSkill(skillid));
         }
+
+        for (int i : GameConstants.blockedSkills) { // after the maxing we go..
+            if (i == skillid) {
+                c.getPlayer().dropMessage(1, "此技能無法配點");
+                return;
+            }
+        }
+
         final Skill skill = SkillFactory.getSkill(skillid);
 
         for (Pair<Integer, Byte> ski : skill.getRequiredSkills()) {

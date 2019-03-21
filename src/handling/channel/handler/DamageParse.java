@@ -244,15 +244,18 @@ public class DamageParse {
                             }
                         }*/
                     }
+
                     if (player == null) { // o_O
                         return;
                     }
 
-                    if((attack.skill == 4331003 || attack.skill == 1221011 || attack.skill == 3221007) && player.getClient().getChannel() >= 11)
+                    if((attack.skill == 4331003 || attack.skill == 1221011 || attack.skill == 3221007 || Tempest) && player.getClient().getChannel() >= 11)
                     {
                         eachd = 0;
                         player.dropMessage("您所在的位置渾沌立場環繞,無法秒殺怪物");
                     }
+                    if(attack.skill == 30011170)
+                        eachd = 0;
 
                     if (GameConstants.isBeginnerJob(attack.skill / 10000)) {
                         switch (attack.skill % 10000) {
@@ -262,31 +265,32 @@ public class DamageParse {
                         }
                     }
                     if(eachd > (1999999 + player.getStat().getBkd())) {
-                        if(attack.skill == 3221001)
+                        if(attack.skill == 3221001 || Tempest)
                             eachd = 1999999 + player.getStat().getBkd();
                         else
                             player.getCheatTracker().registerOffense(CheatingOffense.攻擊超過自身角色破攻, "[傷害: " + eachd + ", 腳色頂傷: " + maxDamagePerHit + ", 怪物ID: " + monster.getId() + "] [职业: " + player.getJob() + ", 等級: " + player.getLevel() + ", 技能: " + attack.skill + "]");
                     }
-                    if(eachd > 50000)
-                        player.finishAchievement(60);
-                    if(eachd > 99999)
-                        player.finishAchievement(61);
-                    if(eachd > 499999)
-                        player.finishAchievement(62);
-                    if(eachd > 999999)
-                        player.finishAchievement(63);
-                    if(eachd > 1999999)
-                        player.finishAchievement(64);
-                    if(eachd > 4999999)
-                        player.finishAchievement(65);
-                    if(eachd > 9999999)
-                        player.finishAchievement(66);
-                    if(eachd > 19999999)
-                        player.finishAchievement(67);
-                    if(eachd > 59999999)
-                        player.finishAchievement(68);
+
                     if(eachd > 99999999)
                         player.finishAchievement(69);
+                    else if(eachd > 59999999)
+                        player.finishAchievement(68);
+                    else if(eachd > 19999999)
+                        player.finishAchievement(67);
+                    else if(eachd > 9999999)
+                        player.finishAchievement(66);
+                    else if(eachd > 4999999)
+                        player.finishAchievement(65);
+                    else if(eachd > 1999999)
+                        player.finishAchievement(64);
+                    else if(eachd > 999999)
+                        player.finishAchievement(63);
+                    else if(eachd > 499999)
+                        player.finishAchievement(62);
+                    else if(eachd > 99999)
+                        player.finishAchievement(61);
+                    else if(eachd > 50000)
+                        player.finishAchievement(60);
 
                     totDamageToOneMonster += eachd;
                     //force the miss even if they dont miss. popular wz edit
@@ -1196,13 +1200,14 @@ public class DamageParse {
         }else if(ret.skill == 21101003){
             lea.skip(1);
         }
-        final Skill skill = SkillFactory.getSkill(ret.skill);
-        if (skill != null) {
-            if (skill.isChargeSkill()) {
-                lea.skip(4);
-            }
-        }
-
+//        final Skill skill = SkillFactory.getSkill(ret.skill);
+//        if (skill != null) {
+//            if (skill.isChargeSkill()) {
+//                lea.skip(4);
+//            }
+//        }
+        if(ret.skill == 5101004)
+            lea.skip(4);
         for (int i = 0; i < ret.targets; i++) {
             int oid = lea.readInt();
             lea.skip(14);

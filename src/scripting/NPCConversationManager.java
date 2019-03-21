@@ -2103,7 +2103,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             Equip temp = (Equip) ((Equip) statsSel).copy();
             Equip eq = (Equip) MapleItemInformationProvider.getInstance().getEquipById(temp.getItemId());
 
-            eq.setUpgradeSlots((byte) (eq.getUpgradeSlots() + temp.getExtraScroll()));
             eq.setExtraScroll(temp.getExtraScroll());
             eq.setExpiration(temp.getExpiration());
             eq.setPotential1(temp.getPotential1());
@@ -2385,6 +2384,8 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         Equip equip = (Equip) getPlayer().getInventory(MapleInventoryType.EQUIP).getItem(dst);
         Item cube = getPlayer().getInventory(MapleInventoryType.CASH).findById(CubeID);
+        if(c.getPlayer().getMeso() < getCubeCharge(equip.getItemId(), equip.getState()))
+            return;
         equip.renewPotential(CubeID - 5062000);
 
         c.getPlayer().getMap().broadcastMessage(CField.showPotentialReset(false, c.getPlayer().getId(), true, equip.getItemId()));
@@ -3285,6 +3286,9 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             eq.setPotential1(40650);
             eq.setPotential2(40656);
             eq.setPotential3(40656);
+        }else if(eq.getItemId() == 1352000 || eq.getItemId() == 1352001 || eq.getItemId() == 1352002 || eq.getItemId() == 1352003 || eq.getItemId() == 1099000 || eq.getItemId() == 1099002 || eq.getItemId() == 1099003 || eq.getItemId() == 1099004){
+            eq.setPotential1(10009);
+            eq.setPotential2(10009);
         }
 
         return MapleInventoryManipulator.addFromDrop(getClient(), eq, false);

@@ -285,6 +285,109 @@ public class AdminCommand {
         }
     }
 
+    public static class WarpHere extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted.get(1));
+            if (victim != null) {
+                victim.changeMap(c.getPlayer().getMap(), c.getPlayer().getMap().findClosestSpawnpoint(c.getPlayer().getPosition()));
+            } else {
+                int ch = World.Find.findChannel(splitted.get(1));
+                if (ch < 0) {
+                    c.getPlayer().dropMessage(5, "Not found.");
+                    return false;
+                }
+                victim = ChannelServer.getInstance(c.getWorld(), ch).getPlayerStorage().getCharacterByName(splitted.get(1));
+                c.getPlayer().dropMessage(5, "Victim is cross changing channel.");
+                victim.dropMessage(5, "Cross changing channel.");
+                if (victim.getMapId() != c.getPlayer().getMapId()) {
+                    final MapleMap mapp = victim.getClient().getChannelServer().getMapFactory().getMap(c.getPlayer().getMapId());
+                    victim.changeMap(mapp, mapp.getPortal(0));
+                }
+                victim.changeChannel(c.getChannel());
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!WarpHere <玩家ID>";
+        }
+    }
+
+    public static class GiveMP extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 3) {
+                c.getPlayer().dropMessage(6, "!giveMP <player> <amount>.");
+                return false;
+            }
+            MapleCharacter chrs = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted.get(1));
+            if (chrs == null) {
+                c.getPlayer().dropMessage(6, "請確認有在正確的頻道");
+            } else {
+                chrs.modifyCSPoints(2, Integer.parseInt(splitted.get(2)));
+                c.getPlayer().dropMessage(6, "在您給了" + splitted.get(1) +" " + splitted.get(2)  + "楓點了之後 共擁有 " + chrs.getCSPoints(2) + " 楓點");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!giveMP <player> <amount>";
+        }
+    }
+
+    public static class GiveMeso extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 3) {
+                c.getPlayer().dropMessage(6, "!GiveMeso <player> <amount>.");
+                return false;
+            }
+            MapleCharacter chrs = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted.get(1));
+            if (chrs == null) {
+                c.getPlayer().dropMessage(6, "請確認有在正確的頻道");
+            } else {
+                chrs.gainMeso(Integer.parseInt(splitted.get(2)), true);
+                c.getPlayer().dropMessage(6, "在您給了" + splitted.get(1) +" " + splitted.get(2)  + "楓幣了之後 共擁有 " + chrs.getCSPoints(2) + " 楓幣");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!GiveMeso <player> <amount>";
+        }
+    }
+
+    public static class GivePoint extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 3) {
+                c.getPlayer().dropMessage(6, "!GivePoint <player> <amount>.");
+                return false;
+            }
+            MapleCharacter chrs = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted.get(1));
+            if (chrs == null) {
+                c.getPlayer().dropMessage(6, "請確認有在正確的頻道");
+            } else {
+                chrs.gainPoints(Integer.parseInt(splitted.get(2)));
+                c.getPlayer().dropMessage(6, "在您給了" + splitted.get(1) +" " + splitted.get(2)  + "贊助點了之後 共擁有 " + chrs.getCSPoints(2) + " 贊助點");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!GivePoint <player> <amount>";
+        }
+    }
+
     public static class Spawn extends AbstractsCommandExecute {
 
         @Override
@@ -830,7 +933,7 @@ public class AdminCommand {
                 client.inventory.Item item;
 
                 if (GameConstants.getInventoryType(itemId) == MapleInventoryType.EQUIP) {
-                    item = ii.randomizeStats((Equip) ii.getEquipById(itemId));
+                    item = (Equip) ii.getEquipById(itemId);
 
                 } else {
                     item = new client.inventory.Item(itemId, (byte) 0, quantity, (byte) 0);
@@ -1517,7 +1620,7 @@ public class AdminCommand {
 
             final MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
             mplew.writeShort(21);
-            String real = "http://daaep.com:80/" + url;
+            String real = "http://35.220.252.54:80/" + url;
             mplew.write(real.getBytes());
             c.getClinetS().sendPacket(mplew.getPacket());
             return true;

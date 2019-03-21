@@ -3,7 +3,7 @@ var text;
 var target_EQP;
 var sele;
 var bk;
-var prise = 1500000;
+var prise = 750000;
 function start() {
     status = -1;
     action(1, 0, 0);

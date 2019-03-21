@@ -2115,8 +2115,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             }
         }
         try{
-            ps = con.prepareStatement("SELECT * FROM achievements WHERE accountid = ?");
-            ps.setInt(1, accountid);
+            ps = con.prepareStatement("SELECT * FROM achievements WHERE characterid = ?");
+            ps.setInt(1, id);
             rs = ps.executeQuery();
             while (rs.next()) {
                 final int toAdd = rs.getInt("achievementid");
@@ -2126,8 +2126,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             rs.close();
             ps.close();
 
-            ps = con.prepareStatement("DELETE FROM achievements WHERE accountid = ?");
-            ps.setInt(1, accountid);
+            ps = con.prepareStatement("DELETE FROM achievements WHERE characterid = ?");
+            ps.setInt(1, id);
             ps.executeUpdate();
             ps.close();
             ps = con.prepareStatement("INSERT INTO achievements(characterid, achievementid, accountid) VALUES(?, ?, ?)");
@@ -3136,11 +3136,14 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public void dispel() {
-        if (!isHidden()) {
+        if (!isHidden() && !this.getStat().equippedBlackDra) {
             final LinkedList<MapleBuffStatValueHolder> allBuffs = new LinkedList<>(effects.values());
             allBuffs.stream().filter(mbsvh -> mbsvh.getStatEffect().isSkill() && mbsvh.getSchedule() != null && !mbsvh.getStatEffect().isMorph() && !mbsvh.getStatEffect().isGmBuff() && !mbsvh.getStatEffect().isMonsterRiding() && !mbsvh.getStatEffect().isMechChange() && !mbsvh.getStatEffect().isEnergyCharge() && !mbsvh.getStatEffect().isAranCombo()).forEach(mbsvh -> {
                 cancelEffect(mbsvh.getStatEffect(), false, mbsvh.getStartTime());
             });
+        }
+        if(this.getStat().equippedBlackDra){
+            dropMessage(6, "日出勳章 為您抵擋 消技能");
         }
     }
 
@@ -5493,7 +5496,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                 updatePartyMemberHP();
                 equipChanged();
                 getMap().broadcastMessage(this, CField.spawnPlayerMapobject(this), false);
-                dropMessage(6, "Hide Deactivated.");
+                dropMessage(6, "管理員隱藏 = 關閉 \r\n 開啟請輸入!hide");
             } else {
                 this.hidden = true;
                 if (!login) {
@@ -5508,7 +5511,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                         getMap().broadcastNONGMMessage(this, CField.removePlayerFromMap(getId()), false);
                     }
                 }
-                dropMessage(6, "Hide Activated.");
+                dropMessage(6, "管理員隱藏 = 開啟 \r\n 解除請輸入!unhide");
             }
             announce(CWvsContext.enableActions());
         }
@@ -6676,6 +6679,52 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         visibleMapObjectsLock.writeLock().unlock();
     }
 
+
+    public int getBossLog(String bossid) {
+        Connection con1 = DatabaseConnection.getConnection();
+        try {
+            int ret_count = 0;
+            PreparedStatement ps;
+            ps = con1.prepareStatement("select * from bosslog where characterid = ? and bossid = ? and lastattempt >= subtime(current_timestamp, '1 0:0:0.0')");
+            ps.setInt(1, id);
+            ps.setString(2, bossid);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Timestamp updateTime = rs.getTimestamp("lastattempt");
+                Calendar sqlcal = Calendar.getInstance();
+                if (updateTime != null) {
+                    sqlcal.setTimeInMillis(updateTime.getTime());
+                }
+                if (sqlcal.get(Calendar.DAY_OF_MONTH) + 1 <= Calendar.getInstance().get(Calendar.DAY_OF_MONTH) || sqlcal.get(Calendar.MONTH) + 1 <= Calendar.getInstance().get(Calendar.MONTH) || sqlcal.get(Calendar.YEAR) + 1 <= Calendar.getInstance().get(Calendar.YEAR)) {
+                    continue;
+                }else{
+                    ret_count += 1;
+                }
+
+            }
+            rs.close();
+            ps.close();
+            return ret_count;
+        } catch (Exception Ex) {
+            //log.error("Error while read bosslog.", Ex);
+            return -1;
+        }
+    }
+
+    public void setBossLog(String bossid) {
+        Connection con1 = DatabaseConnection.getConnection();
+        try {
+            PreparedStatement ps;
+            ps = con1.prepareStatement("insert into bosslog (characterid, bossid) values (?,?)");
+            ps.setInt(1, id);
+            ps.setString(2, bossid);
+            ps.executeUpdate();
+            ps.close();
+        } catch (Exception Ex) {
+            //   log.error("Error while insert bosslog.", Ex);
+        }
+    }
+
     public boolean isAlive() {
         return stats.getHp() > 0;
     }
@@ -6967,23 +7016,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
                     if (getPetIndex(pet) != -1) { // Already summoned, let's keep it
                         unequipSpawnPet(pet, true, false);
                     } else {
-                        int leadid = 8;
-//                        if (GameConstants.isKOC(getJob())) {
-//                            leadid = 10000018;
-//                        } else if (GameConstants.isAran(getJob())) {
-//                            leadid = 20000024;
-//                        } else if (GameConstants.isEvan(getJob())) {
-//                            leadid = 20011024;
-//                        } else if (GameConstants.isMercedes(getJob())) {
-//                            leadid = 20021024;
-//                        } else if (GameConstants.isDemon(getJob())) {
-//                            leadid = 30011024;
-//                        } else if (GameConstants.isResist(getJob())) {
-//                            leadid = 30001024;
-//                        }
-                        if ((getSkillLevel(SkillFactory.getSkill(leadid)) == 0 || getNoPets() == 3) && getSpawnPet(0) != null) {
+                        if ((getNoPets() == 3) && getSpawnPet(0) != null) {
                             unequipSpawnPet(getSpawnPet(0), false, false);
-                        } else if (lead && getSkillLevel(SkillFactory.getSkill(leadid)) > 0) { // Follow the Lead
+                        } else if (lead) { // Follow the Lead
                             shiftPetsRight();
                         }
                         Point pos = getPosition();
@@ -9522,6 +9557,10 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         return finishedDailyQuests;
     }
 
+    public boolean isDailyFinished(int id){
+        return finishedDailyQuests.contains(id);
+    }
+
     public void setAchievementFinished(int id) {
         if (!finishedAchievements.contains(id)) {
             finishedAchievements.add(id);
@@ -9529,6 +9568,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     }
 
     public boolean achievementFinished(int achievementid) {
+        if(finishedAchievements.contains(achievementid))
+            return true;
         Connection con = DatabaseConnection.getConnection();
         try {
             PreparedStatement ps = con.prepareStatement("SELECT * FROM achievements WHERE accountid = ?");

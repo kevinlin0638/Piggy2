@@ -117,16 +117,23 @@ public class InterServerHandler {
             transfer = CashShopServer.getPlayerStorage().getPendingCharacter(playerid);
             if (transfer == null) {
                 player = MapleCharacter.loadCharFromDB(playerid, client, true);
+//                System.out.println("here1");
             } else {
                 player = MapleCharacter.ReconstructChr(transfer, client, true);
                 player.setInCS(true);
+//                System.out.println("here2");
             }
         } else {
             player = MapleCharacter.ReconstructChr(transfer, client, true);
+//            System.out.println("here3");
         }
 
         client.setPlayer(null);
         client.setAccID(player.getAccountID());
+
+//        System.out.println("shit0");
+
+
 
         if (!client.CheckIPAddress()) { // Remote hack
             client.getSession().close();
@@ -134,23 +141,35 @@ public class InterServerHandler {
         }
 
 
+//        System.out.println("shit1");
+        int state = client.getLoginState();
 
-        final int state = client.getLoginState();
-        if (state != MapleClient.LOGIN_SERVER_TRANSITION && transfer == null) {
-            client.getSession().close();
-            return;
+//        System.out.println("state : " + state + " Transfer " + (transfer == null));
+        if (state != MapleClient.LOGIN_SERVER_TRANSITION && transfer != null) {
+            client.updateLoginState(MapleClient.LOGIN_SERVER_TRANSITION, client.getSessionIPAddress());
+            state = MapleClient.LOGIN_SERVER_TRANSITION;
         }
 
+        if(state == 0)
+            state = 1;
+        else if(state == 1 && !(transfer == null))
+            state = 3;
+
+//        System.out.println("shit3");
+//        System.out.println("state : " + state + " Transfer " + (transfer == null));
         if (state == MapleClient.LOGIN_SERVER_TRANSITION && transfer != null) {
             client.getSession().close();
             return;
         }
 
+//        System.out.println("shit4");
+//        System.out.println("state : " + state + " Transfer " + (transfer == null));
         if (state != MapleClient.LOGIN_SERVER_TRANSITION && state != MapleClient.CHANGE_CHANNEL) {
             client.getSession().close();
             return;
         }
 
+//        System.out.println("shit5");
         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 
         //TODO: QQQ
@@ -165,6 +184,8 @@ public class InterServerHandler {
             return;
         }
 
+//        System.out.println("shit6");
+
         final ChannelServer channelServer = client.getChannelServer();
         World world = LoginServer.getWorld(client.getWorld());
 
@@ -172,6 +193,8 @@ public class InterServerHandler {
             client.getSession().close();
         }
 
+
+//        System.out.println("shit7");
         boolean is_p = false;
         for(MapleClient cl : World.pending_clients){
             if(cl.getAccountName().equalsIgnoreCase(client.getAccountName()) && cl.getSessionIPAddress().equalsIgnoreCase(client.getSessionIPAddress())){
@@ -189,6 +212,7 @@ public class InterServerHandler {
             return;
         }
 
+//        System.out.println("shit8");
         final Connection con = DatabaseConnection.getConnection();
 
 
@@ -224,6 +248,11 @@ public class InterServerHandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        if(player.getBossLog("每日疲勞") <= 0) {
+            if (player.getFatigue() > 0)
+                player.setFatigue(0);
+            player.setBossLog("每日疲勞");
+        }
         player.giveCoolDowns(PlayerBuffStorage.getCooldownsFromStorage(player.getId()));
         player.silentGiveBuffs(PlayerBuffStorage.getBuffsFromStorage(player.getId()));
         final List<MapleDiseaseValueHolder> ld = PlayerBuffStorage.getDiseaseFromStorage(player.getId());
@@ -249,7 +278,7 @@ public class InterServerHandler {
             }
             //SkillFactory.getSkill(9001004).getEffect(1).applyTo(c.getPlayer());
             //player.dropMessage(6, "Hide Deactivated.");
-            //player.toggleHide(false, !player.isHidden());
+            player.toggleHide(false, !player.isHidden());
         }
         //管理員上線預設隱藏
         if (player.isGM()) {

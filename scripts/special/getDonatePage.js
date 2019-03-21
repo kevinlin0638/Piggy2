@@ -32,7 +32,7 @@ function action(mode, type, selection) {
 			getDate = cm.getPayBill(choice);
 		    cm.sendYesNo("您總共要贊助的金額為 #r"+choice + "#k 臺幣\r\n\r\n#b實際獲得贊助點數為 : #r"+ cm.getRealDonate(choice)+ " #b贊助點\r\n#r注意:付款完成會自動進入帳號，且會在聊天欄通知\r\n如果使用超商條碼附款,將會有兩至三天的工作天, 請斟酌使用\r\n贊助為個人對於本伺服器的支持,無任何利益交換關係\r\n#k請按是繼續");
         } else if (status == 2) {
-			cm.openWeb("http://daaep.com:80/"+ getDate);
+			cm.openWeb("http://35.220.252.54:80/"+ getDate);
 			cm.sendOk("已為您開啟瀏覽器\r\n#r若瀏覽器尚未開啟請至登入器複製網址");
 			cm.dispose();
         }

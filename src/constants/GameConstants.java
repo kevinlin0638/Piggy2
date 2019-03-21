@@ -181,6 +181,7 @@ public class GameConstants {
             1198,
             1199,
             1200,
+            23101003,
             35121013,
             1220013,
             4341003
@@ -8902,7 +8903,7 @@ public class GameConstants {
             case 矛:
             case 雙手劍:
             case 加農炮:
-                //case 雙弩槍: //magic arrow
+            case 雙弩槍: //magic arro
                 return true;
             default:
                 return false;
@@ -9899,7 +9900,7 @@ public class GameConstants {
     public static boolean optionTypeFits(int optionType, int itemId) {
         switch (optionType) {
             case 10: // weapons
-                return isWeapon(itemId);
+                return isWeapon(itemId) || itemId / 100000 == 16;
             case 11: // all equipment except weapons
                 return !isWeapon(itemId);
             case 20: // all armors
@@ -9978,7 +9979,7 @@ public class GameConstants {
     }
 
     public static boolean canScroll(int itemId) {
-        return itemId / 100000 != 19 && itemId / 100000 != 16; //no mech/taming/dragon
+        return itemId / 100000 != 19; //no mech/taming/dragon
     }
 
     public static boolean canHammer(int itemId) {
