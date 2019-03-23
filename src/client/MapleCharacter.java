@@ -7401,12 +7401,15 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
     }
 
-    public void gaingpcon(int gpcon){
+    public boolean gaingpcon(int gpcon){
         MapleGuildCharacter mgc = getGuild().getMGC(id);
+        if(mgc == null)
+            return false;
         if(mgc.getGpcon() + gpcon < 0)
             gpcon = -mgc.getGpcon();
         mgc.setGpcon(mgc.getGpcon() + gpcon);
         this.gpcon += gpcon;
+        return true;
     }
 
     public int getGuildContribution() {

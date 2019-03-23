@@ -63,6 +63,8 @@ public class MapleMonster extends AbstractLoadedMapleLife {
     private ChangeableStats ostats = null;
     private long hp, nextKill = 0, lastDropTime = 0;
     private int mp;
+
+    private boolean isGMSpawn = false;
     private byte carnivalTeam = -1;
     private MapleMap map;
     private WeakReference<MapleMonster> sponge = new WeakReference<MapleMonster>(null);
@@ -1150,6 +1152,14 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         return ret;
     }
 
+    public boolean isGMSpawn() {
+        return isGMSpawn;
+    }
+
+    public void setGMSpawn(boolean GMSpawn) {
+        isGMSpawn = GMSpawn;
+    }
+
     public final boolean isFake() {
         return fake;
     }
@@ -1426,7 +1436,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         }
     }
 
-    private interface AttackerEntry {
+    public interface AttackerEntry {
 
         List<AttackingMapleCharacter> getAttackers();
 
@@ -1439,7 +1449,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         public void killedMob(MapleMap map, int baseExp, boolean mostDamage, int lastSkill);
     }
 
-    private static class AttackingMapleCharacter {
+    public static class AttackingMapleCharacter {
 
         private MapleCharacter attacker;
         private long lastAttackTime;

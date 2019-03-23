@@ -104,8 +104,8 @@ function action(mode, type, selection) {
                    }
                 } else if (selection == 10) {
                 var price = 15000000;
-                if (cm.getPlayer().getVote Points() > 2) {      
-                    cm.getPlayer().gainVote Points(-3);                    
+                if (cm.getPlayer().getVotePoints() > 2) {
+                    cm.getPlayer().gainVotePoints(-3);
                    cm.modifyNX(18000, 4);
                    cm.dispose();
                      } else {

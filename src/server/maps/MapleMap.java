@@ -687,8 +687,22 @@ public final class MapleMap {
                 charactersLock.readLock().unlock();
             }
         }
+
+
+
         final int mobid = monster.getId();
         ExpeditionType type = null;
+
+        if(monster.isGMSpawn())
+            for (final MapleMonster.AttackerEntry mattacker : monster.getAttackers()) {
+                for (final MapleMonster.AttackingMapleCharacter cattacker : mattacker.getAttackers()) {
+                    if (cattacker.getAttacker().getMap() == this) { // current attacker is on the map of the monster
+                        World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] 玩家:" + cattacker.getAttacker().getName() + "傷害: " + mattacker.getDamage()));
+                    }
+                }
+            }
+
+
         if (mobid == 9400566) {
             chr.setHp(0);
             chr.updateSingleStat(MapleStat.HP, 0);

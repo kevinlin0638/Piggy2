@@ -164,7 +164,11 @@ function action(mode, type, selection) {
 					cm.dispose();
 					return;
 				}
-				cm.getPlayer().gaingpcon(-money);
+				if(!cm.getPlayer().gaingpcon(-money)){
+					cm.sendOk("發生未知錯誤麻煩通知管理員!");
+					cm.dispose();
+					return;
+				}
 				get_type = cm.getPlayer().getGpcon();
 				cm.gainItem(items[choice][2], fee);
 				cm.sendOk("#b恭喜，購買了#r " + fee + " #b個#r #v" + items[choice][2] + "#\r\n\r\n#r"+ type + " #b餘額為:#r " + get_type + " #b");

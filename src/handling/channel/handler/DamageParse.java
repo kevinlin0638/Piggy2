@@ -267,8 +267,11 @@ public class DamageParse {
                     if(eachd > (1999999 + player.getStat().getBkd())) {
                         if(attack.skill == 3221001 || Tempest)
                             eachd = 1999999 + player.getStat().getBkd();
-                        else
-                            player.getCheatTracker().registerOffense(CheatingOffense.攻擊超過自身角色破攻, "[傷害: " + eachd + ", 腳色頂傷: " + maxDamagePerHit + ", 怪物ID: " + monster.getId() + "] [职业: " + player.getJob() + ", 等級: " + player.getLevel() + ", 技能: " + attack.skill + "]");
+                        else {
+                            //player.getCheatTracker().registerOffense(CheatingOffense.攻擊超過自身角色破攻, "[傷害: " + eachd + ", 腳色頂傷: " + maxDamagePerHit + ", 怪物ID: " + monster.getId() + "] [职业: " + player.getJob() + ", 等級: " + player.getLevel() + ", 技能: " + attack.skill + "]");
+                            World.Broadcast.broadcastGMMessage(player.getWorld(), CWvsContext.broadcastMsg(6, "[GM消息] " + player.getName() + " ID: " + player.getId() + " (等級 " + player.getLevel() + ") 在地圖: " + player.getMapId() + " 傷害超過自身破攻。"));
+                            World.Broadcast.broadcastGMMessage(player.getWorld(), CWvsContext.broadcastMsg(6, "[GM消息] " + " 自身破攻: " + (1999999 + player.getStat().getBkd()) + " 傷害: " + eachd + "技能: " + attack.skill));
+                        }
                     }
 
                     if(eachd > 99999999)

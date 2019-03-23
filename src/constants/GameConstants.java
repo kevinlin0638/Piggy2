@@ -9900,7 +9900,7 @@ public class GameConstants {
     public static boolean optionTypeFits(int optionType, int itemId) {
         switch (optionType) {
             case 10: // weapons
-                return isWeapon(itemId) || itemId / 100000 == 16;
+                return isWeapon(itemId) || itemId / 100000 == 16 || (itemId >= 1099000 && itemId <= 1099015);
             case 11: // all equipment except weapons
                 return !isWeapon(itemId);
             case 20: // all armors

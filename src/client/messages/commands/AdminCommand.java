@@ -399,6 +399,7 @@ public class AdminCommand {
             Integer exp = CommandProcessorUtil.getNamedIntArg(splitted.toArray(new String[0]), 1, "exp");
             Double php = CommandProcessorUtil.getNamedDoubleArg(splitted.toArray(new String[0]), 1, "php");
             Double pexp = CommandProcessorUtil.getNamedDoubleArg(splitted.toArray(new String[0]), 1, "pexp");
+            Integer level = CommandProcessorUtil.getNamedIntArg(splitted.toArray(new String[0]), 1, "level");
 
             MapleMonster onemob;
             try {
@@ -407,7 +408,10 @@ public class AdminCommand {
                 c.getPlayer().dropMessage(5, "Error: " + e.getMessage());
                 return false;
             }
-
+            if(onemob == null){
+                c.getPlayer().dropMessage(5, "Error: 無此ID");
+                return false;
+            }
             long newhp = 0;
             int newexp = 0;
             if (hp != null) {
@@ -424,13 +428,18 @@ public class AdminCommand {
             } else {
                 newexp = onemob.getMobExp();
             }
+
+            if(level != null)
+                onemob.getStats().setLevel(level.shortValue());
             if (newhp < 1) {
                 newhp = 1;
             }
 
+
             final OverrideMonsterStats overrideStats = new OverrideMonsterStats(newhp, onemob.getMobMaxMp(), newexp, false);
             for (int i = 0; i < num; i++) {
                 MapleMonster mob = MapleLifeFactory.getMonster(mid);
+                mob.setGMSpawn(true);
                 mob.setHp(newhp);
                 mob.setOverrideStats(overrideStats);
                 c.getPlayer().getMap().spawnMonsterOnGroundBelow(mob, c.getPlayer().getPosition());

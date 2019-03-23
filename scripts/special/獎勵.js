@@ -25,24 +25,24 @@ var NPC_List = [ //id, text
 		10,// 等級限制
 		"粉專分享"//領獎名稱
 	],
-	["七日獎勵-第一天",//顯示名稱
+	["七日獎勵-第二天",//顯示名稱
 		[
 		 [5062002, 50, -1, false, true],
 		 [2049117, 5, -1, false, true],
 		],
 		3,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
 		10,// 等級限制
-		"七日獎勵1"//領獎名稱
+		"七日獎勵2"//領獎名稱
 	],
-	["刻耳柏洛斯的回歸",//顯示名稱
+	["刻耳柏洛斯的復仇",//顯示名稱
 		[
 		 [4021029, 1, -1, false, true],
-		 [5062002, 80, -1, false, true],
-		 [2049120, 10, -1, false, true],
+		 [5062002, 30, -1, false, true],
+		 [2049118, 10, -1, false, true],
 		],
 		3,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
 		10,// 等級限制
-		"刻耳柏洛斯的回歸"//領獎名稱
+		"刻耳柏洛斯的復仇"//領獎名稱
 	],
 	["關鍵時刻",//顯示名稱
 		[
@@ -84,7 +84,7 @@ function action(mode, type, selection) {
 			
 			for(var i = 0; i < NPC_List.length;i++){
 				if(NPC_List[i][2] == 4){
-					if(Today.getDay() < 6 && Today.getDay() > 0)
+					if(Today.getDay() < 5 && Today.getDay() > 0)
 						continue;
 					NPC_List[i][0] += (Today.getMonth()+1) + "/" + Today.getDate();
 					NPC_List[i][4] += (Today.getMonth()+1) + "/" + Today.getDate();
