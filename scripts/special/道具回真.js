@@ -4,6 +4,7 @@ var target_EQP;
 var sele;
 var bk;
 var prise = 750000;
+var discount = true
 function start() {
     status = -1;
     action(1, 0, 0);
@@ -34,7 +35,10 @@ function action(mode, type, selection) {
 				if(!cm.isCash(target_EQP.getItemId())){
 					bk = target_EQP.getExtraScroll();
 					text = "#h # 您好，您目前剩餘 #r" +cm.getNX(2)+ " 點#k #b贊助點#k\r\n將要回真的裝備為\r\n#v"+target_EQP.getItemId()+"##b#z"+target_EQP.getItemId()+"#-已增加 "+ bk +" 贊助衝捲數\r\n";
+					if(discount)
+						prise -= 250000;
 					text += "\r\n#k您所需花費 : #r" + prise+" #b楓點"
+					text += discount?"#r(特價 原價:750000)":""
 					cm.sendYesNo(text);
 				}else{
 					cm.sendOk("此道具 #v"+target_EQP.getItemId()+"##b#z"+target_EQP.getItemId()+"# 無法使用回真功能!");

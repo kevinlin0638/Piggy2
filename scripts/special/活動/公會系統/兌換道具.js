@@ -164,36 +164,8 @@ function action(mode, type, selection) {
 					cm.dispose();
 					return;
 				}
-				switch(items[choice][1]){
-					case -2:
-						cm.getPlayer().gaingpcon(-money);
-						get_type = cm.getPlayer().getGpcon();
-						break;
-					case -1:
-						cm.gainMeso(-money);
-						get_type = cm.getMeso();
-						break;
-					case 0:
-						cm.getPlayer().gainPoints((cm.getPlayer().getPoints()-money));
-						get_type = cm.getPlayer().getPoints();
-						break;
-					case 1:
-						cm.gainNX(1, -money);
-						get_type = cm.getPlayer().getCSPoints(1);
-						break;
-					case 2:
-						cm.gainNX(2, -money);
-						get_type = cm.getPlayer().getCSPoints(2);
-						break;
-					case 3:
-						cm.setDojoRecord(false,false, -money);
-						get_type = cm.getDojoPoints();
-						break;
-					default:
-						cm.gainItem(items[choice][1], -money);
-						get_type = cm.getItemQuantity(items[choice][1]);
-						break;
-				}
+				cm.getPlayer().gaingpcon(-money);
+				get_type = cm.getPlayer().getGpcon();
 				cm.gainItem(items[choice][2], fee);
 				cm.sendOk("#b恭喜，購買了#r " + fee + " #b個#r #v" + items[choice][2] + "#\r\n\r\n#r"+ type + " #b餘額為:#r " + get_type + " #b");
 				cm.dispose();

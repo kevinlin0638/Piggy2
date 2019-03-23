@@ -32,7 +32,7 @@ function action(mode, type, selection) {
 			text += '\r\n' + ye + '#k 目前公會總GP: #r' + cm.getGP();
 			text += '\r\n' + ye + '#k 目前個人累積GP: #r' + cm.getPlayer().getGpcon();
 			
-			text += '\r\n\r\n#d請問您需要什麼服務？#b\r\n#L0#兌換道具#l#b\r\n#L2#本月獎勵預覽#l\r\n';
+			text += '\r\n\r\n#d請問您需要什麼服務？#b\r\n#L0#兌換道具(維修中)#l#b\r\n#L2#本月獎勵預覽#l\r\n';
 			if(cm.getPlayer().getGuild().getLastMrk() > 0)
 				text += '#L1#領取公會上月排名獎勵(第 ' + cm.getPlayer().getGuild().getLastMrk() + ' 名)#l\r\n';
 			text += '#L3#說明#l'

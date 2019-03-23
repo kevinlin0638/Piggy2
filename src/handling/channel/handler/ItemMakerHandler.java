@@ -597,7 +597,7 @@ public class ItemMakerHandler {
                 cr = CraftRanking.SOSO;
             }
 
-            if(reqLevel >= 105 && Randomizer.nextInt(1000000) <= 1000){
+            if(reqLevel >= 105 && Randomizer.nextInt(1000000) <= 3000){
                 toGet = 4021021;
                 quantity = 1;
             }

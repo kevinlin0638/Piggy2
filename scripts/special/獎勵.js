@@ -3,6 +3,7 @@
 
 var status;
 var sele;
+var Today =new Date();
 
 var NPC_List = [ //id, text
 	["開服新手禮包",//顯示名稱
@@ -15,16 +16,6 @@ var NPC_List = [ //id, text
 		10,// 等級限制
 		"開服新手禮包"//領獎名稱
 	],
-	["喵喵亂抓補償0320",//顯示名稱
-		[
-		 [4310003, 1, -1, false, true],
-		 [5062002, 35, -1, false, true],
-		 [2340000, 5, -1, false, true],
-		],
-		3,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
-		10,// 等級限制
-		"喵喵亂抓補償0320"//領獎名稱
-	],
 	["粉專分享",//顯示名稱
 		[
 		 [5210000, 1, 7, false, true],
@@ -34,14 +25,33 @@ var NPC_List = [ //id, text
 		10,// 等級限制
 		"粉專分享"//領獎名稱
 	],
-	["封測喵喵",//顯示名稱
+	["七日獎勵-第一天",//顯示名稱
 		[
-		 [3015598, 1, -1, false, true],
-		 [2049118, 3, -1, false, true],
+		 [5062002, 50, -1, false, true],
+		 [2049117, 5, -1, false, true],
 		],
-		2,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
+		3,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
 		10,// 等級限制
-		"封測喵喵"//領獎名稱
+		"七日獎勵1"//領獎名稱
+	],
+	["刻耳柏洛斯的回歸",//顯示名稱
+		[
+		 [4021029, 1, -1, false, true],
+		 [5062002, 80, -1, false, true],
+		 [2049120, 10, -1, false, true],
+		],
+		3,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
+		10,// 等級限制
+		"刻耳柏洛斯的回歸"//領獎名稱
+	],
+	["關鍵時刻",//顯示名稱
+		[
+		 [2028061, 15, -1, false, true],
+		 [2028062, 5, -1, false, true],
+		],
+		4,//type 1:帳號領取 2.只有Giftsender 3.只有領獎帳號可領取
+		10,// 等級限制
+		"關鍵時刻"//領獎名稱
 	],
 ]
 
@@ -73,6 +83,12 @@ function action(mode, type, selection) {
 			}
 			
 			for(var i = 0; i < NPC_List.length;i++){
+				if(NPC_List[i][2] == 4){
+					if(Today.getDay() < 6 && Today.getDay() > 0)
+						continue;
+					NPC_List[i][0] += (Today.getMonth()+1) + "/" + Today.getDate();
+					NPC_List[i][4] += (Today.getMonth()+1) + "/" + Today.getDate();
+				}
 				Text += "#L" + i + "#" + NPC_List[i][0];
 				if((i + 1) % 3 == 0)
 					Text += "\r\n"
@@ -216,6 +232,59 @@ function action(mode, type, selection) {
 						cm.sendOk("恭喜獲得 "+ NPC_List[sele][0]);
 						cm.dispose();
 						return
+					} else {
+						cm.sendOk("已領取過獎勵或尚未達到領取條件\r\n\r\n#r必須是領獎帳號才可領取此獎勵\r\n#b造成不便還請見諒");
+						cm.dispose();
+						return;
+					}
+				case 4:
+					if (cm.getEventCount("領獎帳號註冊",1) > 0 &&(cm.getEventCount(NPC_List[sele][4],1) == -1 || cm.getEventCount(NPC_List[sele][4],1) == 0) && cm.getPlayer().getLevel() >= NPC_List[sele][3]) {
+						var yes = false;
+						if(Today.valueOf() > new Date(Today.getFullYear(), (Today.getMonth()), Today.getDate(), 6, 0, 0).valueOf() &&
+						Today.valueOf() < new Date(Today.getFullYear(), (Today.getMonth()), Today.getDate(), 6, 30, 0).valueOf())
+						 yes = true;
+						else if(Today.valueOf() > new Date(Today.getFullYear(), (Today.getMonth()), Today.getDate(), 12, 0, 0).valueOf() &&
+						Today.valueOf() < new Date(Today.getFullYear(), (Today.getMonth()), Today.getDate(), 12, 30, 0).valueOf())
+						 yes = true;
+						else if(Today.valueOf() > new Date(Today.getFullYear(), (Today.getMonth()), Today.getDate(), 23, 0, 0).valueOf() &&
+						Today.valueOf() < new Date(Today.getFullYear(), (Today.getMonth()), Today.getDate(), 23, 30, 0).valueOf())
+						 yes = true;
+						if(!yes){
+							cm.sendOk("尚未到達領獎時段!~\r\n#b可領獎時段:\r\n#r06:00~06:30\r\n#r12:00~12:30\r\n#r23:00~23:30\r\n");
+							cm.dispose();
+							return;
+						}
+						var eqs = NPC_List[sele][1];
+						for(var i = 0; i < eqs.length;i++){
+							if(eqs[i][0] == 0 || eqs[i][0] == 2)
+								continue;
+							if(!cm.canHold(eqs[i][0], eqs[i][1])){
+								cm.sendOk("背包空間不足");
+								cm.dispose();
+								return;
+							}
+						}
+						for(var i = 0; i < eqs.length;i++){
+							if(eqs[i][0] == 0){
+								cm.gainMeso(eqs[i][1]);
+							}else if(eqs[i][0] == 2){
+								cm.gainNX(2,eqs[i][1]);
+							}else{
+								if(!eqs[i][4])
+									cm.addWithPara(eqs[i][0], eqs[i][1], eqs[i][2], eqs[i][3], false)
+								else if(eqs[i][3])
+									cm.addWithPara(eqs[i][0], eqs[i][2], true);
+								else if(eqs[i][2] > 0)
+									cm.gainItemPeriod(eqs[i][0], eqs[i][1], eqs[i][2]);
+								else
+									cm.gainItem(eqs[i][0], eqs[i][1]);
+							}
+						}
+						
+						cm.setEventCount(NPC_List[sele][4],1);
+						cm.sendOk("恭喜獲得 "+ NPC_List[sele][0]);
+						cm.dispose();
+						return;
 					} else {
 						cm.sendOk("已領取過獎勵或尚未達到領取條件\r\n\r\n#r必須是領獎帳號才可領取此獎勵\r\n#b造成不便還請見諒");
 						cm.dispose();
