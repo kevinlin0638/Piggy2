@@ -3021,9 +3021,9 @@ public class MapleStatEffect implements Serializable {
             case 35120000: // Extreme Mech
                 sameSrc = effect.sourceid == 35001002;
                 break;
-            case 35121013: // Mech: Siege Mode
-                sameSrc = effect.sourceid == 35111004;
-                break;
+//            case 35121013: // Mech: Siege Mode
+//                sameSrc = effect.sourceid == 35111004;
+//                break;
         }
         return effect != null && sameSrc && this.skill == effect.skill;
     }

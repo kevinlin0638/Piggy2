@@ -64,24 +64,24 @@ public class MapleAchievements {
          achievements.put(31, new MapleAchievement("獲得 100 名聲", 1000000, true));
          achievements.put(32, new MapleAchievement("獲得 500 名聲", 5000000, true));
 
-         achievements.put(40, new MapleAchievement("首次使用星力強化(裝備強化捲)至 5 星", 100000, true));
-         achievements.put(41, new MapleAchievement("首次使用星力強化(裝備強化捲)至 10 星", 500000, true));
-         achievements.put(42, new MapleAchievement("首次使用星力強化(裝備強化捲)至 15 星", 1000000, true));
+         achievements.put(40, new MapleAchievement("首次使用星力強化(裝備強化捲)至 5 星", 0, true));
+         achievements.put(41, new MapleAchievement("首次使用星力強化(裝備強化捲)至 10 星", 0, true));
+         achievements.put(42, new MapleAchievement("首次使用星力強化(裝備強化捲)至 15 星", 0, true));
          achievements.put(43, new MapleAchievement("首次使用星力強化(裝備強化捲)至 20 星", 5000000, true));
          achievements.put(44, new MapleAchievement("首次使用星力強化(裝備強化捲)至 25 星", 10000000, true));
          achievements.put(45, new MapleAchievement("首次使用星力強化(裝備強化捲)至 30 星", 50000000, true));
 
 
-         achievements.put(60, new MapleAchievement("單下傷害超過 50000", 50000, false));
-         achievements.put(61, new MapleAchievement("單下傷害超過 99999", 100000, false));
-         achievements.put(62, new MapleAchievement("單下傷害超過 499999", 150000, true));
-         achievements.put(63, new MapleAchievement("單下傷害超過 999999", 50000, true));
-         achievements.put(64, new MapleAchievement("單下傷害超過 1999999", 750000, true));
-         achievements.put(65, new MapleAchievement("單下傷害超過 4999999", 1000000, true));
-         achievements.put(66, new MapleAchievement("單下傷害超過 9999999", 2000000, true));
-         achievements.put(67, new MapleAchievement("單下傷害超過 19999999", 3000000, true));
-         achievements.put(68, new MapleAchievement("單下傷害超過 59999999", 4000000, true));
-         achievements.put(69, new MapleAchievement("單下傷害超過 99999999", 10000000, true));
+         achievements.put(60, new MapleAchievement("單下傷害超過 50000", 0, false));
+         achievements.put(61, new MapleAchievement("單下傷害超過 99999", 0, false));
+         achievements.put(62, new MapleAchievement("單下傷害超過 499999", 0, true));
+         achievements.put(63, new MapleAchievement("單下傷害超過 999999", 0, true));
+         achievements.put(64, new MapleAchievement("單下傷害超過 1999999", 0, true));
+         achievements.put(65, new MapleAchievement("單下傷害超過 4999999", 0, true));
+         achievements.put(66, new MapleAchievement("單下傷害超過 9999999", 0, true));
+         achievements.put(67, new MapleAchievement("單下傷害超過 19999999", 0, true));
+         achievements.put(68, new MapleAchievement("單下傷害超過 59999999", 0, true));
+         achievements.put(69, new MapleAchievement("單下傷害超過 99999999", 0, true));
 
          achievements.put(70, new MapleAchievement("首次獲得 100 萬 楓幣", 0, false));
          achievements.put(71, new MapleAchievement("首次獲得 1000 萬 楓幣", 0, false));

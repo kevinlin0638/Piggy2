@@ -93,6 +93,40 @@ public class GameConstants {
             2044703
     };
 
+    public static final int[] itemPoten = {
+            1122019,
+            1122024,
+            1122025,
+            1122026,
+            1122027,
+            1122028,
+            1122029,
+            1122030,
+            1122031,
+            1122032,
+            1122033,
+            1122034,
+            1122035,
+            1122037,
+            1122037,
+            1122038,
+            1122122,
+            1122123,
+            1122124,
+            1122125,
+            1122126,
+            1012164,
+            1012167,
+            1012168,
+            1012169,
+            1012170,
+            1012171,
+            1012172,
+            1012173,
+            1012174
+    };
+
+
     public static boolean isHellChannelDrop(int id){
         switch (id){
             case 2049116:
@@ -181,11 +215,35 @@ public class GameConstants {
             1198,
             1199,
             1200,
+            20020022,
+            30010022,
+            30000022,
             23101003,
             35121013,
             1220013,
             4341003
     };
+
+    public static double levelRateNX(final int level){
+        if(level == 255){
+            return 2.3;
+        }else if(level == 254){
+            return 2.1;
+        }else if(level == 253){
+            return 1.9;
+        }else if(level == 252){
+            return 1.7;
+        }else if(level == 251){
+            return 1.5;
+        }else if(level == 250){
+            return 1.3;
+        }else if(level >= 240){
+            return 1.1;
+        }else{
+            return 1;
+        }
+    }
+
     public static final int[] rankC = {
             70000000,
             70000001,

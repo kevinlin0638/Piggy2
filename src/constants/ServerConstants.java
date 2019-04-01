@@ -34,7 +34,7 @@ public class ServerConstants {
     public static boolean moreThanOne = true;
 
     // 歡迎訊息
-    public static String SERVER_MESSAGE = "歡迎來到小喵谷 v145.1，目前正在 公測中";
+    public static String SERVER_MESSAGE = "歡迎來到小喵谷 v145.1，歡迎各位小喵喵們的蒞臨";
     public static String WELCOME_MESSAGE = "【歡迎加入 小喵谷 v145.1】";
 
     public static List<MapleLoginBalloon> getBalloons() {

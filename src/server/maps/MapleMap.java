@@ -489,39 +489,49 @@ public final class MapleMap {
             return;
         }
         final List<MonsterDropEntry> dropEntry = new ArrayList<>(drops);
-
-        if(mob.getMobLevel() >= 31 && mob.getMobLevel() <= 50)
-            dropEntry.add(new MonsterDropEntry(4260000, 10000, 1 ,1, 0));
-        else if(mob.getMobLevel() >= 51 && mob.getMobLevel() <= 70)
-            dropEntry.add(new MonsterDropEntry(4260001, 10000, 1 ,1, 0));
-        else if(mob.getMobLevel() >= 71 && mob.getMobLevel() <= 90)
-            dropEntry.add(new MonsterDropEntry(4260002, 10000, 1 ,1, 0));
-        else if(mob.getMobLevel() >= 91 && mob.getMobLevel() <= 110)
-            dropEntry.add(new MonsterDropEntry(4260003, 10000, 1 ,1, 0));
-        else if(mob.getMobLevel() >= 111 && mob.getMobLevel() <= 130)
-            dropEntry.add(new MonsterDropEntry(4260004, 10000, 1 ,1, 0));
-        else if(mob.getMobLevel() >= 131 && mob.getMobLevel() <= 150)
-            dropEntry.add(new MonsterDropEntry(4260005, 10000, 1 ,1, 0));
-        else if(mob.getMobLevel() >= 151 && mob.getMobLevel() <=170)
-            dropEntry.add(new MonsterDropEntry(4260006, 10000, 1 ,1, 0));
-        else if(mob.getMobLevel() >= 171 && mob.getMobLevel() <= 190)
-            dropEntry.add(new MonsterDropEntry(4260007, 10000, 1 ,1, 0));
-        else if(mob.getMobLevel() >= 191)
-            dropEntry.add(new MonsterDropEntry(4260008, 5000, 1 ,1, 0));
-
+        int extra = 0;
+        if(chr.getLevel() > 250){
+            extra = 1000 * (chr.getLevel() - 250);
+        }
+        if (mob.getMobLevel() >= 31 && mob.getMobLevel() <= 50) {
+            dropEntry.add(new MonsterDropEntry(4260000, 10000 + extra, 1, 1, 0));
+        } else if (mob.getMobLevel() >= 51 && mob.getMobLevel() <= 70){
+            dropEntry.add(new MonsterDropEntry(4260001, 10000 + extra, 1, 1, 0));
+        }else if(mob.getMobLevel() >= 71 && mob.getMobLevel() <= 90) {
+            dropEntry.add(new MonsterDropEntry(4260002, 10000 + extra, 1, 1, 0));
+        }else if(mob.getMobLevel() >= 91 && mob.getMobLevel() <= 110) {
+            dropEntry.add(new MonsterDropEntry(4260003, 10000 + extra, 1, 1, 0));
+        }else if(mob.getMobLevel() >= 111 && mob.getMobLevel() <= 130) {
+            dropEntry.add(new MonsterDropEntry(4260004, 10000 + extra, 1, 1, 0));
+        }else if(mob.getMobLevel() >= 131 && mob.getMobLevel() <= 150) {
+            dropEntry.add(new MonsterDropEntry(4260005, 10000 + extra, 1, 1, 0));
+        }else if(mob.getMobLevel() >= 151 && mob.getMobLevel() <=170) {
+            dropEntry.add(new MonsterDropEntry(4260006, 10000 + extra, 1, 1, 0));
+        }else if(mob.getMobLevel() >= 171 && mob.getMobLevel() <= 190) {
+            dropEntry.add(new MonsterDropEntry(4260007, 10000 + extra, 1, 1, 0));
+        }else if(mob.getMobLevel() >= 191) {
+            dropEntry.add(new MonsterDropEntry(4260008, 5000  + (extra / 2), 1, 1, 0));
+        }
         if(mob.getMobLevel() >= 140)
-            dropEntry.add(new MonsterDropEntry(4021020, 1000, 1 ,1, 0));
+            dropEntry.add(new MonsterDropEntry(4021020, 1000  + (extra / 10), 1 ,1, 0));
 
         Collections.shuffle(dropEntry);
 
         boolean mesoDropped = false;
         for (final MonsterDropEntry de : dropEntry) {
+            double x_rate = 1.0;
             if (de.itemId == mob.getStolen()) {
                 continue;
             }
-            if(GameConstants.isHellChannelDrop(de.itemId) && channel < 11)
-                continue;
-            if (Randomizer.nextInt(999999) < (int) (de.chance * chServerrate * chr.getDropMod() * (chr.getStat().dropBuff / 100.0) * (showdown / 100.0))) {
+            if(GameConstants.isHellChannelDrop(de.itemId)) {
+                if (channel < 11)
+                    continue;
+                else {
+                    if(chr.getLevel() >= 253)
+                        x_rate += 0.1 * (chr.getLevel() - 252);
+                }
+            }
+            if (Randomizer.nextInt(999999) < (int) (de.chance * chServerrate * chr.getDropMod() * x_rate * (chr.getStat().dropBuff / 100.0) * (showdown / 100.0))) {
                 if (mesoDropped && droptype != 3 && de.itemId == 0) { //not more than 1 sack of meso
                     continue;
                 }
@@ -574,7 +584,7 @@ public final class MapleMap {
                 }
                 if (de.itemId == 0) {
                     int all = Randomizer.rand(70, 100);
-                    int pre = (int) ((Randomizer.nextInt(cashz) + cashz + cashModifier) * (chr.getStat().cashBuff / 100.0) * chr.getCashMod());
+                    int pre = (int) ((Randomizer.nextInt(cashz) + cashz + cashModifier) * (chr.getStat().cashBuff / 100.0) * chr.getCashMod() * GameConstants.levelRateNX(chr.getLevel()));
                     all = (all * pre) / 100;
                     if(chr.getLevel() > 251)
                         all += (all / 10 * (chr.getLevel() - 251));
@@ -708,7 +718,7 @@ public final class MapleMap {
             chr.updateSingleStat(MapleStat.HP, 0);
         } else if (mobid == 8810018 && mapid == 240060200) {
             World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] Horntail was killed by : " + chr.getName()));
-            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "經過無數次的挑戰，"+ chr.getName() +" 所帶領的隊伍終於擊破了闇黑龍王的遠征隊！你們才是龍之林的真正英雄~"));
+//            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "經過無數次的挑戰，"+ chr.getName() +" 所帶領的隊伍終於擊破了闇黑龍王的遠征隊！你們才是龍之林的真正英雄~"));
             for (MapleCharacter c : getCharactersThreadsafe()) {
                 c.finishAchievement(16);
                 c.finishDailyQuest(17);
@@ -721,7 +731,7 @@ public final class MapleMap {
             doShrine(true);
         } else if (mobid == 8810122 && mapid == 240060201) { // Horntail
             World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] 寒霜冰龍 Horntail was killed by : " + chr.getName()));
-            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "To the crew that have finally conquered 寒霜冰龍 Horned Tail after numerous attempts, I salute thee! You are the true heroes of Leafre!!"));
+            //World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "To the crew that have finally conquered 寒霜冰龍 Horned Tail after numerous attempts, I salute thee! You are the true heroes of Leafre!!"));
             charactersLock.readLock().lock();
             try {
                 for (MapleCharacter c : characters) {
@@ -789,7 +799,7 @@ public final class MapleMap {
                     c.getGuild().gainGP(180 * rate, false, c.getId());
             }
             World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] Pink bean was killed by : " + chr.getName()));
-            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "經過帶領的隊伍經過無數次的挑戰，終於擊破了時間的寵兒－皮卡丘的遠征隊！你們才是時間神殿的真正英雄~"));
+//            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "經過帶領的隊伍經過無數次的挑戰，終於擊破了時間的寵兒－皮卡丘的遠征隊！你們才是時間神殿的真正英雄~"));
             charactersLock.readLock().lock();
             try {
                 for (MapleCharacter c : characters) {
@@ -804,7 +814,7 @@ public final class MapleMap {
             doShrine(true);
         } else if (mobid == 8850011 && mapid == 271040100) {
             World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] Empress was killed by : " + chr.getName()));
-            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "您是我們的英雄!!擊敗了 西格諾斯"));
+//            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "您是我們的英雄!!擊敗了 西格諾斯"));
             if (speedRunStart > 0) {
                 type = ExpeditionType.Cygnus;
             }
@@ -818,7 +828,7 @@ public final class MapleMap {
             doShrine(true);
         } else if (mobid == 8860000 && mapid == 272030400) {
             World.Broadcast.broadcastGMMessage(chr.getWorld(), CWvsContext.broadcastMsg(5, "[GM訊息] 阿卡 was killed by : " + chr.getName()));
-            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "您是我們的英雄!!擊敗了 阿卡伊濃"));
+//            World.Broadcast.broadcastMessage(chr.getWorld(), CWvsContext.broadcastMsg(6, "您是我們的英雄!!擊敗了 阿卡伊濃"));
 
             for (MapleCharacter c : getCharactersThreadsafe()) {
                 int rate = 1;

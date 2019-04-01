@@ -2094,6 +2094,25 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return MapleInventoryManipulator.addFromDrop(getClient(), item, false);
     }
 
+    public boolean givePotential(Object statsSel){
+        if(statsSel instanceof Equip) {
+            Equip temp = (Equip) ((Equip) statsSel).copy();
+            temp.setPotential1(10004);
+            temp.setPotential2(10004);
+            MapleInventoryManipulator.removeFromSlot(getClient(), MapleInventoryType.EQUIP, (short) 1, (short) 1, false);
+            return MapleInventoryManipulator.addFromDrop(getClient(), temp, false);
+        }else{
+            return false;
+        }
+    }
+    public boolean canPoten(final int itemid){
+        for(int i : GameConstants.itemPoten){
+            if(itemid == i)
+                return true;
+        }
+        return false;
+    }
+
     public boolean replaceItem(int slot, int invType, Object statsSel, int upgradeSlots) {
         return replaceItem(slot, invType, statsSel, upgradeSlots, "Slots");
     }

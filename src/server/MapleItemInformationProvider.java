@@ -755,8 +755,8 @@ public class MapleItemInformationProvider {
                         }else if (GameConstants.isEquipScroll(scrollId.getItemId())) {
                             boolean isSucc = true;
                             Pair<Integer, Integer> chanc = (scrollId.getItemId() == 2049300 ? getEnhanceSucceRate(true, nEquip.getEnhance()) : getEnhanceSucceRate(false, nEquip.getEnhance()));
-//                            if(chr.getGMLevel() > 4)
-//                                chanc = new Pair<Integer, Integer>(0, 100);
+                            if(chr.getGMLevel() > 4)
+                                chanc = new Pair<Integer, Integer>(100, 0);
                             if(!ServerConstants.isEnhanceEnable){
                                 chr.dropMessage(1, "裝備強化暫時關閉");
                                 break;
@@ -1973,7 +1973,7 @@ public class MapleItemInformationProvider {
         if (GameConstants.getInventoryType(itemId) == MapleInventoryType.UNDEFINED) {
             return false;
         }
-        if(itemId == 1012616 || itemId == 1022194 || itemId == 1022183 || itemId == 1022184)
+        if(itemId == 1012616 || itemId == 1022194 || itemId == 1022183 || itemId == 1022184 || itemId == 1004788 || itemId == 1004398)
             return false;
         return getItemInformation(itemId) != null;
     }

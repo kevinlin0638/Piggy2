@@ -268,6 +268,7 @@ public class DamageParse {
                         if(attack.skill == 3221001 || Tempest)
                             eachd = 1999999 + player.getStat().getBkd();
                         else {
+                            eachd = 0;
                             //player.getCheatTracker().registerOffense(CheatingOffense.攻擊超過自身角色破攻, "[傷害: " + eachd + ", 腳色頂傷: " + maxDamagePerHit + ", 怪物ID: " + monster.getId() + "] [职业: " + player.getJob() + ", 等級: " + player.getLevel() + ", 技能: " + attack.skill + "]");
                             World.Broadcast.broadcastGMMessage(player.getWorld(), CWvsContext.broadcastMsg(6, "[GM消息] " + player.getName() + " ID: " + player.getId() + " (等級 " + player.getLevel() + ") 在地圖: " + player.getMapId() + " 傷害超過自身破攻。"));
                             World.Broadcast.broadcastGMMessage(player.getWorld(), CWvsContext.broadcastMsg(6, "[GM消息] " + " 自身破攻: " + (1999999 + player.getStat().getBkd()) + " 傷害: " + eachd + "技能: " + attack.skill));
@@ -1155,7 +1156,6 @@ public class DamageParse {
             case 4341002:
             case 4341003:
             case 5301001:
-            case 5300007:
             case 31001000: // grim scythe
             case 31101000: // soul eater
             case 31111005: // carrion breath

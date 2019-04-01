@@ -25,118 +25,34 @@ function start() {
 
 function action(mode, type, selection) {
 	items =  Array(
-		Array(2002020, // 欲合成之道具 ID
-			[[4031627 , 1]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
+		Array(1152121, // 欲合成之道具 ID
+			[[1152120, 1],[4011000 , 3],[4260005, 100],[4008000, 10],[4008001, 10],[4008002, 10],[4008003, 10],[0, 1000000]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
 			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
 			-1, //是否限制時間, 時間
-			true, // 是否批量合成
-			-1, //等級限制
-			true,
-			5),// 是否顯示
-		Array(2002021, // 欲合成之道具 ID
-			[[4031628 , 1]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
+			false, // 是否批量合成
+			0, //等級限制
+			true),
+		Array(1152122, // 欲合成之道具 ID
+			[[1152121, 1],[4011003 , 3],[4260006, 100],[4008000, 20],[4008001, 20],[4008002, 20],[4008003, 20],[0, 5000000]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
 			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
 			-1, //是否限制時間, 時間
-			true, // 是否批量合成
-			-1, //等級限制
-			true,
-			5),// 是否顯示
-		Array(2002022, // 欲合成之道具 ID
-			[[4031630 , 1]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
+			false, // 是否批量合成
+			0, //等級限制
+			true),
+		Array(1152123, // 欲合成之道具 ID
+			[[1152122, 1],[4011005 , 3],[4260007, 100],[4008000, 30],[4008001, 30],[4008002, 30],[4008003, 30],[0, 8000000]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
 			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
 			-1, //是否限制時間, 時間
-			true, // 是否批量合成
-			-1, //等級限制
-			true,
-			5),// 是否顯示
-		Array(2002023, // 欲合成之道具 ID
-			[[4031631 , 1]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
+			false, // 是否批量合成
+			0, //等級限制
+			true),
+		Array(1152124, // 欲合成之道具 ID
+			[[1152123, 1],[4011006 , 3],[4260008, 100],[4008000, 40],[4008001, 40],[4008002, 40],[4008003, 40],[0, 10000000]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
 			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
 			-1, //是否限制時間, 時間
-			true, // 是否批量合成
-			-1, //等級限制
-			true,
-			5),// 是否顯示
-		Array(2000004, // 欲合成之道具 ID
-			[[4031640 , 1]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
-			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
-			-1, //是否限制時間, 時間
-			true, // 是否批量合成
-			-1, //等級限制
-			true,
-			5),// 是否顯示
-		Array(2000005, // 欲合成之道具 ID
-			[[4031644 , 1]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
-			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
-			-1, //是否限制時間, 時間
-			true, // 是否批量合成
-			-1, //等級限制
-			true,
-			5),// 是否顯示
-		Array(2050004, // 欲合成之道具 ID
-			[[4031648, 1]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
-			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
-			-1, //是否限制時間, 時間
-			true, // 是否批量合成
-			-1, //等級限制
-			true,
-			5),// 是否顯示
-		Array(2046318, // 欲合成之道具 ID
-			[[4021006, 1], [4021007, 1]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
-			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
-			-1, //是否限制時間, 時間
-			true, // 是否批量合成
-			-1, //等級限制
-			true,
-			3),
-		Array(2046319, // 欲合成之道具 ID
-			[[4021006, 1], [4021007, 1]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
-			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
-			-1, //是否限制時間, 時間
-			true, // 是否批量合成
-			-1, //等級限制
-			true,
-			3),
-		Array(2046229, // 欲合成之道具 ID
-			[[4021020, 1], [4260008, 3], [4008000, 5], [4008001, 5], [4008002, 5], [4008003, 5]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
-			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
-			-1, //是否限制時間, 時間
-			true, // 是否批量合成
-			-1, //等級限制
-			true,
-			1),
-		Array(2046230, // 欲合成之道具 ID
-			[[4021020, 1], [4260008, 3], [4008000, 5], [4008001, 5], [4008002, 5], [4008003, 5]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
-			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
-			-1, //是否限制時間, 時間
-			true, // 是否批量合成
-			-1, //等級限制
-			true,
-			1),
-		Array(5360015, // 欲合成之道具 ID
-			[[4021019 , 2]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
-			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
-			3, //是否限制時間, 時間
-			true, // 是否批量合成
-			-1, //等級限制
-			true,
-			1),
-		Array(2046049, // 欲合成之道具 ID
-			[[2046135 , 1]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
-			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
-			-1, //是否限制時間, 時間
-			true, // 是否批量合成
-			-1, //等級限制
-			true,
-			1),
-		Array(2046053, // 欲合成之道具 ID
-			[[2046137 , 1]], //欲合成之道具 1 個所需材料 [id, num], id = 0 楓幣, id = 1 Gash, id = 2 楓點, id = 3 贊助點
-			[false], //是否特殊強化, str, dex, int, luk, watk, matk, addi_slot
-			-1, //是否限制時間, 時間
-			true, // 是否批量合成
-			-1, //等級限制
-			true,
-			1)
+			false, // 是否批量合成
+			0, //等級限制
+			true)
 	); 
 	
 	
@@ -165,7 +81,7 @@ function action(mode, type, selection) {
 			req_num = 1;
 		}
 		if(sele_item[4] && req_num == -1){
-			var selStr = "您選擇的物品是 #b#v" + sele_item[0] + "##z" + sele_item[0] + "# #r(" +sele_item[7] +" 單位)#k所需材料如下 : \r\n"
+			var selStr = "您選擇的物品是 #b#v" + sele_item[0] + "##z" + sele_item[0] + "# #r(1 單位)#k所需材料如下 : \r\n"
 			if(sele_item[5] > 0)
 				selStr += "#b所需等級 : #r" + sele_item[5] + "\r\n";
 			if(sele_item[3] > 0)
@@ -177,7 +93,7 @@ function action(mode, type, selection) {
 			}
 			cm.sendGetNumber(selStr, 1, 1, 100);
 		}else{
-			var selStr = "您選擇的物品是 #b#v" + sele_item[0] + "##z" + sele_item[0] + "# #r(" + sele_item[7] + " 單位)#k所需材料如下 : \r\n"
+			var selStr = "您選擇的物品是 #b#v" + sele_item[0] + "##z" + sele_item[0] + "# #r(" + req_num + " 單位)#k所需材料如下 : \r\n"
 			if(sele_item[5] > 0)
 				selStr += "#b所需等級 : #r" + sele_item[5] + "\r\n";
 			if(sele_item[3] > 0)
@@ -199,7 +115,7 @@ function action(mode, type, selection) {
 		if(sele_item[4])
 			req_num = selection;
 		
-		var selStr = "您選擇的物品是 #b#v" + sele_item[0] + "##z" + sele_item[0] + "# #r(" + sele_item[7] + " 單位)#k所需材料如下 : \r\n"
+		var selStr = "您選擇的物品是 #b#v" + sele_item[0] + "##z" + sele_item[0] + "# #r(" + req_num + " 單位)#k所需材料如下 : \r\n"
 		if(sele_item[5] > 0)
 			selStr += "#b所需等級 : #r" + sele_item[5] + "\r\n";
 		if(sele_item[3] > 0)
@@ -220,7 +136,7 @@ function action(mode, type, selection) {
 		cm.sendYesNo(selStr);
 		
 	} else if (status == 3 && mode == 1) {
-		if(!cm.canHold(sele_item[0], req_num * sele_item[7])){
+		if(!cm.canHold(sele_item[0], req_num)){
 			cm.sendOk("很抱歉,您的背包空間不足");
 			cm.dispose();
 			return;
@@ -251,9 +167,9 @@ function action(mode, type, selection) {
 			//itemid, str, dex, int, luk, watk, matk, expira, addi_slot
 			cm.addWithPara(sele_item[0], tee[1], tee[2], tee[3], tee[4], tee[5], tee[6], sele_item[3], tee[7]);
 		}else{
-			cm.gainItemPeriod(sele_item[0], req_num * sele_item[7], sele_item[3]);
+			cm.gainItemPeriod(sele_item[0], req_num, sele_item[3]);
 		}
-		cm.sendOk("製作 #b#v" + sele_item[0] + "##t" + sele_item[0] + "# #r(" + (req_num * sele_item[7]) + " 單位)#k - 成功!" );
+		cm.sendOk("製作 #b#v" + sele_item[0] + "##t" + sele_item[0] + "# #r(" + req_num + " 單位)#k - 成功!" );
 		cm.dispose();
 	}
 }

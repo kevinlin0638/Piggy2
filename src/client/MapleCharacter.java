@@ -1569,7 +1569,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         try {
             con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
             con.setAutoCommit(false);
-            ps = con.prepareStatement("UPDATE characters SET level = ?, fame = ?, str = ?, dex = ?, luk = ?, `int` = ?, exp = ?, hp = ?, mp = ?, maxhp = ?, maxmp = ?, sp = ?, ap = ?, gm = ?, skincolor = ?, gender = ?, job = ?, hair = ?, face = ?, demonMarking = ?, map = ?, meso = ?, hpApUsed = ?, spawnpoint = ?, party = ?, buddyCapacity = ?, pets = ?, subcategory = ?, marriageId = ?, currentrep = ?, totalrep = ?, gachexp = ?, fatigue = ?, charm = ?, charisma = ?, craft = ?, insight = ?, sense = ?, will = ?, totalwins = ?, totallosses = ?, pvpExp = ?, pvpPoints = ?, reborns = ?, apstorage = ?, msipoints = ?, muted = ?, unmutetime = ?, dgm = ?, honourExp = ?, honourLevel = ?, gml = ?, noacc = ?, location = ?, birthday = ?, found = ?, todo = ?, occupationId = ?, occupationExp = ?, occupationLevel = ?, charToggle = ?, jqlevel = ?, jqexp = ?, pvpKills = ?, pvpDeaths = ?, fametoggle = ?, dps = ?, autoap = ?, autotoken = ?, elf = ?, name = ?, primexe = ? WHERE id = ?", DatabaseConnection.RETURN_GENERATED_KEYS);
+            ps = con.prepareStatement("UPDATE characters SET level = ?, fame = ?, str = ?, dex = ?, luk = ?, `int` = ?, exp = ?, hp = ?, mp = ?, maxhp = ?, maxmp = ?, sp = ?, ap = ?, gm = ?, skincolor = ?, gender = ?, job = ?, hair = ?, face = ?, demonMarking = ?, map = ?, meso = ?, hpApUsed = ?, spawnpoint = ?, party = ?, buddyCapacity = ?, pets = ?, subcategory = ?, marriageId = ?, currentrep = ?, totalrep = ?, gachexp = ?, fatigue = ?, charm = ?, charisma = ?, craft = ?, insight = ?, sense = ?, will = ?, totalwins = ?, totallosses = ?, pvpExp = ?, pvpPoints = ?, reborns = ?, apstorage = ?, msipoints = ?, muted = ?, unmutetime = ?, dgm = ?, honourExp = ?, honourLevel = ?, gml = ?, noacc = ?, location = ?, birthday = ?, found = ?, todo = ?, occupationId = ?, occupationExp = ?, occupationLevel = ?, charToggle = ?, jqlevel = ?, jqexp = ?, pvpKills = ?, pvpDeaths = ?, fametoggle = ?, dps = ?, autoap = ?, autotoken = ?, elf = ?, name = ?, primexe = ?, gpcon = ? WHERE id = ?", DatabaseConnection.RETURN_GENERATED_KEYS);
             ps.setInt(1, level);
             ps.setInt(2, fame);
             ps.setShort(3, stats.getStr());
@@ -1678,7 +1678,8 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             ps.setInt(70, elf ? 1 : 0); // delete
             ps.setString(71, name);
             ps.setLong(72, primexe);
-            ps.setInt(73, id);
+            ps.setInt(73, gpcon);
+            ps.setInt(74, id);
             if (ps.executeUpdate() < 1) {
                 ps.close();
                 throw new DatabaseException("Character not in database (" + id + ")");

@@ -773,7 +773,7 @@ public class MapleGuild implements java.io.Serializable {
                     if (mgc.isOnline()) {
                         World.Guild.setGuildAndRank(cid, 0, 5, 0, 5, 0);
                     } else {
-                        MapleCharacterUtil.sendNote(mgc.getName(), initiator.getName(), "You have been expelled from the guild.", 0);
+                        MapleCharacterUtil.sendNote(mgc.getName(), initiator.getName(), "您已被逐出公會.", 0);
                         setOfflineGuildStatus((short) 0, (byte) 5, 0, (byte) 5, cid, 0);
                     }
                     members.remove(mgc);

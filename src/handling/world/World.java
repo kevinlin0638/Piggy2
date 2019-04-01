@@ -420,8 +420,8 @@ public class World {
                 ps.setString(2, "推文獎勵");
                 rs = ps.executeQuery();
                 while (rs.next()){
-                    all += 30;
-                    chr.modifyCSPoints(2, 300000);
+                    all += 70;
+                    chr.modifyCSPoints(2, 700000);
                     ids.add(rs.getInt("id"));
                 }
                 if(all > 0)

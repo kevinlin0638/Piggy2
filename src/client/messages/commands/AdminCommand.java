@@ -1725,6 +1725,25 @@ public class AdminCommand {
         }
     }
 
+    public static class MapClock extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() < 2) {
+                c.getPlayer().dropMessage(6, splitted.get(0) + " <時間>");
+                return false;
+            }
+            int minutes = Integer.parseInt(splitted.get(1));
+            c.getPlayer().getMap().broadcastMessage(CField.getClock(minutes * 60));
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!MapClock <時間>";
+        }
+    }
+
     public static class 殺 extends AbstractsCommandExecute {
 
         @Override

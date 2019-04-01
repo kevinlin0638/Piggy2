@@ -251,15 +251,17 @@ public class Event_DojoAgent {
             for (MaplePartyCharacter mem : chr.getParty().getMembers()) {
                 MapleCharacter chr_mem = pass_map.getCharacterById(mem.getId());
                 if (chr_mem != null) {
+                    double level_rate_NX = GameConstants.levelRateNX(chr_mem.getLevel());
                     final int cal = CalculatePoints(points, chr_mem);
-                    chr_mem.modifyCSPoints(2, Double.valueOf(cal * 5.87).intValue(), true);
+                    chr_mem.modifyCSPoints(2, Double.valueOf(cal * 5.87 * level_rate_NX).intValue(), true);
                     chr_mem.setDojo(chr_mem.getDojo() + cal);
                     chr_mem.getClient().getSession().write(CWvsContext.Mulung_Pts(cal, chr_mem.getDojo()));
                     MapScriptMethods.sendDojoStart(chr_mem.getClient(), next_stage+1);
                 }
             }
         } else {
-            chr.modifyCSPoints(2, Double.valueOf(points * 0.1).intValue(), true);
+            double level_rate_NX = GameConstants.levelRateNX(chr.getLevel());
+            chr.modifyCSPoints(2, Double.valueOf(points * 0.1 * level_rate_NX).intValue(), true);
             chr.setDojo(chr.getDojo() + points);
 
             MapScriptMethods.sendDojoStart(chr.getClient(), next_stage+1);
@@ -361,6 +363,7 @@ public class Event_DojoAgent {
         }
         return true; // 成功 傳送全部隊員
     }
+
 
     private static int CalculatePoints(final int point, final MapleCharacter chr) {
         Double final_point = Integer.valueOf(point).doubleValue();

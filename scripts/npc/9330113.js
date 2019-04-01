@@ -21,6 +21,7 @@ var gold_item = Array(
 	Array(1032205, 1, 0), //
 	Array(1012164, 1, 0), //
 	Array(1022189, 1, 0), //
+	Array(1152120, 1, 0),
 	Array(1122019, 1, 0) //
 );
 var mor = Array(
