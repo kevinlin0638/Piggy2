@@ -1069,7 +1069,7 @@ public class PlayerHandler {
             packet = CField.closeRangeAttack(chr, skillLevel, 0, attack);
         }
 
-        if (!chr.isHidden() && attack.skill != 31121005) {
+        if (!chr.isHidden()) {
             chr.getMap().broadcastMessage(chr, packet, chr.getTruePosition());
         } else {
             chr.getMap().broadcastGMMessage(chr, packet, false);

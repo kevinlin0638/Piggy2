@@ -1463,6 +1463,9 @@ public class MapleStatEffect implements Serializable {
         } else if (sourceid == 20031203) { // To the Skies
             applyfrom.changeMap(150000000);
             return true;
+        }else if (sourceid == 31121005 && applyfrom != applyto){
+            applyfrom.getClient().sendPacket(CWvsContext.enableActions());
+            return false;
         }
         if (!applyfrom.isGM()) {
             if (skill && (sourceid == 9001000 || sourceid == 9001001 || sourceid == 9001002 || sourceid == 9101000 || sourceid == 9101001 || sourceid == 9101002 || sourceid == 9101003 || sourceid == 9001004 || sourceid == 9101005 || sourceid == 9101006 || sourceid == 9101007 || sourceid == 9101008)) {

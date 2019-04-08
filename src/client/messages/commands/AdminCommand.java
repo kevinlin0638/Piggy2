@@ -200,7 +200,7 @@ public class AdminCommand {
         @Override
         public boolean execute(MapleClient c, List<String> args) {
             if (c.getPlayer().getLevel() >= 200){
-                c.getPlayer().setPrimexe(GameConstants.getExpNeededForHighLevel(c.getPlayer().getLevel()) - 1);
+                c.getPlayer().setPrimexe(GameConstants.getExpNeededForHighLevel(c.getPlayer().getLevel(), c.getPlayer().getJob()) - 1);
                 c.getPlayer().setExp(0);
             }else {
                 c.getPlayer().setExp(GameConstants.getExpNeededForLevel(c.getPlayer().getLevel()) - 1);
@@ -1884,6 +1884,51 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "!LoadGR - 重載上月公會排名)";
+        }
+    }
+
+    public static class ResetDR extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            try {
+                Connection con = DatabaseConnection.getConnection();
+                PreparedStatement ps = con.prepareStatement("DELETE FROM dojo_ranks_month");
+                ps.executeUpdate();
+                ps.close();
+
+                ps = con.prepareStatement("SELECT `name`, `time` FROM dojo_ranks ORDER BY `time` ASC LIMIT 50");
+                int counter = 1;
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    PreparedStatement pss = con.prepareStatement("INSERT INTO dojo_ranks_month(name, `rank`) VALUES(?, ?)");
+                    pss.setString(1, rs.getString("name"));
+                    pss.setInt(2, counter);
+                    pss.executeUpdate();
+                    pss.close();
+                    counter++;
+                }
+                ps.close();
+                rs.close();
+
+                PreparedStatement pss = con.prepareStatement("INSERT INTO dojo_ranks_month(name, `rank`) VALUES(?, ?)");
+                pss.setString(1, new Date().toString());
+                pss.setInt(2, 0);
+                pss.executeUpdate();
+                pss.close();
+
+                ps = con.prepareStatement("DELETE FROM dojo_ranks");
+                ps.executeUpdate();
+                ps.close();
+            }catch (SQLException se) {
+                se.printStackTrace();
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!ResetDR - 重載上月武陵排名並將排名重製)";
         }
     }
 

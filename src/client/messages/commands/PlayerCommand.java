@@ -62,7 +62,7 @@ public class PlayerCommand {
             if(c.getPlayer().getLevel() < 200) {
                 s = c.getPlayer().getExp() + "/" + GameConstants.getExpNeededForLevel(c.getPlayer().getLevel()) +  "(" + Math.floor(Long.valueOf(c.getPlayer().getExp()).doubleValue() / Integer.valueOf(GameConstants.getExpNeededForLevel(c.getPlayer().getLevel())).doubleValue() * 1000) / 10 + "%)";
             }else{
-                s = c.getPlayer().getPrimexe() + "/" + GameConstants.getExpNeededForHighLevel(c.getPlayer().getLevel()) + "(" + Math.floor(Long.valueOf(c.getPlayer().getPrimexe()).doubleValue() / Long.valueOf(GameConstants.getExpNeededForHighLevel(c.getPlayer().getLevel())).doubleValue() * 1000) / 10 + "%)";
+                s = c.getPlayer().getPrimexe() + "/" + GameConstants.getExpNeededForHighLevel(c.getPlayer().getLevel(), c.getPlayer().getJob()) + "(" + Math.floor(Long.valueOf(c.getPlayer().getPrimexe()).doubleValue() / Long.valueOf(GameConstants.getExpNeededForHighLevel(c.getPlayer().getLevel(), c.getPlayer().getJob())).doubleValue() * 1000) / 10 + "%)";
             }
             long time = System.currentTimeMillis() - c.getPlayer().getOnline_time();
             String ss = (time / (1000 * 60 * 60)) + " 小時 " +  ((time % (1000 * 60 * 60)) / (1000 * 60)) + " 分鐘 " + (((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000) + " 秒";

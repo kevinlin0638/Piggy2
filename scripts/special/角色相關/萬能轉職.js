@@ -58,7 +58,7 @@ function action(mode, type, selection) {
         case 1:
 			cm.dispose();
 			if (Message[selection][1] == 1)
-				cm.openNpc(9900007, "changeJob");
+				cm.openNpc(9900007, "角色相關/changeJob");
             break;
         case 2:
         case 3:

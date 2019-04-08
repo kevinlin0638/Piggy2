@@ -38,15 +38,15 @@ function action (mode,type,selection) {
 		//贊助點換点券
 		if (selection == 0){
 			cm.dispose();
-			cm.openNpc(9300011, "貨幣楓點");
+			cm.openNpc(9300011, "角色相關/貨幣楓點");
 		//点券換金色枫叶
 		} else if (selection == 1) {
 			cm.dispose();
-			cm.openNpc(9300011, "貨幣楓幣");
+			cm.openNpc(9300011, "角色相關/貨幣楓幣");
 		//金色枫叶換点券
 		}else if (selection == 2) {
 			cm.dispose();
-			cm.openNpc(9300011, "貨幣贊助點");
+			cm.openNpc(9300011, "角色相關/貨幣贊助點");
 		}
 		//贊助點成功兌換点券
 	}

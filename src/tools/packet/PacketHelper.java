@@ -737,8 +737,8 @@ public class PacketHelper {
             // 天使破壞者裝備(1300) + 拼圖(1400) + 未知[未確認](1500)
             // 獸魔裝備(5100) + 花狐裝備(5200) + 圖騰(5000)
             // 未知[未確認](6000)
-            int[] startRang = {1000, 1100, 1200, 1300, 1400, 1500, 5100, 5200, 5000, 6000};
-            int[] endRang = {1004, 1105, 1207, 1305, 1425, 1512, 5106, 5201, 5003, 6025};
+            int[] startRang = {1000, 1100, 1200, 5000, 1300, 1400, 1500, 5100, 5200, 6000};
+            int[] endRang = {1004, 1105, 1207, 5003, 1305, 1425, 1512, 5106, 5201, 6025};
             Iitem = getInventoryInfo(equipped, startRang[v4], endRang[v4]).iterator();
             while (true) {
                 Item item = Iitem.hasNext() ? Iitem.next() : null;
@@ -1141,7 +1141,8 @@ public class PacketHelper {
 
         chr.getAllBuffs().stream().forEach((PlayerBuffValueHolder pbvh) -> {
             pbvh.statup.keySet().stream().forEach((bu) -> {
-                statups.put(bu, pbvh.statup.get(bu));
+                if(pbvh.effect.getSourceId() != 32121003)
+                    statups.put(bu, pbvh.statup.get(bu));
             });
         });
 

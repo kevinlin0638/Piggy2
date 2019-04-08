@@ -7639,9 +7639,16 @@ public class GameConstants {
         }
         return 0;
     }
-    public static long getExpNeededForHighLevel(final int level) {
+    public static long getExpNeededForHighLevel(final int level, final int job) {
         if(level < 200 || level-200 >= high_exp.length)
             return Long.MAX_VALUE;
+        if (((job >= 410 && job <= 412) || (job >= 520 && job <= 522)) && (level >= 245 && level < 250)){
+            long all = 0;
+            for (int i = 36;i < 45;i++)
+                all += high_exp[i];
+            all /= 9;
+            return high_exp[level - 200] + all;
+        }
         return high_exp[level - 200];
     }
 

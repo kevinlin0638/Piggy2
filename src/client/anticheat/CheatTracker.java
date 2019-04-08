@@ -96,10 +96,10 @@ public class CheatTracker {
             //System.out.println("开始检测 - 是否检测: " + !player.isInTownMap() + " 是否有怪物: " + player.getMap().getMobsSize() + " 是否在活动地圖: " + (player.getEventInstance() != null));
             if (!player.isInTownMap() && player.getEventInstance() == null && player.getMap().getMobsSize() >= 2) {
                 inMapIimeCount++;
-                if (inMapIimeCount >= 6) {
+                if (inMapIimeCount >= 3) {
                     World.Broadcast.broadcastGMMessage(player.getWorld(), CWvsContext.broadcastMsg(6, "[GM消息] " + player.getName() + " ID: " + player.getId() + " (等級 " + player.getLevel() + ") 在地圖: " + player.getMapId() + " 打怪時間超過1小时，該玩家可能是在掛機打怪。"));
                 }
-                if (inMapIimeCount >= 8) {
+                if (inMapIimeCount >= 3) {
                     inMapIimeCount = 0;
                     player.getAntiMacro().startLieDetector("系統測試", false, false);
                     //System.out.println("开始检测 - 启动测谎仪.");

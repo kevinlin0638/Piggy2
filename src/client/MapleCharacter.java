@@ -5201,7 +5201,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (level < 255) {
 
             if (level >= 200) {
-                long needhigh = GameConstants.getExpNeededForHighLevel(level);
+                long needhigh = GameConstants.getExpNeededForHighLevel(level, job);
                 if (primexe + total >= needhigh) {
                     if(!checkAchievement(level))
                         return;
@@ -5270,7 +5270,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         //   stats.checkEquipLevels(this, total); //gms like
         // }
         int needed = getNeededExp();
-        long need_high = GameConstants.getExpNeededForHighLevel(level);
+        long need_high = GameConstants.getExpNeededForHighLevel(level, job);
         if (level >= 255 ) {
             setExp(0);
         } else {
@@ -6374,16 +6374,24 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             maxmp += Randomizer.rand(50, 100);
         }
         //maxmp += stats.getTotalInt() / 10;
-        if (level < 200){
+        if (level < 200) {
             exp -= GameConstants.getExpNeededForLevel(level);
             if (exp < 0) {
                 exp = 0;
             }
-        }else{
+        } else {
             exp = 0;
             primexe = 0;
         }
-        level += 1;
+
+        if (((getJob() >= 410 && getJob() <= 412) || (getJob() >= 520 && getJob() <= 522)) && level == 235){
+            remainingAp += 50; // all 5
+            level += 11;
+            updateSingleStat(MapleStat.AVAILABLE_AP, getRemainingAp());
+        }else {
+            level += 1;
+        }
+
         int level = getLevel();
         // 成就系統
         if (level == 10) {
@@ -6411,7 +6419,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         if (level == 230) {
             finishAchievement(27);
         }
-        if (level == 240) {
+        if (level >= 240) {
             finishAchievement(28);
         }
         if (level == 250) {

@@ -12,7 +12,12 @@ function start() {
     mapid = cm.getMapId();
 
     if (mapid == 925020001) {
-		cm.sendSimple("想要挑戰 #r武陵道場#k 嗎?#b \n\r #L1# 我想要進行 #r團隊挑戰#b#l\r\n#r#L5# 我想要將獎勵分給他人。#b#l\r\n#r#L6# 清除獎勵分配。#b#l\r\n#L2# 我要 #r換道具#b#l \n\r");
+		var text = "想要挑戰 #r武陵道場#k 嗎?#b \n\r #L1# 我想要進行 #r團隊挑戰#b#l\r\n#r#L5# 我想要將獎勵分給他人。#b#l\r\n#r#L6# 清除獎勵分配。#b#l\r\n#L2# 我要 #r換道具#b#l \r\n";
+		var last_rk = cm.getDojoRankLastMonth();
+		if(last_rk >= 1){
+			text += "#L10# 領取上週排名獎勵#r(第 " + last_rk + " 名)#l\r\n"
+		} 
+		cm.sendSimple(text);
     } else if (isRestingSpot(mapid)) {
 		cm.sendSimple("I'm amazed to know that you've safely reached up to this level. I can guarantee you, however, that it won't get any easier. What do you think? Do you want to keep going?#b \n\r #L0# Yes, I'll keep going.#l \n\r #L1# I want out#l \n\r #L2# I want to save my progress on record.#l");
     } else {
@@ -56,7 +61,10 @@ function action(mode, type, selection) {
 			cm.dispose();
 		}else if (sel == 2) {
 			cm.dispose();
-			cm.openNpc(2091005, "武陵道場兌換");
+			cm.openNpc(2091005, "武陵道場/武陵道場兌換");
+		}else if (sel == 10) {
+			cm.dispose();
+			cm.openNpc(2091005, "武陵道場/武陵每周獎勵");
 		} else if (sel == 1) {
 			var text = "以下的玩家分配獎勵給您:\r\n"
 			chrs = cm.getPlayer().getMap().getCharacters()

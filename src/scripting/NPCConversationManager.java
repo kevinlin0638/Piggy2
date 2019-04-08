@@ -1810,6 +1810,44 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         c.sendPacket(CField.sendPVPMaps());
     }
 
+    public int getDojoRankLastMonth(){
+        int ret = -1;
+        Connection con = DatabaseConnection.getConnection();
+        PreparedStatement ps = null;
+        try {
+            ps = con.prepareStatement("SELECT * FROM dojo_ranks_month WHERE name = ?");
+            ps.setString(1, c.getPlayer().getName());
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                ret = rs.getInt("rank");
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    public String getDojoRankEventName(){
+        String ret = "";
+        Connection con = DatabaseConnection.getConnection();
+        PreparedStatement ps = null;
+        try {
+            ps = con.prepareStatement("SELECT * FROM dojo_ranks_month WHERE `rank` = ?");
+            ps.setInt(1, 0);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                ret = rs.getString("name");
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
     public void sendDojoRanks() {
         try {
             PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT `name`, `time` FROM dojo_ranks ORDER BY `time` ASC LIMIT 50");

@@ -1088,7 +1088,7 @@ public class MapleInventoryManipulator {
         if (dst < 0 || source == null || (GameConstants.GMS && src == -55)) {
             return;
         }
-        if (target != null && src <= 0) { // do not allow switching with equip
+        if (target != null && src <= 0) { // do not allow swi@eatching with equip
             c.sendPacket(InventoryPacket.getInventoryFull());
             return;
         }
