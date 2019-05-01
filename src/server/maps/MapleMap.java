@@ -33,6 +33,7 @@ import constants.GameConstants;
 import constants.MapConstants;
 import constants.WorldConfig;
 import database.DatabaseConnection;
+import handling.Poker.PokerGame;
 import handling.channel.ChannelServer;
 import handling.login.LoginServer;
 import handling.world.MaplePartyCharacter;
@@ -102,6 +103,7 @@ public final class MapleMap {
     public List<Integer> pvpmaps = new ArrayList<>();
     private int runningOid = 500000;
     private MapleFootholdTree footholds = null;
+    private PokerGame pg = null;
     private float monsterRate, recoveryRate;
     private MapleMapEffect mapEffect;
     private int channel, world;
@@ -273,6 +275,14 @@ public final class MapleMap {
 
     public final void setTimeLimit(final int timeLimit) {
         this.timeLimit = timeLimit;
+    }
+
+    public PokerGame getPg() {
+        return pg;
+    }
+
+    public void setPg(PokerGame pg) {
+        this.pg = pg;
     }
 
     public final String getMapName() {
@@ -2442,6 +2452,12 @@ public final class MapleMap {
             if (getSquadBegin() != null && getSquadBegin().getTimeLeft() > 0 && getSquadBegin().getStatus() == 1) {
                 chr.getClient().sendPacket(CField.getClock((int) (getSquadBegin().getTimeLeft() / 1000)));
             }
+            if (getPg() != null){
+                if(getPg().getTimeLeft() > System.currentTimeMillis()) {
+                    chr.getClient().sendPacket(CField.getClock((int) ((getPg().getTimeLeft() - System.currentTimeMillis()) / 1000)));
+                }
+            }
+            chr.getClient().sendPacket(CWvsContext.clearMidMsg());
             if (mapid / 1000 != 105100 && mapid / 100 != 8020003 && mapid / 100 != 8020008) { //no boss_balrog/2095/coreblaze/auf. but coreblaze/auf does AFTER
                 final MapleSquad sqd = getSquadByMap(); //for all squads
                 if (!squadTimer && sqd != null && chr.getName().equals(sqd.getLeaderName()) && !chr.isClone()) {

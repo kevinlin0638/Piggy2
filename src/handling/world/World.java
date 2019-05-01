@@ -403,9 +403,9 @@ public class World {
                 rs = ps.executeQuery();
                 int all = 0;
                 while (rs.next()){
-                    if(MapleInventoryManipulator.checkSpace(chr.getClient(), 5062002, 30, "")){
+                    if(MapleInventoryManipulator.checkSpace(chr.getClient(), 5062002, 50, "")){
                         all += 30;
-                        MapleInventoryManipulator.addById(chr.getClient(), 5062002, (short) 30, "", null, -1, "Received from interaction 案讚發布 on " + FileoutputUtil.CurrentReadable_Date());
+                        MapleInventoryManipulator.addById(chr.getClient(), 5062002, (short) 50, "", null, -1, "Received from interaction 案讚發布 on " + FileoutputUtil.CurrentReadable_Date());
                         ids.add(rs.getInt("id"));
                     }
                 }

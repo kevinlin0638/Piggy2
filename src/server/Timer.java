@@ -221,7 +221,7 @@ public abstract class Timer {
                 r.run();
             } catch (Throwable t) {
                 FileoutputUtil.outputFileError(file, t);
-                //t.printStackTrace(); //mostly this gives un-needed errors... that take up a lot of space
+                t.printStackTrace(); //mostly this gives un-needed errors... that take up a lot of space
             }
         }
     }

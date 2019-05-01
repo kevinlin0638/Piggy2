@@ -105,7 +105,7 @@ function action(mode, type, selection) {
 					cm.getPlayer().getGuild().gainGP(50, true, cm.getPlayer().getId());
 				cm.gainItem(4310014, 1);
 				cm.dispose();
-				cm.openNpc(9330003, "每日任務");
+				cm.openNpc(9330003, "角色相關/每日任務");
 			}
 			break;
         default:

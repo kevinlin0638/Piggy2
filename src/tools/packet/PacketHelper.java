@@ -1397,7 +1397,7 @@ public class PacketHelper {
             mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.MECH_CHANGE));
         }
 //        //109
-        if (statups.containsKey(MapleBuffStatus.AURA)) {
+        if (statups.containsKey(MapleBuffStatus.AURA)  && (statups.containsKey(MapleBuffStatus.BLUE_AURA) || statups.containsKey(MapleBuffStatus.YELLOW_AURA) || statups.containsKey(MapleBuffStatus.DARK_AURA))) {
             mplew.writeShort(chr.getBuffedValue(MapleBuffStatus.AURA));
             mplew.writeInt(chr.getTrueBuffSource(MapleBuffStatus.AURA));
         }

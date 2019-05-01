@@ -36,6 +36,7 @@ import constants.ServerConstants;
 import constants.ServerConstants.PlayerGMRank;
 import database.DatabaseConnection;
 import database.DatabaseException;
+import handling.Poker.PokerGame;
 import handling.channel.ChannelServer;
 import handling.channel.handler.NPCHandler;
 import handling.login.LoginInformationProvider.JobType;
@@ -106,6 +107,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
     public transient MapleAndroid android;
     public EnumMap<MapleTraitType, MapleTrait> traits;
     private Timestamp createDate; //角色创建的时间
+    private PokerGame pg = null;
 
     private long primexe;
     /*Start of Custom Feature*/
@@ -8533,12 +8535,13 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
         if (quantity >= 0) {
             MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-            Item item = ii.getEquipById(id);
             if (!MapleInventoryManipulator.checkSpace(client, id, quantity, "")) {
-                client.getPlayer().dropMessage(1, "Your inventory is full. Please remove an item from your " + GameConstants.getInventoryType(id).name() + " inventory.");
+                if(quantity > 0)
+                    client.getPlayer().dropMessage(1, "Your inventory is full. Please remove an item from your " + GameConstants.getInventoryType(id).name() + " inventory.");
                 return;
             }
-            if (GameConstants.getInventoryType(id).equals(MapleInventoryType.EQUIP) && !GameConstants.isRechargable(item.getItemId())) {
+            if (GameConstants.getInventoryType(id).equals(MapleInventoryType.EQUIP) && !GameConstants.isRechargable(id)) {
+                Item item = ii.getEquipById(id);
                 if (randomStats) {
                     MapleInventoryManipulator.addFromDrop(client, ii.randomizeStats((Equip) item), false);
                 } else {
@@ -8550,7 +8553,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         } else {
             MapleInventoryManipulator.removeById(client, GameConstants.getInventoryType(id), id, -quantity, true, false);
         }
-        client.sendPacket(CWvsContext.InfoPacket.getShowItemGain(id, quantity, true));
+        client.sendPacket(CWvsContext.InfoPacket.getShowItemGain(id, quantity, false));
     }
 
     public int getGMText() {
@@ -9391,9 +9394,9 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         } else if (type == -4) {
             client.sendPacket(CField.getChatText(getId(), message, isSuperGM(), 1)); //1 = hide
         } else if (type == -5) {
-            client.sendPacket(CField.getGameMessage(message, false)); //pink
+            client.sendPacket(CField.getGameMessage(message, false)); //灰色
         } else if (type == -6) {
-            client.sendPacket(CField.getGameMessage(message, true)); //white bg
+            client.sendPacket(CField.getGameMessage(message, true)); //紅色
         } else if (type == -7) {
             client.sendPacket(CWvsContext.getMidMsg(message, false, 0));
         } else if (type == -8) {
@@ -10039,6 +10042,15 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             mp.killMonster(9700100);
             this.isOpenRound = false;
         }
+
+        if(getPg() != null){
+            PokerGame pg = getPg();
+            pg.exit_game(this);
+            if(!pg.canStart()){
+                getMap().setPg(null);
+            }
+            setPg(null);
+        }
         changeRemoval();
         PlayerBuffStorage.addBuffsToStorage(getId(), getAllBuffs());
         PlayerBuffStorage.addDiseaseToStorage(getId(), getAllDiseases());
@@ -10387,6 +10399,21 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             resetStats(4, 4, 4, 4);
         }
     }
+
+    public PokerGame getPg() {
+        return pg;
+    }
+
+    public void setPg(PokerGame pg) {
+        this.pg = pg;
+    }
+
+    public void setStartPg(PokerGame pg) {
+        this.pg = pg;
+        getMap().setPg(pg);
+        getMap().broadcastMessage(CField.getClock(60));
+    }
+
     public boolean isOpenRound() {
         return isOpenRound;
     }
@@ -10458,6 +10485,16 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
             mp.killMonster(9700100);
             this.isOpenRound = false;
         }
+
+        if(getPg() != null){
+            PokerGame pg = getPg();
+            pg.exit_game(this);
+            if(!pg.canStart()){
+                getMap().setPg(null);
+            }
+            setPg(null);
+        }
+
         if (!getMechDoors().isEmpty()) {
             removeMechDoor();
         }

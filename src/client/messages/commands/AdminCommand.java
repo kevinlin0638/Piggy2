@@ -15,6 +15,8 @@ import constants.MapConstants;
 import constants.ServerConstants;
 import database.DatabaseConnection;
 import ecpay.payment.integration.PaymentAIO;
+import handling.Poker.PokerGame;
+import handling.Poker.PokerPlayer;
 import handling.RecvPacketOpcode;
 import handling.SendPacketOpcode;
 import handling.channel.ChannelServer;
@@ -1884,6 +1886,48 @@ public class AdminCommand {
         @Override
         public String getHelpMessage() {
             return "!LoadGR - 重載上月公會排名)";
+        }
+    }
+
+
+    public static class OpenPoker extends AbstractsCommandExecute {
+        @Override
+        public boolean execute(MapleClient c, List<String> args) {
+            if(c.getPlayer().getPg() == null && c.getPlayer().getMap().getPg() == null){
+                /*todo: 盲注*/
+                if (c.getPlayer().getCSPoints(2) < 2 * 100 * 10000){
+                    c.getPlayer().dropMessage("您的楓點不足，此牌局需要 " + 2 * 100 * 10000);
+                    return true;
+                }else if (c.getPlayer().getInventory(MapleInventoryType.ETC).isFull(10)) {
+                    c.getPlayer().dropMessage("您的其他欄位至少要有十格");
+                    return true;
+                }
+                PokerGame pg = new PokerGame(0, 2, c.getPlayer().getMap(), c.getPlayer());
+                c.getPlayer().setStartPg(pg);
+                pg.exchange_Chip(c.getPlayer());
+                Timer.EventTimer.getInstance().schedule(() -> {
+                    PokerGame ppg = c.getPlayer().getPg();
+                    if(ppg == null)
+                        return;
+                    if(!ppg.canStart()){
+                        c.getPlayer().setPg(null);
+                        c.getPlayer().getMap().setPg(null);
+                        ppg.sendToPlayers("因參與人數不足，系統已解散牌局");
+                    }else{
+                        ppg.sendToPlayers("遊戲開始");
+                        ppg.StartPoker();
+                    }
+                }, 60000);
+                c.getPlayer().dropMessage("您已經開啟牌局");
+            }else{
+                c.getPlayer().dropMessage("已經開啟牌局");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!OpenPoker - 開啟撲克牌局";
         }
     }
 

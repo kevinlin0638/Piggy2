@@ -3443,4 +3443,184 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return Math.floor(DonateRate * don);
     }
 
+    public void 強化道具( MapleCharacter player,int y,int 道具id, int 道具數量, int 力量 ,int 敏捷,int 智力,int 幸運,int 攻擊, int 魔功,int 物防, int 魔防,int 血量,int 魔力,int 速度,int 跳躍, int 星數,int 捲數) {
+        byte slot =  1;
+        MapleInventory equip = player.getInventory(MapleInventoryType.EQUIP);
+        Item item = getPlayer().getInventory(MapleInventoryType.EQUIP).getItem((byte) slot);
+        Equip eq = (Equip) item;
+        Equip eu = (Equip) equip.getItem(slot);
+
+
+
+        int itemid = equip.getItem(slot).getItemId();
+        short hand = eu.getHands();
+        byte level = eu.getLevel();
+
+        if (y == 1){
+            if (item != null){
+
+                sendNext("你所選擇的道具#i"+itemid+"##r#t"+itemid+"##k\r\n"+
+                        "你所使用的強化道具#r#e#i"+道具id+"##t"+道具id+"##k#n:"+道具數量+"個\r\n"+
+                        "強化後可以獲得的屬性\r\n#r#e力量:"+力量+"\r\n敏捷:"+敏捷+"\r\n智力:"+智力+"\r\n幸運:"+幸運+"\r\n"+
+                        "攻擊:"+攻擊+"\r\n魔功:"+魔功+"\r\n物防:"+物防+"\r\n魔防:"+魔防+"\r\n"+
+                        "血量:"+血量+"\r\n魔力:"+魔力+"\r\n速度:"+速度+"\r\n跳躍:"+跳躍+"\r\n"+"星數:"+星數+"\r\n"+"捲數:"+捲數+"\r\n"+
+
+                        "#k#n需要強化嗎");
+            }else{
+                sendNext("你第一欄沒有道具");
+            }
+        }
+        int tzzz = -1;
+        if(y == 2){
+            if (eq.getUpgradeSlots() < (捲數*tzzz)) {
+                sendNext("衝捲次數不足");
+                dispose();
+
+            }
+            else if (player.haveItem(道具id,道具數量)) {
+
+                gainItem(道具id, (short) -道具數量);
+                Equip nItem = new Equip(itemid, slot, (byte) 0);
+                nItem.setStr((short) (eq.getStr()+ 力量) ); // STR
+                nItem.setDex((short) (eq.getDex()+ 敏捷) ); // STR
+                nItem.setInt((short) (eq.getInt()+ 智力) ); // STR
+                nItem.setLuk((short) (eq.getLuk()+ 幸運) ); // STR
+                nItem.setWatk((short) (eq.getWatk()+ 攻擊) ); // STR
+                nItem.setMatk((short) (eq.getMatk()+ 魔功) ); // STR
+                nItem.setWdef((short) (eq.getWdef()+ 物防) ); // STR
+                nItem.setMdef((short) (eq.getMdef()+ 魔防) ); // STR
+                nItem.setHp((short) (eq.getHp()+ 血量) ); // STR
+                nItem.setMp((short) (eq.getMp()+ 魔力) ); // STR
+                nItem.setSpeed((short) (eq.getSpeed()+ 速度) ); // STR
+                nItem.setJump((short) (eq.getJump()+ 跳躍) ); // STR
+                nItem.setEnhance((byte) (eq.getEnhance()+ 星數) ); // STR
+                nItem.setLevel((byte) (eq.getLevel()+ 1) ); // STR
+                nItem.setUpgradeSlots((byte)(eq.getUpgradeSlots()+ 捲數 ) );
+                nItem.setHands(hand);
+                player.getInventory(MapleInventoryType.EQUIP).removeItem(slot);
+                player.getInventory(MapleInventoryType.EQUIP).addFromDB(nItem);
+                player.saveToDB(false, false);//存檔
+                player.fakeRelog();
+                player.saveToDB(false, false);//存檔
+                dispose();
+
+            }else{
+                sendNext("道具數量不足");
+                dispose();
+            }
+
+        }
+    }
+    public void 女皇強化( MapleCharacter player,int y,int 道具id, int 道具數量, int 力量 ,int 敏捷,int 智力,int 幸運,int 攻擊, int 魔功,int 物防, int 魔防,int 血量,int 魔力,int 速度,int 跳躍, int 星數,int 捲數) {
+        byte slot =  1;
+        MapleInventory equip = player.getInventory(MapleInventoryType.EQUIP);
+        Item item = getPlayer().getInventory(MapleInventoryType.EQUIP).getItem((byte) slot);
+        Equip eq = (Equip) item;
+        Equip eu = (Equip) equip.getItem(slot);
+
+
+
+        int itemid = equip.getItem(slot).getItemId();
+        short hand = eu.getHands();
+        byte level = eu.getLevel();
+
+        if (y == 1){
+            if (item != null){
+
+                sendNext("你所選擇的道具#i"+itemid+"##r#t"+itemid+"##k\r\n"+
+                        "你所使用的強化道具#r#e#i"+道具id+"##t"+道具id+"##k#n:"+道具數量+"個\r\n"+
+                        "強化後可以獲得的屬性\r\n#r#e力量:"+力量+"\r\n敏捷:"+敏捷+"\r\n智力:"+智力+"\r\n幸運:"+幸運+"\r\n"+
+                        "攻擊:"+攻擊+"\r\n魔功:"+魔功+"\r\n物防:"+物防+"\r\n魔防:"+魔防+"\r\n"+
+                        "血量:"+血量+"\r\n魔力:"+魔力+"\r\n速度:"+速度+"\r\n跳躍:"+跳躍+"\r\n"+"星數:"+星數+"\r\n"+"捲數:"+捲數+"\r\n"+
+
+                        "#k#n需要強化嗎");
+            }else{
+                sendNext("你第一欄沒有道具");
+            }
+        }
+        int tzzz = -1;
+        if(y == 2){
+            if (eq.getUpgradeSlots() < (捲數*tzzz)) {
+                sendNext("衝捲次數不足");
+                dispose();
+
+            } else if (itemid != 1302152 &&  itemid != 1312065 &&  itemid != 1322096  &&  itemid != 1402095 &&  itemid != 1412065 &&  itemid != 1422066 &&  itemid != 1432086
+                    &&  itemid != 1442116 &&  itemid != 1372084 &&  itemid != 1382104 &&  itemid != 1452111 &&  itemid != 1462099 &&  itemid != 1522018 &&  itemid != 1332130
+                    &&  itemid != 1342036 &&  itemid != 1472122 &&  itemid != 1482084 && itemid != 1492085  &&  itemid != 1532018 &&  itemid != 1003172 &&  itemid != 1003173
+                    && itemid != 1003174 &&  itemid != 1003175 &&  itemid != 1003176 &&  itemid != 1052314 &&  itemid != 1052315 &&  itemid != 1052316 &&  itemid != 1052317
+                    &&  itemid != 1052318 &&  itemid != 1072485 &&  itemid != 1072486 &&  itemid != 1072487 &&  itemid != 1072488 &&  itemid != 1072489 &&  itemid != 1072489
+                    &&  itemid != 1082295 &&  itemid != 1082296 &&  itemid != 1082297 &&  itemid != 1082298 &&  itemid != 1082299 &&  itemid != 1102275 &&  itemid != 1102276
+                    &&  itemid != 1102277 &&  itemid != 1102278 &&  itemid != 1102279 &&  itemid != 1152108 &&  itemid != 1152110 &&  itemid != 1152111 &&  itemid != 1152112
+                    &&  itemid != 1152113){
+
+
+
+                sendNext("只能強化女皇套裝 無法強化");
+                dispose();
+
+
+            } else if (player.haveItem(道具id,道具數量)) {
+
+                gainItem(道具id, (short) -道具數量);
+                Equip nItem = new Equip(itemid, slot, (byte) 0);
+                nItem.setStr((short) (eq.getStr()+ 力量) ); // STR
+                nItem.setDex((short) (eq.getDex()+ 敏捷) ); // STR
+                nItem.setInt((short) (eq.getInt()+ 智力) ); // STR
+                nItem.setLuk((short) (eq.getLuk()+ 幸運) ); // STR
+                nItem.setWatk((short) (eq.getWatk()+ 攻擊) ); // STR
+                nItem.setMatk((short) (eq.getMatk()+ 魔功) ); // STR
+                nItem.setWdef((short) (eq.getWdef()+ 物防) ); // STR
+                nItem.setMdef((short) (eq.getMdef()+ 魔防) ); // STR
+                nItem.setHp((short) (eq.getHp()+ 血量) ); // STR
+                nItem.setMp((short) (eq.getMp()+ 魔力) ); // STR
+                nItem.setSpeed((short) (eq.getSpeed()+ 速度) ); // STR
+                nItem.setJump((short) (eq.getJump()+ 跳躍) ); // STR
+                nItem.setEnhance((byte) (eq.getEnhance()+ 星數) ); // STR
+                nItem.setLevel((byte) (eq.getLevel()+ 1) ); // STR
+                nItem.setUpgradeSlots((byte)(eq.getUpgradeSlots()+ 捲數 ) );
+                nItem.setHands(hand);
+                player.getInventory(MapleInventoryType.EQUIP).removeItem(slot);
+                player.getInventory(MapleInventoryType.EQUIP).addFromDB(nItem);
+                player.saveToDB(false, false);//存檔
+                player.fakeRelog();
+                player.saveToDB(false, false);//存檔
+                dispose();
+
+            }else{
+                sendNext("道具數量不足");
+                dispose();
+            }
+
+        }
+    }
+
+
+    public void 道具製作(int id, int 力量 ,int 敏捷,int 智力,int 幸運,int 攻擊, int 魔功,int 物防, int 魔防,int 血量,int 魔力,int 速度,int 跳躍, int 星數,int 捲數, String owner) {
+        if (!canHold(id)) {
+            playerMessage("空間不足");
+            return;
+        }
+
+        Equip equip = (Equip) MapleItemInformationProvider.getInstance().getEquipById(id);
+        equip.setStr((short) (力量) ); // STR
+        equip.setDex((short) (敏捷) ); // STR
+        equip.setInt((short) (智力) ); // STR
+        equip.setLuk((short) (幸運) ); // STR
+        equip.setWatk((short) (攻擊) ); // STR
+        equip.setMatk((short) (魔功) ); // STR
+        equip.setWdef((short) (物防) ); // STR
+        equip.setMdef((short) (魔防) ); // STR
+        equip.setHp((short) (血量) ); // STR
+        equip.setMp((short) (魔力) ); // STR
+        equip.setSpeed((short) (速度) ); // STR
+        equip.setJump((short) (跳躍) ); // STR
+        equip.setEnhance((byte) (星數) ); // STR
+        equip.setUpgradeSlots((byte)(捲數));
+        if (!owner.isEmpty()) {
+            equip.setOwner(owner);
+        }
+
+        MapleInventoryManipulator.addbyItem(getC(), equip.copy());
+    }
+
 }

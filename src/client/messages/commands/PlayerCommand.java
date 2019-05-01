@@ -10,6 +10,8 @@ import client.inventory.MapleInventoryType;
 import constants.GameConstants;
 import constants.ServerConstants.PlayerGMRank;
 import database.DatabaseConnection;
+import handling.Poker.PokerGame;
+import handling.Poker.PokerPlayer;
 import handling.channel.ChannelServer;
 import handling.channel.handler.NPCHandler;
 import server.MapleInventoryManipulator;
@@ -25,6 +27,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
 import scripting.NPCScriptManager;
 import server.shops.IMaplePlayerShop;
 import server.shops.MapleMiniGame;
@@ -1115,6 +1119,221 @@ public class PlayerCommand {
         @Override
         public String getHelpMessage() {
             return "@掉寶查詢 - 掉寶查詢";
+        }
+    }
+
+    public static class fold extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            PokerGame pg = c.getPlayer().getPg();
+            if(pg != null){
+                for(PokerPlayer p : pg.getPlayers()){
+                    if(Objects.requireNonNull(p.getChr().get()).getName().equals(c.getPlayer().getName())){
+                        p.setPlayer_Move_type(4);
+                        p.setFolded(true);
+                        if(Objects.requireNonNull(pg.getPlayers().get(pg.getTurn_index()).getChr().get()).getId() == c.getPlayer().getId()) {
+                            synchronized (c.getPlayer().getPg()) {
+                                pg.notify();
+                            }
+                        }
+                    }
+                }
+            }else{
+                c.getPlayer().dropMessage("您未在牌局中");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "!fold - 放棄手牌";
+        }
+    }
+    public static class check extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            PokerGame pg = c.getPlayer().getPg();
+            if(pg != null){
+                if(Objects.requireNonNull(pg.getPlayers().get(pg.getTurn_index()).getChr().get()).getId() == c.getPlayer().getId())
+                {
+                    if(pg.getPlayers().get(pg.getTurn_index()).getBet() < pg.getCurrent_bet()){
+                        c.getPlayer().dropMessage("有人加注，無法使用Check過牌");
+                        return true;
+                    }
+                    pg.getPlayers().get(pg.getTurn_index()).setPlayer_Move_type(1);
+                    synchronized (c.getPlayer().getPg()){
+                        pg.notify();
+                    }
+                }else{
+                    c.getPlayer().dropMessage(1, "還沒輪到你");
+                    return true;
+                }
+            }else{
+                c.getPlayer().dropMessage("您未在牌局中");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@fold - 放棄手牌";
+        }
+    }
+    public static class call extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            PokerGame pg = c.getPlayer().getPg();
+            if(pg != null){
+                if(Objects.requireNonNull(pg.getPlayers().get(pg.getTurn_index()).getChr().get()).getId() == c.getPlayer().getId())
+                {
+                    if(pg.getPlayers().get(pg.getTurn_index()).getChips() < pg.getCurrent_bet() - pg.getPlayers().get(pg.getTurn_index()).getBet()){
+                        c.getPlayer().dropMessage("您沒有足夠的籌碼，請使用 @Allin");
+                        return true;
+                    }
+                    pg.getPlayers().get(pg.getTurn_index()).setPlayer_Move_type(2);
+                    pg.getPlayers().get(pg.getTurn_index()).setBet_this_round(pg.getCurrent_bet() - pg.getPlayers().get(pg.getTurn_index()).getBet());
+                    pg.getPlayers().get(pg.getTurn_index()).setBet(pg.getCurrent_bet());
+                    synchronized (c.getPlayer().getPg()){
+                        pg.notify();
+                    }
+                }else{
+                    c.getPlayer().dropMessage(1, "還沒輪到你");
+                    return true;
+                }
+            }else{
+                c.getPlayer().dropMessage("您未在牌局中");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@fold - 放棄手牌";
+        }
+    }
+    public static class allin extends bet {
+        public allin(){
+            isAllin = true;
+        }
+    }
+
+    public static class bet extends AbstractsCommandExecute {
+        public boolean isAllin = false;
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            PokerGame pg = c.getPlayer().getPg();
+            if(pg != null){
+                if(Objects.requireNonNull(pg.getPlayers().get(pg.getTurn_index()).getChr().get()).getId() == c.getPlayer().getId())
+                {
+
+                    int chips;
+
+                    if(!isAllin) {
+                        if(splitted.size() < 2)
+                        {
+                            c.getPlayer().dropMessage("@bet <籌碼量>");
+                            return true;
+                        }
+                        try {
+                            chips = Integer.parseInt(splitted.get(1));
+                        } catch (NumberFormatException nfe) {
+                            c.getPlayer().dropMessage(1, "輸入的數字無效.");
+                            return true;
+                        }
+                        if (chips < pg.getCurrent_bet()) {
+                            c.getPlayer().dropMessage(1, "不可下注小於當前注碼(" + pg.getCurrent_bet() + ")，請使用 @Allin");
+                            return true;
+                        }
+                        if (chips > pg.getPlayers().get(pg.getTurn_index()).getChips()) {
+                            c.getPlayer().dropMessage(1, "您沒有足夠的籌碼，請重新輸入或使用 @Allin");
+                            return true;
+                        }
+                    }else{
+                        chips = pg.getPlayers().get(pg.getTurn_index()).getChips() + pg.getPlayers().get(pg.getTurn_index()).getBet();
+                    }
+
+                    pg.getPlayers().get(pg.getTurn_index()).setPlayer_Move_type(3);
+                    pg.getPlayers().get(pg.getTurn_index()).setBet_this_round(chips - pg.getPlayers().get(pg.getTurn_index()).getBet());
+                    pg.getPlayers().get(pg.getTurn_index()).setBet(chips);
+                    synchronized (c.getPlayer().getPg()){
+                        pg.notify();
+                    }
+                }else{
+                    c.getPlayer().dropMessage(1, "還沒輪到你");
+                    return true;
+                }
+            }else{
+                c.getPlayer().dropMessage("您未在牌局中");
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@bet <籌碼數量> - 下注，籌碼以 1/1萬楓點 為單位，最小下注不可小於大盲注碼";
+        }
+    }
+
+    public static class JoinPoker extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            PokerGame pg = c.getPlayer().getMap().getPg();
+            if(pg != null){
+                if(c.getPlayer().getPg() != null){
+                    c.getPlayer().dropMessage("您已在牌局中");
+                }else {
+                    if (c.getPlayer().getCSPoints(2) < pg.getBlind() * 100 * 10000){
+                        c.getPlayer().dropMessage("您的楓點不足，此牌局需要 " + pg.getBlind() * 100 * 10000);
+                    }else if (c.getPlayer().getInventory(MapleInventoryType.ETC).isFull(10)) {
+                        c.getPlayer().dropMessage("您的其他欄位至少要有十格");
+                    }else {
+                        pg.exchange_Chip(c.getPlayer());
+                        pg.sendToPlayers(c.getPlayer().getName() + " 已加入牌局");
+                        pg.join_game(c.getPlayer());
+                        if (c.getPlayer().getMap().getPg().isStart()) {
+                            c.getPlayer().dropMessage("請等待下輪開始");
+                        } else {
+                            c.getPlayer().dropMessage("牌局即將開始");
+                        }
+                    }
+                }
+            }else{
+                c.getPlayer().dropMessage(-7, "此地圖沒有撲克牌局，請使用@OpenPoker開啟牌局");
+//                c.getPlayer().getClient().sendPacket(CWvsContext.clearMidMsg());
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@JoinPoker - 加入牌局)";
+        }
+    }
+
+    public static class ExitPoker extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            MapleCharacter chr = c.getPlayer();
+            if(chr.getPg() != null){
+                PokerGame pg = chr.getPg();
+                pg.exit_game(chr);
+                if(!pg.canStart()){
+                    chr.getMap().setPg(null);
+                }
+                chr.setPg(null);
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return "@ExitPoker - 離開牌局)";
         }
     }
 }

@@ -211,6 +211,12 @@ public class DamageParse {
                     eachd = eachDanage.left;
                     overallAttackCount++;
 
+                    if (attack_type == AttackType.RANGED_WITH_SHADOWPARTNER){
+                        if(eachd ==1 && oned.attack.indexOf(eachDanage) >= oned.attack.size()/2){
+                            eachd = (int)(oned.attack.get(oned.attack.indexOf(eachDanage) / 2).left * 0.5);
+                        }
+                    }
+
                     if (useAttackCount && overallAttackCount - 1 == attackCount) { // Is a Shadow partner hit so let's divide it once
                         maxDamagePerHit = (maxDamagePerHit / 100) * (ShdowPartnerAttackPercentage * (monsterstats.isBoss() ? stats.bossdam_r : stats.dam_r) / 100);
                     }

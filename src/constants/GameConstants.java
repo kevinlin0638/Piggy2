@@ -138,6 +138,7 @@ public class GameConstants {
             case 2049122:
             case 2049123:
             case 2340000:
+            case 4021030:
                 return true;
             default:
                 return false;
@@ -3940,7 +3941,14 @@ public class GameConstants {
             1,
 
             4031631  ,
-            1
+            1,
+
+            5062000,
+            5,
+            5062002,
+            3,
+            2049301,
+            5
     };
     public static int[] Equipments_Bonus = {
             1122017

@@ -33,6 +33,7 @@ import constants.GameConstants;
 import constants.ItemConstants;
 import constants.ServerConstants;
 import constants.SkillConstants;
+import handling.Poker.PokerGame;
 import handling.RecvPacketOpcode;
 import handling.channel.ChannelServer;
 import server.*;
@@ -1637,6 +1638,15 @@ public class PlayerHandler {
                 MapleMap mp = chr.getMap();
                 mp.killMonster(9700100);
                 chr.setOpenRound(false);
+            }
+
+            if(chr.getPg() != null){
+                PokerGame pg = chr.getPg();
+                pg.exit_game(chr);
+                if(!pg.canStart()){
+                    chr.getMap().setPg(null);
+                }
+                chr.setPg(null);
             }
 
             if (targetId != -1 && !chr.isAlive()) {

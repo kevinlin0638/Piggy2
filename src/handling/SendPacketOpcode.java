@@ -497,7 +497,7 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
             case "SPAWN_MONSTER":
             //case "REACTOR_SPAWN":
             case "KILL_MONSTER":
-            //case "UPDATE_STATS":
+            case "UPDATE_STATS":
             case "SHOW_STATUS_INFO":
             //case "MAGIC_ATTACK":
             case "SPAWN_NPC":

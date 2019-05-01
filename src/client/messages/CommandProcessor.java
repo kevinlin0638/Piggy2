@@ -106,6 +106,7 @@ public class CommandProcessor {
                     player.dropMessage("指令錯誤，用法： " + commandObject.getHelpMessage());
                 }
             } catch (Exception ex) {
+                ex.printStackTrace();
                 player.dropMessage("Oops! 指令出錯了!");
             }
             return true;

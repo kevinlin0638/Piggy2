@@ -23,13 +23,13 @@ function action(mode, type, selection) {
         case 1: //
             cm.dispose();//这是结束脚本，請按照实际情况使用
 			if(selection == 1){
-				cm.openNpc(2084001, "獎勵");
+				cm.openNpc(2084001, "道具相關/獎勵");
 			}else if(selection == 2){
-				cm.openNpc(2084001, "等級獎勵");
+				cm.openNpc(2084001, "角色相關/等級獎勵");
 			}else if(selection == 3){
-				cm.openNpc(2084001, "每日任務");
+				cm.openNpc(2084001, "角色相關/每日任務");
 			}else if(selection == 4){
-				cm.openNpc(2084001, "累積贊助");
+				cm.openNpc(2084001, "贊助專區/累積贊助");
 			}else{
 				cm.openNpc(2084001, "活動/收集活動/收集活動主選單");
 			}
