@@ -1,4 +1,4 @@
-*.class
+﻿*.class
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -19,12 +19,9 @@ sql/
 
 out/
 
-server\.properties
+
 
 wz/
 /日誌/nbproject/private/
 /日誌/build/
 /日誌/dist/
-/JavaProject4/nbproject/private/
-/JavaProject4/build/
-/JavaProject4/dist/
