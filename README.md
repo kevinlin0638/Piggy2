@@ -5,3 +5,5 @@
 * 將主程式的wz匯出成 xml 檔案
 * 雙擊 Launcher.bat 開啟端口
 
+[本地端登入器](https://drive.google.com/open?id=1jlI1U-OQMBpqDAOU_GwnlgnumKzWGuK7)
+
