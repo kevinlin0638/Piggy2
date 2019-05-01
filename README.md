@@ -1,6 +1,7 @@
-#h1 小喵谷
+# 小喵谷
 
-1.將Database資料夾內的sql匯入您的資料庫
-2.設定好端口與IP(在server.properties內)
-3.雙擊 Launcher.bat 開啟端口
+* 將Database資料夾內的sql匯入您的資料庫
+* 設定好端口與IP(在server.properties內)
+* 將主程式的wz匯出成 xml 檔案
+* 雙擊 Launcher.bat 開啟端口
 
