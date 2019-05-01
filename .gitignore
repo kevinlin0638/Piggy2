@@ -19,7 +19,7 @@ sql/
 
 out/
 
-
+server\.properties
 
 wz/
 /日誌/nbproject/private/
