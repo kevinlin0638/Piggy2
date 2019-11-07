@@ -164,6 +164,10 @@ public final class ServerConfig {
      */
     @Property(key = "channel.server.ports", defaultValue = "5")
     public static int CHANNEL_PORTS;
+    
+    //頻道數量
+    @Property(key = "channel.count", defaultValue = "5")
+    public static int CHANNEL_COUNTS;
 
 
     // 游戏倍率设置
