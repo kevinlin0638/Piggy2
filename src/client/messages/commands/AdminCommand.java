@@ -57,6 +57,7 @@ import server.MapleInventoryManipulator;
 import tools.packet.CWvsContext;
 
 import static constants.ServerConstants.DonateRate;
+import constants.WorldConfig;
 
 public class AdminCommand {
 
@@ -64,16 +65,24 @@ public class AdminCommand {
         return ServerConstants.PlayerGMRank.ADMIN;
     }
 
-    public static class ExpRate extends AbstractsCommandExecute {
+        public static class ExpRate extends AbstractsCommandExecute {
 
         @Override
-        public boolean execute(MapleClient c, List<String> args) {
-            return false;
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() > 1) {
+                final int rate = Integer.parseInt(splitted.get(1));
+                    WorldConfig.雪吉拉.setExpRate(rate);
+                c.getPlayer().dropMessage(6, "伺服器經驗值已調整為" + rate + "倍");
+            } else {
+                return false;
+            }
+            return true;
         }
 
         @Override
         public String getHelpMessage() {
-            return "@expRate <世界> <頻道> <倍率> - 設定經驗值倍率";
+            return new StringBuilder().append(ServerConstants.PlayerGMRank.ADMIN.getCommandPrefix()).append("exprate <倍率> - 更改經驗倍率").toString();
+
         }
     }
 
