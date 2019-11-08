@@ -26,9 +26,9 @@ public class WorldConstants {
             + "HorntailBattle,LudiPQ,KerningPQ,ZakumBattle,MV,MVBattle,DollHouse,Amoria,CWKPQ,BossBalrog_EASY,BossBalrog_NORMAL,PinkBeanBattle,ZakumPQ,ProtectTylus,ChaosHorntail,"
             + "ChaosZakum,Ravana_EASY,Ravana_HARD,Ravana_MED,GuildQuest";
 
-    public static int GLOBAL_EXP_RATE = 5;
-    public static int GLOBAL_MESO_RATE = 1;
-    public static int GLOBAL_DROP_RATE = 1; // Default: 2
+    public static int GLOBAL_EXP_RATE = ServerConfig.CHANNEL_RATE_EXP;
+    public static int GLOBAL_MESO_RATE = ServerConfig.CHANNEL_RATE_MESO;
+    public static int GLOBAL_DROP_RATE = ServerConfig.CHANNEL_RATE_DROP; // Default: 2
 
     public static boolean GLOBAL_RATES = true; // When true, all worlds use the above rates
 
@@ -111,7 +111,7 @@ public class WorldConstants {
 
         WorldConfig.雪吉拉.setMaxCharacters(ServerConfig.CHANNEL_RATE_EXP);
         WorldConfig.雪吉拉.setUserLimit(1500);
-        WorldConfig.雪吉拉.setChnnaelCount(20);
+        WorldConfig.雪吉拉.setChnnaelCount(ServerConfig.CHANNEL_COUNTS);
 
         WorldConfig.三眼章魚.setMaxCharacters(15);
         WorldConfig.三眼章魚.setUserLimit(1500);

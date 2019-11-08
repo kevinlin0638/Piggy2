@@ -24,3 +24,5 @@ wz/
 /日誌/nbproject/private/
 /日誌/build/
 /日誌/dist/
+.DS_Store
+src/.DS_Store
