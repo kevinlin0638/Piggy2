@@ -85,6 +85,48 @@ public class AdminCommand {
 
         }
     }
+    
+            public static class MesoRate extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() > 1) {
+                final int rate = Integer.parseInt(splitted.get(1));
+                    WorldConfig.雪吉拉.setMesoRate(rate);
+                c.getPlayer().dropMessage(6, "伺服器金錢已調整為" + rate + "倍");
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return new StringBuilder().append(ServerConstants.PlayerGMRank.ADMIN.getCommandPrefix()).append("mesorate <倍率> - 更改金錢倍率").toString();
+
+        }
+    }
+        
+    public static class DropRate extends AbstractsCommandExecute {
+
+        @Override
+        public boolean execute(MapleClient c, List<String> splitted) {
+            if (splitted.size() > 1) {
+                final int rate = Integer.parseInt(splitted.get(1));
+                    WorldConfig.雪吉拉.setDropRate(rate);
+                c.getPlayer().dropMessage(6, "伺服器掉寶已調整為" + rate + "倍");
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String getHelpMessage() {
+            return new StringBuilder().append(ServerConstants.PlayerGMRank.ADMIN.getCommandPrefix()).append("droprate <倍率> - 更改掉落倍率").toString();
+
+        }
+    }
 
     public static class SendToClient extends AbstractsCommandExecute {
 
