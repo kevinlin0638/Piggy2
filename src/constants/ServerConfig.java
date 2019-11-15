@@ -167,7 +167,7 @@ public final class ServerConfig {
     
     //頻道數量
     @Property(key = "channel.count", defaultValue = "5")
-    public static int CHANNEL_COUNTS;
+    public static int CHANNEL_COUNT;
 
 
     // 游戏倍率设置
