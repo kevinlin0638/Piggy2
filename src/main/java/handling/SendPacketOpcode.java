@@ -489,37 +489,37 @@ public enum SendPacketOpcode implements WritableShortValueHolder {
     public static boolean isSkipLog(SendPacketOpcode opcode) {
 
         switch (opcode.toString()) {
-            case "NPC_ACTION":
-            case "YELLOW_CHAT":
-            case "MOVE_PLAYER"://# 玩家移動[完成]
-            case "MOVE_MONSTER"://# 怪物移動 [完成]
-            case "MOVE_MONSTER_RESPONSE"://# 怪物移動回應
-            case "SPAWN_MONSTER":
-            //case "REACTOR_SPAWN":
-            case "KILL_MONSTER":
-            case "UPDATE_STATS":
-            case "SHOW_STATUS_INFO":
-            //case "MAGIC_ATTACK":
-            case "SPAWN_NPC":
-            case "REMOVE_NPC":
-            case "SPAWN_NPC_REQUEST_CONTROLLER":
-            case "GAME_MESSAGE":
-            //case "LP_UserMeleeAttack":
-            case "SERVERMESSAGE":
-            case "SPAWN_MONSTER_CONTROL":
-            //case "MODIFY_INVENTORY_ITEM":
-            //case "SHOW_MONSTER_HP":
-            //case "SHOW_QUEST_COMPLETION":
-            case "WARP_TO_MAP":
-            case "FAMILY":
-            case "DROP_ITEM_FROM_MAPOBJECT":
-            case "REMOVE_ITEM_FROM_MAP":
-            case "ARAN_COMBO":
-            case "NPC_TALK":
-            case "MOVE_SUMMON":
-            case "UPDATE_PARTYMEMBER_HP":
-            case "DAMAGE_PLAYER":
-                return true;
+//            case "NPC_ACTION":
+//            case "YELLOW_CHAT":
+//            case "MOVE_PLAYER"://# 玩家移動[完成]
+//            case "MOVE_MONSTER"://# 怪物移動 [完成]
+//            case "MOVE_MONSTER_RESPONSE"://# 怪物移動回應
+//            case "SPAWN_MONSTER":
+//            //case "REACTOR_SPAWN":
+//            case "KILL_MONSTER":
+//            case "UPDATE_STATS":
+//            case "SHOW_STATUS_INFO":
+//            //case "MAGIC_ATTACK":
+//            case "SPAWN_NPC":
+//            case "REMOVE_NPC":
+//            case "SPAWN_NPC_REQUEST_CONTROLLER":
+//            case "GAME_MESSAGE":
+//            //case "LP_UserMeleeAttack":
+//            case "SERVERMESSAGE":
+//            case "SPAWN_MONSTER_CONTROL":
+//            //case "MODIFY_INVENTORY_ITEM":
+//            //case "SHOW_MONSTER_HP":
+//            //case "SHOW_QUEST_COMPLETION":
+//            case "WARP_TO_MAP":
+//            case "FAMILY":
+//            case "DROP_ITEM_FROM_MAPOBJECT":
+//            case "REMOVE_ITEM_FROM_MAP":
+//            case "ARAN_COMBO":
+//            case "NPC_TALK":
+//            case "MOVE_SUMMON":
+//            case "UPDATE_PARTYMEMBER_HP":
+//            case "DAMAGE_PLAYER":
+//                return true;
             default:
                 return false;
         }

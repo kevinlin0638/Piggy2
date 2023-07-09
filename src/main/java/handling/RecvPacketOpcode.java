@@ -349,27 +349,27 @@ public enum RecvPacketOpcode implements WritableShortValueHolder {
 
     public static boolean isSkipLog(RecvPacketOpcode opcode) {
         switch (opcode.toString()) {
-            case "NPC_ACTION"://# NPC動作...OK!(145)
-            case "MOVE_PLAYER"://# 玩家移動...OK!(145)
-            case "MOVE_SUMMON"://# 召喚獸移動...OK!(145)
-            case "MOVE_DRAGON"://# 神龍移動...OK!(145)
-            case "MOVE_ANDROID"://# 機器人移動...OK!(145)
-            case "MOVE_LIFE"://# 怪物移動...OK!(145)
-            case "MOVE_PET":
-            case "HEAL_OVER_TIME"://# 自動恢復...OK!(145)
-            //case "CP_UserMeleeAttack":
-            case "TAKE_DAMAGE"://# 受到傷害...OK!(145)
-            case "AUTO_AGGRO":
-            //case "SPECIAL_MOVE":
-            //case "USE_ITEM":
-            //case "CHANGE_MAP":
-            case "GENERAL_CHAT":
-            case "ARAN_COMBO":
-            case "NPC_TALK":
-            case "NPC_TALK_MORE":
-               
-            case "CHANGE_KEYMAP":
-                return true;
+////            case "NPC_ACTION"://# NPC動作...OK!(145)
+////            case "MOVE_PLAYER"://# 玩家移動...OK!(145)
+////            case "MOVE_SUMMON"://# 召喚獸移動...OK!(145)
+////            case "MOVE_DRAGON"://# 神龍移動...OK!(145)
+////            case "MOVE_ANDROID"://# 機器人移動...OK!(145)
+////            case "MOVE_LIFE"://# 怪物移動...OK!(145)
+////            case "MOVE_PET":
+////            case "HEAL_OVER_TIME"://# 自動恢復...OK!(145)
+////            //case "CP_UserMeleeAttack":
+////            case "TAKE_DAMAGE"://# 受到傷害...OK!(145)
+////            case "AUTO_AGGRO":
+////            //case "SPECIAL_MOVE":
+////            //case "USE_ITEM":
+////            //case "CHANGE_MAP":
+////            case "GENERAL_CHAT":
+////            case "ARAN_COMBO":
+////            case "NPC_TALK":
+////            case "NPC_TALK_MORE":
+////
+////            case "CHANGE_KEYMAP":
+//                return true;
             default:
                 return false;
         }
